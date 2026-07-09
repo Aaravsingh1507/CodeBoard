@@ -1,0 +1,22 @@
+{
+  "functions": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/node_modules/**"
+    ]
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextserver"
+      }
+    ]
+  }
+}

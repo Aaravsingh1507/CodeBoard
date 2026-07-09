@@ -1,0 +1,156 @@
+// DevTrack AI — Prisma schema
+// Default datasource is SQLite for zero-config local development.
+// To switch to Postgres (Supabase/Neon) for production:
+//   1. Change provider below to "postgresql"
+//   2. Set DATABASE_URL in .env to your Postgres connection string
+//   3. Run `npx prisma migrate dev` again
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(cuid())
+  githubId         String?  @unique
+  githubUsername   String?
+  leetcodeUsername String?
+  name             String?
+  email            String?  @unique
+  emailVerified    DateTime?
+  image            String?
+  avatarUrl        String?
+  targetRole       String?
+  targetCompanies  String?
+  jobSearchStatus  String?  @default("not_looking") // not_looking | passive | active
+  githubAccessToken String? // stored to make authenticated GitHub API calls
+  onboarded        Boolean  @default(false)
+  theme            String   @default("dark")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  accounts       Account[]
+  sessions       Session[]
+  activityLogs   ActivityLog[]
+  resumeVersions ResumeVersion[]
+  applications   Application[]
+  weeklyReviews  WeeklyReview[]
+  goals          Goal[]
+
+  // cached external stats, refreshed periodically rather than on every request
+  githubStatsCache   String? // JSON blob
+  githubStatsSyncedAt DateTime?
+  leetcodeStatsCache   String? // JSON blob
+  leetcodeStatsSyncedAt DateTime?
+}
+
+// NextAuth (Auth.js) required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// One row per user per day. Written by the daily activity-sync job.
+model ActivityLog {
+  id                    String   @id @default(cuid())
+  userId                String
+  date                  DateTime // stored at midnight UTC for the day represented
+  githubContributions   Int      @default(0)
+  leetcodeSubmissions   Int      @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model ResumeVersion {
+  id         String   @id @default(cuid())
+  userId     String
+  fileUrl    String
+  fileName   String
+  label      String
+  notes      String?
+  isActive   Boolean  @default(false)
+  uploadedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Application {
+  id         String   @id @default(cuid())
+  userId     String
+  company    String
+  role       String
+  link       String?
+  status     String   @default("wishlist") // wishlist | applied | oa_screen | interview | offer | rejected
+  appliedAt  DateTime?
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WeeklyReview {
+  id            String   @id @default(cuid())
+  userId        String
+  weekStart     DateTime
+  weekEnd       DateTime
+  summaryText   String
+  observations  String   // JSON-encoded string[]
+  suggestions   String   // JSON-encoded string[]
+  generatedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekStart])
+}
+
+model Goal {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String    // leetcode_count | github_streak | applications_sent | custom
+  label     String
+  target    Int
+  current   Int       @default(0)
+  deadline  DateTime
+  status    String    @default("in_progress") // in_progress | completed | missed
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

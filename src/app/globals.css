@@ -1,0 +1,72 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f7f7fa;
+  --surface: #ffffff;
+  --surface-2: #eef0f4;
+  --border: #dfe1e8;
+  --foreground: #14151a;
+  --muted: #6b6f7b;
+  --accent: #6d5bf0;      /* violet — primary */
+  --accent-2: #12b8a6;    /* teal — secondary / success */
+  --warn: #e8a13d;
+  --danger: #e0546b;
+}
+
+.dark {
+  --background: #0d0e13;
+  --surface: #15161d;
+  --surface-2: #1b1d26;
+  --border: #262835;
+  --foreground: #e9e9f0;
+  --muted: #8b8d9c;
+  --accent: #8b7bff;
+  --accent-2: #2dd4bf;
+  --warn: #f0b94f;
+  --danger: #f0708a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jbmono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-data {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-feature-settings: "tnum" 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
