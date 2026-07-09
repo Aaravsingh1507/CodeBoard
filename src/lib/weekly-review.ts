@@ -28,6 +28,7 @@ export async function buildWeeklyReviewInput(userId: string): Promise<WeeklyRevi
   if (user?.githubStatsCache) {
     const stats = JSON.parse(user.githubStatsCache);
     githubPRsThisWeek = (stats.recentActivity ?? []).filter(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (a: any) => a.type === "pr" && new Date(a.date) >= start
     ).length;
   }

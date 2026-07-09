@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import fs from "fs";
-import path from "path";
 
 // Prevent creating a new PrismaClient on every hot-reload in dev.
 const globalForPrisma = globalThis as unknown as {
@@ -134,7 +133,7 @@ CREATE TABLE IF NOT EXISTS "Goal" (
 `;
 
 function createPrismaClient() {
-  let url = process.env.DATABASE_URL || "file:./dev.db";
+  const url = process.env.DATABASE_URL || "file:./dev.db";
   
   // For Cloud Functions, copy the bundled DB to /tmp if it doesn't exist.
   // Because sqlite natively needs a file path, we just let Prisma use the file path.
