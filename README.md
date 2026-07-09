@@ -1,12 +1,32 @@
 # DevTrack AI
 
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)](https://www.prisma.io/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+
 A productivity dashboard for developers — GitHub stats, LeetCode tracking, a
 unified coding streak, a resume version manager, an internship/job
 application tracker, AI-generated weekly reviews, and a goal planner.
 
-This is a real Next.js 14 (App Router) + TypeScript + Prisma app. Every
+🔗 **Live Demo:** [your-vercel-url](https://your-vercel-url.vercel.app) *(deploy to Vercel and update this link)*
+
+This is a real Next.js (App Router) + TypeScript + Prisma app. Every
 feature is wired to real data — GitHub's API, LeetCode's public GraphQL
 endpoint, and Claude's API — not mock/placeholder content.
+
+---
+
+## Screenshots
+
+> Drop your own screenshots into the `docs/` folder and they'll render here automatically.
+
+| Dashboard | GitHub Stats | Applications |
+|---|---|---|
+| ![Dashboard](./docs/screenshot-dashboard.png) | ![GitHub](./docs/screenshot-github.png) | ![Applications](./docs/screenshot-applications.png) |
+
+---
 
 ## 1. Prerequisites
 
@@ -53,7 +73,7 @@ Visit `http://localhost:3000`, sign in with GitHub, and you're in.
 | Coding streak + heatmap | Real — daily `ActivityLog` rows written by a sync job, computed server-side |
 | Resume version tracker | Real — PDF upload, list, download, delete, set-active. **Stored on local disk by default — see note below before deploying** |
 | Application/job Kanban tracker | Real — full CRUD, drag-and-drop + dropdown fallback, stats |
-| AI weekly review | Real — aggregates your week's data and calls the Claude API (`claude-sonnet-4-6`) |
+| AI weekly review | Real — aggregates your week's data and calls the Claude API |
 | Goal planner | Real — auto-progress for LeetCode/streak/application goals, manual progress for custom goals |
 | Dark mode, loading/empty/error states, responsive layout | Implemented throughout |
 
@@ -111,12 +131,11 @@ auth, but LeetCode can change or rate-limit this endpoint without notice —
 every place that calls it catches failures and falls back to the last
 successfully cached data instead of crashing the page.
 
-## 8. A note on how this was built
+## Contributing
 
-Everything here was written and reviewed via static analysis and linting.
-`npx prisma generate` needs to download an engine binary from
-`binaries.prisma.sh`, which wasn't reachable from the sandbox this was built
-in — so a full `next build` type-check couldn't be run in that environment.
-It will work normally on your machine with regular internet access. First
-thing to run after `npm install` is `npx prisma generate && npm run build`
-to confirm a clean compile before you start developing.
+Contributions are welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for
+guidelines and development setup.
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
