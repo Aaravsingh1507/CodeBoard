@@ -10,7 +10,7 @@ A productivity dashboard for developers — GitHub stats, LeetCode tracking, a
 unified coding streak, a resume version manager, an internship/job
 application tracker, AI-generated weekly reviews, and a goal planner.
 
-🔗 **Live Demo:** [your-vercel-url](https://your-vercel-url.vercel.app) *(deploy to Vercel and update this link)*
+🔗 **Live Demo:** [devtrack-ai-opal.vercel.app](https://devtrack-ai-opal.vercel.app)
 
 This is a real Next.js (App Router) + TypeScript + Prisma app. Every
 feature is wired to real data — GitHub's API, LeetCode's public GraphQL
