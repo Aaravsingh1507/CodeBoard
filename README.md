@@ -13,7 +13,7 @@ Real Next.js 14 (App Router) + TypeScript + Prisma app. Every number on
 screen comes from a real API call — GitHub, LeetCode, and Claude — not
 placeholder data.
 
-🔗 **Live Demo:** [devtrack-ai-opal.vercel.app](https://devtrack-ai-opal.vercel.app) (Update URL if you deploy to a different Vercel domain)
+🔗 **Live Demo:** [codeboard-rho.vercel.app](https://codeboard-rho.vercel.app)
 
 ---
 
