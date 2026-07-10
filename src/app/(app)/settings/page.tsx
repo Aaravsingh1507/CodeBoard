@@ -81,7 +81,7 @@ export default async function SettingsPage() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-muted">Job search status</label>
-            <Select name="jobSearchStatus" defaultValue={user.jobSearchStatus}>
+            <Select name="jobSearchStatus" defaultValue={user.jobSearchStatus ?? "not_looking"}>
               <option value="not_looking">Not looking</option>
               <option value="passive">Open to opportunities</option>
               <option value="active">Actively applying</option>
