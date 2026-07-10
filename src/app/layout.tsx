@@ -7,9 +7,9 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const jbMono = JetBrains_Mono({ variable: "--font-jbmono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "DevTrack AI",
+  title: "CodeBoard",
   description:
-    "Your coding activity, career progress, and goals — one dashboard.",
+    "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
 };
 
 export default function RootLayout({

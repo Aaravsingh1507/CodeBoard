@@ -8,20 +8,5 @@
       "path": "/api/cron/weekly-review",
       "schedule": "0 20 * * 0"
     }
-  ],
-  "services": {
-    "devtrack-ai": {
-      "root": ".",
-      "framework": "nextjs"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": {
-        "type": "service",
-        "service": "devtrack-ai"
-      }
-    }
   ]
 }

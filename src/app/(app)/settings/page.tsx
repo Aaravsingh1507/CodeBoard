@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 export default async function SettingsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  const user = await prisma.user.findUnique({ where: { id: (session.user as { id: string }).id } });
+  const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user) redirect("/login");
 
   async function updateProfile(formData: FormData) {
@@ -17,7 +17,7 @@ export default async function SettingsPage() {
     if (!s?.user) redirect("/login");
 
     await prisma.user.update({
-      where: { id: (s.user as { id: string }).id },
+      where: { id: (s.user as any).id },
       data: {
         leetcodeUsername: String(formData.get("leetcodeUsername") ?? "").trim() || null,
         targetRole: String(formData.get("targetRole") ?? "").trim() || null,
@@ -81,7 +81,7 @@ export default async function SettingsPage() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-muted">Job search status</label>
-            <Select name="jobSearchStatus" defaultValue={user.jobSearchStatus ?? "not_looking"}>
+            <Select name="jobSearchStatus" defaultValue={user.jobSearchStatus}>
               <option value="not_looking">Not looking</option>
               <option value="passive">Open to opportunities</option>
               <option value="active">Actively applying</option>

@@ -9,7 +9,7 @@ export default async function OnboardingPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const user = await prisma.user.findUnique({ where: { id: (session.user as { id: string }).id } });
+  const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user) redirect("/login");
   if (user.onboarded) redirect("/dashboard");
 
@@ -24,7 +24,7 @@ export default async function OnboardingPage() {
     const jobSearchStatus = String(formData.get("jobSearchStatus") ?? "not_looking");
 
     await prisma.user.update({
-      where: { id: (s.user as { id: string }).id },
+      where: { id: (s.user as any).id },
       data: {
         leetcodeUsername: leetcodeUsername || null,
         targetRole: targetRole || null,

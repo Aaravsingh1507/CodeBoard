@@ -36,7 +36,7 @@ async function githubGraphQL(token: string, query: string, variables: Record<str
   });
   if (!res.ok) throw new Error(`GitHub GraphQL error: ${res.status}`);
   const json = await res.json();
-  if (json.errors) throw new Error(json.errors.map((e: { message: string }) => e.message).join("; "));
+  if (json.errors) throw new Error(json.errors.map((e: any) => e.message).join("; "));
   return json.data;
 }
 
@@ -85,7 +85,7 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
 
   const langTotals = new Map<string, number>();
   let totalStars = 0;
-  for (const repo of u.repositories.nodes as { stargazerCount: number; languages?: { edges: { size: number; node: { name: string } }[] } }[]) {
+  for (const repo of u.repositories.nodes as any[]) {
     totalStars += repo.stargazerCount ?? 0;
     for (const edge of repo.languages?.edges ?? []) {
       const name = edge.node.name;
@@ -98,13 +98,12 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
     .map(([name, bytes]) => ({ name, bytes }));
 
   const calendar = u.contributionsCollection.contributionCalendar;
-  const contributionCalendar = calendar.weeks.flatMap((w: { contributionDays: { date: string; contributionCount: number }[] }) =>
-    w.contributionDays.map((d) => ({ date: d.date, count: d.contributionCount }))
+  const contributionCalendar = calendar.weeks.flatMap((w: any) =>
+    w.contributionDays.map((d: any) => ({ date: d.date, count: d.contributionCount }))
   );
 
   // Recent activity via REST (public events endpoint — simplest reliable source)
   const events = await githubRest(token, `/users/${login}/events/public?per_page=30`);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recentActivity = (events as any[])
     .filter((e) => ["PushEvent", "PullRequestEvent", "IssuesEvent"].includes(e.type))
     .slice(0, 10)

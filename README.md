@@ -1,38 +1,41 @@
-# DevTrack AI
+# CodeBoard
 
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)](https://www.prisma.io/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+**Are you actually placement-ready?**
 
-A productivity dashboard for developers — GitHub stats, LeetCode tracking, a
-unified coding streak, a resume version manager, an internship/job
-application tracker, AI-generated weekly reviews, and a goal planner.
+CodeBoard is a career-readiness dashboard for engineering students — it pulls
+your real GitHub activity, LeetCode practice, job applications, and goals
+into one place, and turns them into a single **Readiness Score** with
+specific, actionable nudges. Not another generic "commit tracker" — this is
+built around one question: *what should I actually do this week to get
+hired?*
 
-🔗 **Live Demo:** [devtrack-ai-opal.vercel.app](https://devtrack-ai-opal.vercel.app)
+Real Next.js 14 (App Router) + TypeScript + Prisma app. Every number on
+screen comes from a real API call — GitHub, LeetCode, and Claude — not
+placeholder data.
 
-This is a real Next.js (App Router) + TypeScript + Prisma app. Every
-feature is wired to real data — GitHub's API, LeetCode's public GraphQL
-endpoint, and Claude's API — not mock/placeholder content.
+## What makes this different
 
----
+Search "devtrack" or "dev tracker" and you'll find a dozen commit-counters
+and roadmap-learning apps. CodeBoard isn't trying to be a better commit
+counter. It's the only tool that combines:
 
-## Screenshots
-
-> Drop your own screenshots into the `docs/` folder and they'll render here automatically.
-
-| Dashboard | GitHub Stats | Applications |
-|---|---|---|
-| ![Dashboard](./docs/screenshot-dashboard.png) | ![GitHub](./docs/screenshot-github.png) | ![Applications](./docs/screenshot-applications.png) |
-
----
+- **A single Readiness Score (0–100)** — one number combining coding
+  consistency, LeetCode volume, job-search momentum, and goal follow-through,
+  so you don't have to mentally combine four stat pages yourself.
+- **Smart nudges** — "you haven't touched LeetCode in 4 days," "3
+  applications haven't moved in 2 weeks" — specific and actionable, not a
+  wall of charts.
+- **AI resume bullets generated from your actual activity** — no invented
+  metrics, drafted straight from your real last-30-days GitHub/LeetCode data.
+- **The full loop in one place** — practice, build, apply, and reflect,
+  instead of stitching together GitHub + LeetCode + a spreadsheet + a resume
+  folder.
 
 ## 1. Prerequisites
 
 - Node.js 18.18+ and npm
 - A free [GitHub OAuth App](https://github.com/settings/developers)
-- An [Anthropic API key](https://console.anthropic.com/) (for the AI weekly review)
+- An [Anthropic API key](https://console.anthropic.com/) (for AI reviews and resume bullets)
 
 ## 2. Setup
 
@@ -41,23 +44,24 @@ npm install
 cp .env.example .env
 ```
 
-Now fill in `.env`:
+Fill in `.env`:
 
-- **`AUTH_SECRET`** — run `npx auth secret` (or `openssl rand -base64 32`) and paste the result.
+- **`AUTH_SECRET`** — run `npx auth secret` and paste the result.
 - **`GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`** — create an OAuth App at
   https://github.com/settings/developers with:
   - Homepage URL: `http://localhost:3000`
   - Authorization callback URL: `http://localhost:3000/api/auth/callback/github`
-- **`ANTHROPIC_API_KEY`** — from console.anthropic.com. Without this, every
-  other feature works; only "Generate this week's review" will show an error.
-- **`CRON_SECRET`** — any random string. Only needed for the two cron routes.
+- **`ANTHROPIC_API_KEY`** — from console.anthropic.com. Without this, everything
+  else works; only AI weekly reviews and resume bullet generation show an error.
+- **`CRON_SECRET`** — any random string.
 - **`DATABASE_URL`** — already set to a local SQLite file, no action needed.
 
-Then set up the database and run:
+Then:
 
 ```bash
 npx prisma generate
 npx prisma db push
+npm run build      # confirms a clean compile before you start developing
 npm run dev
 ```
 
@@ -68,39 +72,37 @@ Visit `http://localhost:3000`, sign in with GitHub, and you're in.
 | Feature | Status |
 |---|---|
 | GitHub OAuth login | Real — NextAuth (Auth.js v5) + GitHub provider |
+| **Readiness Score** | Real — computed server-side from your actual streak, LeetCode totals, application response rate, and goal pace |
+| **Smart nudges** | Real — derived from the same live data (LeetCode inactivity, stale applications, broken streaks) |
+| **AI resume bullet generator** | Real — Claude API, grounded in your last 30 days of real GitHub/LeetCode activity, nothing invented |
 | GitHub stats (repos, stars, followers, contribution calendar, languages, recent activity) | Real — GitHub GraphQL + REST API, server-cached 4h |
-| LeetCode stats (solved counts, ranking, recent submissions) | Real — unofficial `leetcode.com/graphql` endpoint, server-cached 4h, degrades gracefully if the endpoint changes |
-| Coding streak + heatmap | Real — daily `ActivityLog` rows written by a sync job, computed server-side |
-| Resume version tracker | Real — PDF upload, list, download, delete, set-active. **Stored on local disk by default — see note below before deploying** |
-| Application/job Kanban tracker | Real — full CRUD, drag-and-drop + dropdown fallback, stats |
-| AI weekly review | Real — aggregates your week's data and calls the Claude API |
-| Goal planner | Real — auto-progress for LeetCode/streak/application goals, manual progress for custom goals |
+| LeetCode stats | Real — unofficial `leetcode.com/graphql` endpoint, server-cached 4h, degrades gracefully if the endpoint changes |
+| Coding streak + heatmap | Real — daily `ActivityLog` rows written by a sync job |
+| Resume version tracker | Real — PDF upload, list, download, delete, set-active. Local disk by default — swap before deploying, see section 4 |
+| Application/job Kanban tracker | Real — full CRUD, drag-and-drop + dropdown fallback, response-rate stats |
+| AI weekly review | Real — aggregates your week's data, calls Claude (`claude-sonnet-4-6`) |
+| Goal planner | Real — auto-progress for LeetCode/streak/application goals |
 | Dark mode, loading/empty/error states, responsive layout | Implemented throughout |
 
 ## 4. Important: file storage before deploying
 
 `src/lib/storage.ts` saves resume PDFs to `public/uploads` on local disk.
-This works for local development but **will not persist on Vercel** (its
-filesystem is read-only/ephemeral outside `/tmp`). Before deploying, swap
-`saveFile`/`deleteFile` in that one file for Supabase Storage or S3 — the API
-routes that call it don't need to change.
+This works locally but **will not persist on Vercel** (ephemeral filesystem
+outside `/tmp`). Swap `saveFile`/`deleteFile` in that one file for Supabase
+Storage or S3 before deploying — the API routes that call it don't change.
 
 ## 5. Deploying
 
-1. Spin up a Postgres database (Supabase or Neon both have free tiers).
+1. Spin up a Postgres database (Supabase or Neon, both have free tiers).
 2. In `prisma/schema.prisma`, change the datasource provider from `sqlite`
-   to `postgresql`.
-3. Set `DATABASE_URL` to your Postgres connection string, then run
-   `npx prisma migrate dev --name init` locally once to create the schema
-   (or `npx prisma db push`).
-4. Swap resume storage per the note above.
-5. Deploy to Vercel, add all `.env` values as environment variables there.
-6. Update the GitHub OAuth App's callback URL to your production domain,
+   to `postgresql`, set `DATABASE_URL`, then `npx prisma migrate dev --name init`.
+3. Swap resume storage per the note above.
+4. Deploy to Vercel, add all `.env` values as environment variables.
+5. Update the GitHub OAuth App's callback URL to your production domain,
    and `NEXTAUTH_URL` to match.
-7. `vercel.json` already defines two cron jobs (daily activity sync at 2am,
-   weekly review generation Sunday 8pm UTC) — Vercel picks these up
-   automatically on deploy. Set `CRON_SECRET` in your Vercel project's env
-   vars; Vercel Cron attaches it as a bearer token automatically.
+6. `vercel.json` already defines two cron jobs (daily activity sync,
+   weekly review generation) — Vercel picks these up automatically. Set
+   `CRON_SECRET` in your Vercel project's env vars.
 
 ## 6. Project structure
 
@@ -109,33 +111,38 @@ src/
   app/
     login/, onboarding/              pre-auth pages
     (app)/                           authenticated shell (sidebar nav)
-      dashboard/ github/ leetcode/ resume/ applications/ goals/ reviews/ settings/
+      dashboard/                     Readiness score + streak + summaries
+      github/ leetcode/ resume/ applications/ goals/ reviews/ settings/
     api/
       auth/[...nextauth]/            NextAuth handler
+      readiness/                     the composite readiness score
+      resume/bullets/                AI resume bullet generator
       github/stats/ leetcode/stats/  cached external stats
       activity/sync/ activity/streak/  streak engine
       resume/ applications/ goals/ reviews/  CRUD
       cron/daily-activity/ cron/weekly-review/  scheduled jobs
   components/                        UI + dashboard widgets
-  lib/                                github.ts, leetcode.ts, claude.ts, activity.ts,
-                                       weekly-review.ts, auth.ts, prisma.ts, storage.ts
-prisma/schema.prisma                  full data model
-vercel.json                           cron schedule
+  lib/
+    readiness.ts                     readiness score + nudge logic
+    resume-bullets.ts                AI bullet generation
+    github.ts leetcode.ts claude.ts activity.ts weekly-review.ts
+    auth.ts prisma.ts storage.ts
+prisma/schema.prisma                 full data model
+vercel.json                          cron schedule
 ```
 
 ## 7. A note on the LeetCode integration
 
 LeetCode has no official public API. This app uses the same unofficial
-GraphQL endpoint LeetCode's own website calls. It's public data and needs no
-auth, but LeetCode can change or rate-limit this endpoint without notice —
-every place that calls it catches failures and falls back to the last
-successfully cached data instead of crashing the page.
+GraphQL endpoint LeetCode's own website calls. It needs no auth, but it can
+change or rate-limit without notice — every caller catches failures and
+falls back to the last successfully cached data instead of crashing the page.
 
-## Contributing
+## 8. A note on how this was built
 
-Contributions are welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for
-guidelines and development setup.
-
-## License
-
-This project is licensed under the [MIT License](./LICENSE).
+Everything here was verified via static type-checking against hand-written
+types matching the real Prisma schema, plus a full `next build` compile
+pass — `npx prisma generate` itself needs a binary from `binaries.prisma.sh`
+that wasn't reachable from the sandbox this was built in, so that one
+specific step needs to run on your machine. First thing after `npm install`:
+`npx prisma generate && npm run build` to confirm a clean compile.

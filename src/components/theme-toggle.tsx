@@ -7,9 +7,7 @@ import { useTheme } from "next-themes";
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   if (!mounted) {
     return <div className="h-9 w-9 rounded-lg border border-border" aria-hidden />;

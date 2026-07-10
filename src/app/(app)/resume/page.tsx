@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { ResumeBulletGenerator } from "@/components/resume-bullet-generator";
 import { formatDate } from "@/lib/utils";
 
 interface ResumeVersion {
@@ -51,6 +52,8 @@ export default function ResumePage() {
           <Upload size={15} /> Upload version
         </Button>
       </div>
+
+      <ResumeBulletGenerator />
 
       {showForm && (
         <UploadForm

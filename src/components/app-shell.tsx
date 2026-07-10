@@ -39,7 +39,7 @@ export function AppShell({
           >
             <Menu size={20} />
           </button>
-          <span className="text-sm font-semibold">DevTrack AI</span>
+          <span className="text-sm font-semibold">CodeBoard</span>
         </header>
         <main className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 md:px-10 md:py-8">{children}</div>

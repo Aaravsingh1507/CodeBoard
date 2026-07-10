@@ -1,3 +1,4 @@
+import { ReadinessWidget } from "@/components/widgets/readiness-widget";
 import { StreakWidget } from "@/components/widgets/streak-widget";
 import { GithubSummaryWidget } from "@/components/widgets/github-summary-widget";
 import { LeetcodeSummaryWidget } from "@/components/widgets/leetcode-summary-widget";
@@ -10,6 +11,10 @@ export default function DashboardPage() {
       <div className="mb-6">
         <h1 className="text-xl font-semibold">Overview</h1>
         <p className="mt-1 text-sm text-muted">Everything you&apos;re working toward, in one place.</p>
+      </div>
+
+      <div className="mb-5">
+        <ReadinessWidget />
       </div>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">

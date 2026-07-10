@@ -39,7 +39,7 @@ export function Sidebar({
         <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent font-data text-xs font-bold text-white">
           {"</>"}
         </div>
-        <span className="text-sm font-semibold tracking-tight">DevTrack AI</span>
+        <span className="text-sm font-semibold tracking-tight">CodeBoard</span>
       </div>
 
       <nav className="flex-1 space-y-0.5 px-3">

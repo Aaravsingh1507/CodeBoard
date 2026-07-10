@@ -80,7 +80,6 @@ export async function fetchLeetcodeStats(username: string): Promise<LeetcodeStat
     easySolved: find("Easy"),
     mediumSolved: find("Medium"),
     hardSolved: find("Hard"),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recentSubmissions: (json.data.recentSubmissionList ?? []).map((s: any) => ({
       title: s.title,
       difficulty: "", // recentSubmissionList doesn't include difficulty directly
