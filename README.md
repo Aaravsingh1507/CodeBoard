@@ -13,6 +13,20 @@ Real Next.js 14 (App Router) + TypeScript + Prisma app. Every number on
 screen comes from a real API call — GitHub, LeetCode, and Claude — not
 placeholder data.
 
+🔗 **Live Demo:** [codeboard.vercel.app](https://codeboard.vercel.app) (Update URL if you deploy to a different Vercel domain)
+
+---
+
+## Screenshots
+
+> Drop your own screenshots into the `docs/` folder and they'll render here automatically.
+
+| Dashboard | GitHub Stats | Applications |
+|---|---|---|
+| ![Dashboard](./docs/screenshot-dashboard.png) | ![GitHub](./docs/screenshot-github.png) | ![Applications](./docs/screenshot-applications.png) |
+
+---
+
 ## What makes this different
 
 Search "devtrack" or "dev tracker" and you'll find a dozen commit-counters

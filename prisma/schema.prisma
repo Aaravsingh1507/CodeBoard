@@ -1,4 +1,4 @@
-// DevTrack AI — Prisma schema
+// CodeBoard — Prisma schema
 // Default datasource is SQLite for zero-config local development.
 // To switch to Postgres (Supabase/Neon) for production:
 //   1. Change provider below to "postgresql"
