@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 export default async function SettingsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
+  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!user) redirect("/login");
 
   async function updateProfile(formData: FormData) {
@@ -17,7 +17,7 @@ export default async function SettingsPage() {
     if (!s?.user) redirect("/login");
 
     await prisma.user.update({
-      where: { id: (s.user as any).id },
+      where: { id: s.user.id },
       data: {
         leetcodeUsername: String(formData.get("leetcodeUsername") ?? "").trim() || null,
         targetRole: String(formData.get("targetRole") ?? "").trim() || null,

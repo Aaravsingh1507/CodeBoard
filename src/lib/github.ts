@@ -23,6 +23,38 @@ export interface GithubStats {
   }[];
 }
 
+interface GraphQLError {
+  message: string;
+}
+
+interface GithubRepo {
+  stargazerCount: number;
+  languages?: {
+    edges: { size: number; node: { name: string } }[];
+  };
+}
+
+interface ContributionDay {
+  date: string;
+  contributionCount: number;
+}
+
+interface ContributionWeek {
+  contributionDays: ContributionDay[];
+}
+
+interface GithubEvent {
+  type: string;
+  repo: { name: string };
+  created_at: string;
+  payload: {
+    action?: string;
+    commits?: { sha: string; message: string }[];
+    pull_request?: { title: string; html_url: string };
+    issue?: { title: string; html_url: string };
+  };
+}
+
 async function githubGraphQL(token: string, query: string, variables: Record<string, unknown>) {
   const res = await fetch(GITHUB_GRAPHQL, {
     method: "POST",
@@ -36,7 +68,7 @@ async function githubGraphQL(token: string, query: string, variables: Record<str
   });
   if (!res.ok) throw new Error(`GitHub GraphQL error: ${res.status}`);
   const json = await res.json();
-  if (json.errors) throw new Error(json.errors.map((e: any) => e.message).join("; "));
+  if (json.errors) throw new Error(json.errors.map((e: GraphQLError) => e.message).join("; "));
   return json.data;
 }
 
@@ -85,7 +117,7 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
 
   const langTotals = new Map<string, number>();
   let totalStars = 0;
-  for (const repo of u.repositories.nodes as any[]) {
+  for (const repo of u.repositories.nodes as GithubRepo[]) {
     totalStars += repo.stargazerCount ?? 0;
     for (const edge of repo.languages?.edges ?? []) {
       const name = edge.node.name;
@@ -98,13 +130,13 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
     .map(([name, bytes]) => ({ name, bytes }));
 
   const calendar = u.contributionsCollection.contributionCalendar;
-  const contributionCalendar = calendar.weeks.flatMap((w: any) =>
-    w.contributionDays.map((d: any) => ({ date: d.date, count: d.contributionCount }))
+  const contributionCalendar = calendar.weeks.flatMap((w: ContributionWeek) =>
+    w.contributionDays.map((d: ContributionDay) => ({ date: d.date, count: d.contributionCount }))
   );
 
   // Recent activity via REST (public events endpoint — simplest reliable source)
   const events = await githubRest(token, `/users/${login}/events/public?per_page=30`);
-  const recentActivity = (events as any[])
+  const recentActivity = (events as GithubEvent[])
     .filter((e) => ["PushEvent", "PullRequestEvent", "IssuesEvent"].includes(e.type))
     .slice(0, 10)
     .map((e) => {
@@ -122,7 +154,7 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
         return {
           type: "pr" as const,
           title: `${e.payload.action}: ${e.payload.pull_request?.title}`,
-          url: e.payload.pull_request?.html_url,
+          url: e.payload.pull_request?.html_url ?? "",
           repo: e.repo.name,
           date: e.created_at,
         };
@@ -130,7 +162,7 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
       return {
         type: "issue" as const,
         title: `${e.payload.action}: ${e.payload.issue?.title}`,
-        url: e.payload.issue?.html_url,
+        url: e.payload.issue?.html_url ?? "",
         repo: e.repo.name,
         date: e.created_at,
       };

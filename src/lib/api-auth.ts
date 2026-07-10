@@ -7,7 +7,7 @@ export async function requireUser() {
   if (!session?.user) {
     return { user: null, error: NextResponse.json({ error: "Not authenticated" }, { status: 401 }) };
   }
-  const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
+  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!user) {
     return { user: null, error: NextResponse.json({ error: "User not found" }, { status: 401 }) };
   }

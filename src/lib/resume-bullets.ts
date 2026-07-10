@@ -1,6 +1,18 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/prisma";
 
+interface CachedLanguage {
+  name: string;
+  bytes: number;
+}
+
+interface CachedActivity {
+  title: string;
+  repo: string;
+  type: string;
+  date: string;
+}
+
 export interface ResumeBulletInput {
   targetRole: string | null;
   githubTopLanguages: string[];
@@ -22,11 +34,11 @@ export async function buildResumeBulletInput(userId: string): Promise<ResumeBull
   let githubRecentWork: ResumeBulletInput["githubRecentWork"] = [];
   if (user?.githubStatsCache) {
     const stats = JSON.parse(user.githubStatsCache);
-    githubTopLanguages = (stats.topLanguages ?? []).slice(0, 4).map((l: any) => l.name);
+    githubTopLanguages = (stats.topLanguages ?? []).slice(0, 4).map((l: CachedLanguage) => l.name);
     githubRecentWork = (stats.recentActivity ?? [])
-      .filter((a: any) => new Date(a.date) >= thirtyDaysAgo)
+      .filter((a: CachedActivity) => new Date(a.date) >= thirtyDaysAgo)
       .slice(0, 10)
-      .map((a: any) => ({ title: a.title, repo: a.repo, type: a.type }));
+      .map((a: CachedActivity) => ({ title: a.title, repo: a.repo, type: a.type }));
   }
 
   let leetcodeTotals = { easy: 0, medium: 0, hard: 0 };

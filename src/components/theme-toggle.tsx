@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
+// Promise that resolves after first paint — avoids useEffect + setState
+const afterHydration = typeof window !== "undefined"
+  ? Promise.resolve(true)
+  : new Promise<boolean>(() => {});
+
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = use(afterHydration);
 
   if (!mounted) {
     return <div className="h-9 w-9 rounded-lg border border-border" aria-hidden />;

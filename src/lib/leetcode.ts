@@ -80,7 +80,7 @@ export async function fetchLeetcodeStats(username: string): Promise<LeetcodeStat
     easySolved: find("Easy"),
     mediumSolved: find("Medium"),
     hardSolved: find("Hard"),
-    recentSubmissions: (json.data.recentSubmissionList ?? []).map((s: any) => ({
+    recentSubmissions: (json.data.recentSubmissionList ?? []).map((s: { title: string; statusDisplay: string; timestamp: string }) => ({
       title: s.title,
       difficulty: "", // recentSubmissionList doesn't include difficulty directly
       status: s.statusDisplay,

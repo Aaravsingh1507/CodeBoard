@@ -28,7 +28,7 @@ export async function buildWeeklyReviewInput(userId: string): Promise<WeeklyRevi
   if (user?.githubStatsCache) {
     const stats = JSON.parse(user.githubStatsCache);
     githubPRsThisWeek = (stats.recentActivity ?? []).filter(
-      (a: any) => a.type === "pr" && new Date(a.date) >= start
+      (a: { type: string; date: string }) => a.type === "pr" && new Date(a.date) >= start
     ).length;
   }
   if (user?.leetcodeStatsCache) {
