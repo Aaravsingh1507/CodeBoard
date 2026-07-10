@@ -22,6 +22,8 @@ model User {
   leetcodeUsername String?
   name             String?
   email            String?  @unique
+  emailVerified    DateTime?
+  image            String?
   avatarUrl        String?
   targetRole       String?
   targetCompanies  String?
