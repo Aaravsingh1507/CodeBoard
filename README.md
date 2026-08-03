@@ -1,10 +1,5 @@
 # CodeBoard 🚀
 
-![Overview](./public/overview.png)
-![GitHub Integration](./public/github.png)
-![Company Prep Focus](./public/prep.png)
-![Settings](./public/settings.png)
-
 **Live Demo**: [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app)
 
 **Are you actually placement-ready?**
@@ -19,6 +14,19 @@ hired?*
 Real Next.js 14 (App Router) + TypeScript + Prisma app. Every number on
 screen comes from a real API call — GitHub, LeetCode, and Claude — not
 placeholder data.
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+  <img src="./public/overview.png" width="49%" alt="Overview" />
+  <img src="./public/github.png" width="49%" alt="GitHub Integration" />
+  <img src="./public/prep.png" width="49%" alt="Company Prep Focus" />
+  <img src="./public/settings.png" width="49%" alt="Settings" />
+</div>
+
+---
 
 ## What makes this different
 
