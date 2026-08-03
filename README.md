@@ -1,6 +1,9 @@
 # CodeBoard 🚀
 
-![CodeBoard Dashboard](./public/screenshot.png)
+![Overview](./public/overview.png)
+![GitHub Integration](./public/github.png)
+![Company Prep Focus](./public/prep.png)
+![Settings](./public/settings.png)
 
 **Live Demo**: [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app)
 
