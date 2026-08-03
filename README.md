@@ -20,10 +20,10 @@ placeholder data.
 ## 📸 Screenshots
 
 <div align="center">
-  <img src="./public/overview.png" width="49%" alt="Overview" />
-  <img src="./public/github.png" width="49%" alt="GitHub Integration" />
-  <img src="./public/prep.png" width="49%" alt="Company Prep Focus" />
-  <img src="./public/settings.png" width="49%" alt="Settings" />
+  <img src="./public/overview.png" width="24%" alt="Overview" />
+  <img src="./public/github.png" width="24%" alt="GitHub Integration" />
+  <img src="./public/prep.png" width="24%" alt="Company Prep Focus" />
+  <img src="./public/settings.png" width="24%" alt="Settings" />
 </div>
 
 ---
