@@ -2,9 +2,8 @@ import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
 
 export default defineConfig({
-  earlyAccess: true,
   schema: "prisma/schema.prisma",
   datasource: {
-    url: env("DATABASE_URL"),
+    url: env("POSTGRES_URL_NON_POOLING"),
   },
 });

@@ -1,5 +1,7 @@
 # CodeBoard
 
+**Live Demo**: [https://codeboard-aaravsingh-personal.vercel.app](https://codeboard-aaravsingh-personal.vercel.app) · [Inspect Deployment](https://vercel.com/aaravsingh-personal/codeboard)
+
 **Are you actually placement-ready?**
 
 CodeBoard is a career-readiness dashboard for engineering students — it pulls
@@ -108,16 +110,27 @@ Storage or S3 before deploying — the API routes that call it don't change.
 
 ## 5. Deploying
 
-1. Spin up a Postgres database (Supabase or Neon, both have free tiers).
-2. In `prisma/schema.prisma`, change the datasource provider from `sqlite`
-   to `postgresql`, set `DATABASE_URL`, then `npx prisma migrate dev --name init`.
-3. Swap resume storage per the note above.
-4. Deploy to Vercel, add all `.env` values as environment variables.
-5. Update the GitHub OAuth App's callback URL to your production domain,
-   and `NEXTAUTH_URL` to match.
-6. `vercel.json` already defines two cron jobs (daily activity sync,
-   weekly review generation) — Vercel picks these up automatically. Set
-   `CRON_SECRET` in your Vercel project's env vars.
+The app is already deployed at [https://codeboard-aaravsingh-personal.vercel.app](https://codeboard-aaravsingh-personal.vercel.app) using:
+
+- **Vercel** for hosting (serverless Next.js)
+- **Neon Postgres** (via Vercel's native integration) for the database
+- **Prisma** (with `@prisma/adapter-neon`) for the ORM
+
+To deploy your own fork:
+
+1. Fork this repo and import it into [Vercel](https://vercel.com).
+2. Create a **Neon Postgres** database from the Vercel Storage tab and connect it to your project.
+3. Add these env vars in Vercel Project Settings → Environment Variables:
+   - `AUTH_SECRET` — run `npx auth secret` locally and paste the result
+   - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` — create a GitHub OAuth App
+   - `NEXTAUTH_URL` — your Vercel production URL (e.g. `https://yourapp.vercel.app`)
+   - `ANTHROPIC_API_KEY` — optional, for AI features
+   - `CRON_SECRET` — any random string for securing cron endpoints
+   - `RESEND_API_KEY` / `DIGEST_FROM_EMAIL` — optional, for email digest
+4. In your **GitHub OAuth App**, set the callback URL to:
+   `https://yourapp.vercel.app/api/auth/callback/github`
+5. Vercel will run `prisma db push` and `next build` automatically on each deploy.
+6. `vercel.json` defines cron jobs for daily activity sync and weekly reviews — Vercel picks these up automatically.
 
 ## 6. Project structure
 

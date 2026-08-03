@@ -47,3 +47,6 @@ next-env.d.ts
 # local resume uploads (swap to S3/Supabase Storage for production)
 /public/uploads/*
 !/public/uploads/.gitkeep
+
+.vercel
+.env*
