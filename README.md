@@ -112,7 +112,7 @@ Storage or S3 before deploying — the API routes that call it don't change.
 
 ## 5. Deploying
 
-The app is already deployed at [https://codeboard-aaravsingh-personal.vercel.app](https://codeboard-aaravsingh-personal.vercel.app) using:
+The app is already deployed at [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app) using:
 
 - **Vercel** for hosting (serverless Next.js)
 - **Neon Postgres** (via Vercel's native integration) for the database
