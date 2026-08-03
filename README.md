@@ -1,6 +1,8 @@
-# CodeBoard
+# CodeBoard 🚀
 
-**Live Demo**: [https://codeboard-aaravsingh-personal.vercel.app](https://codeboard-aaravsingh-personal.vercel.app) · [Inspect Deployment](https://vercel.com/aaravsingh-personal/codeboard)
+![CodeBoard Dashboard](./public/screenshot.png)
+
+**Live Demo**: [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app)
 
 **Are you actually placement-ready?**
 
