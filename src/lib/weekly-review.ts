@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { generateWeeklyReview, type WeeklyReviewInput } from "@/lib/claude";
+import { generateWeeklyReview, type WeeklyReviewInput } from "@/lib/groq";
 import { computeStreaks } from "@/lib/activity";
 import { startOfUTCDay } from "@/lib/utils";
 

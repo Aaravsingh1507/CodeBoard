@@ -12,7 +12,7 @@ built around one question: *what should I actually do this week to get
 hired?*
 
 Real Next.js 14 (App Router) + TypeScript + Prisma app. Every number on
-screen comes from a real API call — GitHub, LeetCode, and Claude — not
+screen comes from a real API call — GitHub, LeetCode, and Groq — not
 placeholder data.
 
 ---
@@ -59,7 +59,7 @@ counter. It's the only tool that combines:
 
 - Node.js 18.18+ and npm
 - A free [GitHub OAuth App](https://github.com/settings/developers)
-- An [Anthropic API key](https://console.anthropic.com/) (for AI reviews and resume bullets)
+- A [Groq API key](https://console.groq.com/) (for AI reviews and resume bullets)
 - Optionally, a free [Resend API key](https://resend.com) for the weekly email digest
 
 ## 2. Setup
@@ -76,8 +76,9 @@ Fill in `.env`:
   https://github.com/settings/developers with:
   - Homepage URL: `http://localhost:3000`
   - Authorization callback URL: `http://localhost:3000/api/auth/callback/github`
-- **`ANTHROPIC_API_KEY`** — from console.anthropic.com. Without this, everything
+- **`GROQ_API_KEY`** — from console.groq.com. Without this, everything
   else works; only AI weekly reviews and resume bullet generation show an error.
+- **`GROQ_MODEL`** — optional. Defaults to `openai/gpt-oss-120b` if not set.
 - **`CRON_SECRET`** — any random string.
 - **`RESEND_API_KEY` / `DIGEST_FROM_EMAIL`** — optional. Without these, the
   weekly digest cron simply no-ops instead of sending email.
@@ -101,7 +102,7 @@ Visit `http://localhost:3000`, sign in with GitHub, and you're in.
 | GitHub OAuth login | Real — NextAuth (Auth.js v5) + GitHub provider |
 | **Readiness Score** | Real — computed server-side from your actual streak, LeetCode totals, application response rate, and goal pace |
 | **Smart nudges** | Real — derived from the same live data (LeetCode inactivity, stale applications, broken streaks) |
-| **AI resume bullet generator** | Real — Claude API, grounded in your last 30 days of real GitHub/LeetCode activity |
+| **AI resume bullet generator** | Real — Groq API, grounded in your last 30 days of real GitHub/LeetCode activity |
 | **Topic-wise DSA breakdown** | Real — LeetCode's `tagProblemCounts` GraphQL field, fundamental/intermediate/advanced |
 | **Company prep focus** | Curated static dataset matched against your target companies — general public guidance, not scraped/official data |
 | **Interview round tracking** | Real — per-application rounds with outcome + free-text debrief, stored in the database |
@@ -137,7 +138,8 @@ To deploy your own fork:
    - `AUTH_SECRET` — run `npx auth secret` locally and paste the result
    - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` — create a GitHub OAuth App
    - `NEXTAUTH_URL` — your Vercel production URL (e.g. `https://yourapp.vercel.app`)
-   - `ANTHROPIC_API_KEY` — optional, for AI features
+   - `GROQ_API_KEY` — optional, for AI features
+   - `GROQ_MODEL` — optional, defaults to `openai/gpt-oss-120b`
    - `CRON_SECRET` — any random string for securing cron endpoints
    - `RESEND_API_KEY` / `DIGEST_FROM_EMAIL` — optional, for email digest
 4. In your **GitHub OAuth App**, set the callback URL to:
@@ -175,7 +177,7 @@ src/
     placement.ts                     countdown + weekly goal pacing
     public-profile.ts                sanitized public profile data
     email.ts                         weekly digest via Resend
-    github.ts leetcode.ts claude.ts activity.ts weekly-review.ts
+    github.ts leetcode.ts groq.ts activity.ts weekly-review.ts
     auth.ts prisma.ts storage.ts
 prisma/schema.prisma                 full data model
 vercel.json                          cron schedule (3 jobs)

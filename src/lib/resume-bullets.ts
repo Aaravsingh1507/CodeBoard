@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import Groq from "groq-sdk";
 import { prisma } from "@/lib/prisma";
 
 export interface ResumeBulletInput {
@@ -56,15 +56,15 @@ export async function buildResumeBulletInput(userId: string): Promise<ResumeBull
 }
 
 export async function generateResumeBullets(input: ResumeBulletInput): Promise<string[]> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    throw new Error("ANTHROPIC_API_KEY is not set — add it to your .env to enable this feature.");
+    throw new Error("GROQ_API_KEY is not set — add it to your .env to enable this feature.");
   }
   if (input.githubRecentWork.length === 0 && input.leetcodeTotals.easy + input.leetcodeTotals.medium + input.leetcodeTotals.hard === 0) {
     throw new Error("Not enough recent activity yet to generate meaningful bullets. Give it a week.");
   }
 
-  const client = new Anthropic({ apiKey });
+  const client = new Groq({ apiKey });
   const prompt = `You write resume bullet points for a software engineering student/new grad based on their REAL, verified activity data. Never invent metrics or achievements not supported by the data below.
 
 Target role: ${input.targetRole ?? "Software Engineer"}
@@ -81,22 +81,22 @@ Write 3-5 resume bullet points. Rules:
 Respond with ONLY a JSON array of strings, no markdown fences, no preamble. Example:
 ["Built and shipped 3 features across a TypeScript/Next.js codebase, including...", "Solved 12 medium-difficulty LeetCode problems focused on graph algorithms"]`;
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-6",
+  const response = await client.chat.completions.create({
+    model: process.env.GROQ_MODEL ?? "openai/gpt-oss-120b",
     max_tokens: 500,
     messages: [{ role: "user", content: prompt }],
   });
 
-  const textBlock = response.content.find((b) => b.type === "text");
-  if (!textBlock || textBlock.type !== "text") {
-    throw new Error("Claude did not return a text response.");
+  const text = response.choices[0]?.message?.content ?? "";
+  if (!text) {
+    throw new Error("AI did not return a text response.");
   }
-  const cleaned = textBlock.text.replace(/```json|```/g, "").trim();
+  const cleaned = text.replace(/```json|```/g, "").trim();
   try {
     const parsed = JSON.parse(cleaned);
     if (!Array.isArray(parsed)) throw new Error("not an array");
     return parsed.filter((b) => typeof b === "string");
   } catch {
-    throw new Error("Could not parse Claude's response.");
+    throw new Error("Could not parse AI response.");
   }
 }

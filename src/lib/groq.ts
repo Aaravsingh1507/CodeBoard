@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import Groq from "groq-sdk";
 
 export interface WeeklyReviewInput {
   githubContributionsThisWeek: number;
@@ -19,11 +19,11 @@ export interface WeeklyReviewOutput {
 }
 
 export async function generateWeeklyReview(input: WeeklyReviewInput): Promise<WeeklyReviewOutput> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    throw new Error("ANTHROPIC_API_KEY is not set — add it to your .env to enable AI reviews.");
+    throw new Error("GROQ_API_KEY is not set — add it to your .env to enable AI reviews.");
   }
-  const client = new Anthropic({ apiKey });
+  const client = new Groq({ apiKey });
 
   const prompt = `You are a supportive but honest coding coach reviewing a developer's week.
 Here is their structured activity data for the past 7 days:
@@ -37,18 +37,18 @@ Respond with ONLY valid JSON, no markdown fences, no preamble, matching exactly 
   "suggestions": ["2-3 concrete, actionable suggestions for next week"]
 }`;
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-6",
+  const response = await client.chat.completions.create({
+    model: process.env.GROQ_MODEL ?? "openai/gpt-oss-120b",
     max_tokens: 1000,
     messages: [{ role: "user", content: prompt }],
   });
 
-  const textBlock = response.content.find((b) => b.type === "text");
-  if (!textBlock || textBlock.type !== "text") {
-    throw new Error("Claude did not return a text response.");
+  const text = response.choices[0]?.message?.content ?? "";
+  if (!text) {
+    throw new Error("AI did not return a text response.");
   }
 
-  const cleaned = textBlock.text.replace(/```json|```/g, "").trim();
+  const cleaned = text.replace(/```json|```/g, "").trim();
   try {
     const parsed = JSON.parse(cleaned);
     return {
@@ -57,6 +57,6 @@ Respond with ONLY valid JSON, no markdown fences, no preamble, matching exactly 
       suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
     };
   } catch {
-    throw new Error("Could not parse Claude's response as JSON.");
+    throw new Error("Could not parse AI response as JSON.");
   }
 }
