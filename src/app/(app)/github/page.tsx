@@ -1,6 +1,22 @@
 "use client";
 
-import { RefreshCw, ExternalLink, GitCommit, GitPullRequest, CircleDot } from "lucide-react";
+import {
+  RefreshCw,
+  ExternalLink,
+  GitCommit,
+  GitPullRequest,
+  CircleDot,
+  Star,
+  GitFork,
+  Eye,
+  Users,
+  UserPlus,
+  Download,
+  BarChart3,
+  Globe,
+  BookOpen,
+  Bug,
+} from "lucide-react";
 import { useFetch } from "@/lib/use-fetch";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +26,33 @@ import { Button } from "@/components/ui/button";
 import { StreakHeatmap } from "@/components/streak-heatmap";
 import { LanguageDonut } from "@/components/language-donut";
 import type { GithubStats } from "@/lib/github";
+
+function StatTile({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  color: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-lg bg-surface-2/60 px-3 py-2.5">
+      <div
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+        style={{ background: color }}
+      >
+        {icon}
+      </div>
+      <div className="min-w-0">
+        <p className="font-data text-lg font-semibold leading-tight">{value.toLocaleString()}</p>
+        <p className="truncate text-[11px] text-muted">{label}</p>
+      </div>
+    </div>
+  );
+}
 
 export default function GithubPage() {
   const { data, loading, error, warning, refetch } = useFetch<GithubStats>("/api/github/stats");
@@ -78,24 +121,111 @@ export default function GithubPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Profile</CardTitle>
+                <CardTitle>Profile overview</CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-3 gap-3 text-center">
-                <div>
-                  <p className="font-data text-2xl font-semibold">{data.publicRepos}</p>
-                  <p className="text-xs text-muted">Repos</p>
-                </div>
-                <div>
-                  <p className="font-data text-2xl font-semibold">{data.totalStars}</p>
-                  <p className="text-xs text-muted">Stars</p>
-                </div>
-                <div>
-                  <p className="font-data text-2xl font-semibold">{data.followers}</p>
-                  <p className="text-xs text-muted">Followers</p>
-                </div>
+              <CardContent className="grid grid-cols-2 gap-2.5">
+                <StatTile
+                  icon={<BookOpen size={15} className="text-white" />}
+                  label="Repositories"
+                  value={data.publicRepos}
+                  color="hsl(250 70% 55%)"
+                />
+                <StatTile
+                  icon={<Star size={15} className="text-white" />}
+                  label="Stars earned"
+                  value={data.totalStars}
+                  color="hsl(45 90% 50%)"
+                />
+                <StatTile
+                  icon={<Users size={15} className="text-white" />}
+                  label="Followers"
+                  value={data.followers}
+                  color="hsl(200 75% 50%)"
+                />
+                <StatTile
+                  icon={<UserPlus size={15} className="text-white" />}
+                  label="Following"
+                  value={data.following}
+                  color="hsl(170 60% 45%)"
+                />
+                <StatTile
+                  icon={<GitFork size={15} className="text-white" />}
+                  label="Forks"
+                  value={data.totalForks}
+                  color="hsl(280 60% 55%)"
+                />
+                <StatTile
+                  icon={<Eye size={15} className="text-white" />}
+                  label="Watchers"
+                  value={data.totalWatchers}
+                  color="hsl(220 65% 55%)"
+                />
+                <StatTile
+                  icon={<GitPullRequest size={15} className="text-white" />}
+                  label="Pull requests"
+                  value={data.totalPRs}
+                  color="hsl(150 60% 45%)"
+                />
+                <StatTile
+                  icon={<Bug size={15} className="text-white" />}
+                  label="Issues"
+                  value={data.totalIssues}
+                  color="hsl(0 65% 55%)"
+                />
               </CardContent>
             </Card>
           </div>
+
+          {/* Traffic Insights — 14 day window */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Traffic insights</CardTitle>
+              <span className="text-[11px] text-muted">Last 14 days · top 10 repos</span>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {/* Clone & View counters */}
+                <div className="flex gap-3">
+                  <div className="flex flex-1 items-center gap-3 rounded-lg bg-surface-2/60 px-4 py-3">
+                    <Download size={18} className="shrink-0 text-accent" />
+                    <div>
+                      <p className="font-data text-xl font-semibold">{data.totalClones.toLocaleString()}</p>
+                      <p className="text-[11px] text-muted">Git clones</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-1 items-center gap-3 rounded-lg bg-surface-2/60 px-4 py-3">
+                    <BarChart3 size={18} className="shrink-0 text-accent-2" />
+                    <div>
+                      <p className="font-data text-xl font-semibold">{data.totalViews.toLocaleString()}</p>
+                      <p className="text-[11px] text-muted">Page views</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Top referrers */}
+                <div>
+                  <p className="mb-2 text-xs font-semibold text-muted">Top referrers</p>
+                  {data.topReferrers.length === 0 ? (
+                    <p className="text-xs text-muted/70">No referrer data available yet.</p>
+                  ) : (
+                    <ul className="space-y-1.5">
+                      {data.topReferrers.map((r) => (
+                        <li key={r.referrer} className="flex items-center justify-between text-sm">
+                          <span className="flex items-center gap-1.5 truncate text-foreground">
+                            <Globe size={12} className="shrink-0 text-muted" />
+                            {r.referrer}
+                          </span>
+                          <span className="font-data text-xs text-muted">
+                            {r.count} <span className="text-muted/60">({r.uniques} unique)</span>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
@@ -139,3 +269,4 @@ export default function GithubPage() {
     </div>
   );
 }
+

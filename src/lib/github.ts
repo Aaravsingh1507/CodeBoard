@@ -10,7 +10,12 @@ export interface GithubStats {
   avatarUrl: string;
   publicRepos: number;
   followers: number;
+  following: number;
   totalStars: number;
+  totalForks: number;
+  totalWatchers: number;
+  totalPRs: number;
+  totalIssues: number;
   totalContributionsLastYear: number;
   contributionCalendar: { date: string; count: number }[]; // last ~365 days
   topLanguages: { name: string; bytes: number }[];
@@ -21,6 +26,10 @@ export interface GithubStats {
     repo: string;
     date: string;
   }[];
+  // Traffic data (14-day window, requires push access to repos)
+  totalClones: number;
+  totalViews: number;
+  topReferrers: { referrer: string; count: number; uniques: number }[];
 }
 
 async function githubGraphQL(token: string, query: string, variables: Record<string, unknown>) {
@@ -52,16 +61,37 @@ async function githubRest(token: string, path: string) {
   return res.json();
 }
 
+/** Like githubRest but returns null on 403/404 instead of throwing. */
+async function githubRestSafe(token: string, path: string) {
+  const res = await fetch(`${GITHUB_REST}${path}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+    },
+    cache: "no-store",
+  });
+  if (res.status === 403 || res.status === 404) return null;
+  if (!res.ok) return null;
+  return res.json();
+}
+
 const CONTRIBUTIONS_QUERY = `
   query($login: String!) {
     user(login: $login) {
       login
       avatarUrl
       followers { totalCount }
-      repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {
+      following { totalCount }
+      pullRequests { totalCount }
+      issues { totalCount }
+      repositories(first: 100, ownerAffiliations: OWNER, isFork: false, orderBy: { field: STARGAZERS, direction: DESC }) {
         totalCount
         nodes {
+          name
+          owner { login }
           stargazerCount
+          forkCount
+          watchers { totalCount }
           languages(first: 5, orderBy: { field: SIZE, direction: DESC }) {
             edges { size node { name } }
           }
@@ -85,8 +115,15 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
 
   const langTotals = new Map<string, number>();
   let totalStars = 0;
+  let totalForks = 0;
+  let totalWatchers = 0;
+  const repoNames: string[] = [];
+
   for (const repo of u.repositories.nodes as any[]) {
     totalStars += repo.stargazerCount ?? 0;
+    totalForks += repo.forkCount ?? 0;
+    totalWatchers += repo.watchers?.totalCount ?? 0;
+    repoNames.push(`${repo.owner.login}/${repo.name}`);
     for (const edge of repo.languages?.edges ?? []) {
       const name = edge.node.name;
       langTotals.set(name, (langTotals.get(name) ?? 0) + edge.size);
@@ -136,16 +173,58 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
       };
     });
 
+  // Traffic data — only available for repos with push access.
+  // Fetch for top 10 repos (by stars) in parallel, skip 403s gracefully.
+  const trafficRepos = repoNames.slice(0, 10);
+  const [cloneResults, viewResults, referrerResults] = await Promise.all([
+    Promise.all(trafficRepos.map((r) => githubRestSafe(token, `/repos/${r}/traffic/clones`))),
+    Promise.all(trafficRepos.map((r) => githubRestSafe(token, `/repos/${r}/traffic/views`))),
+    Promise.all(trafficRepos.map((r) => githubRestSafe(token, `/repos/${r}/traffic/popular/referrers`))),
+  ]);
+
+  let totalClones = 0;
+  let totalViews = 0;
+  const referrerMap = new Map<string, { count: number; uniques: number }>();
+
+  for (const c of cloneResults) {
+    if (c) totalClones += c.count ?? 0;
+  }
+  for (const v of viewResults) {
+    if (v) totalViews += v.count ?? 0;
+  }
+  for (const refs of referrerResults) {
+    if (Array.isArray(refs)) {
+      for (const r of refs) {
+        const existing = referrerMap.get(r.referrer) ?? { count: 0, uniques: 0 };
+        existing.count += r.count ?? 0;
+        existing.uniques += r.uniques ?? 0;
+        referrerMap.set(r.referrer, existing);
+      }
+    }
+  }
+  const topReferrers = [...referrerMap.entries()]
+    .sort((a, b) => b[1].count - a[1].count)
+    .slice(0, 5)
+    .map(([referrer, { count, uniques }]) => ({ referrer, count, uniques }));
+
   return {
     login: u.login,
     avatarUrl: u.avatarUrl,
     publicRepos: u.repositories.totalCount,
     followers: u.followers.totalCount,
+    following: u.following.totalCount,
     totalStars,
+    totalForks,
+    totalWatchers,
+    totalPRs: u.pullRequests.totalCount,
+    totalIssues: u.issues.totalCount,
     totalContributionsLastYear: calendar.totalContributions,
     contributionCalendar,
     topLanguages,
     recentActivity,
+    totalClones,
+    totalViews,
+    topReferrers,
   };
 }
 

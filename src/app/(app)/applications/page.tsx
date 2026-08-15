@@ -67,6 +67,15 @@ export default function ApplicationsPage() {
   ).length;
   const responseRate = appliedOrLater > 0 ? Math.round((responded / appliedOrLater) * 100) : 0;
 
+  const STATUS_COLORS: Record<string, { bg: string; accent: string; dot: string }> = {
+    wishlist: { bg: "rgba(109,91,240,0.08)", accent: "hsl(250 70% 60%)", dot: "bg-[hsl(250,70%,60%)]" },
+    applied: { bg: "rgba(59,130,246,0.08)", accent: "hsl(215 80% 56%)", dot: "bg-[hsl(215,80%,56%)]" },
+    oa_screen: { bg: "rgba(234,179,8,0.08)", accent: "hsl(45 90% 50%)", dot: "bg-[hsl(45,90%,50%)]" },
+    interview: { bg: "rgba(20,184,166,0.08)", accent: "hsl(170 60% 45%)", dot: "bg-[hsl(170,60%,45%)]" },
+    offer: { bg: "rgba(34,197,94,0.08)", accent: "hsl(145 65% 42%)", dot: "bg-[hsl(145,65%,42%)]" },
+    rejected: { bg: "rgba(224,84,107,0.08)", accent: "hsl(350 70% 55%)", dot: "bg-[hsl(350,70%,55%)]" },
+  };
+
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -107,70 +116,99 @@ export default function ApplicationsPage() {
       )}
 
       {data && total > 0 && (
-        <div className="grid grid-cols-1 gap-4 overflow-x-auto sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          {COLUMNS.map((col) => (
-            <div
-              key={col.key}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={() => {
-                if (dragId) updateStatus(dragId, col.key);
-                setDragId(null);
-              }}
-              className="flex min-w-[220px] flex-col gap-2 rounded-xl bg-surface-2/50 p-2"
-            >
-              <div className="flex items-center justify-between px-1.5 py-1">
-                <span className="text-xs font-semibold text-muted">{col.label}</span>
-                <span className="font-data text-xs text-muted">{byColumn[col.key].length}</span>
-              </div>
-              {byColumn[col.key].map((app) => (
-                <Card
-                  key={app.id}
-                  draggable
-                  onDragStart={() => setDragId(app.id)}
-                  className="cursor-grab space-y-2 p-3 active:cursor-grabbing"
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {COLUMNS.map((col) => {
+            const colors = STATUS_COLORS[col.key];
+            const count = byColumn[col.key].length;
+            return (
+              <div
+                key={col.key}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => {
+                  if (dragId) updateStatus(dragId, col.key);
+                  setDragId(null);
+                }}
+                className="flex min-h-[140px] flex-col rounded-xl border border-border bg-surface shadow-sm"
+                style={{ background: colors.bg }}
+              >
+                {/* Column header with accent bar */}
+                <div
+                  className="flex items-center justify-between rounded-t-xl px-4 py-2.5"
+                  style={{ borderBottom: `2px solid ${colors.accent}` }}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-foreground">{app.company}</p>
-                      <p className="truncate text-xs text-muted">{app.role}</p>
-                    </div>
-                    <button
-                      onClick={() => removeApplication(app.id)}
-                      className="shrink-0 text-muted hover:text-danger"
-                      aria-label="Delete application"
-                    >
-                      <Trash2 size={13} />
-                    </button>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="inline-block h-2.5 w-2.5 rounded-full"
+                      style={{ background: colors.accent }}
+                    />
+                    <span className="text-sm font-semibold text-foreground">{col.label}</span>
                   </div>
-                  {app.link && (
-                    <a
-                      href={app.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-1 text-xs text-accent hover:underline"
-                    >
-                      Posting <ExternalLink size={10} />
-                    </a>
-                  )}
-                  {app.appliedAt && (
-                    <p className="text-[11px] text-muted">Applied {formatDate(app.appliedAt)}</p>
-                  )}
-                  <Select
-                    value={app.status}
-                    onChange={(e) => updateStatus(app.id, e.target.value)}
-                    className="h-7 text-xs"
+                  <span
+                    className="flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 font-data text-[11px] font-semibold text-white"
+                    style={{ background: colors.accent }}
                   >
-                    {COLUMNS.map((c) => (
-                      <option key={c.key} value={c.key}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </Select>
-                  <InterviewRounds applicationId={app.id} />
-                </Card>
-              ))}
-            </div>
-          ))}
+                    {count}
+                  </span>
+                </div>
+
+                {/* Cards */}
+                <div className="flex flex-1 flex-col gap-2 p-2.5">
+                  {count === 0 && (
+                    <div className="flex flex-1 items-center justify-center py-4">
+                      <p className="text-xs text-muted/50">Drop applications here</p>
+                    </div>
+                  )}
+                  {byColumn[col.key].map((app) => (
+                    <Card
+                      key={app.id}
+                      draggable
+                      onDragStart={() => setDragId(app.id)}
+                      className="cursor-grab space-y-2 p-3 transition-shadow hover:shadow-md active:cursor-grabbing"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium text-foreground">{app.company}</p>
+                          <p className="truncate text-xs text-muted">{app.role}</p>
+                        </div>
+                        <button
+                          onClick={() => removeApplication(app.id)}
+                          className="shrink-0 text-muted hover:text-danger"
+                          aria-label="Delete application"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                      {app.link && (
+                        <a
+                          href={app.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-1 text-xs text-accent hover:underline"
+                        >
+                          Posting <ExternalLink size={10} />
+                        </a>
+                      )}
+                      {app.appliedAt && (
+                        <p className="text-[11px] text-muted">Applied {formatDate(app.appliedAt)}</p>
+                      )}
+                      <Select
+                        value={app.status}
+                        onChange={(e) => updateStatus(app.id, e.target.value)}
+                        className="h-7 text-xs"
+                      >
+                        {COLUMNS.map((c) => (
+                          <option key={c.key} value={c.key}>
+                            {c.label}
+                          </option>
+                        ))}
+                      </Select>
+                      <InterviewRounds applicationId={app.id} />
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
