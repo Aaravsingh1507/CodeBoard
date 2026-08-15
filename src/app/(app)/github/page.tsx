@@ -145,31 +145,31 @@ export default function GithubPage() {
                 <StatTile
                   icon={<UserPlus size={15} className="text-white" />}
                   label="Following"
-                  value={data.following}
+                  value={data.following ?? 0}
                   color="hsl(170 60% 45%)"
                 />
                 <StatTile
                   icon={<GitFork size={15} className="text-white" />}
                   label="Forks"
-                  value={data.totalForks}
+                  value={data.totalForks ?? 0}
                   color="hsl(280 60% 55%)"
                 />
                 <StatTile
                   icon={<Eye size={15} className="text-white" />}
                   label="Watchers"
-                  value={data.totalWatchers}
+                  value={data.totalWatchers ?? 0}
                   color="hsl(220 65% 55%)"
                 />
                 <StatTile
                   icon={<GitPullRequest size={15} className="text-white" />}
                   label="Pull requests"
-                  value={data.totalPRs}
+                  value={data.totalPRs ?? 0}
                   color="hsl(150 60% 45%)"
                 />
                 <StatTile
                   icon={<Bug size={15} className="text-white" />}
                   label="Issues"
-                  value={data.totalIssues}
+                  value={data.totalIssues ?? 0}
                   color="hsl(0 65% 55%)"
                 />
               </CardContent>
@@ -189,14 +189,14 @@ export default function GithubPage() {
                   <div className="flex flex-1 items-center gap-3 rounded-lg bg-surface-2/60 px-4 py-3">
                     <Download size={18} className="shrink-0 text-accent" />
                     <div>
-                      <p className="font-data text-xl font-semibold">{data.totalClones.toLocaleString()}</p>
+                      <p className="font-data text-xl font-semibold">{(data.totalClones ?? 0).toLocaleString()}</p>
                       <p className="text-[11px] text-muted">Git clones</p>
                     </div>
                   </div>
                   <div className="flex flex-1 items-center gap-3 rounded-lg bg-surface-2/60 px-4 py-3">
                     <BarChart3 size={18} className="shrink-0 text-accent-2" />
                     <div>
-                      <p className="font-data text-xl font-semibold">{data.totalViews.toLocaleString()}</p>
+                      <p className="font-data text-xl font-semibold">{(data.totalViews ?? 0).toLocaleString()}</p>
                       <p className="text-[11px] text-muted">Page views</p>
                     </div>
                   </div>
@@ -205,11 +205,11 @@ export default function GithubPage() {
                 {/* Top referrers */}
                 <div>
                   <p className="mb-2 text-xs font-semibold text-muted">Top referrers</p>
-                  {data.topReferrers.length === 0 ? (
+                  {(data.topReferrers ?? []).length === 0 ? (
                     <p className="text-xs text-muted/70">No referrer data available yet.</p>
                   ) : (
                     <ul className="space-y-1.5">
-                      {data.topReferrers.map((r) => (
+                      {(data.topReferrers ?? []).map((r) => (
                         <li key={r.referrer} className="flex items-center justify-between text-sm">
                           <span className="flex items-center gap-1.5 truncate text-foreground">
                             <Globe size={12} className="shrink-0 text-muted" />
