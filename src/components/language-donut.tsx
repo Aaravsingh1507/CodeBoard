@@ -35,47 +35,45 @@ export function LanguageDonut({
   const activePercent = total > 0 ? ((activeItem.bytes / total) * 100).toFixed(1) : "0";
 
   return (
-    <div className="flex h-full w-full flex-col justify-between gap-4">
+    <div className="flex h-full w-full flex-col justify-between gap-3">
       {/* Top stacked multi-color language proportion bar */}
-      <div className="space-y-1">
-        <div className="flex h-2 w-full overflow-hidden rounded-full bg-surface-2">
-          {data.map((d, i) => {
-            const pct = total > 0 ? (d.bytes / total) * 100 : 0;
-            const color = COLORS[i % COLORS.length];
-            const isHovered = activeIndex === i;
-            return (
-              <div
-                key={d.name}
-                style={{
-                  width: `${pct}%`,
-                  backgroundColor: color,
-                }}
-                className={`h-full transition-all duration-200 ${
-                  i === 0 ? "rounded-l-full" : ""
-                } ${i === data.length - 1 ? "rounded-r-full" : ""} ${
-                  isHovered ? "brightness-125 scale-y-125" : "opacity-90 hover:opacity-100"
-                }`}
-                title={`${d.name}: ${pct.toFixed(1)}%`}
-                onMouseEnter={() => setActiveIndex(i)}
-                onMouseLeave={() => setActiveIndex(null)}
-              />
-            );
-          })}
-        </div>
+      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-surface-2 p-0.5">
+        {data.map((d, i) => {
+          const pct = total > 0 ? (d.bytes / total) * 100 : 0;
+          const color = COLORS[i % COLORS.length];
+          const isHovered = activeIndex === i;
+          return (
+            <div
+              key={d.name}
+              style={{
+                width: `${pct}%`,
+                backgroundColor: color,
+              }}
+              className={`h-full transition-all duration-200 cursor-pointer ${
+                i === 0 ? "rounded-l-full" : ""
+              } ${i === data.length - 1 ? "rounded-r-full" : ""} ${
+                isHovered ? "brightness-125 scale-y-125" : "opacity-90 hover:opacity-100"
+              }`}
+              title={`${d.name}: ${pct.toFixed(1)}%`}
+              onMouseEnter={() => setActiveIndex(i)}
+              onMouseLeave={() => setActiveIndex(null)}
+            />
+          );
+        })}
       </div>
 
-      {/* Main content: Donut chart with center stats on left, rich breakdown on right */}
-      <div className="flex flex-1 flex-col items-center justify-between gap-6 sm:flex-row">
-        {/* Donut Chart Container */}
-        <div className="relative flex h-48 w-48 shrink-0 items-center justify-center sm:h-52 sm:w-52">
+      {/* Main content: Left large donut chart, Right language cards filling full height */}
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center flex-1 py-1">
+        {/* Large Donut Chart on Left (5 cols) */}
+        <div className="sm:col-span-5 relative flex items-center justify-center h-52 sm:h-60 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
                 dataKey="bytes"
                 nameKey="name"
-                innerRadius={56}
-                outerRadius={78}
+                innerRadius={60}
+                outerRadius={88}
                 paddingAngle={3}
                 stroke="none"
                 onMouseEnter={(_, index) => setActiveIndex(index)}
@@ -85,7 +83,7 @@ export function LanguageDonut({
                   <Cell
                     key={i}
                     fill={COLORS[i % COLORS.length]}
-                    className="cursor-pointer transition-opacity duration-200"
+                    className="cursor-pointer transition-all duration-200"
                     opacity={activeIndex === null || activeIndex === i ? 1 : 0.35}
                   />
                 ))}
@@ -108,20 +106,20 @@ export function LanguageDonut({
 
           {/* Center Callout Overlay */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="max-w-[90px] truncate text-[11px] font-medium text-muted">
+            <span className="max-w-[100px] truncate text-[11px] font-medium text-muted">
               {activeIndex !== null ? activeItem.name : "Top"}
             </span>
-            <span className="font-data text-sm font-bold text-foreground sm:text-base">
+            <span className="font-data text-base sm:text-lg font-bold text-foreground leading-tight">
               {activeIndex !== null ? `${activePercent}%` : activeItem.name}
             </span>
-            <span className="font-data text-[10px] text-muted">
+            <span className="font-data text-[11px] text-muted">
               {formatBytes(activeItem.bytes)}
             </span>
           </div>
         </div>
 
-        {/* Breakdown List */}
-        <div className="flex w-full flex-1 flex-col justify-center gap-2">
+        {/* Breakdown List on Right (7 cols) */}
+        <div className="sm:col-span-7 flex flex-col justify-center gap-2 h-full w-full">
           {data.map((d, i) => {
             const pct = total > 0 ? (d.bytes / total) * 100 : 0;
             const color = COLORS[i % COLORS.length];
@@ -130,27 +128,29 @@ export function LanguageDonut({
             return (
               <div
                 key={d.name}
-                className={`group flex flex-col rounded-lg px-2.5 py-1.5 transition-colors cursor-pointer ${
-                  isHovered ? "bg-surface-2" : "hover:bg-surface-2/60"
+                className={`group flex flex-col rounded-lg px-3 py-2 transition-all cursor-pointer border ${
+                  isHovered
+                    ? "bg-surface-2 border-border/80 shadow-xs"
+                    : "bg-surface-2/40 border-transparent hover:bg-surface-2/80 hover:border-border/40"
                 }`}
                 onMouseEnter={() => setActiveIndex(i)}
                 onMouseLeave={() => setActiveIndex(null)}
               >
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
                     <span
-                      className="h-2 w-2 shrink-0 rounded-full transition-transform group-hover:scale-125"
+                      className="h-2.5 w-2.5 shrink-0 rounded-full transition-transform group-hover:scale-125"
                       style={{ background: color }}
                     />
                     <span className="font-medium text-foreground truncate">{d.name}</span>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0 font-data">
+                  <div className="flex items-center gap-2.5 shrink-0 font-data">
                     <span className="text-[11px] text-muted">{formatBytes(d.bytes)}</span>
                     <span className="font-semibold text-foreground">{pct.toFixed(0)}%</span>
                   </div>
                 </div>
                 {/* Mini progress bar under each language */}
-                <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-surface-2">
+                <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-surface">
                   <div
                     className="h-full rounded-full transition-all duration-300"
                     style={{
