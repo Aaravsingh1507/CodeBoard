@@ -106,11 +106,16 @@ export default function GithubPage() {
           </Card>
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <Card>
+            <Card className="flex flex-col">
               <CardHeader>
                 <CardTitle>Top languages</CardTitle>
+                {data.topLanguages.length > 0 && (
+                  <span className="font-data text-xs text-muted">
+                    {data.topLanguages.length} {data.topLanguages.length === 1 ? "language" : "languages"}
+                  </span>
+                )}
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex flex-1 flex-col justify-between">
                 {data.topLanguages.length === 0 ? (
                   <EmptyState title="No language data yet" description="Push some code to see this fill in." />
                 ) : (
@@ -119,7 +124,7 @@ export default function GithubPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="flex flex-col">
               <CardHeader>
                 <CardTitle>Profile overview</CardTitle>
               </CardHeader>
