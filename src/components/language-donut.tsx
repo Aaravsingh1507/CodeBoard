@@ -72,10 +72,10 @@ export function LanguageDonut({
       </div>
 
       {/* Main content: Left large donut chart, Right language cards filling full height */}
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center flex-1 py-1">
-        {/* Large Donut Chart on Left (5 cols) */}
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center flex-1 py-1">
+        {/* Large Donut Chart on Left (6 cols for significantly larger diameter) */}
         <div
-          className={`sm:col-span-5 relative flex items-center justify-center h-52 sm:h-72 w-full ${
+          className={`sm:col-span-6 relative flex items-center justify-center h-60 sm:h-72 w-full ${
             mounted ? "animate-donut-reveal" : "opacity-0"
           }`}
         >
@@ -85,8 +85,8 @@ export function LanguageDonut({
                 data={data}
                 dataKey="bytes"
                 nameKey="name"
-                innerRadius="55%"
-                outerRadius="80%"
+                innerRadius="64%"
+                outerRadius="92%"
                 paddingAngle={3}
                 stroke="none"
                 onMouseEnter={(_, index) => setActiveIndex(index)}
@@ -111,28 +111,28 @@ export function LanguageDonut({
             </PieChart>
           </ResponsiveContainer>
 
-          {/* Center Callout Overlay — sole hover feedback, no more Tooltip fighting it */}
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
+          {/* Center Callout Overlay — generous space inside enlarged inner hole */}
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center px-2">
             <span
               key={activeItem.name}
-              className="animate-fade-in max-w-[100px] sm:max-w-[120px] truncate text-[11px] sm:text-xs font-medium text-muted"
+              className="animate-fade-in max-w-[130px] sm:max-w-[150px] truncate text-[10px] sm:text-xs font-semibold text-muted uppercase tracking-wider"
             >
               {activeIndex !== null ? activeItem.name : "Top"}
             </span>
             <span
               key={`${activeItem.name}-val`}
-              className="animate-fade-in font-data text-base sm:text-xl font-bold text-foreground leading-tight"
+              className="animate-fade-in font-data text-sm sm:text-base font-bold text-foreground leading-tight truncate max-w-[130px] sm:max-w-[150px]"
             >
               {activeIndex !== null ? `${activePercent}%` : activeItem.name}
             </span>
-            <span className="font-data text-[10px] sm:text-[11px] text-muted">
+            <span className="font-data text-[10px] sm:text-xs text-muted">
               {formatBytes(activeItem.bytes)}
             </span>
           </div>
         </div>
 
-        {/* Breakdown List on Right (7 cols) */}
-        <div className="sm:col-span-7 flex flex-col justify-center gap-2 h-full w-full">
+        {/* Breakdown List on Right (6 cols) */}
+        <div className="sm:col-span-6 flex flex-col justify-center gap-2 h-full w-full">
           {data.map((d, i) => {
             const pct = total > 0 ? (d.bytes / total) * 100 : 0;
             const color = COLORS[i % COLORS.length];
