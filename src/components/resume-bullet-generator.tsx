@@ -43,7 +43,7 @@ export function ResumeBulletGenerator() {
             nothing invented, only what actually happened.
           </p>
         </div>
-        <Button size="sm" variant="secondary" onClick={generate} disabled={loading}>
+        <Button size="sm" variant="secondary" onClick={generate} disabled={loading} className="whitespace-nowrap shrink-0">
           {loading ? "Generating…" : bullets ? "Regenerate" : "Generate"}
         </Button>
       </div>

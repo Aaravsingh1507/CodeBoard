@@ -160,22 +160,27 @@ html {
 .delay-7 { animation-delay: 350ms; }
 .delay-8 { animation-delay: 400ms; }
 
-/* ── Touch scroll improvements ── */
+/* ── Touch & Desktop scroll improvements ── */
 .scroll-touch {
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
 
 .scroll-touch::-webkit-scrollbar {
-  height: 4px;
+  width: 6px;
+  height: 6px;
 }
 .scroll-touch::-webkit-scrollbar-track {
   background: transparent;
 }
 .scroll-touch::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 4px;
+  border-radius: 9999px;
+}
+.scroll-touch::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
 }
 
 /* ── Reduced motion ── */
