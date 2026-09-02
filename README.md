@@ -198,3 +198,5 @@ pass — `npx prisma generate` itself needs a binary from `binaries.prisma.sh`
 that wasn't reachable from the sandbox this was built in, so that one
 specific step needs to run on your machine. First thing after `npm install`:
 `npx prisma generate && npm run build` to confirm a clean compile.
+
+<!-- Trigger Vercel Build -->
