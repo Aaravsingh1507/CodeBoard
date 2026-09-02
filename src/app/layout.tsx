@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   title: "CodeBoard",
   description:
     "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

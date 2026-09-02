@@ -75,7 +75,7 @@ export function LanguageDonut({
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center flex-1 py-1">
         {/* Large Donut Chart on Left (5 cols) */}
         <div
-          className={`sm:col-span-5 relative flex items-center justify-center h-44 sm:h-60 w-full ${
+          className={`sm:col-span-5 relative flex items-center justify-center h-52 sm:h-72 w-full ${
             mounted ? "animate-donut-reveal" : "opacity-0"
           }`}
         >
@@ -85,8 +85,8 @@ export function LanguageDonut({
                 data={data}
                 dataKey="bytes"
                 nameKey="name"
-                innerRadius="45%"
-                outerRadius="70%"
+                innerRadius="55%"
+                outerRadius="80%"
                 paddingAngle={3}
                 stroke="none"
                 onMouseEnter={(_, index) => setActiveIndex(index)}
@@ -115,13 +115,13 @@ export function LanguageDonut({
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
             <span
               key={activeItem.name}
-              className="animate-fade-in max-w-[90px] sm:max-w-[100px] truncate text-[10px] sm:text-[11px] font-medium text-muted"
+              className="animate-fade-in max-w-[100px] sm:max-w-[120px] truncate text-[11px] sm:text-xs font-medium text-muted"
             >
               {activeIndex !== null ? activeItem.name : "Top"}
             </span>
             <span
               key={`${activeItem.name}-val`}
-              className="animate-fade-in font-data text-sm sm:text-lg font-bold text-foreground leading-tight"
+              className="animate-fade-in font-data text-base sm:text-xl font-bold text-foreground leading-tight"
             >
               {activeIndex !== null ? `${activePercent}%` : activeItem.name}
             </span>

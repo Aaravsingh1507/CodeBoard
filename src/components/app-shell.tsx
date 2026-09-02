@@ -75,9 +75,11 @@ export function AppShell({
           >
             <Menu size={22} />
           </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="CodeBoard" className="h-6 w-6 rounded object-contain" />
           <span className="text-sm font-semibold">CodeBoard</span>
         </header>
-        <main className="flex-1 overflow-y-auto scroll-touch">
+        <main className="flex-1 overflow-y-auto scroll-touch" style={{ WebkitOverflowScrolling: "touch", willChange: "scroll-position" }}>
           <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 md:px-10 md:py-8 animate-fade-in">{children}</div>
         </main>
       </div>

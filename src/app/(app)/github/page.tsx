@@ -4,6 +4,7 @@ import {
   RefreshCw,
   ExternalLink,
   GitCommit,
+  Calendar,
   GitPullRequest,
   CircleDot,
   Star,
@@ -244,7 +245,22 @@ export default function GithubPage() {
                 />
               ) : (
                 <ul className="divide-y divide-border">
-                  {data.recentActivity.map((a, i) => (
+                  {data.recentActivity.map((a, i) => {
+                    // Format date as relative time
+                    const activityDate = new Date(a.date);
+                    const now = new Date();
+                    const diffMs = now.getTime() - activityDate.getTime();
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMs / 3600000);
+                    const diffDays = Math.floor(diffMs / 86400000);
+                    let relativeTime = "";
+                    if (diffMins < 1) relativeTime = "Just now";
+                    else if (diffMins < 60) relativeTime = `${diffMins}m ago`;
+                    else if (diffHours < 24) relativeTime = `${diffHours}h ago`;
+                    else if (diffDays < 7) relativeTime = `${diffDays}d ago`;
+                    else relativeTime = activityDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+                    return (
                     <li key={i} className="flex items-start gap-3 py-2.5">
                       <span className="mt-0.5 text-muted">
                         {a.type === "commit" && <GitCommit size={15} />}
@@ -261,10 +277,17 @@ export default function GithubPage() {
                           <span className="truncate">{a.title}</span>
                           <ExternalLink size={11} className="shrink-0" />
                         </a>
-                        <p className="text-xs text-muted">{a.repo}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <p className="text-xs text-muted">{a.repo}</p>
+                          <span className="flex items-center gap-1 text-[11px] text-muted/70">
+                            <Calendar size={10} className="shrink-0" />
+                            {relativeTime}
+                          </span>
+                        </div>
                       </div>
                     </li>
-                  ))}
+                    );
+                  })}
                 </ul>
               )}
             </CardContent>

@@ -196,3 +196,18 @@ html {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* ── Performance: GPU-accelerated scrolling & rendering ── */
+main {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+img {
+  content-visibility: auto;
+}
+
+/* Smooth page transitions */
+@view-transition {
+  navigation: auto;
+}

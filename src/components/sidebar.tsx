@@ -40,9 +40,8 @@ export function Sidebar({
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col border-r border-border bg-surface">
       <div className="flex items-center gap-2 px-5 py-5">
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent font-data text-xs font-bold text-white">
-          {"</>"}
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="CodeBoard" className="h-7 w-7 rounded-md object-contain" />
         <span className="text-sm font-semibold tracking-tight">CodeBoard</span>
       </div>
 
