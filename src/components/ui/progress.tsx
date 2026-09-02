@@ -5,9 +5,10 @@ export function Progress({ value, className }: { value: number; className?: stri
   return (
     <div className={cn("h-2 w-full overflow-hidden rounded-full bg-surface-2", className)}>
       <div
-        className="h-full rounded-full bg-accent transition-all"
+        className="h-full rounded-full bg-accent transition-all animate-progress-grow"
         style={{ width: `${pct}%` }}
       />
     </div>
   );
 }
+

@@ -53,6 +53,132 @@ body {
   font-feature-settings: "tnum" 1;
 }
 
+/* ── Smooth scrolling ── */
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Animation keyframes ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes backdropFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes donutReveal {
+  from { opacity: 0; transform: scale(0.85) rotate(-10deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes progressGrow {
+  from { width: 0; }
+}
+
+/* ── Animation utility classes ── */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out both;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.35s ease-out both;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-slide-out-left {
+  animation: slideOutLeft 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.35s ease-out both;
+}
+
+.animate-backdrop-in {
+  animation: backdropFadeIn 0.3s ease-out both;
+}
+
+.animate-backdrop-out {
+  animation: backdropFadeOut 0.25s ease-out both;
+}
+
+.animate-donut-reveal {
+  animation: donutReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-progress-grow {
+  animation: progressGrow 0.8s ease-out both;
+}
+
+/* ── Stagger delay utilities ── */
+.delay-1 { animation-delay: 50ms; }
+.delay-2 { animation-delay: 100ms; }
+.delay-3 { animation-delay: 150ms; }
+.delay-4 { animation-delay: 200ms; }
+.delay-5 { animation-delay: 250ms; }
+.delay-6 { animation-delay: 300ms; }
+.delay-7 { animation-delay: 350ms; }
+.delay-8 { animation-delay: 400ms; }
+
+/* ── Touch scroll improvements ── */
+.scroll-touch {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.scroll-touch::-webkit-scrollbar {
+  height: 4px;
+}
+.scroll-touch::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-touch::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

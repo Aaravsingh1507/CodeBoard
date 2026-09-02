@@ -41,8 +41,8 @@ function PlacementBanner() {
   if (!data) return null;
 
   return (
-    <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-accent/30 bg-accent/5 px-4 py-3 text-sm">
-      <CalendarClock size={16} className="text-accent" />
+    <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-accent/30 bg-accent/5 px-4 py-3 text-sm animate-slide-up">
+      <CalendarClock size={16} className="text-accent shrink-0" />
       <span className="text-foreground">
         {data.daysLeft > 0
           ? `${data.daysLeft} days until your placement date (${formatDate(data.placementDate)}) — goal targets below are paced against it.`
@@ -72,24 +72,30 @@ export default function GoalsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <div>
+      {/* Header — flex-wrap prevents squished button on narrow screens */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
           <h1 className="text-xl font-semibold">Goals</h1>
           <p className="mt-1 text-sm text-muted">Set targets and watch your progress fill in.</p>
         </div>
-        <Button onClick={() => setShowForm(true)}>
+        <Button
+          onClick={() => setShowForm(true)}
+          className="whitespace-nowrap shrink-0"
+        >
           <Plus size={15} /> New goal
         </Button>
       </div>
 
       {showForm && (
-        <NewGoalForm
-          onClose={() => setShowForm(false)}
-          onCreated={() => {
-            setShowForm(false);
-            refetch();
-          }}
-        />
+        <div className="animate-fade-in-scale">
+          <NewGoalForm
+            onClose={() => setShowForm(false)}
+            onCreated={() => {
+              setShowForm(false);
+              refetch();
+            }}
+          />
+        </div>
       )}
 
       <PlacementBanner />
@@ -97,30 +103,36 @@ export default function GoalsPage() {
       {loading && <Skeleton className="h-40 w-full" />}
       {error && <ErrorState message={error} onRetry={() => refetch()} />}
       {data && data.length === 0 && (
-        <EmptyState
-          title="No goals yet"
-          description="Set a LeetCode, streak, application, or custom goal to track progress automatically."
-          action={
-            <Button size="sm" onClick={() => setShowForm(true)}>
-              <Plus size={14} /> Set your first goal
-            </Button>
-          }
-        />
+        <div className="animate-fade-in">
+          <EmptyState
+            title="No goals yet"
+            description="Set a LeetCode, streak, application, or custom goal to track progress automatically."
+            action={
+              <Button size="sm" onClick={() => setShowForm(true)}>
+                <Plus size={14} /> Set your first goal
+              </Button>
+            }
+          />
+        </div>
       )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {(data ?? []).map((g) => {
+        {(data ?? []).map((g, index) => {
           const pct = (g.current / g.target) * 100;
           const daysLeft = daysBetween(new Date(), new Date(g.deadline));
           const closeToDeadline = g.status === "in_progress" && daysLeft <= 3;
+          const delayClass = `delay-${Math.min(index + 1, 8)}`;
           return (
-            <Card key={g.id} className="p-4">
+            <Card key={g.id} className={`p-4 animate-slide-up ${delayClass} transition-all duration-200 hover:shadow-md hover:border-border/80`}>
               <div className="mb-2 flex items-start justify-between">
-                <div>
+                <div className="min-w-0 flex-1 mr-2">
                   <p className="text-sm font-medium text-foreground">{g.label}</p>
                   <p className="text-xs text-muted">{TYPE_LABEL[g.type]}</p>
                 </div>
-                <button onClick={() => removeGoal(g.id)} className="text-muted hover:text-danger">
+                <button
+                  onClick={() => removeGoal(g.id)}
+                  className="text-muted hover:text-danger transition-colors duration-150 p-1 rounded-md hover:bg-danger/10 shrink-0"
+                >
                   <Trash2 size={13} />
                 </button>
               </div>
@@ -219,7 +231,11 @@ function NewGoalForm({ onClose, onCreated }: { onClose: () => void; onCreated: (
     <Card className="mb-5 p-4">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold">New goal</h2>
-        <button onClick={onClose} className="text-muted hover:text-foreground" aria-label="Close">
+        <button
+          onClick={onClose}
+          className="text-muted hover:text-foreground transition-colors duration-150 p-1 rounded-md hover:bg-surface-2"
+          aria-label="Close"
+        >
           <X size={16} />
         </button>
       </div>

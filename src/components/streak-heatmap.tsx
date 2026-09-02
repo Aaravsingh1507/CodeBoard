@@ -37,24 +37,29 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <div className="flex gap-1">
-        {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-col gap-1">
-            {week.map((day, di) =>
-              day ? (
-                <div
-                  key={di}
-                  title={`${day.date}: ${day.count} activity event${day.count === 1 ? "" : "s"}`}
-                  className={`h-2.5 w-2.5 rounded-[3px] ${LEVEL_CLASSES[levelFor(day.count)]}`}
-                />
-              ) : (
-                <div key={di} className="h-2.5 w-2.5" />
-              )
-            )}
-          </div>
-        ))}
+    <div className="relative">
+      {/* Scroll container with touch-friendly scrolling */}
+      <div className="overflow-x-auto scroll-touch pb-1">
+        <div className="flex gap-1 animate-fade-in">
+          {weeks.map((week, wi) => (
+            <div key={wi} className="flex flex-col gap-1">
+              {week.map((day, di) =>
+                day ? (
+                  <div
+                    key={di}
+                    title={`${day.date}: ${day.count} activity event${day.count === 1 ? "" : "s"}`}
+                    className={`h-2.5 w-2.5 rounded-[3px] transition-all duration-200 hover:scale-150 hover:ring-2 hover:ring-accent/30 ${LEVEL_CLASSES[levelFor(day.count)]}`}
+                  />
+                ) : (
+                  <div key={di} className="h-2.5 w-2.5" />
+                )
+              )}
+            </div>
+          ))}
+        </div>
       </div>
+      {/* Gradient fade hints on edges for mobile scroll indication */}
+      <div className="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-surface to-transparent sm:hidden" />
       <div className="mt-2 flex items-center gap-1.5 text-xs text-muted">
         <span>Less</span>
         {LEVEL_CLASSES.map((c, i) => (

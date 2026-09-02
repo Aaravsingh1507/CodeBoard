@@ -30,8 +30,10 @@ const NAV = [
 
 export function Sidebar({
   user,
+  onNavigate,
 }: {
   user: { name?: string | null; image?: string | null; githubUsername?: string | null };
+  onNavigate?: () => void;
 }) {
   const pathname = usePathname();
 
@@ -51,11 +53,12 @@ export function Sidebar({
             <Link
               key={href}
               href={href}
+              onClick={onNavigate}
               className={cn(
-                "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors",
+                "flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-all duration-200",
                 active
                   ? "bg-accent/10 text-accent font-medium"
-                  : "text-muted hover:bg-surface-2 hover:text-foreground"
+                  : "text-muted hover:bg-surface-2 hover:text-foreground active:scale-[0.98]"
               )}
             >
               <Icon size={16} />

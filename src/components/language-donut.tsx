@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { useState, useEffect } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const COLORS = [
   "#8b7bff", // violet (accent)
@@ -26,6 +26,13 @@ export function LanguageDonut({
   data: { name: string; bytes: number }[];
 }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Trigger mount animation after first render
+    const timer = setTimeout(() => setMounted(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (data.length === 0) return null;
   const total = data.reduce((s, d) => s + d.bytes, 0);
@@ -57,6 +64,8 @@ export function LanguageDonut({
               title={`${d.name}: ${pct.toFixed(1)}%`}
               onMouseEnter={() => setActiveIndex(i)}
               onMouseLeave={() => setActiveIndex(null)}
+              onTouchStart={() => setActiveIndex(i)}
+              onTouchEnd={() => setActiveIndex(null)}
             />
           );
         })}
@@ -65,54 +74,58 @@ export function LanguageDonut({
       {/* Main content: Left large donut chart, Right language cards filling full height */}
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center flex-1 py-1">
         {/* Large Donut Chart on Left (5 cols) */}
-        <div className="sm:col-span-5 relative flex items-center justify-center h-52 sm:h-60 w-full">
+        <div
+          className={`sm:col-span-5 relative flex items-center justify-center h-44 sm:h-60 w-full ${
+            mounted ? "animate-donut-reveal" : "opacity-0"
+          }`}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
                 dataKey="bytes"
                 nameKey="name"
-                innerRadius={60}
-                outerRadius={88}
+                innerRadius="45%"
+                outerRadius="70%"
                 paddingAngle={3}
                 stroke="none"
                 onMouseEnter={(_, index) => setActiveIndex(index)}
                 onMouseLeave={() => setActiveIndex(null)}
+                animationBegin={200}
+                animationDuration={800}
+                animationEasing="ease-out"
               >
                 {data.map((_, i) => (
                   <Cell
                     key={i}
                     fill={COLORS[i % COLORS.length]}
-                    className="cursor-pointer transition-all duration-200"
-                    opacity={activeIndex === null || activeIndex === i ? 1 : 0.35}
+                    className="cursor-pointer"
+                    style={{
+                      opacity: activeIndex === null || activeIndex === i ? 1 : 0.35,
+                      transition: "opacity 0.2s ease, transform 0.2s ease",
+                      filter: activeIndex === i ? "brightness(1.15)" : "none",
+                    }}
                   />
                 ))}
               </Pie>
-              <Tooltip
-                formatter={(value, name) => [
-                  `${((Number(value ?? 0) / total) * 100).toFixed(1)}% (${formatBytes(Number(value ?? 0))})`,
-                  name,
-                ]}
-                contentStyle={{
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8,
-                  fontSize: 12,
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-                }}
-              />
             </PieChart>
           </ResponsiveContainer>
 
-          {/* Center Callout Overlay */}
+          {/* Center Callout Overlay — sole hover feedback, no more Tooltip fighting it */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="max-w-[100px] truncate text-[11px] font-medium text-muted">
+            <span
+              key={activeItem.name}
+              className="animate-fade-in max-w-[90px] sm:max-w-[100px] truncate text-[10px] sm:text-[11px] font-medium text-muted"
+            >
               {activeIndex !== null ? activeItem.name : "Top"}
             </span>
-            <span className="font-data text-base sm:text-lg font-bold text-foreground leading-tight">
+            <span
+              key={`${activeItem.name}-val`}
+              className="animate-fade-in font-data text-sm sm:text-lg font-bold text-foreground leading-tight"
+            >
               {activeIndex !== null ? `${activePercent}%` : activeItem.name}
             </span>
-            <span className="font-data text-[11px] text-muted">
+            <span className="font-data text-[10px] sm:text-[11px] text-muted">
               {formatBytes(activeItem.bytes)}
             </span>
           </div>
@@ -124,22 +137,27 @@ export function LanguageDonut({
             const pct = total > 0 ? (d.bytes / total) * 100 : 0;
             const color = COLORS[i % COLORS.length];
             const isHovered = activeIndex === i;
+            const delayClass = `delay-${Math.min(i + 1, 8)}`;
 
             return (
               <div
                 key={d.name}
-                className={`group flex flex-col rounded-lg px-3 py-2 transition-all cursor-pointer border ${
+                className={`group flex flex-col rounded-lg px-3 py-2 transition-all duration-200 cursor-pointer border ${
+                  mounted ? `animate-slide-up ${delayClass}` : "opacity-0"
+                } ${
                   isHovered
-                    ? "bg-surface-2 border-border/80 shadow-xs"
+                    ? "bg-surface-2 border-border/80 shadow-xs scale-[1.02]"
                     : "bg-surface-2/40 border-transparent hover:bg-surface-2/80 hover:border-border/40"
                 }`}
                 onMouseEnter={() => setActiveIndex(i)}
                 onMouseLeave={() => setActiveIndex(null)}
+                onTouchStart={() => setActiveIndex(i)}
+                onTouchEnd={() => setActiveIndex(null)}
               >
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span
-                      className="h-2.5 w-2.5 shrink-0 rounded-full transition-transform group-hover:scale-125"
+                      className="h-2.5 w-2.5 shrink-0 rounded-full transition-transform duration-200 group-hover:scale-125"
                       style={{ background: color }}
                     />
                     <span className="font-medium text-foreground truncate">{d.name}</span>
@@ -152,10 +170,13 @@ export function LanguageDonut({
                 {/* Mini progress bar under each language */}
                 <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-surface">
                   <div
-                    className="h-full rounded-full transition-all duration-300"
+                    className={`h-full rounded-full transition-all duration-300 ${
+                      mounted ? "animate-progress-grow" : ""
+                    }`}
                     style={{
                       width: `${pct}%`,
                       backgroundColor: color,
+                      animationDelay: `${(i + 1) * 100 + 300}ms`,
                     }}
                   />
                 </div>
@@ -167,4 +188,3 @@ export function LanguageDonut({
     </div>
   );
 }
-
