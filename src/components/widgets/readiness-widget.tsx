@@ -67,7 +67,7 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
     },
     {
       label: "Goal follow-through",
-      score: data.breakdown[3]?.score ?? 12,
+      score: data.breakdown[3]?.score ?? 0,
       max: data.breakdown[3]?.max ?? 25,
       icon: Flag,
       iconColor: "text-emerald-400",
@@ -127,9 +127,9 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
               </div>
             </div>
 
-            {/* Getting Started Pill */}
+            {/* Getting Started / Tier Pill */}
             <div className="mt-1.5 rounded-full border border-purple-500/30 bg-purple-950/70 px-3.5 py-0.5 text-[11px] font-medium text-purple-300 shadow-sm shadow-purple-900/40">
-              Getting Started
+              {data.score < 40 ? "Getting Started" : scoreLabel(data.score)}
             </div>
           </div>
 

@@ -13,6 +13,7 @@ export interface LeetcodeStats {
   easySolved: number;
   mediumSolved: number;
   hardSolved: number;
+  acceptanceRate?: string;
   recentSubmissions: {
     title: string;
     difficulty: string;
@@ -29,6 +30,7 @@ const PROFILE_QUERY = `
       profile { ranking }
       submitStats {
         acSubmissionNum { difficulty count }
+        totalSubmissionNum { difficulty count }
       }
       tagProblemCounts {
         fundamental { tagName problemsSolved }
@@ -77,7 +79,19 @@ export async function fetchLeetcodeStats(username: string): Promise<LeetcodeStat
     difficulty: string;
     count: number;
   }[];
+  const totalStats = (json.data.matchedUser.submitStats.totalSubmissionNum ?? []) as {
+    difficulty: string;
+    count: number;
+  }[];
   const find = (d: string) => acStats.find((s) => s.difficulty === d)?.count ?? 0;
+  const findTotal = (d: string) => totalStats.find((s) => s.difficulty === d)?.count ?? 0;
+
+  const totalSolved = find("All");
+  const totalSubmissions = findTotal("All");
+  const acceptanceRate =
+    totalSubmissions > 0
+      ? `${(Math.round((totalSolved / totalSubmissions) * 1000) / 10).toFixed(1)}%`
+      : undefined;
 
   const tagCounts = json.data.matchedUser.tagProblemCounts ?? {
     fundamental: [],
@@ -95,10 +109,11 @@ export async function fetchLeetcodeStats(username: string): Promise<LeetcodeStat
   return {
     username: json.data.matchedUser.username,
     ranking: json.data.matchedUser.profile?.ranking ?? null,
-    totalSolved: find("All"),
+    totalSolved,
     easySolved: find("Easy"),
     mediumSolved: find("Medium"),
     hardSolved: find("Hard"),
+    acceptanceRate,
     topicBreakdown,
     recentSubmissions: (json.data.recentSubmissionList ?? []).map((s: any) => ({
       title: s.title,

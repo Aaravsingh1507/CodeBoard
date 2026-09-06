@@ -58,12 +58,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async linkAccount({ user, account }) {
       if (account.provider === "github" && account.access_token && user.id) {
         await persistGithubProfile(user.id, account.access_token);
+        try {
+          const { syncActivityForUser } = await import("@/lib/activity");
+          void syncActivityForUser(user.id).catch(() => {});
+        } catch {}
       }
     },
     async signIn({ user, account }) {
       // Refresh on every sign-in too, in case the token was rotated.
       if (account?.provider === "github" && account.access_token && user.id) {
         await persistGithubProfile(user.id, account.access_token);
+        try {
+          const { syncActivityForUser } = await import("@/lib/activity");
+          void syncActivityForUser(user.id).catch(() => {});
+        } catch {}
       }
     },
   },

@@ -38,19 +38,19 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
           <div>
             <p className="text-[11px] text-muted">Repos</p>
             <p className="font-data mt-0.5 text-xl font-bold text-white leading-tight">
-              {data ? data.publicRepos : 12}
+              {loading && !data ? "..." : (data ? data.publicRepos : "—")}
             </p>
           </div>
           <div>
             <p className="text-[11px] text-muted">Contributions</p>
             <p className="font-data mt-0.5 text-xl font-bold text-white leading-tight">
-              {data ? data.totalContributionsLastYear : 134}
+              {loading && !data ? "..." : (data ? data.totalContributionsLastYear : "—")}
             </p>
           </div>
           <div>
             <p className="text-[11px] text-muted">Followers</p>
             <p className="font-data mt-0.5 text-xl font-bold text-white leading-tight">
-              {data ? data.followers : 8}
+              {loading && !data ? "..." : (data ? data.followers : "—")}
             </p>
           </div>
         </div>

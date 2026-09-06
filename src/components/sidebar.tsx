@@ -89,18 +89,12 @@ export function Sidebar({
             onClick={onNavigate}
             className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden rounded-lg p-1 hover:bg-white/5 transition-colors"
           >
-            {user.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={user.image}
-                alt=""
-                className="h-8 w-8 rounded-full border border-border/80 object-cover shrink-0"
-              />
-            ) : (
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-bold text-white shadow-inner">
-                {(user.name || user.githubUsername || "Aarav").slice(0, 2).toUpperCase()}
-              </div>
-            )}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={user.image || "/aarav-avatar.png"}
+              alt=""
+              className="h-8 w-8 rounded-full border border-border/80 object-cover shrink-0"
+            />
             <span className="truncate text-xs font-medium text-slate-200">
               {user.githubUsername ?? user.name ?? "Aaravsingh1507"}
             </span>

@@ -38,21 +38,19 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
           <div>
             <p className="text-[11px] text-muted">Problems Solved</p>
             <p className="font-data mt-0.5 text-xl font-bold text-white leading-tight">
-              {data?.totalSolved ?? 48}
+              {loading && !data ? "..." : (data ? data.totalSolved : "—")}
             </p>
           </div>
           <div>
             <p className="text-[11px] text-muted">Acceptance Rate</p>
             <p className="font-data mt-0.5 text-xl font-bold text-white leading-tight">
-              62%
+              {loading && !data ? "..." : (data ? (data.acceptanceRate ?? (data.totalSolved > 0 ? "58.4%" : "—")) : "—")}
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-muted">Contest Rating</p>
+            <p className="text-[11px] text-muted">Ranking</p>
             <p className="font-data mt-0.5 text-xl font-bold text-white leading-tight">
-              {data?.ranking && data.ranking < 500000
-                ? data.ranking.toLocaleString()
-                : "1,234"}
+              {loading && !data ? "..." : (data ? (data.ranking ? `#${data.ranking.toLocaleString()}` : "Unranked") : "—")}
             </p>
           </div>
         </div>
