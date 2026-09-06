@@ -154,10 +154,10 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
 
                 return (
                   <div key={c.label} className="flex flex-col justify-between">
-                    <div className="flex items-center justify-between text-xs mb-1.5 gap-1">
+                    <div className="flex items-center justify-between text-xs mb-1.5 gap-1.5">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <Icon size={13} className={`${c.iconColor} shrink-0`} />
-                        <span className="truncate text-[11px] xl:text-xs font-medium text-slate-300">
+                        <span className="whitespace-nowrap text-[11px] xl:text-xs font-medium text-slate-300">
                           {c.label}
                         </span>
                       </div>
@@ -169,7 +169,10 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
                     <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#182033]">
                       <div
                         className={`h-full rounded-full ${c.barColor} transition-all duration-700`}
-                        style={{ width: `${pct}%` }}
+                        style={{
+                          width: `${Math.max(pct, 5)}%`,
+                          minWidth: "10px",
+                        }}
                       />
                     </div>
                   </div>

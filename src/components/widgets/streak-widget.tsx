@@ -94,16 +94,16 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
           </div>
 
           {/* Right Column (5 cols): 3D Developer Desk Artwork */}
-          <div className="relative hidden lg:flex lg:col-span-5 items-center justify-center select-none">
+          <div className="relative hidden lg:flex lg:col-span-5 items-center justify-center select-none overflow-hidden py-1">
             {/* Ambient Purple Glow */}
             <div className="pointer-events-none absolute h-48 w-48 rounded-full bg-purple-600/20 blur-3xl" />
 
-            <div className="relative z-10 flex items-center justify-center">
+            <div className="relative z-10 flex items-center justify-center max-w-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/streak-desk-3d.png"
                 alt="Coding Desk"
-                className="max-h-[168px] w-auto rounded-xl object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)]"
+                className="max-h-[168px] w-auto max-w-full rounded-xl object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)]"
               />
             </div>
           </div>
