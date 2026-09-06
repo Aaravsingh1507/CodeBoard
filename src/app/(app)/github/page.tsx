@@ -40,16 +40,16 @@ function StatTile({
   color: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-surface-2/60 px-3 py-2.5">
+    <div className="flex items-center gap-3 rounded-xl border border-[#1c2438] bg-[#121829]/70 px-3 py-2.5 shadow-inner">
       <div
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-md"
         style={{ background: color }}
       >
         {icon}
       </div>
       <div className="min-w-0">
-        <p className="font-data text-lg font-semibold leading-tight">{value.toLocaleString()}</p>
-        <p className="truncate text-[11px] text-muted">{label}</p>
+        <p className="font-data text-lg font-bold leading-tight text-white">{value.toLocaleString()}</p>
+        <p className="truncate text-[11px] text-slate-400">{label}</p>
       </div>
     </div>
   );
@@ -61,11 +61,11 @@ export default function GithubPage() {
   const notConnected = error?.includes("No GitHub account");
 
   return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">GitHub</h1>
-          <p className="mt-1 text-sm text-muted">Contribution activity, languages, and recent work.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">GitHub</h1>
+          <p className="mt-1 text-sm text-slate-400">Contribution activity, languages, and recent work.</p>
         </div>
         <Button variant="secondary" size="sm" onClick={() => refetch({ force: true })} disabled={loading}>
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />

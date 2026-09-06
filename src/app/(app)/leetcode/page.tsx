@@ -23,11 +23,11 @@ export default function LeetcodePage() {
   const notConfigured = error?.includes("No LeetCode username");
 
   return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">LeetCode</h1>
-          <p className="mt-1 text-sm text-muted">Solved problems and recent submissions.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">LeetCode</h1>
+          <p className="mt-1 text-sm text-slate-400">Solved problems and recent submissions.</p>
         </div>
         <Button variant="secondary" size="sm" onClick={() => refetch({ force: true })} disabled={loading}>
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />

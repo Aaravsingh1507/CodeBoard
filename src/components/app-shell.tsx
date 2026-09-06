@@ -19,14 +19,13 @@ export function AppShell({
     setTimeout(() => {
       setOpen(false);
       setClosing(false);
-    }, 250); // matches the slide-out animation duration
+    }, 250);
   }, []);
 
   const handleNavigate = useCallback(() => {
     closeSidebar();
   }, [closeSidebar]);
 
-  // Lock body scroll when mobile sidebar is open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -39,23 +38,21 @@ export function AppShell({
   }, [open]);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-background text-foreground">
       {/* Desktop sidebar */}
       <div className="hidden md:block">
         <Sidebar user={user} />
       </div>
 
-      {/* Mobile drawer with animations */}
+      {/* Mobile drawer */}
       {open && (
         <div className="fixed inset-0 z-40 md:hidden" aria-modal="true" role="dialog">
-          {/* Animated backdrop */}
           <div
-            className={`absolute inset-0 bg-black/50 backdrop-blur-[2px] ${
+            className={`absolute inset-0 bg-black/60 backdrop-blur-[3px] ${
               closing ? "animate-backdrop-out" : "animate-backdrop-in"
             }`}
             onClick={closeSidebar}
           />
-          {/* Animated sidebar panel */}
           <div
             className={`relative z-50 h-full ${
               closing ? "animate-slide-out-left" : "animate-slide-in-left"
@@ -67,20 +64,39 @@ export function AppShell({
       )}
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex items-center gap-3 border-b border-border bg-surface px-4 py-3 md:hidden">
-          <button
-            onClick={() => setOpen(true)}
-            className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-foreground active:scale-95 transition-all duration-150"
-            aria-label="Open menu"
-          >
-            <Menu size={22} />
-          </button>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="CodeBoard" className="h-6 w-6 object-contain drop-shadow-sm" />
-          <span className="text-sm font-semibold">CodeBoard</span>
+        {/* Mobile Header Bar (hidden on desktop) */}
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background/90 px-4 backdrop-blur-md md:hidden">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setOpen(true)}
+              className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-foreground active:scale-95 transition-all"
+              aria-label="Open menu"
+            >
+              <Menu size={20} />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
+                <span className="font-mono text-xs font-bold text-white">&lt;/&gt;</span>
+              </div>
+              <span className="text-sm font-bold tracking-tight text-white">
+                Code<span className="text-indigo-400">Board</span>
+              </span>
+            </div>
+          </div>
         </header>
-        <main className="flex-1 overflow-y-auto scroll-touch" style={{ WebkitOverflowScrolling: "touch", willChange: "scroll-position" }}>
-          <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 md:px-10 md:py-8 animate-fade-in">{children}</div>
+
+        {/* Main Content Area with Subtle Ambient Glow */}
+        <main
+          className="relative flex-1 overflow-y-auto scroll-touch bg-[#080c17]"
+          style={{ WebkitOverflowScrolling: "touch", willChange: "scroll-position" }}
+        >
+          {/* Subtle Ambient Nebula Glows matching reference */}
+          <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-purple-600/12 blur-[140px]" />
+          <div className="pointer-events-none absolute left-1/4 top-40 h-[400px] w-[400px] rounded-full bg-indigo-600/10 blur-[130px]" />
+
+          <div className="relative z-10 mx-auto max-w-7xl px-4 py-5 sm:px-6 md:px-8 md:py-7 animate-fade-in">
+            {children}
+          </div>
         </main>
       </div>
     </div>

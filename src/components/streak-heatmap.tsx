@@ -14,19 +14,19 @@ function levelFor(count: number) {
 }
 
 const LEVEL_CLASSES = [
-  "bg-surface-2",
-  "bg-accent-2/30",
-  "bg-accent-2/55",
-  "bg-accent-2/80",
-  "bg-accent-2",
+  "bg-[#141c2e] border border-[#1d273e]/70",
+  "bg-teal-950/80 border border-teal-800/50",
+  "bg-teal-700/80 border border-teal-500/60",
+  "bg-teal-500 border border-teal-400/70 shadow-[0_0_4px_rgba(20,184,166,0.4)]",
+  "bg-[#2dd4bf] border border-teal-200 shadow-[0_0_10px_rgba(45,212,191,0.8)]",
 ];
 
 export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
   if (days.length === 0) return null;
 
-  // Align into weeks (columns), Sunday-first, so it reads like a commit graph.
+  // Align into weeks (columns), Sunday-first
   const first = new Date(days[0].date + "T00:00:00Z");
-  const leadingBlanks = first.getUTCDay(); // 0 = Sunday
+  const leadingBlanks = first.getUTCDay();
   const cells: (HeatmapDay | null)[] = [
     ...Array(leadingBlanks).fill(null),
     ...days,
@@ -38,33 +38,35 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
 
   return (
     <div className="relative">
-      {/* Scroll container with touch-friendly scrolling */}
-      <div className="overflow-x-auto scroll-touch pb-1">
-        <div className="flex gap-1 animate-fade-in">
+      {/* Scroll container */}
+      <div className="overflow-x-auto scroll-touch pb-2">
+        <div className="flex gap-1.5 animate-fade-in">
           {weeks.map((week, wi) => (
-            <div key={wi} className="flex flex-col gap-1">
+            <div key={wi} className="flex flex-col gap-1.5">
               {week.map((day, di) =>
                 day ? (
                   <div
                     key={di}
                     title={`${day.date}: ${day.count} activity event${day.count === 1 ? "" : "s"}`}
-                    className={`h-2.5 w-2.5 rounded-[3px] transition-all duration-200 hover:scale-150 hover:ring-2 hover:ring-accent/30 ${LEVEL_CLASSES[levelFor(day.count)]}`}
+                    className={`h-3 w-3 rounded-[3px] transition-all duration-200 hover:scale-150 hover:ring-2 hover:ring-accent/40 ${LEVEL_CLASSES[levelFor(day.count)]}`}
                   />
                 ) : (
-                  <div key={di} className="h-2.5 w-2.5" />
+                  <div key={di} className="h-3 w-3" />
                 )
               )}
             </div>
           ))}
         </div>
       </div>
-      {/* Gradient fade hints on edges for mobile scroll indication */}
-      <div className="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-surface to-transparent sm:hidden" />
-      <div className="mt-2 flex items-center gap-1.5 text-xs text-muted">
+
+      {/* Legend */}
+      <div className="mt-3 flex items-center gap-2 text-xs text-muted">
         <span>Less</span>
-        {LEVEL_CLASSES.map((c, i) => (
-          <div key={i} className={`h-2.5 w-2.5 rounded-[3px] ${c}`} />
-        ))}
+        <div className="flex items-center gap-1.5">
+          {LEVEL_CLASSES.map((c, i) => (
+            <div key={i} className={`h-3 w-3 rounded-[3px] ${c}`} />
+          ))}
+        </div>
         <span>More</span>
       </div>
     </div>

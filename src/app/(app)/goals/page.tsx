@@ -41,9 +41,11 @@ function PlacementBanner() {
   if (!data) return null;
 
   return (
-    <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-accent/30 bg-accent/5 px-4 py-3 text-sm animate-slide-up">
-      <CalendarClock size={16} className="text-accent shrink-0" />
-      <span className="text-foreground">
+    <div className="mb-5 flex items-center gap-3 rounded-2xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm backdrop-blur-sm animate-slide-up">
+      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/20 text-accent">
+        <CalendarClock size={16} />
+      </div>
+      <span className="text-xs sm:text-sm text-slate-200 leading-relaxed">
         {data.daysLeft > 0
           ? `${data.daysLeft} days until your placement date (${formatDate(data.placementDate)}) — goal targets below are paced against it.`
           : "Your placement date has passed — update it in Settings if you have a new one."}
@@ -71,12 +73,12 @@ export default function GoalsPage() {
   }
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Header — flex-wrap prevents squished button on narrow screens */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold">Goals</h1>
-          <p className="mt-1 text-sm text-muted">Set targets and watch your progress fill in.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Goals</h1>
+          <p className="mt-1 text-sm text-slate-400">Set targets and watch your progress fill in.</p>
         </div>
         <Button
           onClick={() => setShowForm(true)}

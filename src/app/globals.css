@@ -2,29 +2,31 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f7f7fa;
-  --surface: #ffffff;
-  --surface-2: #eef0f4;
-  --border: #dfe1e8;
-  --foreground: #14151a;
-  --muted: #6b6f7b;
-  --accent: #6d5bf0;      /* violet — primary */
-  --accent-2: #12b8a6;    /* teal — secondary / success */
-  --warn: #e8a13d;
-  --danger: #e0546b;
+  color-scheme: dark;
+  --background: #080c17;
+  --surface: #0e1426;
+  --surface-2: #141c32;
+  --border: #1a233c;
+  --foreground: #f8fafc;
+  --muted: #94a3b8;
+  --accent: #8b5cf6;      /* vibrant purple */
+  --accent-2: #2dd4bf;    /* cyan / teal */
+  --warn: #f59e0b;
+  --danger: #ef4444;
 }
 
 .dark {
-  --background: #0d0e13;
-  --surface: #15161d;
-  --surface-2: #1b1d26;
-  --border: #262835;
-  --foreground: #e9e9f0;
-  --muted: #8b8d9c;
-  --accent: #8b7bff;
+  color-scheme: dark;
+  --background: #080c17;
+  --surface: #0e1426;
+  --surface-2: #141c32;
+  --border: #1a233c;
+  --foreground: #f8fafc;
+  --muted: #94a3b8;
+  --accent: #8b5cf6;
   --accent-2: #2dd4bf;
-  --warn: #f0b94f;
-  --danger: #f0708a;
+  --warn: #f59e0b;
+  --danger: #ef4444;
 }
 
 @theme inline {
@@ -38,7 +40,7 @@
   --color-accent-2: var(--accent-2);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-sans-main);
   --font-mono: var(--font-jbmono);
 }
 
@@ -216,3 +218,32 @@ img {
 @view-transition {
   navigation: auto;
 }
+
+/* Active navigation pill styling matching the reference design */
+.nav-pill-active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.35) 0%, rgba(139, 92, 246, 0.3) 50%, rgba(168, 85, 247, 0.25) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  box-shadow: 0 4px 20px -2px rgba(139, 92, 246, 0.35), inset 0 1px 1px 0 rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.glow-card {
+  background: linear-gradient(180deg, rgba(17, 23, 40, 0.8) 0%, rgba(13, 18, 32, 0.9) 100%);
+  border: 1px solid #1e263d;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass-card {
+  background: linear-gradient(180deg, rgba(17, 23, 40, 0.75) 0%, rgba(13, 18, 32, 0.85) 100%);
+  border: 1px solid #1e263d;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+}
+
+.gradient-title-view {
+  background: linear-gradient(90deg, #c084fc 0%, #d8b4fe 40%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+

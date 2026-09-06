@@ -67,10 +67,10 @@ export default async function SettingsPage() {
   const publicUrl = user.publicProfileSlug ? `${origin}/u/${user.publicProfileSlug}` : null;
 
   return (
-    <div className="max-w-xl">
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold">Settings</h1>
-        <p className="mt-1 text-sm text-muted">Your profile and connections.</p>
+    <div className="max-w-xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Settings</h1>
+        <p className="mt-1 text-sm text-slate-400">Your profile and connections.</p>
       </div>
 
       <Card className="mb-5 p-5">
@@ -151,11 +151,16 @@ export default async function SettingsPage() {
               defaultValue={user.placementDate ? user.placementDate.toISOString().slice(0, 10) : ""}
             />
           </div>
-          <label className="flex items-center gap-2 text-xs text-muted">
-            <input type="checkbox" name="digestEnabled" defaultChecked={user.digestEnabled} className="h-3.5 w-3.5" />
+          <label className="flex items-center gap-2.5 text-xs text-muted cursor-pointer select-none">
+            <input
+              type="checkbox"
+              name="digestEnabled"
+              defaultChecked={user.digestEnabled}
+              className="h-4 w-4 rounded-md border-border/80 bg-surface-2/80 accent-purple-600 focus:ring-1 focus:ring-accent/30"
+            />
             Send me a weekly email digest of my readiness score and nudges
           </label>
-          <Button type="submit">Save changes</Button>
+          <Button type="submit" className="w-full sm:w-auto">Save changes</Button>
         </form>
       </Card>
 

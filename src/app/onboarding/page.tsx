@@ -38,11 +38,15 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 shadow-sm">
-        <h1 className="text-lg font-semibold">Set up your dashboard</h1>
-        <p className="mt-1 text-sm text-muted">
-          Signed in as <span className="font-data text-foreground">@{user.githubUsername}</span>. A
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#080c17] px-4">
+      {/* Ambient Nebula Glows */}
+      <div className="pointer-events-none absolute right-1/4 top-1/4 h-[500px] w-[500px] rounded-full bg-purple-600/15 blur-[140px]" />
+      <div className="pointer-events-none absolute left-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full bg-indigo-600/15 blur-[140px]" />
+
+      <div className="relative z-10 w-full max-w-md rounded-[24px] border border-[#1e263d] bg-gradient-to-b from-[#111728]/95 to-[#0d1220]/95 p-8 shadow-2xl shadow-black/60 backdrop-blur-md">
+        <h1 className="text-xl font-bold tracking-tight text-white">Set up your dashboard</h1>
+        <p className="mt-1 text-sm text-slate-400">
+          Signed in as <span className="font-data font-semibold text-purple-400">@{user.githubUsername}</span>. A
           couple more details and you&apos;re in.
         </p>
 
