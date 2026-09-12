@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   // WebSocket library only needed locally where the global WebSocket API
   // isn't available.
   serverExternalPackages: ["ws"],
+  async rewrites() {
+    return [
+      {
+        source: "/portfolio",
+        destination: "/portfolio/index.html",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
