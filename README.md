@@ -23,7 +23,7 @@ placeholder data.
   <img src="./public/overview.png" width="24%" alt="Overview" />
   <img src="./public/github.png" width="24%" alt="GitHub Integration" />
   <img src="./public/prep.png" width="24%" alt="Company Prep Focus" />
-  <img src="./public/settings.png" width="24%" alt="Settings" />
+  <img src="./public/reviews.png" width="24%" alt="AI Weekly Reviews" />
 </div>
 
 ---
