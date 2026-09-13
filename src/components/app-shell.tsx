@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Menu } from "lucide-react";
+import { Menu, Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Sidebar } from "./sidebar";
 
 export function AppShell({
@@ -13,6 +14,12 @@ export function AppShell({
 }) {
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const closeSidebar = useCallback(() => {
     setClosing(true);
@@ -69,7 +76,7 @@ export function AppShell({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setOpen(true)}
-              className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-foreground active:scale-95 transition-all"
+              className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-foreground active:scale-95 transition-all cursor-pointer"
               aria-label="Open menu"
             >
               <Menu size={20} />
@@ -83,6 +90,21 @@ export function AppShell({
               </span>
             </div>
           </div>
+
+          {/* Quick Mobile Theme Toggle */}
+          {mounted && (
+            <button
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-surface-2/60 text-muted hover:bg-surface-2 hover:text-foreground active:scale-95 transition-all cursor-pointer"
+              aria-label="Toggle theme"
+            >
+              {resolvedTheme === "dark" ? (
+                <Sun size={16} className="text-amber-400" />
+              ) : (
+                <Moon size={16} className="text-indigo-600" />
+              )}
+            </button>
+          )}
         </header>
 
         {/* Main Content Area with Subtle Ambient Glow */}

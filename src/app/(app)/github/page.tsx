@@ -40,9 +40,9 @@ function StatTile({
   color: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-[#1c2438] bg-[#121829]/70 px-3 py-2.5 shadow-inner">
+    <div className="flex items-center gap-3 rounded-xl border border-border bg-surface-2/60 dark:border-[#1c2438] dark:bg-[#121829]/70 px-3 py-2.5 shadow-xs transition-colors">
       <div
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-md"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm"
         style={{ background: color }}
       >
         {icon}
