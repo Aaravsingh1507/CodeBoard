@@ -48,8 +48,8 @@ function StatTile({
         {icon}
       </div>
       <div className="min-w-0">
-        <p className="font-data text-lg font-bold leading-tight text-white">{value.toLocaleString()}</p>
-        <p className="truncate text-[11px] text-slate-400">{label}</p>
+        <p className="font-data text-lg font-bold leading-tight text-foreground dark:text-white">{value.toLocaleString()}</p>
+        <p className="truncate text-[11px] text-muted dark:text-slate-400">{label}</p>
       </div>
     </div>
   );
@@ -64,8 +64,8 @@ export default function GithubPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">GitHub</h1>
-          <p className="mt-1 text-sm text-slate-400">Contribution activity, languages, and recent work.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl">GitHub</h1>
+          <p className="mt-1 text-sm text-muted dark:text-slate-400">Contribution activity, languages, and recent work.</p>
         </div>
         <Button variant="secondary" size="sm" onClick={() => refetch({ force: true })} disabled={loading}>
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />

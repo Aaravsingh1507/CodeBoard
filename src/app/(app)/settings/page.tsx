@@ -69,8 +69,8 @@ export default async function SettingsPage() {
   return (
     <div className="max-w-xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Settings</h1>
-        <p className="mt-1 text-sm text-slate-400">Your profile and connections.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl">Settings</h1>
+        <p className="mt-1 text-sm text-muted dark:text-slate-400">Your profile and connections.</p>
       </div>
 
       <Card className="mb-5 p-5">

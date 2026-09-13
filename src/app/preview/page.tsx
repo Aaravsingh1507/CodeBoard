@@ -139,10 +139,10 @@ export default function PreviewPage() {
           <div className="space-y-6 animate-fade-in">
             {/* Title Header */}
             <div>
-              <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              <h1 className="text-3xl font-extrabold tracking-tight text-foreground dark:text-white sm:text-4xl">
                 Over<span className="gradient-title-view">view</span>
               </h1>
-              <p className="mt-1.5 text-sm text-slate-400">
+              <p className="mt-1.5 text-sm text-muted dark:text-slate-400">
                 Everything you&apos;re working toward, in one place.
               </p>
             </div>
@@ -165,13 +165,13 @@ export default function PreviewPage() {
         {activeTab === "settings" && (
           <div className="max-w-xl space-y-5 animate-fade-in">
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-white">Settings</h1>
-              <p className="mt-1 text-sm text-slate-400">Your profile and connections.</p>
+              <h1 className="text-xl font-bold tracking-tight text-foreground dark:text-white">Settings</h1>
+              <p className="mt-1 text-sm text-muted dark:text-slate-400">Your profile and connections.</p>
             </div>
 
             {/* GitHub Card */}
             <Card className="p-5">
-              <h2 className="mb-4 text-sm font-semibold text-white">GitHub</h2>
+              <h2 className="mb-4 text-sm font-semibold text-foreground dark:text-white">GitHub</h2>
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-inner">
                   AS
@@ -188,7 +188,7 @@ export default function PreviewPage() {
 
             {/* Public Profile Card */}
             <Card className="p-5">
-              <h2 className="mb-1 text-sm font-semibold text-white">Public profile</h2>
+              <h2 className="mb-1 text-sm font-semibold text-foreground dark:text-white">Public profile</h2>
               <p className="mb-4 text-xs text-muted leading-relaxed">
                 A shareable, read-only link with your readiness score and stats — safe to put in a resume
                 or LinkedIn. Applications, resume files, and target companies are never shown publicly.
@@ -200,7 +200,7 @@ export default function PreviewPage() {
 
             {/* Profile Form Card */}
             <Card className="p-5">
-              <h2 className="mb-4 text-sm font-semibold text-white">Profile</h2>
+              <h2 className="mb-4 text-sm font-semibold text-foreground dark:text-white">Profile</h2>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-muted">LeetCode username</label>
@@ -255,8 +255,8 @@ export default function PreviewPage() {
           <div className="space-y-5 animate-fade-in">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-white">Resume</h1>
-                <p className="mt-1 text-sm text-slate-400">Keep every version, mark the one you&apos;re using.</p>
+                <h1 className="text-xl font-bold tracking-tight text-foreground dark:text-white">Resume</h1>
+                <p className="mt-1 text-sm text-muted dark:text-slate-400">Keep every version, mark the one you&apos;re using.</p>
               </div>
               <Button>
                 <Upload size={15} /> Upload version
@@ -266,7 +266,7 @@ export default function PreviewPage() {
             <Card className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="flex items-center gap-1.5 text-sm font-semibold text-white">
+                  <h2 className="flex items-center gap-1.5 text-sm font-semibold text-foreground dark:text-white">
                     <Sparkles size={15} className="text-accent" />
                     Resume bullets from your real work
                   </h2>
@@ -289,7 +289,7 @@ export default function PreviewPage() {
                     key={i}
                     className="flex items-start justify-between gap-3 rounded-xl border border-border/60 bg-surface-2/70 px-3.5 py-2.5 text-sm text-foreground transition-colors hover:bg-surface-2"
                   >
-                    <span className="leading-relaxed text-slate-200">{b}</span>
+                    <span className="leading-relaxed text-slate-700 dark:text-slate-200">{b}</span>
                     <button
                       onClick={() => {
                         setCopiedBullet(i);
@@ -298,7 +298,7 @@ export default function PreviewPage() {
                       className="shrink-0 text-muted hover:text-accent pt-0.5"
                     >
                       {copiedBullet === i ? (
-                        <Check size={14} className="text-accent-2" />
+                        <Check size={14} className="text-teal-600 dark:text-accent-2" />
                       ) : (
                         <Copy size={14} />
                       )}
@@ -335,8 +335,8 @@ export default function PreviewPage() {
           <div className="space-y-5 animate-fade-in">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-white">Goals</h1>
-                <p className="mt-1 text-sm text-slate-400">Set targets and watch your progress fill in.</p>
+                <h1 className="text-xl font-bold tracking-tight text-foreground dark:text-white">Goals</h1>
+                <p className="mt-1 text-sm text-muted dark:text-slate-400">Set targets and watch your progress fill in.</p>
               </div>
               <Button>
                 <Plus size={15} /> New goal
@@ -347,7 +347,7 @@ export default function PreviewPage() {
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/20 text-accent">
                 <CalendarClock size={16} />
               </div>
-              <span className="text-xs sm:text-sm text-slate-200 leading-relaxed">
+              <span className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
                 Your placement date has passed — update it in Settings if you have a new one.
               </span>
             </div>
@@ -357,14 +357,14 @@ export default function PreviewPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <span className="text-xs font-semibold text-accent uppercase tracking-wider">LeetCode</span>
-                    <h3 className="text-base font-bold text-white mt-1">Solve 100 Medium Problems</h3>
+                    <h3 className="text-base font-bold text-foreground dark:text-white mt-1">Solve 100 Medium Problems</h3>
                   </div>
                   <Badge tone="warn">In progress</Badge>
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex justify-between text-xs">
                     <span className="text-muted">Progress</span>
-                    <span className="font-semibold text-white">48 / 100</span>
+                    <span className="font-semibold text-foreground dark:text-white">48 / 100</span>
                   </div>
                   <Progress value={48} />
                 </div>
@@ -373,15 +373,15 @@ export default function PreviewPage() {
               <Card className="p-5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-xs font-semibold text-accent-2 uppercase tracking-wider">GitHub</span>
-                    <h3 className="text-base font-bold text-white mt-1">30-Day Contribution Streak</h3>
+                    <span className="text-xs font-semibold text-teal-600 dark:text-accent-2 uppercase tracking-wider">GitHub</span>
+                    <h3 className="text-base font-bold text-foreground dark:text-white mt-1">30-Day Contribution Streak</h3>
                   </div>
                   <Badge tone="neutral">0d streak</Badge>
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex justify-between text-xs">
                     <span className="text-muted">Progress</span>
-                    <span className="font-semibold text-white">1 / 30</span>
+                    <span className="font-semibold text-foreground dark:text-white">1 / 30</span>
                   </div>
                   <Progress value={3.3} />
                 </div>
@@ -395,8 +395,8 @@ export default function PreviewPage() {
           <div className="space-y-5 animate-fade-in">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-white">Circles</h1>
-                <p className="mt-1 text-sm text-slate-400">
+                <h1 className="text-xl font-bold tracking-tight text-foreground dark:text-white">Circles</h1>
+                <p className="mt-1 text-sm text-muted dark:text-slate-400">
                   Small accountability groups — see each other&apos;s streak and readiness, nothing more.
                 </p>
               </div>
@@ -411,7 +411,7 @@ export default function PreviewPage() {
             <Card className="p-5">
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <p className="text-base font-bold text-white">ai a</p>
+                  <p className="text-base font-bold text-foreground dark:text-white">ai a</p>
                   <p className="text-xs text-muted">
                     Invite code: <span className="font-data font-semibold text-accent">GPC2JH</span> · 3 members
                   </p>
@@ -452,8 +452,8 @@ export default function PreviewPage() {
           <div className="space-y-5 animate-fade-in">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-white">AI weekly reviews</h1>
-                <p className="mt-1 text-sm text-slate-400">
+                <h1 className="text-xl font-bold tracking-tight text-foreground dark:text-white">AI weekly reviews</h1>
+                <p className="mt-1 text-sm text-muted dark:text-slate-400">
                   A short, honest look back — generated automatically every Sunday night, or on demand.
                 </p>
               </div>
@@ -466,16 +466,16 @@ export default function PreviewPage() {
               <p className="mb-2 text-xs font-medium text-muted">
                 Week of Aug 27, 2026 – Sep 2, 2026 · generated Sep 2, 2026
               </p>
-              <p className="text-sm text-slate-200 leading-relaxed">
+              <p className="text-sm text-foreground leading-relaxed">
                 It looks like this week was a quiet period for coding activities, which can happen to anyone.
                 Use this as a fresh start to build momentum next week!
               </p>
 
-              <div className="mt-4 pt-3 border-t border-border/40">
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-300">
-                  <TrendingUp size={13} className="text-accent-2" /> Observations
+              <div className="mt-4 pt-3 border-t border-border/60">
+                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                  <TrendingUp size={13} className="text-teal-600 dark:text-accent-2" /> Observations
                 </p>
-                <ul className="space-y-1.5 text-sm text-slate-300">
+                <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
                   <li className="flex items-start gap-2 leading-relaxed">
                     <span className="text-muted shrink-0 mt-0.5">•</span>
                     <span>No GitHub contributions, pull requests, or LeetCode submissions were recorded.</span>
@@ -491,11 +491,11 @@ export default function PreviewPage() {
                 </ul>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-border/40">
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-300">
-                  <Lightbulb size={13} className="text-warn" /> For next week
+              <div className="mt-4 pt-3 border-t border-border/60">
+                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                  <Lightbulb size={13} className="text-amber-600 dark:text-warn" /> For next week
                 </p>
-                <ul className="space-y-1.5 text-sm text-slate-300">
+                <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
                   <li className="flex items-start gap-2 leading-relaxed">
                     <span className="text-muted shrink-0 mt-0.5">•</span>
                     <span>Set a small, achievable goal for the next week, such as making one GitHub commit or solving one easy LeetCode problem.</span>
@@ -519,8 +519,8 @@ export default function PreviewPage() {
           <div className="space-y-5 animate-fade-in">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-white">Applications</h1>
-                <p className="mt-1 text-sm text-slate-400">
+                <h1 className="text-xl font-bold tracking-tight text-foreground dark:text-white">Applications</h1>
+                <p className="mt-1 text-sm text-muted dark:text-slate-400">
                   3 total · 2 applied · 50% response rate
                 </p>
               </div>
@@ -536,7 +536,7 @@ export default function PreviewPage() {
                   <span className="h-2 w-2 rounded-full bg-purple-500" />
                 </div>
                 <div className="rounded-xl border border-border/60 bg-surface-2/70 p-3">
-                  <p className="text-sm font-semibold text-white">Google</p>
+                  <p className="text-sm font-semibold text-foreground dark:text-white">Google</p>
                   <p className="text-xs text-muted">Software Engineer (Frontend)</p>
                 </div>
               </Card>
@@ -547,7 +547,7 @@ export default function PreviewPage() {
                   <span className="h-2 w-2 rounded-full bg-blue-500" />
                 </div>
                 <div className="rounded-xl border border-border/60 bg-surface-2/70 p-3">
-                  <p className="text-sm font-semibold text-white">Microsoft</p>
+                  <p className="text-sm font-semibold text-foreground dark:text-white">Microsoft</p>
                   <p className="text-xs text-muted">Full Stack Engineer · Applied Sep 2</p>
                 </div>
               </Card>
@@ -558,7 +558,7 @@ export default function PreviewPage() {
                   <span className="h-2 w-2 rounded-full bg-teal-500" />
                 </div>
                 <div className="rounded-xl border border-border/60 bg-surface-2/70 p-3">
-                  <p className="text-sm font-semibold text-white">Amazon</p>
+                  <p className="text-sm font-semibold text-foreground dark:text-white">Amazon</p>
                   <p className="text-xs text-muted">SDE-1 · Round 2 Technical</p>
                 </div>
               </Card>

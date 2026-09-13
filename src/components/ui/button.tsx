@@ -17,7 +17,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant === "primary" &&
             "bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-md shadow-purple-900/25 border border-purple-500/30",
           variant === "secondary" &&
-            "bg-surface-2/80 text-foreground border border-border/80 hover:bg-surface-2 hover:border-border text-slate-200",
+            "bg-surface-2/80 text-foreground border border-border/80 hover:bg-surface-2 hover:border-border",
           variant === "ghost" && "text-muted hover:text-foreground hover:bg-surface-2/60",
           variant === "danger" && "bg-danger/10 text-danger border border-danger/30 hover:bg-danger/20",
           className

@@ -14,11 +14,11 @@ function levelFor(count: number) {
 }
 
 const LEVEL_CLASSES = [
-  "bg-[#141c2e] border border-[#1d273e]/70",
-  "bg-teal-950/80 border border-teal-800/50",
-  "bg-teal-700/80 border border-teal-500/60",
-  "bg-teal-500 border border-teal-400/70 shadow-[0_0_4px_rgba(20,184,166,0.4)]",
-  "bg-[#2dd4bf] border border-teal-200 shadow-[0_0_10px_rgba(45,212,191,0.8)]",
+  "bg-slate-200/90 border border-slate-300/80 dark:bg-[#141c2e] dark:border-[#1d273e]/70",
+  "bg-emerald-200 border border-emerald-300 dark:bg-teal-950/80 dark:border-teal-800/50",
+  "bg-emerald-400 border border-emerald-500 dark:bg-teal-700/80 dark:border-teal-500/60",
+  "bg-emerald-500 border border-emerald-600 dark:bg-teal-500 dark:border-teal-400/70 dark:shadow-[0_0_4px_rgba(20,184,166,0.4)]",
+  "bg-emerald-600 border border-emerald-700 dark:bg-[#2dd4bf] dark:border-teal-200 dark:shadow-[0_0_10px_rgba(45,212,191,0.8)]",
 ];
 
 export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {

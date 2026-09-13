@@ -45,8 +45,8 @@ export default function ResumePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Resume</h1>
-          <p className="mt-1 text-sm text-slate-400">Keep every version, mark the one you&apos;re using.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl">Resume</h1>
+          <p className="mt-1 text-sm text-muted dark:text-slate-400">Keep every version, mark the one you&apos;re using.</p>
         </div>
         <Button onClick={() => setShowForm(true)} className="whitespace-nowrap shrink-0">
           <Upload size={15} /> Upload version

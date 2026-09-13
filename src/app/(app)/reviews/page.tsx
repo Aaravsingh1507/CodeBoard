@@ -42,8 +42,8 @@ export default function ReviewsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">AI weekly reviews</h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl">AI weekly reviews</h1>
+          <p className="mt-1 text-sm text-muted dark:text-slate-400">
             A short, honest look back — generated automatically every Sunday night, or on demand.
           </p>
         </div>
@@ -79,14 +79,14 @@ export default function ReviewsPage() {
               Week of {formatDate(r.weekStart)} – {formatDate(r.weekEnd)} · generated{" "}
               {formatDate(r.generatedAt)}
             </p>
-            <p className="text-sm text-foreground">{r.summaryText}</p>
+            <p className="text-sm text-foreground leading-relaxed">{r.summaryText}</p>
 
             {r.observations.length > 0 && (
-              <div className="mt-4 pt-3 border-t border-border/40">
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-300">
-                  <TrendingUp size={13} className="text-accent-2" /> Observations
+              <div className="mt-4 pt-3 border-t border-border/60">
+                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                  <TrendingUp size={13} className="text-teal-600 dark:text-accent-2" /> Observations
                 </p>
-                <ul className="space-y-1.5 text-sm text-slate-300">
+                <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
                   {r.observations.map((o, i) => (
                     <li key={i} className="flex items-start gap-2 leading-relaxed">
                       <span className="text-muted shrink-0 mt-0.5">•</span>
@@ -98,11 +98,11 @@ export default function ReviewsPage() {
             )}
 
             {r.suggestions.length > 0 && (
-              <div className="mt-4 pt-3 border-t border-border/40">
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-300">
-                  <Lightbulb size={13} className="text-warn" /> For next week
+              <div className="mt-4 pt-3 border-t border-border/60">
+                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                  <Lightbulb size={13} className="text-amber-600 dark:text-warn" /> For next week
                 </p>
-                <ul className="space-y-1.5 text-sm text-slate-300">
+                <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
                   {r.suggestions.map((s, i) => (
                     <li key={i} className="flex items-start gap-2 leading-relaxed">
                       <span className="text-muted shrink-0 mt-0.5">•</span>

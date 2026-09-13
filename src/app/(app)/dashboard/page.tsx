@@ -11,10 +11,10 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Overview Hero Title */}
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+        <h1 className="text-3xl font-extrabold tracking-tight text-foreground dark:text-white sm:text-4xl">
           Over<span className="gradient-title-view">view</span>
         </h1>
-        <p className="mt-1.5 text-sm text-slate-400">
+        <p className="mt-1.5 text-sm text-muted dark:text-slate-400">
           Everything you&apos;re working toward, in one place.
         </p>
       </div>

@@ -77,8 +77,8 @@ export default function GoalsPage() {
       {/* Header — flex-wrap prevents squished button on narrow screens */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Goals</h1>
-          <p className="mt-1 text-sm text-slate-400">Set targets and watch your progress fill in.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl">Goals</h1>
+          <p className="mt-1 text-sm text-muted dark:text-slate-400">Set targets and watch your progress fill in.</p>
         </div>
         <Button
           onClick={() => setShowForm(true)}
