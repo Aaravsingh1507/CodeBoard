@@ -134,21 +134,44 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
             </div>
           </div>
 
-          {/* Middle section: Titles + 4 Metrics */}
+          {/* Middle section: Titles + CTA Header + 4 Metrics */}
           <div className="flex-1 min-w-0">
-            <div>
-              <h2 className="text-xl font-bold tracking-tight text-foreground dark:text-white">
-                Readiness score —{" "}
-                <span className="text-purple-600 dark:text-purple-400 font-bold">{scoreLabel(data.score)}</span>
-              </h2>
-              <p className="mt-1 text-xs text-muted dark:text-slate-400">
-                Focus area right now:{" "}
-                <span className="font-semibold text-purple-600 dark:text-purple-400">{data.focusArea}</span>
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-bold tracking-tight text-foreground dark:text-white">
+                  Readiness score —{" "}
+                  <span className="text-purple-600 dark:text-purple-400 font-bold">{scoreLabel(data.score)}</span>
+                </h2>
+                <p className="mt-1 text-xs text-muted dark:text-slate-400">
+                  Focus area right now:{" "}
+                  <span className="font-semibold text-purple-600 dark:text-purple-400">{data.focusArea}</span>
+                </p>
+              </div>
+
+              {/* Small steps / Big progress Capsule Button */}
+              <Link
+                href="/goals"
+                className="group flex items-center justify-between sm:justify-start gap-3 rounded-xl border border-border bg-surface-2/60 px-3.5 py-2 transition-all hover:bg-surface-2 hover:border-purple-500/30 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 shrink-0 self-stretch sm:self-auto shadow-xs"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-100 border border-rose-200/80 text-rose-600 dark:bg-rose-500/20 dark:border-rose-500/30 dark:text-rose-400 text-xs shrink-0">
+                    🎯
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <span className="text-xs font-semibold text-foreground dark:text-white leading-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                      Small steps
+                    </span>
+                    <span className="text-[10px] text-muted dark:text-slate-400 leading-tight">
+                      Big progress
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight size={14} className="text-muted dark:text-slate-400 transition-transform group-hover:translate-x-0.5 ml-1" />
+              </Link>
             </div>
 
             {/* 4 Categories */}
-            <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2 2xl:grid-cols-4">
+            <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
               {categories.map((c) => {
                 const Icon = c.icon;
                 const pct = Math.min(100, Math.max(0, (c.score / c.max) * 100));
@@ -183,23 +206,6 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
                 );
               })}
             </div>
-          </div>
-
-          {/* Right Section: Small steps / Big progress Capsule Button */}
-          <div className="flex shrink-0 items-center justify-end">
-            <Link
-              href="/goals"
-              className="flex items-center gap-3 rounded-2xl border border-border bg-surface-2/60 px-4 py-2.5 transition-all hover:bg-surface-2 hover:border-purple-500/30 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-500/20 text-rose-400">
-                🎯
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-xs font-semibold text-foreground dark:text-white leading-tight">Small steps</span>
-                <span className="text-[11px] text-muted dark:text-slate-400 leading-tight">Big progress</span>
-              </div>
-              <ChevronRight size={14} className="text-muted dark:text-slate-400 ml-1" />
-            </Link>
           </div>
         </div>
 
