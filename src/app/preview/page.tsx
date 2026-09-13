@@ -51,7 +51,7 @@ export default function PreviewPage() {
     score: 12,
     breakdown: [
       { label: "Consistency", score: 0, max: 25, detail: "0-day streak" },
-      { label: "Problem-solving", score: 0, max: 25, detail: "48 LeetCode solved" },
+      { label: "Problem-solving", score: 0, max: 25, detail: "No LeetCode account linked" },
       { label: "Job-search momentum", score: 0, max: 25, detail: "0 applications" },
       { label: "Goal follow-through", score: 12, max: 25, detail: "Goals active" },
     ],
@@ -75,33 +75,31 @@ export default function PreviewPage() {
   const previewGithub: GithubStats = {
     login: "Aaravsingh1507",
     avatarUrl: "",
-    publicRepos: 12,
-    followers: 8,
-    following: 5,
-    totalStars: 4,
-    totalForks: 2,
-    totalWatchers: 3,
-    totalPRs: 8,
-    totalIssues: 2,
-    totalContributionsLastYear: 134,
-    contributionCalendar: [],
-    topLanguages: [],
+    publicRepos: 4,
+    followers: 6,
+    following: 10,
+    totalStars: 0,
+    totalForks: 0,
+    totalWatchers: 0,
+    totalPRs: 0,
+    totalIssues: 0,
+    totalContributionsLastYear: 13,
+    contributionCalendar: [
+      { date: "2026-07-06", count: 3 },
+      { date: "2026-07-20", count: 1 },
+      { date: "2026-08-03", count: 1 },
+      { date: "2026-08-17", count: 2 },
+      { date: "2026-08-31", count: 3 },
+      { date: "2026-09-14", count: 3 },
+    ],
+    topLanguages: [{ name: "Python", bytes: 45000 }, { name: "TypeScript", bytes: 32000 }],
     recentActivity: [],
     totalClones: 0,
     totalViews: 0,
     topReferrers: [],
   };
 
-  const previewLeetcode: LeetcodeStats = {
-    username: "Aaravsingh1507",
-    ranking: 1234,
-    totalSolved: 48,
-    easySolved: 25,
-    mediumSolved: 18,
-    hardSolved: 5,
-    recentSubmissions: [],
-    topicBreakdown: [],
-  };
+  const previewLeetcode: LeetcodeStats | undefined = undefined;
 
   const [copiedBullet, setCopiedBullet] = useState<number | null>(null);
 

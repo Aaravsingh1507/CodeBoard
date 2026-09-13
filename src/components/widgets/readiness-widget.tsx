@@ -147,21 +147,24 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
             </div>
 
             {/* 4 Categories */}
-            <div className="mt-4 grid grid-cols-2 gap-3.5 sm:grid-cols-4">
+            <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2 2xl:grid-cols-4">
               {categories.map((c) => {
                 const Icon = c.icon;
                 const pct = Math.min(100, Math.max(0, (c.score / c.max) * 100));
 
                 return (
-                  <div key={c.label} className="flex flex-col justify-between">
-                    <div className="flex items-center justify-between text-xs mb-1.5 gap-1.5">
-                      <div className="flex items-center gap-1.5 min-w-0">
+                  <div key={c.label} className="flex flex-col justify-between min-w-0">
+                    <div className="flex items-center justify-between text-xs mb-1.5 gap-2 min-w-0">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
                         <Icon size={13} className={`${c.iconColor} shrink-0`} />
-                        <span className="whitespace-nowrap text-[11px] xl:text-xs font-medium text-slate-300">
+                        <span
+                          className="truncate text-[11px] xl:text-xs font-medium text-slate-300"
+                          title={c.label}
+                        >
                           {c.label}
                         </span>
                       </div>
-                      <span className="font-data text-xs font-bold text-white shrink-0">
+                      <span className="font-data text-xs font-bold text-white shrink-0 ml-1">
                         {c.score}/{c.max}
                       </span>
                     </div>
