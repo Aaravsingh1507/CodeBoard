@@ -57,22 +57,22 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
   const areaPath = `${linePath} L ${points[points.length - 1].x} ${baseY} L ${points[0].x} ${baseY} Z`;
 
   return (
-    <Card className="relative overflow-hidden rounded-[22px] border border-[#1e263d] bg-gradient-to-b from-[#111728]/95 to-[#0d1220]/95 p-6 shadow-2xl shadow-black/50 backdrop-blur-md flex-1 flex flex-col justify-between">
+    <Card className="relative overflow-hidden rounded-[22px] border border-border bg-surface p-6 shadow-xs dark:border-[#1e263d] dark:bg-gradient-to-b dark:from-[#111728]/95 dark:to-[#0d1220]/95 dark:shadow-2xl dark:shadow-black/50 dark:backdrop-blur-md flex-1 flex flex-col justify-between">
       <CardContent className="p-0 flex flex-col justify-between h-full">
         {/* Top Row: Title + Full stats link */}
         <div className="flex items-center justify-between pb-1">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#231911] border border-[#543b18] text-[#f59e0b] shrink-0 shadow-inner">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 border border-amber-200 text-[#f59e0b] dark:bg-[#231911] dark:border-[#543b18] shrink-0 shadow-inner">
               <LeetcodeIcon size={22} className="text-[#f59e0b]" />
             </div>
             <div>
-              <h3 className="text-lg font-bold tracking-tight text-white leading-tight">LeetCode</h3>
-              <p className="text-xs text-slate-400 font-normal">Practice. Improve. Land your dream.</p>
+              <h3 className="text-lg font-bold tracking-tight text-foreground dark:text-white leading-tight">LeetCode</h3>
+              <p className="text-xs text-muted dark:text-slate-400 font-normal">Practice. Improve. Land your dream.</p>
             </div>
           </div>
           <Link
             href="/leetcode"
-            className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+            className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-3 py-1.5 text-xs font-medium text-foreground dark:text-slate-300 transition-colors hover:bg-surface-2 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:text-white"
           >
             <span>Full stats</span>
             <span className="text-xs">↗</span>
@@ -91,9 +91,9 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
             </div>
             <button
               onClick={() => refetch()}
-              className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white shrink-0 ml-2"
+              className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-3 py-1.5 text-xs font-medium text-foreground dark:border-white/10 dark:bg-white/5 dark:text-slate-300 hover:bg-surface-2 dark:hover:bg-white/10 dark:hover:text-white shrink-0 ml-2"
             >
-              <RefreshCw size={12} className="text-slate-400" />
+              <RefreshCw size={12} className="text-muted dark:text-slate-400" />
               <span>Retry</span>
             </button>
           </div>
@@ -104,39 +104,39 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
         {/* 3 Stat Cards Row */}
         <div className="relative z-10 mt-4 grid grid-cols-3 gap-3">
           {/* Problems Solved Card */}
-          <div className="rounded-2xl border border-white/5 bg-[#0d1322]/80 p-3 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2b1f13] border border-[#52381e] text-amber-400 shrink-0">
+          <div className="rounded-2xl border border-border bg-surface-2/50 p-3 flex items-center gap-3 dark:border-white/5 dark:bg-[#0d1322]/80">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 border border-amber-200 text-amber-600 dark:bg-[#2b1f13] dark:border-[#52381e] dark:text-amber-400 shrink-0">
               <Check size={16} className="stroke-[2.5]" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium text-slate-400 truncate">Problems Solved</p>
-              <p className="font-data text-xl font-bold text-white leading-tight mt-0.5">
+              <p className="text-[11px] font-medium text-muted dark:text-slate-400 truncate">Problems Solved</p>
+              <p className="font-data text-xl font-bold text-foreground dark:text-white leading-tight mt-0.5">
                 {hasData && data ? data.totalSolved : "—"}
               </p>
             </div>
           </div>
 
           {/* Acceptance Rate Card */}
-          <div className="rounded-2xl border border-white/5 bg-[#0d1322]/80 p-3 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2b1f13] border border-[#52381e] text-amber-400 shrink-0">
+          <div className="rounded-2xl border border-border bg-surface-2/50 p-3 flex items-center gap-3 dark:border-white/5 dark:bg-[#0d1322]/80">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 border border-amber-200 text-amber-600 dark:bg-[#2b1f13] dark:border-[#52381e] dark:text-amber-400 shrink-0">
               <BarChart2 size={16} />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium text-slate-400 truncate">Acceptance Rate</p>
-              <p className="font-data text-xl font-bold text-white leading-tight mt-0.5">
+              <p className="text-[11px] font-medium text-muted dark:text-slate-400 truncate">Acceptance Rate</p>
+              <p className="font-data text-xl font-bold text-foreground dark:text-white leading-tight mt-0.5">
                 {hasData && data?.acceptanceRate ? data.acceptanceRate : "—"}
               </p>
             </div>
           </div>
 
           {/* Ranking Card */}
-          <div className="rounded-2xl border border-white/5 bg-[#0d1322]/80 p-3 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2b1f13] border border-[#52381e] text-amber-400 shrink-0">
+          <div className="rounded-2xl border border-border bg-surface-2/50 p-3 flex items-center gap-3 dark:border-white/5 dark:bg-[#0d1322]/80">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 border border-amber-200 text-amber-600 dark:bg-[#2b1f13] dark:border-[#52381e] dark:text-amber-400 shrink-0">
               <Trophy size={16} />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium text-slate-400 truncate">Ranking</p>
-              <p className="font-data text-xl font-bold text-white leading-tight mt-0.5">
+              <p className="text-[11px] font-medium text-muted dark:text-slate-400 truncate">Ranking</p>
+              <p className="font-data text-xl font-bold text-foreground dark:text-white leading-tight mt-0.5">
                 {hasData && data?.ranking ? `#${data.ranking.toLocaleString()}` : "—"}
               </p>
             </div>
@@ -146,12 +146,12 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
         {/* Chart Header */}
         <div className="mt-5 flex items-center justify-between">
           <div>
-            <h4 className="text-xs font-bold tracking-tight text-white">Solved Problems</h4>
-            <p className="text-[11px] text-slate-400">Cumulative progress</p>
+            <h4 className="text-xs font-bold tracking-tight text-foreground dark:text-white">Solved Problems</h4>
+            <p className="text-[11px] text-muted dark:text-slate-400">Cumulative progress</p>
           </div>
-          <div className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-300 select-none">
+          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-2.5 py-1 text-xs font-medium text-foreground dark:text-slate-300 dark:border-white/10 dark:bg-white/5 select-none">
             <span>Last 12 weeks</span>
-            <ChevronDown size={12} className="text-slate-400" />
+            <ChevronDown size={12} className="text-muted dark:text-slate-400" />
           </div>
         </div>
 

@@ -76,7 +76,7 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
   ];
 
   return (
-    <Card className="rounded-[22px] border border-[#1e263d] bg-gradient-to-b from-[#111728]/95 to-[#0d1220]/95 p-0 shadow-2xl shadow-black/50 backdrop-blur-md">
+    <Card className="rounded-[22px] border border-border bg-surface p-0 shadow-xs dark:border-[#1e263d] dark:bg-gradient-to-b dark:from-[#111728]/95 dark:to-[#0d1220]/95 dark:shadow-2xl dark:shadow-black/50 dark:backdrop-blur-md">
       <CardContent className="p-6">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           {/* Left section: Donut gauge with floating sparkles matching reference */}
@@ -95,7 +95,8 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
                   </linearGradient>
                 </defs>
                 <circle
-                  stroke="#161c2d"
+                  stroke="currentColor"
+                  className="text-slate-100 dark:text-[#161c2d]"
                   fill="transparent"
                   strokeWidth={stroke}
                   r={normalizedRadius}
@@ -120,15 +121,15 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
               </svg>
 
               <div className="absolute flex flex-col items-center justify-center text-center">
-                <span className="font-data text-3xl font-extrabold text-white leading-none">
+                <span className="font-data text-3xl font-extrabold text-foreground dark:text-white leading-none">
                   {data.score}
                 </span>
-                <span className="text-[11px] font-medium text-slate-400 mt-1">/ 100</span>
+                <span className="text-[11px] font-medium text-muted dark:text-slate-400 mt-1">/ 100</span>
               </div>
             </div>
 
             {/* Getting Started / Tier Pill */}
-            <div className="mt-1.5 rounded-full border border-purple-500/30 bg-purple-950/70 px-3.5 py-0.5 text-[11px] font-medium text-purple-300 shadow-sm shadow-purple-900/40">
+            <div className="mt-1.5 rounded-full border border-purple-500/30 bg-purple-50 dark:bg-purple-950/70 px-3.5 py-0.5 text-[11px] font-medium text-purple-700 dark:text-purple-300 shadow-xs">
               {data.score < 40 ? "Getting Started" : scoreLabel(data.score)}
             </div>
           </div>
@@ -136,13 +137,13 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
           {/* Middle section: Titles + 4 Metrics */}
           <div className="flex-1 min-w-0">
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-white">
+              <h2 className="text-xl font-bold tracking-tight text-foreground dark:text-white">
                 Readiness score —{" "}
-                <span className="text-purple-400 font-bold">{scoreLabel(data.score)}</span>
+                <span className="text-purple-600 dark:text-purple-400 font-bold">{scoreLabel(data.score)}</span>
               </h2>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-muted dark:text-slate-400">
                 Focus area right now:{" "}
-                <span className="font-semibold text-purple-400">{data.focusArea}</span>
+                <span className="font-semibold text-purple-600 dark:text-purple-400">{data.focusArea}</span>
               </p>
             </div>
 
@@ -158,18 +159,18 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
                       <div className="flex items-center gap-1.5 min-w-0 flex-1">
                         <Icon size={13} className={`${c.iconColor} shrink-0`} />
                         <span
-                          className="truncate text-[11px] xl:text-xs font-medium text-slate-300"
+                          className="truncate text-[11px] xl:text-xs font-medium text-slate-700 dark:text-slate-300"
                           title={c.label}
                         >
                           {c.label}
                         </span>
                       </div>
-                      <span className="font-data text-xs font-bold text-white shrink-0 ml-1">
+                      <span className="font-data text-xs font-bold text-foreground dark:text-white shrink-0 ml-1">
                         {c.score}/{c.max}
                       </span>
                     </div>
 
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#182033]">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-[#182033]">
                       <div
                         className={`h-full rounded-full ${c.barColor} transition-all duration-700`}
                         style={{
@@ -188,23 +189,23 @@ export function ReadinessWidget({ previewData }: { previewData?: Readiness } = {
           <div className="flex shrink-0 items-center justify-end">
             <Link
               href="/goals"
-              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 transition-all hover:bg-white/10 hover:border-purple-500/30"
+              className="flex items-center gap-3 rounded-2xl border border-border bg-surface-2/60 px-4 py-2.5 transition-all hover:bg-surface-2 hover:border-purple-500/30 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
             >
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-500/20 text-rose-400">
                 🎯
               </div>
               <div className="flex flex-col text-left">
-                <span className="text-xs font-semibold text-white leading-tight">Small steps</span>
-                <span className="text-[11px] text-slate-400 leading-tight">Big progress</span>
+                <span className="text-xs font-semibold text-foreground dark:text-white leading-tight">Small steps</span>
+                <span className="text-[11px] text-muted dark:text-slate-400 leading-tight">Big progress</span>
               </div>
-              <ChevronRight size={14} className="text-slate-400 ml-1" />
+              <ChevronRight size={14} className="text-muted dark:text-slate-400 ml-1" />
             </Link>
           </div>
         </div>
 
         {/* Bottom Alert Row */}
-        <div className="mt-5 flex items-center gap-2 pt-3 border-t border-border/40 text-xs text-slate-400">
-          <Info size={14} className="text-amber-400 shrink-0" />
+        <div className="mt-5 flex items-center gap-2 pt-3 border-t border-border/40 text-xs text-muted dark:text-slate-400">
+          <Info size={14} className="text-amber-500 dark:text-amber-400 shrink-0" />
           <span>{defaultNudge}</span>
         </div>
       </CardContent>

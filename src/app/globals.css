@@ -2,16 +2,16 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  color-scheme: dark;
-  --background: #080c17;
-  --surface: #0e1426;
-  --surface-2: #141c32;
-  --border: #1a233c;
-  --foreground: #f8fafc;
-  --muted: #94a3b8;
-  --accent: #8b5cf6;      /* vibrant purple */
-  --accent-2: #2dd4bf;    /* cyan / teal */
-  --warn: #f59e0b;
+  color-scheme: light;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --border: #e2e8f0;
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --accent: #7c3aed;      /* vibrant purple */
+  --accent-2: #0d9488;    /* cyan / teal */
+  --warn: #d97706;
   --danger: #ef4444;
 }
 
@@ -221,6 +221,12 @@ img {
 
 /* Active navigation pill styling matching the reference design */
 .nav-pill-active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.16) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #7c3aed;
+}
+
+.dark .nav-pill-active {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.35) 0%, rgba(139, 92, 246, 0.3) 50%, rgba(168, 85, 247, 0.25) 100%);
   border: 1px solid rgba(168, 85, 247, 0.45);
   box-shadow: 0 4px 20px -2px rgba(139, 92, 246, 0.35), inset 0 1px 1px 0 rgba(255, 255, 255, 0.18);
@@ -228,16 +234,28 @@ img {
 }
 
 .glow-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glow-card {
   background: linear-gradient(180deg, rgba(17, 23, 40, 0.8) 0%, rgba(13, 18, 32, 0.9) 100%);
   border: 1px solid #1e263d;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
 }
 
 .glass-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+}
+
+.dark .glass-card {
   background: linear-gradient(180deg, rgba(17, 23, 40, 0.75) 0%, rgba(13, 18, 32, 0.85) 100%);
   border: 1px solid #1e263d;
   box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px);
 }
 
 .gradient-title-view {

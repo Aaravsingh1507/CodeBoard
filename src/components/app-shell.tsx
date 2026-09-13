@@ -78,8 +78,8 @@ export function AppShell({
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
                 <span className="font-mono text-xs font-bold text-white">&lt;/&gt;</span>
               </div>
-              <span className="text-sm font-bold tracking-tight text-white">
-                Code<span className="text-indigo-400">Board</span>
+              <span className="text-sm font-bold tracking-tight text-foreground dark:text-white">
+                Code<span className="text-indigo-500 dark:text-indigo-400">Board</span>
               </span>
             </div>
           </div>
@@ -87,12 +87,12 @@ export function AppShell({
 
         {/* Main Content Area with Subtle Ambient Glow */}
         <main
-          className="relative flex-1 overflow-y-auto scroll-touch bg-[#080c17]"
+          className="relative flex-1 overflow-y-auto scroll-touch bg-background dark:bg-[#080c17]"
           style={{ WebkitOverflowScrolling: "touch", willChange: "scroll-position" }}
         >
-          {/* Subtle Ambient Nebula Glows matching reference */}
-          <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-purple-600/12 blur-[140px]" />
-          <div className="pointer-events-none absolute left-1/4 top-40 h-[400px] w-[400px] rounded-full bg-indigo-600/10 blur-[130px]" />
+          {/* Subtle Ambient Nebula Glows */}
+          <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-purple-500/5 dark:bg-purple-600/12 blur-[140px]" />
+          <div className="pointer-events-none absolute left-1/4 top-40 h-[400px] w-[400px] rounded-full bg-indigo-500/5 dark:bg-indigo-600/10 blur-[130px]" />
 
           <div className="relative z-10 mx-auto max-w-7xl px-4 py-5 sm:px-6 md:px-8 md:py-7 animate-fade-in">
             {children}

@@ -75,22 +75,22 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
   const areaPath = `${linePath} L ${points[points.length - 1].x} ${baseY} L ${points[0].x} ${baseY} Z`;
 
   return (
-    <Card className="relative overflow-hidden rounded-[22px] border border-[#1e263d] bg-gradient-to-b from-[#111728]/95 to-[#0d1220]/95 p-6 shadow-2xl shadow-black/50 backdrop-blur-md flex-1 flex flex-col justify-between">
+    <Card className="relative overflow-hidden rounded-[22px] border border-border bg-surface p-6 shadow-xs dark:border-[#1e263d] dark:bg-gradient-to-b dark:from-[#111728]/95 dark:to-[#0d1220]/95 dark:shadow-2xl dark:shadow-black/50 dark:backdrop-blur-md flex-1 flex flex-col justify-between">
       <CardContent className="p-0 flex flex-col justify-between h-full">
         {/* Top Row: Title + Full stats link */}
         <div className="flex items-center justify-between pb-1">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1b1738] border border-[#3b2d6a] text-white shrink-0 shadow-inner">
-              <GithubIcon size={22} className="text-white" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 dark:bg-[#1b1738] dark:border-[#3b2d6a] dark:text-white shrink-0 shadow-inner">
+              <GithubIcon size={22} className="text-indigo-600 dark:text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold tracking-tight text-white leading-tight">GitHub</h3>
-              <p className="text-xs text-slate-400 font-normal">Build. Share. Collaborate.</p>
+              <h3 className="text-lg font-bold tracking-tight text-foreground dark:text-white leading-tight">GitHub</h3>
+              <p className="text-xs text-muted dark:text-slate-400 font-normal">Build. Share. Collaborate.</p>
             </div>
           </div>
           <Link
             href="/github"
-            className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+            className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-3 py-1.5 text-xs font-medium text-foreground dark:text-slate-300 transition-colors hover:bg-surface-2 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:text-white"
           >
             <span>Full stats</span>
             <span className="text-xs">↗</span>
@@ -107,49 +107,49 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
         {/* 3 Stat Cards Row */}
         <div className="relative z-10 mt-4 grid grid-cols-3 gap-3">
           {/* Repos Card */}
-          <div className="rounded-2xl border border-white/5 bg-[#0d1322]/80 p-3 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#231b47] border border-[#3d2f78] text-purple-400 shrink-0">
+          <div className="rounded-2xl border border-border bg-surface-2/50 p-3 flex items-center gap-3 dark:border-white/5 dark:bg-[#0d1322]/80">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 border border-purple-200 text-purple-600 dark:bg-[#231b47] dark:border-[#3d2f78] dark:text-purple-400 shrink-0">
               <BookOpen size={16} />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium text-slate-400 truncate">Repos</p>
-              <p className="font-data text-xl font-bold text-white leading-tight mt-0.5">
+              <p className="text-[11px] font-medium text-muted dark:text-slate-400 truncate">Repos</p>
+              <p className="font-data text-xl font-bold text-foreground dark:text-white leading-tight mt-0.5">
                 {loading && !data ? "..." : (data ? data.publicRepos : "—")}
               </p>
-              <p className="text-[10px] font-semibold text-emerald-400 flex items-center gap-0.5 mt-0.5">
-                ▲ 33% <span className="text-slate-500 font-normal text-[9px]">vs last month</span>
+              <p className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 mt-0.5">
+                ▲ 33% <span className="text-muted dark:text-slate-500 font-normal text-[9px]">vs last month</span>
               </p>
             </div>
           </div>
 
           {/* Contributions Card */}
-          <div className="rounded-2xl border border-white/5 bg-[#0d1322]/80 p-3 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#231b47] border border-[#3d2f78] text-purple-400 shrink-0">
+          <div className="rounded-2xl border border-border bg-surface-2/50 p-3 flex items-center gap-3 dark:border-white/5 dark:bg-[#0d1322]/80">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 border border-purple-200 text-purple-600 dark:bg-[#231b47] dark:border-[#3d2f78] dark:text-purple-400 shrink-0">
               <GitPullRequest size={16} />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium text-slate-400 truncate">Contributions</p>
-              <p className="font-data text-xl font-bold text-white leading-tight mt-0.5">
+              <p className="text-[11px] font-medium text-muted dark:text-slate-400 truncate">Contributions</p>
+              <p className="font-data text-xl font-bold text-foreground dark:text-white leading-tight mt-0.5">
                 {loading && !data ? "..." : (data ? data.totalContributionsLastYear : "—")}
               </p>
-              <p className="text-[10px] font-semibold text-emerald-400 flex items-center gap-0.5 mt-0.5">
-                ▲ 86% <span className="text-slate-500 font-normal text-[9px]">vs last month</span>
+              <p className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 mt-0.5">
+                ▲ 86% <span className="text-muted dark:text-slate-500 font-normal text-[9px]">vs last month</span>
               </p>
             </div>
           </div>
 
           {/* Followers Card */}
-          <div className="rounded-2xl border border-white/5 bg-[#0d1322]/80 p-3 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#231b47] border border-[#3d2f78] text-purple-400 shrink-0">
+          <div className="rounded-2xl border border-border bg-surface-2/50 p-3 flex items-center gap-3 dark:border-white/5 dark:bg-[#0d1322]/80">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 border border-purple-200 text-purple-600 dark:bg-[#231b47] dark:border-[#3d2f78] dark:text-purple-400 shrink-0">
               <Users size={16} />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium text-slate-400 truncate">Followers</p>
-              <p className="font-data text-xl font-bold text-white leading-tight mt-0.5">
+              <p className="text-[11px] font-medium text-muted dark:text-slate-400 truncate">Followers</p>
+              <p className="font-data text-xl font-bold text-foreground dark:text-white leading-tight mt-0.5">
                 {loading && !data ? "..." : (data ? data.followers : "—")}
               </p>
-              <p className="text-[10px] font-semibold text-emerald-400 flex items-center gap-0.5 mt-0.5">
-                ▲ 50% <span className="text-slate-500 font-normal text-[9px]">vs last month</span>
+              <p className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 mt-0.5">
+                ▲ 50% <span className="text-muted dark:text-slate-500 font-normal text-[9px]">vs last month</span>
               </p>
             </div>
           </div>
@@ -158,12 +158,12 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
         {/* Chart Header */}
         <div className="mt-5 flex items-center justify-between">
           <div>
-            <h4 className="text-xs font-bold tracking-tight text-white">Contributions</h4>
-            <p className="text-[11px] text-slate-400">Activity over the last 12 weeks</p>
+            <h4 className="text-xs font-bold tracking-tight text-foreground dark:text-white">Contributions</h4>
+            <p className="text-[11px] text-muted dark:text-slate-400">Activity over the last 12 weeks</p>
           </div>
-          <div className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-300 select-none">
+          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-2.5 py-1 text-xs font-medium text-foreground dark:text-slate-300 dark:border-white/10 dark:bg-white/5 select-none">
             <span>Last 12 weeks</span>
-            <ChevronDown size={12} className="text-slate-400" />
+            <ChevronDown size={12} className="text-muted dark:text-slate-400" />
           </div>
         </div>
 

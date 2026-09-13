@@ -23,10 +23,10 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`dark ${sans.variable} ${jbMono.variable} h-full antialiased`}
+      className={`${sans.variable} ${jbMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground selection:bg-purple-500/30 selection:text-white">
-        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           {children}
         </ThemeProvider>
       </body>
