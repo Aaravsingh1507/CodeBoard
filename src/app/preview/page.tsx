@@ -23,19 +23,20 @@ import {
   Copy,
   Check,
 } from "lucide-react";
+import { MatchScopeClient } from "@/components/matchscope/MatchScopeClient";
 import type { GithubStats } from "@/lib/github";
 import type { LeetcodeStats } from "@/lib/leetcode";
 
 export default function PreviewPage() {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "settings" | "resume" | "goals" | "circles" | "reviews" | "applications"
+    "overview" | "matchscope" | "settings" | "resume" | "goals" | "circles" | "reviews" | "applications"
   >("overview");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get("tab") as any;
-      if (tab && ["overview", "settings", "resume", "goals", "circles", "reviews", "applications"].includes(tab)) {
+      if (tab && ["overview", "matchscope", "settings", "resume", "goals", "circles", "reviews", "applications"].includes(tab)) {
         setActiveTab(tab);
       }
     }
@@ -258,6 +259,13 @@ export default function PreviewPage() {
                 Sign out
               </button>
             </div>
+          </div>
+        )}
+
+                {/* MATCHSCOPE TAB */}
+        {activeTab === "matchscope" && (
+          <div className="space-y-6 animate-fade-in">
+            <MatchScopeClient />
           </div>
         )}
 

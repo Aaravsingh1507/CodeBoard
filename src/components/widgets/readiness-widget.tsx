@@ -1,9 +1,10 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { Card } from "@/components/ui/card";
 
-export function ReadinessWidget({ previewData }: { previewData?: any } = {}) {
+export function ReadinessWidget(props?: { previewData?: unknown }) {
+  void props;
   return (
     <Card className="relative overflow-hidden rounded-[24px] border border-white/10 bg-[#080c18] p-0 shadow-2xl shadow-purple-950/40">
       <div className="relative w-full aspect-[1024/341] overflow-hidden select-none cursor-default">
@@ -22,10 +23,9 @@ export function ReadinessWidget({ previewData }: { previewData?: any } = {}) {
             srcSet="/small-steps-banner@3x.png 3072w, /small-steps-banner@2x.png 2048w"
             sizes="(max-width: 768px) 100vw, 1280px"
           />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/small-steps-banner.png"
-            alt="Small Steps Big Progress - Stay consistent, solve one problem at a time, and watch your progress grow."
+            alt="Small Steps Big Progress — Stay consistent, solve one problem at a time, and watch your progress grow."
             width={1024}
             height={341}
             draggable={false}

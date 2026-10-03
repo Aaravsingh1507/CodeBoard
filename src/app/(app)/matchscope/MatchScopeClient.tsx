@@ -1,0 +1,1 @@
+﻿export { MatchScopeClient } from "@/components/matchscope/MatchScopeClient";

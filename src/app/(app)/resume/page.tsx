@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
-import { Upload, Download, Trash2, Star, FileText, X } from "lucide-react";
+import Link from "next/link";
+import { Upload, Download, Trash2, Star, FileText, X, Target, Sparkles, ExternalLink } from "lucide-react";
 import { useFetch } from "@/lib/use-fetch";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ResumeBulletGenerator } from "@/components/resume-bullet-generator";
+import { MatchScopeClient } from "@/components/matchscope/MatchScopeClient";
 import { formatDate } from "@/lib/utils";
 
 interface ResumeVersion {
@@ -26,6 +28,7 @@ interface ResumeVersion {
 export default function ResumePage() {
   const { data, loading, error, refetch } = useFetch<ResumeVersion[]>("/api/resume");
   const [showForm, setShowForm] = useState(false);
+  const [activeView, setActiveView] = useState<"matchscope" | "versions">("matchscope");
 
   async function setActive(id: string) {
     await fetch(`/api/resume/${id}`, {
@@ -43,77 +46,137 @@ export default function ResumePage() {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl">Resume</h1>
-          <p className="mt-1 text-sm text-muted dark:text-slate-400">Keep every version, mark the one you&apos;re using.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl flex items-center gap-2.5">
+            Resume Hub
+          </h1>
+          <p className="mt-1 text-sm text-muted dark:text-slate-400">
+            Track resume versions, tailor bullets, and match your resume against Job Descriptions with MatchScope.
+          </p>
         </div>
-        <Button onClick={() => setShowForm(true)} className="whitespace-nowrap shrink-0">
-          <Upload size={15} /> Upload version
-        </Button>
-      </div>
 
-      <ResumeBulletGenerator />
-
-      {showForm && (
-        <UploadForm
-          onClose={() => setShowForm(false)}
-          onUploaded={() => {
-            setShowForm(false);
-            refetch();
-          }}
-        />
-      )}
-
-      {loading && <Skeleton className="h-40 w-full" />}
-      {error && <ErrorState message={error} onRetry={() => refetch()} />}
-      {data && data.length === 0 && (
-        <EmptyState
-          icon={<FileText size={20} />}
-          title="No resume versions yet"
-          description="Upload a PDF to start tracking versions."
-          action={
-            <Button size="sm" onClick={() => setShowForm(true)}>
-              <Upload size={14} /> Upload your first version
+        <div className="flex items-center gap-2">
+          <Link href="/matchscope">
+            <Button variant="secondary" className="whitespace-nowrap shrink-0 text-xs">
+              <ExternalLink size={13} /> Full MatchScope
             </Button>
-          }
-        />
+          </Link>
+          <Button onClick={() => setShowForm(true)} className="whitespace-nowrap shrink-0 text-xs">
+            <Upload size={14} /> Upload version
+          </Button>
+        </div>
+      </div>
+
+      {/* Mode Switcher Tabs */}
+      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-2 dark:bg-[#13131f] border border-border dark:border-[#1e2338] w-fit">
+        <button
+          type="button"
+          onClick={() => setActiveView("matchscope")}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            activeView === "matchscope"
+              ? "bg-[#7c3aed] text-white shadow-md shadow-[#7c3aed]/25"
+              : "text-muted hover:text-foreground dark:text-slate-400 dark:hover:text-white"
+          }`}
+        >
+          <Target size={14} />
+          <span>MatchScope (JD Matcher)</span>
+          <span className="rounded-full bg-white/20 px-1.5 py-0.2 text-[10px]">Groq AI</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveView("versions")}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            activeView === "versions"
+              ? "bg-[#7c3aed] text-white shadow-md shadow-[#7c3aed]/25"
+              : "text-muted hover:text-foreground dark:text-slate-400 dark:hover:text-white"
+          }`}
+        >
+          <FileText size={14} />
+          <span>Versions & Bullets</span>
+          {data && data.length > 0 && (
+            <span className="rounded-full bg-slate-500/20 px-1.5 py-0.2 text-[10px] text-muted dark:text-slate-300">
+              {data.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* VIEW 1: MatchScope Section */}
+      {activeView === "matchscope" && (
+        <div className="space-y-6 animate-fade-in">
+          <MatchScopeClient embeddedMode={true} />
+        </div>
       )}
 
-      <div className="space-y-3">
-        {(data ?? []).map((v) => (
-          <Card key={v.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 items-center gap-3">
-              <FileText className="shrink-0 text-muted" size={20} />
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <p className="truncate text-sm font-medium text-foreground">{v.label}</p>
-                  {v.isActive && <Badge tone="success">Active</Badge>}
+      {/* VIEW 2: Versions & Bullets */}
+      {activeView === "versions" && (
+        <div className="space-y-6 animate-fade-in">
+          <ResumeBulletGenerator />
+
+          {showForm && (
+            <UploadForm
+              onClose={() => setShowForm(false)}
+              onUploaded={() => {
+                setShowForm(false);
+                refetch();
+              }}
+            />
+          )}
+
+          {loading && <Skeleton className="h-40 w-full" />}
+          {error && <ErrorState message={error} onRetry={() => refetch()} />}
+          {data && data.length === 0 && (
+            <EmptyState
+              icon={<FileText size={20} />}
+              title="No resume versions yet"
+              description="Upload a PDF to start tracking versions and tailoring them for applications."
+              action={
+                <Button size="sm" onClick={() => setShowForm(true)}>
+                  <Upload size={14} /> Upload your first version
+                </Button>
+              }
+            />
+          )}
+
+          <div className="space-y-3">
+            {(data ?? []).map((v) => (
+              <Card key={v.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 items-center gap-3">
+                  <FileText className="shrink-0 text-muted" size={20} />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="truncate text-sm font-medium text-foreground">{v.label}</p>
+                      {v.isActive && <Badge tone="success">Active</Badge>}
+                    </div>
+                    <p className="truncate text-xs text-muted">
+                      {v.fileName} • {formatDate(v.uploadedAt)}
+                    </p>
+                    {v.notes && <p className="mt-1 text-xs text-muted">{v.notes}</p>}
+                  </div>
                 </div>
-                <p className="truncate text-xs text-muted">
-                  {v.fileName} · {formatDate(v.uploadedAt)}
-                </p>
-                {v.notes && <p className="mt-1 text-xs text-muted">{v.notes}</p>}
-              </div>
-            </div>
-            <div className="flex shrink-0 items-center gap-1 ml-8 sm:ml-0">
-              {!v.isActive && (
-                <Button variant="ghost" size="sm" onClick={() => setActive(v.id)} title="Mark active">
-                  <Star size={14} />
-                </Button>
-              )}
-              <a href={v.fileUrl} download>
-                <Button variant="ghost" size="sm" title="Download">
-                  <Download size={14} />
-                </Button>
-              </a>
-              <Button variant="ghost" size="sm" onClick={() => removeVersion(v.id)} title="Delete">
-                <Trash2 size={14} />
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+                <div className="flex shrink-0 items-center gap-1 ml-8 sm:ml-0">
+                  {!v.isActive && (
+                    <Button variant="ghost" size="sm" onClick={() => setActive(v.id)} title="Mark active">
+                      <Star size={14} />
+                    </Button>
+                  )}
+                  <a href={v.fileUrl} download>
+                    <Button variant="ghost" size="sm" title="Download">
+                      <Download size={14} />
+                    </Button>
+                  </a>
+                  <Button variant="ghost" size="sm" onClick={() => removeVersion(v.id)} title="Delete">
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

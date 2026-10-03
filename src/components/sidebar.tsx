@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -18,16 +18,49 @@ import {
 import { GithubIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
-const NAV = [
-  { href: "/dashboard", label: "Overview", icon: LayoutGrid },
-  { href: "/github", label: "GitHub", icon: GithubIcon },
-  { href: "/leetcode", label: "LeetCode", icon: Code2 },
-  { href: "/applications", label: "Applications", icon: LayoutGrid },
-  { href: "/goals", label: "Goals", icon: Target },
-  { href: "/circles", label: "Circles", icon: Users },
-  { href: "/resume", label: "Resume", icon: FileText },
-  { href: "/reviews", label: "AI Reviews", icon: Sparkles },
-  { href: "/settings", label: "Settings", icon: Settings },
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  badge?: string;
+  tag?: string;
+}
+
+interface NavSection {
+  title?: string | null;
+  items: NavItem[];
+}
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    title: null,
+    items: [
+      { href: "/dashboard", label: "Overview", icon: LayoutGrid },
+      { href: "/github", label: "GitHub", icon: GithubIcon },
+      { href: "/leetcode", label: "LeetCode", icon: Code2 },
+      { href: "/applications", label: "Applications", icon: LayoutGrid },
+      { href: "/circles", label: "Circles", icon: Users },
+    ],
+  },
+  {
+    title: "Tools",
+    items: [
+      {
+        href: "/matchscope",
+        label: "MatchScope",
+        icon: Target,
+        badge: "🎯",
+        tag: "AI",
+      },
+      { href: "/resume", label: "Resume", icon: FileText },
+      { href: "/goals", label: "Goals", icon: Target },
+      { href: "/reviews", label: "AI Reviews", icon: Sparkles },
+    ],
+  },
+  {
+    title: null,
+    items: [{ href: "/settings", label: "Settings", icon: Settings }],
+  },
 ];
 
 export function Sidebar({
@@ -62,34 +95,59 @@ export function Sidebar({
         </span>
       </div>
 
-      {/* Navigation Links */}
-      <nav className="flex-1 space-y-1 px-3">
-        {NAV.map(({ href, label, icon: Icon }) => {
-          const active =
-            pathname === href ||
-            (href === "/dashboard" && pathname === "/preview") ||
-            (href !== "/dashboard" && pathname.startsWith(href));
+      {/* Navigation Links organized into sections */}
+      <nav className="flex-1 space-y-4 px-3 overflow-y-auto scroll-touch">
+        {NAV_SECTIONS.map((section, sIdx) => (
+          <div key={sIdx} className="space-y-1">
+            {section.title && (
+              <div className="px-3 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted/80 dark:text-slate-500 flex items-center justify-between">
+                <span>{section.title}</span>
+              </div>
+            )}
+            {section.items.map(({ href, label, icon: Icon, badge, tag }) => {
+              const active =
+                pathname === href ||
+                (href === "/dashboard" && pathname === "/preview") ||
+                (href !== "/dashboard" && pathname.startsWith(href));
 
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={onNavigate}
-              className={cn(
-                "flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-all duration-200",
-                active
-                  ? "nav-pill-active font-semibold"
-                  : "text-muted hover:bg-slate-100 hover:text-foreground dark:hover:bg-white/5 dark:hover:text-white active:scale-[0.98]"
-              )}
-            >
-              <Icon
-                size={18}
-                className={active ? "" : "text-muted transition-colors group-hover:text-foreground dark:group-hover:text-white"}
-              />
-              <span>{label}</span>
-            </Link>
-          );
-        })}
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={onNavigate}
+                  className={cn(
+                    "group flex items-center justify-between rounded-xl px-3.5 py-2 text-sm transition-all duration-200",
+                    active
+                      ? "nav-pill-active font-semibold"
+                      : "text-muted hover:bg-slate-100 hover:text-foreground dark:hover:bg-white/5 dark:hover:text-white active:scale-[0.98]"
+                  )}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon
+                      size={18}
+                      className={cn(
+                        "shrink-0 transition-colors",
+                        active
+                          ? "text-[#7c3aed] dark:text-[#c4b5fd]"
+                          : "text-muted group-hover:text-foreground dark:group-hover:text-white"
+                      )}
+                    />
+                    <span className="truncate">{label}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {tag && (
+                      <span className="rounded bg-[#7c3aed]/15 px-1.5 py-0.5 text-[10px] font-semibold text-[#8b5cf6] dark:text-[#a78bfa] border border-[#7c3aed]/25">
+                        {tag}
+                      </span>
+                    )}
+                    {badge && <span className="text-xs">{badge}</span>}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* User Profile Footer */}
