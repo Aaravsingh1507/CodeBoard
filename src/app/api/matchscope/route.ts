@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { extractText } from "unpdf";
 
 export const runtime = "nodejs";
 
@@ -42,43 +43,62 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json().catch(() => ({}));
-    const { resume, jobDescription } = body as { resume?: string; jobDescription?: string };
+    let resume = "";
+    let jobDescription = "";
 
-    if (!resume || !resume.trim()) {
+    const contentType = req.headers.get("content-type") || "";
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+      jobDescription = (formData.get("jobDescription") as string) || "";
+      const rawResumeText = (formData.get("resume") as string) || "";
+
+      const file = formData.get("file") as File | null;
+      if (file && file.size > 0) {
+        const fileName = (file.name || "").toLowerCase();
+        if (fileName.endsWith(".pdf") || file.type === "application/pdf") {
+          const arrayBuffer = await file.arrayBuffer();
+          const pdfResult = await extractText(new Uint8Array(arrayBuffer));
+          const pdfText = Array.isArray(pdfResult.text)
+            ? pdfResult.text.join("\n\n")
+            : String(pdfResult.text || "");
+          resume = pdfText.trim();
+        } else {
+          // Text, markdown, or code file
+          const text = await file.text();
+          resume = text.trim();
+        }
+      }
+
+      if (!resume && rawResumeText) {
+        resume = rawResumeText.trim();
+      }
+    } else {
+      const body = await req.json().catch(() => ({}));
+      resume = (body.resume || "").trim();
+      jobDescription = (body.jobDescription || "").trim();
+    }
+
+    if (!resume) {
       return NextResponse.json(
-        { error: "Please provide your resume text for analysis." },
+        { error: "Please upload your resume file (PDF/TXT/MD) or provide resume text for analysis." },
         { status: 400 }
       );
     }
 
-    if (!jobDescription || !jobDescription.trim()) {
-      return NextResponse.json(
-        { error: "Please provide the target job description to match against." },
-        { status: 400 }
-      );
-    }
+    const isTargetedMatch = Boolean(jobDescription && jobDescription.trim().length > 20);
 
-    if (resume.trim().length < 30) {
-      return NextResponse.json(
-        { error: "Resume text is too short. Please provide a more complete resume." },
-        { status: 400 }
-      );
-    }
+    let systemPrompt: string;
+    let userContent: string;
 
-    if (jobDescription.trim().length < 30) {
-      return NextResponse.json(
-        { error: "Job description is too short. Please provide a more detailed job posting." },
-        { status: 400 }
-      );
-    }
+    if (isTargetedMatch) {
+      systemPrompt = `You are MatchScope, an expert AI applicant tracking system (ATS) analyst and senior technical recruiter.
+Your job is to objectively and rigorously analyze how well a candidate's resume matches a target job description.
 
-    const systemPrompt = `You are MatchScope, an elite AI technical recruiter, ATS matching algorithm, and hiring strategist.
-Your task is to critically analyze a candidate's Resume against a Job Description.
-
-Analyze deeply:
-1. Score (0 to 100): Weighted match based on requirements, experience seniority, tech stack, and responsibilities.
-2. Label: Assign one of strictly: "Poor Fit", "Moderate Fit", "Good Fit", "Strong Fit", "Excellent Fit".
+SCORING METHODOLOGY:
+1. Overall Match Score (0 to 100):
+   - Score objectively based on concrete evidence in the resume matching the job description.
+2. Label:
    - 0-44: "Poor Fit"
    - 45-59: "Moderate Fit"
    - 60-74: "Good Fit"
@@ -96,12 +116,10 @@ Analyze deeply:
    - "miss": The skill/tool/requirement is missing from the resume.
 6. Suggestions: 4 to 6 specific, actionable resume fixes ranked by priority ('high', 'medium', or 'low').
    - High priority fixes for major gaps, medium for missing keywords/context, low for phrasing/formatting.
-   - IMPORTANT: DO NOT give generic advice like "tailor your resume" or "use action verbs". Reference actual resume content or exact bullets in the 'context' field, and provide the exact phrasing or metric to add in 'description'.
+   - Reference actual resume content or exact bullets in 'context', and provide the exact phrasing or metric to add in 'description'.
 
-CRITICAL INSTRUCTION:
-Return ONLY a valid JSON object. No markdown formatting, no code fences (\`\`\`json or \`\`\`), no conversational intro or outro.
-
-Required JSON structure:
+Return ONLY a valid JSON object. No markdown code fences, no conversational prose.
+JSON structure:
 {
   "score": number,
   "label": "Poor Fit" | "Moderate Fit" | "Good Fit" | "Strong Fit" | "Excellent Fit",
@@ -125,15 +143,71 @@ Required JSON structure:
   ]
 }`;
 
-    const userContent = `CANDIDATE RESUME:
+      userContent = `CANDIDATE RESUME:
 """
-${resume.trim()}
+${resume}
 """
 
 TARGET JOB DESCRIPTION:
 """
 ${jobDescription.trim()}
 """`;
+    } else {
+      // General Resume Evaluation & ATS Hiring Audit
+      systemPrompt = `You are MatchScope, an elite technical career coach, senior engineering hiring manager, and ATS auditor.
+You analyze resumes uploaded by software engineers and developers to evaluate their overall hiring readiness, ATS compatibility, technical depth, and quantifiable impact.
+
+SCORING METHODOLOGY:
+1. Overall ATS & Hiring Readiness Score (0 to 100):
+   - 0-44: "Poor Fit" (Critical formatting issues, lacks metrics, vague descriptions)
+   - 45-59: "Moderate Fit" (Adequate skills listed, but missing quantifiable impact or modern tech stack depth)
+   - 60-74: "Good Fit" (Solid technical baseline, clean structure, could improve impact metrics)
+   - 75-89: "Strong Fit" (Well-crafted engineering resume, strong metrics, clear scope)
+   - 90-100: "Excellent Fit" (Top 5% tech resume, elite impact, high ATS parsability)
+2. Summary: Exactly a 2-line executive summary summarizing the candidate's core specialization, primary technical strength, and key area to elevate.
+3. Categories: Exactly 4 categories with score (0-100) and specific, honest 1-2 sentence feedback:
+   - "Technical Breadth & Stack" (Depth of languages, frameworks, system architecture)
+   - "Impact & Measurable Metrics" (Usage of quantifiable results, Google XYZ formula, scale indicators)
+   - "ATS Formatting & Parsability" (Structure clarity, standard headers, bullet conciseness)
+   - "Software Engineering Competencies" (Testing, CI/CD, algorithms, collaborative development)
+4. Keywords: Extract 12 to 16 modern core engineering skills, libraries, and architectural concepts relevant to the candidate's inferred profile. Classify each:
+   - "match": Prominently demonstrated with real project/work experience.
+   - "partial": Mentioned casually or only in skills list without project context.
+   - "miss": Key industry competency that is missing and would significantly boost interview rate.
+5. Suggestions: 4 to 6 concrete, actionable bullet rewrites and improvements ranked by priority ('high', 'medium', or 'low').
+   - Identify weak, vague, or passive lines from the resume in 'context'.
+   - In 'description', provide the exact rewritten bullet points using quantified impact and strong action verbs.
+
+Return ONLY a valid JSON object. No markdown code fences, no conversational prose.
+JSON structure:
+{
+  "score": number,
+  "label": "Poor Fit" | "Moderate Fit" | "Good Fit" | "Strong Fit" | "Excellent Fit",
+  "summary": string,
+  "categories": [
+    { "name": "Technical Breadth & Stack", "score": number, "comment": string },
+    { "name": "Impact & Measurable Metrics", "score": number, "comment": string },
+    { "name": "ATS Formatting & Parsability", "score": number, "comment": string },
+    { "name": "Software Engineering Competencies", "score": number, "comment": string }
+  ],
+  "keywords": [
+    { "word": string, "status": "match" | "partial" | "miss" }
+  ],
+  "suggestions": [
+    {
+      "priority": "high" | "medium" | "low",
+      "title": string,
+      "description": string,
+      "context": string
+    }
+  ]
+}`;
+
+      userContent = `CANDIDATE RESUME:
+"""
+${resume}
+"""`;
+    }
 
     let chosenModel = process.env.GROQ_MATCHSCOPE_MODEL || DEFAULT_MODEL;
     let groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -200,7 +274,7 @@ ${jobDescription.trim()}
 
     // Strip markdown code fences if present
     let cleaned = rawContent.trim();
-    cleaned = cleaned.replace(/^\`\`\`json\s*/i, "").replace(/^\`\`\`\s*/i, "").replace(/\`\`\`\s*$/i, "").trim();
+    cleaned = cleaned.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "").trim();
 
     const firstBrace = cleaned.indexOf("{");
     const lastBrace = cleaned.lastIndexOf("}");
@@ -235,19 +309,22 @@ ${jobDescription.trim()}
 
     const summary = typeof parsed.summary === "string" ? parsed.summary.trim() : "";
 
-    const expectedCategoryNames = ["Skills Match", "Experience Level", "Tech Stack", "Role Alignment"];
+    const fallbackCategories = isTargetedMatch
+      ? ["Skills Match", "Experience Level", "Tech Stack", "Role Alignment"]
+      : ["Technical Breadth & Stack", "Impact & Measurable Metrics", "ATS Formatting & Parsability", "Software Engineering Competencies"];
+
     let categories: MatchCategory[] = [];
     if (Array.isArray(parsed.categories)) {
       categories = (parsed.categories as Array<Record<string, unknown>>).map((c, idx) => ({
-        name: typeof c.name === "string" ? c.name : (expectedCategoryNames[idx] || "Category"),
+        name: typeof c.name === "string" ? c.name : (fallbackCategories[idx] || "Category"),
         score: Math.max(0, Math.min(100, Math.round(Number(c.score) || score))),
         comment: typeof c.comment === "string" ? c.comment : "",
       }));
     } else {
-      categories = expectedCategoryNames.map((name) => ({
+      categories = fallbackCategories.map((name) => ({
         name,
         score,
-        comment: "Analysis generated based on overall alignment.",
+        comment: "Analysis generated based on overall evaluation.",
       }));
     }
 
@@ -294,7 +371,7 @@ ${jobDescription.trim()}
     const errorObj = err as Error;
     console.error("MatchScope API error:", errorObj);
     return NextResponse.json(
-      { error: errorObj?.message || "An unexpected error occurred while analyzing the match." },
+      { error: errorObj?.message || "An unexpected error occurred while analyzing the resume." },
       { status: 500 }
     );
   }
