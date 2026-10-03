@@ -20,8 +20,19 @@ import {
   ChevronUp,
   X,
   FileUp,
+  Code2,
+  FolderGit2,
+  Wrench,
+  GraduationCap,
+  Lightbulb,
 } from "lucide-react";
-import type { MatchScopeResponse, MatchKeyword, MatchSuggestion, MatchCategory } from "@/app/api/matchscope/route";
+import type {
+  MatchScopeResponse,
+  MatchKeyword,
+  MatchSuggestion,
+  MatchCategory,
+  CareerRoadmap,
+} from "@/app/api/matchscope/route";
 
 const SAMPLE_JD = `Role: Full Stack Software Engineer (Frontend / Product)
 Company: TechCorp Innovations
@@ -58,7 +69,6 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Rotating loading steps
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (loading) {
@@ -155,13 +165,13 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-[#7c3aed]/30 bg-[#7c3aed]/10 px-3.5 py-1 text-xs font-semibold text-[#a78bfa] mb-2.5 shadow-sm">
             <Sparkles size={13} className="text-[#a78bfa]" />
-            <span>MatchScope • Instant ATS Engine</span>
+            <span>MatchScope • Career & Role Readiness</span>
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground dark:text-white sm:text-4xl">
-            Upload Resume, Get Instant Answers
+            Upload Resume, Get Clear & Honest Guidance
           </h1>
           <p className="mt-1.5 text-sm text-muted dark:text-slate-400 max-w-2xl leading-relaxed">
-            Drop your resume file to evaluate ATS readiness, detect technical strengths & missing keywords, and get high-impact bullet improvements.
+            Upload your resume to check your projects, see which tools you have mastered, find out if you&apos;re ready for the role, and get an exact learning plan: LeetCode/DSA targets, focus projects to build, and bullet upgrades.
           </p>
         </div>
 
@@ -301,7 +311,7 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
                   Target Job Description (Optional)
                 </span>
                 <span className="ml-2 text-[11px] text-slate-500">
-                  {jobDescription.trim() ? "• 1 Job Description added" : "• Leave empty for general tech ATS readiness"}
+                  {jobDescription.trim() ? "• 1 Job Description added" : "• Leave empty for general software developer readiness"}
                 </span>
               </div>
             </div>
@@ -315,7 +325,7 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
           {showJdPanel && (
             <div className="p-4 pt-1 border-t border-[#1a1f33] space-y-3 animate-fade-in">
               <p className="text-xs text-slate-400">
-                Paste a specific job posting to compute a targeted role match score, or leave blank to evaluate all-round Software Engineering readiness.
+                Paste a specific job posting to check how well you match it, or leave blank to see how ready you are for general developer roles.
               </p>
               <textarea
                 value={jobDescription}
@@ -354,23 +364,22 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
           disabled={loading || !hasResume}
           className="group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] px-10 py-4 text-sm font-semibold text-white shadow-xl shadow-[#7c3aed]/25 transition-all duration-300 hover:shadow-2xl hover:shadow-[#7c3aed]/40 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
         >
-          {/* Subtle sheen animation */}
           <div className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
 
           {loading ? (
             <>
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
               <span>
-                {loadingStep === 0 && "Parsing resume structure..."}
-                {loadingStep === 1 && "Benchmarking with Groq AI..."}
-                {loadingStep === 2 && "Synthesizing prioritized improvements..."}
+                {loadingStep === 0 && "Checking your projects & tools..."}
+                {loadingStep === 1 && "Evaluating role readiness & DSA benchmarks..."}
+                {loadingStep === 2 && "Creating your personalized action plan..."}
               </span>
             </>
           ) : (
             <>
               <Target size={18} className="transition-transform group-hover:rotate-12 text-white" />
               <span>
-                {jobDescription.trim() ? "Analyze Resume & Role Match" : "Analyze Resume with AI"}
+                {jobDescription.trim() ? "Check My Match & Get Action Plan" : "Check My Resume & Get Learning Plan"}
               </span>
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
             </>
@@ -379,7 +388,7 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
 
         <p className="text-[11px] text-slate-500 flex items-center gap-1.5">
           <Zap size={12} className="text-[#a78bfa]" />
-          Instant ATS scoring & actionable suggestions powered by Groq
+          Instant project & skills evaluation powered by Groq 120B AI
         </p>
       </div>
 
@@ -393,13 +402,16 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
             summary={result.summary}
           />
 
-          {/* Part 2: Category Breakdown */}
+          {/* Part 2: Career & Preparation Roadmap (DSA, Focus Projects, Tool Mastery) */}
+          {result.roadmap && <ActionPlanSection roadmap={result.roadmap} />}
+
+          {/* Part 3: Category Breakdown */}
           <CategoryBreakdown categories={result.categories} />
 
-          {/* Part 3: Keyword Chips */}
+          {/* Part 4: Keyword & Skills Check */}
           <KeywordChips keywords={result.keywords} />
 
-          {/* Part 4: Suggested Edits & Rewritten Bullets */}
+          {/* Part 5: Suggested Edits & Rewritten Bullets */}
           <SuggestedEdits suggestions={result.suggestions} />
         </div>
       )}
@@ -440,7 +452,7 @@ function ScoreRing({
       <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#7c3aed]/10 blur-3xl" />
 
       <div className="flex flex-col md:flex-row items-center gap-8">
-        {/* SVG Circular Progress */}
+        {/* Circular Progress */}
         <div className="relative flex shrink-0 items-center justify-center">
           <svg height={radius * 2} width={radius * 2} className="-rotate-90">
             <circle
@@ -465,11 +477,11 @@ function ScoreRing({
           </svg>
           <div className="absolute flex flex-col items-center justify-center">
             <span className="text-3xl font-extrabold tracking-tight text-white">{score}</span>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">ATS Score</span>
+            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Readiness</span>
           </div>
         </div>
 
-        {/* Executive Summary */}
+        {/* Profile Summary */}
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 mb-2.5">
             <span className={`rounded-full border px-3 py-0.5 text-xs font-bold tracking-wide ${badgeClass}`}>
@@ -481,11 +493,181 @@ function ScoreRing({
           </div>
 
           <h2 className="text-lg font-bold text-white tracking-tight mb-2">
-            Executive ATS Assessment
+            Overall Profile Assessment
           </h2>
           <p className="text-sm leading-relaxed text-slate-300">
             {summary}
           </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ActionPlanSection({ roadmap }: { roadmap: CareerRoadmap }) {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-2">
+        <GraduationCap className="text-[#a78bfa]" size={20} />
+        <div>
+          <h3 className="text-base font-bold text-white tracking-wide">
+            Your Action Plan & What to Learn Next
+          </h3>
+          <p className="text-xs text-slate-400">
+            Tailored advice on role suitability, coding problem targets, focus projects to build, and tool mastery.
+          </p>
+        </div>
+      </div>
+
+      {/* 1. Suitability Verdict Card */}
+      <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/30 via-[#12162d] to-[#0f1325] p-5 shadow-lg">
+        <div className="flex items-start gap-3.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/40">
+            <Lightbulb size={18} />
+          </div>
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1">
+              Role Suitability Verdict
+            </h4>
+            <p className="text-sm text-slate-200 leading-relaxed">
+              {roadmap.suitability}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Grid: LeetCode/DSA Target & Tool Mastery */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* LeetCode & DSA Target */}
+        <div className="rounded-2xl border border-[#1e2338] bg-[#101424] p-5 shadow-lg flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Code2 size={16} className="text-emerald-400" />
+                <h4 className="text-sm font-bold text-white">DSA & Coding Practice Target</h4>
+              </div>
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-400">
+                {roadmap.dsaTarget.recommendedCount}
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed mb-3">
+              {roadmap.dsaTarget.advice}
+            </p>
+
+            <div className="mt-3">
+              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">
+                Priority Problem Patterns to Practice:
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {roadmap.dsaTarget.focusTopics.map((topic, i) => (
+                  <span
+                    key={i}
+                    className="rounded-lg border border-[#2a304e] bg-[#161a2e] px-2.5 py-1 text-xs text-slate-300 font-mono"
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tool Mastery Check */}
+        <div className="rounded-2xl border border-[#1e2338] bg-[#101424] p-5 shadow-lg flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Wrench size={16} className="text-cyan-400" />
+              <h4 className="text-sm font-bold text-white">Tool & Skills Mastery Check</h4>
+            </div>
+
+            <p className="text-xs text-slate-400 mb-3">
+              Do your projects prove you have mastered these tools, or do they need deeper hands-on work?
+            </p>
+
+            <div className="space-y-2.5">
+              {roadmap.toolsMastery.map((item, i) => {
+                const statusBadge =
+                  item.status === "Mastered"
+                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                    : item.status === "Must Learn"
+                    ? "bg-red-500/15 text-red-400 border-red-500/30"
+                    : "bg-amber-500/15 text-amber-400 border-amber-500/30";
+
+                return (
+                  <div
+                    key={i}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl border border-[#1b2038] bg-[#0c1020] p-2.5 text-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-white">{item.tool}</span>
+                      <span className={`rounded-md border px-2 py-0.5 text-[10px] font-bold ${statusBadge}`}>
+                        {item.status}
+                      </span>
+                    </div>
+                    <span className="text-slate-400 text-[11px] sm:text-right">
+                      {item.explanation}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Recommended Projects to Build */}
+      <div className="rounded-2xl border border-[#1e2338] bg-[#101424] p-5 shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div className="flex items-center gap-2">
+            <FolderGit2 size={16} className="text-[#a78bfa]" />
+            <h4 className="text-sm font-bold text-white">Recommended Focus Projects to Build</h4>
+          </div>
+          <span className="text-xs font-semibold text-indigo-300 bg-indigo-500/15 border border-indigo-500/30 rounded-full px-3 py-0.5 self-start sm:self-auto">
+            Need: {roadmap.projectsTarget.additionalNeeded}
+          </span>
+        </div>
+
+        <p className="text-xs text-slate-400 mb-4">
+          Instead of basic tutorial clones, build one of these focused projects to prove production-level competence:
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {roadmap.projectsTarget.recommendedProjects.map((p, i) => (
+            <div
+              key={i}
+              className="rounded-xl border border-[#1f253e] bg-[#0c1020] p-4 flex flex-col justify-between hover:border-[#7c3aed]/40 transition-colors"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <h5 className="text-sm font-bold text-white">{p.title}</h5>
+                  <span className="rounded-md border border-[#2a304e] bg-[#171c33] px-2 py-0.5 text-[10px] font-medium text-slate-300">
+                    {p.difficulty}
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-300 leading-relaxed mb-3">
+                  {p.description}
+                </p>
+
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {p.technologies.map((t, idx) => (
+                    <span
+                      key={idx}
+                      className="rounded bg-[#1a1f38] px-2 py-0.5 text-[10px] font-mono text-indigo-300"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-[#1b2038] pt-2 text-[11px] text-slate-400">
+                <span className="font-semibold text-slate-300">Why it stands out: </span>
+                {p.whyItMatters}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -497,7 +679,7 @@ function CategoryBreakdown({ categories }: { categories: MatchCategory[] }) {
     <div className="space-y-4">
       <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
         <Target size={15} className="text-[#a78bfa]" />
-        Detailed Category Breakdown
+        Detailed Skills & Quality Breakdown
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -553,10 +735,10 @@ function KeywordChips({ keywords }: { keywords: MatchKeyword[] }) {
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
             <Zap size={15} className="text-[#a78bfa]" />
-            ATS Keyword Intelligence
+            Skills & Tools Found in Resume
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            Key technical requirements extracted and matched against candidate background
+            Green = proven in projects, Yellow = only mentioned, Red = key skill missing
           </p>
         </div>
 
@@ -573,7 +755,7 @@ function KeywordChips({ keywords }: { keywords: MatchKeyword[] }) {
                   : "text-slate-400 hover:text-white"
               }`}
             >
-              {tab} ({counts[tab]})
+              {tab === "match" ? "Proven" : tab === "partial" ? "Mentioned" : tab === "miss" ? "Missing" : "All"} ({counts[tab]})
             </button>
           ))}
         </div>
@@ -632,9 +814,9 @@ function SuggestedEdits({ suggestions }: { suggestions: MatchSuggestion[] }) {
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
           <Sparkles size={15} className="text-[#a78bfa]" />
-          Actionable Resume Improvements ({suggestions.length})
+          Resume Bullet Upgrades ({suggestions.length})
         </h3>
-        <span className="text-xs text-slate-500">Ranked by priority</span>
+        <span className="text-xs text-slate-500">Copy-paste ready rewrites</span>
       </div>
 
       <div className="space-y-3.5">
@@ -680,14 +862,19 @@ function SuggestedEdits({ suggestions }: { suggestions: MatchSuggestion[] }) {
 
               {s.context && (
                 <div className="mb-2.5 rounded-xl border border-[#1b2038] bg-[#090c17] p-2.5 text-xs text-slate-400">
-                  <span className="font-semibold text-slate-300">Current Context: </span>
-                  <span className="italic">{s.context}</span>
+                  <span className="font-semibold text-slate-300">Current line in resume: </span>
+                  <span className="italic">&ldquo;{s.context}&rdquo;</span>
                 </div>
               )}
 
-              <p className="text-xs text-slate-300 leading-relaxed font-mono bg-[#0e1222] border border-[#1d233a] p-3 rounded-xl">
-                {s.description}
-              </p>
+              <div className="rounded-xl border border-[#1d233a] bg-[#0e1222] p-3">
+                <span className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider block mb-1">
+                  Upgraded Version (Shows Real Impact & Numbers):
+                </span>
+                <p className="text-xs text-slate-200 leading-relaxed font-mono">
+                  {s.description}
+                </p>
+              </div>
             </div>
           );
         })}

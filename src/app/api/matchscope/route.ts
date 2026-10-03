@@ -4,7 +4,7 @@ import { extractText } from "unpdf";
 export const runtime = "nodejs";
 
 export interface MatchCategory {
-  name: "Skills Match" | "Experience Level" | "Tech Stack" | "Role Alignment" | "Technical Breadth & Stack" | "Impact & Measurable Metrics" | "ATS Formatting & Parsability" | "Software Engineering Competencies" | string;
+  name: string;
   score: number;
   comment: string;
 }
@@ -21,6 +21,36 @@ export interface MatchSuggestion {
   context: string;
 }
 
+export interface RoadmapDsa {
+  recommendedCount: string;
+  focusTopics: string[];
+  advice: string;
+}
+
+export interface RoadmapProject {
+  title: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  technologies: string[];
+  description: string;
+  whyItMatters: string;
+}
+
+export interface RoadmapTool {
+  tool: string;
+  status: "Mastered" | "Needs Practice" | "Must Learn";
+  explanation: string;
+}
+
+export interface CareerRoadmap {
+  suitability: string;
+  dsaTarget: RoadmapDsa;
+  projectsTarget: {
+    additionalNeeded: string;
+    recommendedProjects: RoadmapProject[];
+  };
+  toolsMastery: RoadmapTool[];
+}
+
 export interface MatchScopeResponse {
   score: number;
   label: "Poor Fit" | "Moderate Fit" | "Good Fit" | "Strong Fit" | "Excellent Fit";
@@ -28,6 +58,7 @@ export interface MatchScopeResponse {
   categories: MatchCategory[];
   keywords: MatchKeyword[];
   suggestions: MatchSuggestion[];
+  roadmap: CareerRoadmap;
 }
 
 const DEFAULT_MODEL = "openai/gpt-oss-120b";
@@ -92,57 +123,43 @@ export async function POST(req: NextRequest) {
     let userContent: string;
 
     if (isTargetedMatch) {
-      systemPrompt = `You are MatchScope, an elite Applicant Tracking System (ATS) evaluation engine, Principal Engineering Hiring Lead, and executive technical recruiter.
-Your sole function is to execute an objective, deep forensic comparison between the candidate's resume and the target job description.
+      systemPrompt = `You are MatchScope, a friendly, deeply knowledgeable senior software engineer and tech mentor.
+Your job is to read the candidate's resume and compare it against the target job posting.
+Explain everything in SIMPLE, PLAIN, BEGINNER-FRIENDLY ENGLISH. Do not use confusing recruitment jargon or corporate buzzwords.
 
-INTERNAL ANALYTICAL PROTOCOL (THINK DEEPLY & EVALUATE RIGOROUSLY BEFORE GENERATING JSON):
-1. TECHNICAL FORENSIC AUDIT:
-   - Differentiate strictly between superficial keyword mentions in a "skills" section versus active, production-grade application in projects or work history.
-   - Contrast the required tech stack against the candidate's demonstrated technologies.
-2. EXPERIENCE & SCOPE RECONCILIATION:
-   - Compare the candidate's verified years of experience and level of autonomy against the role's seniority requirements (Junior, Mid, Senior, Staff/Lead).
-   - Evaluate scope: individual contributor tasks vs. architectural ownership, system scale, and leadership.
-3. QUANTIFIABLE IMPACT ANALYSIS:
-   - Audit experience bullets against the Google XYZ formula: "Accomplished [X] as measured by [Y], by doing [Z]".
-   - Penalize passive, duty-focused statements ("Responsible for...", "Assisted in...") vs. high-velocity outcomes.
-4. ATS PARSABILITY & TAXONOMY:
-   - Evaluate whether the resume's language and taxonomy seamlessly map to the target role's core search parameters.
-5. MATHEMATICAL COHERENCE & CALIBRATION:
-   - You will score 4 distinct categories from 0 to 100:
-     a. "Skills Match": Direct evidence of required core languages, frameworks, and tools.
-     b. "Experience Level": Alignment of years, seniority, and scale of responsibilities.
-     c. "Tech Stack": Modernity, infrastructure, database, and adjacent ecosystem overlap.
-     d. "Role Alignment": Problem domain synergy (e.g., distributed systems, web platforms, ML ops, cloud).
-   - The overall "score" MUST be the rounded arithmetic average of the four category scores.
-   - The "label" MUST be mathematically locked to the overall score:
-     * 90 to 100: "Excellent Fit"
-     * 75 to 89: "Strong Fit"
-     * 60 to 74: "Good Fit"
-     * 45 to 59: "Moderate Fit"
-     * 0 to 44: "Poor Fit"
-6. KEYWORD EXTRACTION (12 to 18 critical technical & role terms):
-   - "match": Directly verified in the candidate's projects/experience.
-   - "partial": Adjacent, theoretical, or mentioned casually without evidence of depth.
-   - "miss": Key requirement from the job description that is completely absent from the resume.
-7. ACTIONABLE SUGGESTIONS (4 to 6 items):
-   - For every suggestion, quote the actual weak or missing line from the resume in "context".
-   - In "description", provide an exact, production-grade rewritten bullet point using active verbs and quantified metrics ready to insert into the resume.
+WHAT YOU MUST EVALUATE:
+1. Real Project Quality: Did they build actual working software, or just follow simple tutorials? Are their projects relevant to what this job asks for?
+2. Tools & Skills Mastery: Which tools listed in their resume are genuinely mastered in real code, versus just listed as buzzwords in a skills list?
+3. Role Suitability: Tell them plainly: Are they ready for this specific job right now? If not, what exact gaps are holding them back?
+4. LeetCode & DSA Target: Tell them how many coding/DSA problems they should practice (e.g. 60-80 problems) and the exact topics (like Trees, Graphs, Two Pointers) needed for this kind of role.
+5. Projects to Build: Tell them how many more projects they need to build, and give 2 concrete, tailored project ideas with tech stack to prove they can do this job.
+6. Honest Scoring (0-100):
+   - Categories:
+     * "Job Requirements Match" (0-100)
+     * "Required Tech Stack" (0-100)
+     * "Project Experience Depth" (0-100)
+     * "Seniority & Experience Match" (0-100)
+   - Overall score MUST equal the rounded average of the 4 category scores.
+   - Label: 90-100: "Excellent Fit", 75-89: "Strong Fit", 60-74: "Good Fit", 45-59: "Moderate Fit", 0-44: "Poor Fit".
+7. Keywords (12 to 16 key skills/tools from the job):
+   - "match": They proved this in a real project.
+   - "partial": Mentioned casually or only in skills list without proof.
+   - "miss": Missing from resume, but required for the job.
+8. Suggestions (4 to 5 bullet improvements):
+   - In "context", quote the weak/vague sentence from their resume.
+   - In "title", write a simple friendly tip.
+   - In "description", write a rewritten, impressive bullet point showing real results and numbers.
 
-CRITICAL FUNCTIONAL CONSTRAINTS:
-- Output MUST be 100% valid JSON matching the exact schema below.
-- Do NOT output any markdown fences (\`\`\`json or \`\`\`), greetings, intro, or concluding prose.
-- Output ONLY the raw JSON object.
-
-JSON SCHEMA:
+OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
 {
   "score": number,
   "label": "Poor Fit" | "Moderate Fit" | "Good Fit" | "Strong Fit" | "Excellent Fit",
   "summary": string,
   "categories": [
-    { "name": "Skills Match", "score": number, "comment": string },
-    { "name": "Experience Level", "score": number, "comment": string },
-    { "name": "Tech Stack", "score": number, "comment": string },
-    { "name": "Role Alignment", "score": number, "comment": string }
+    { "name": "Job Requirements Match", "score": number, "comment": string },
+    { "name": "Required Tech Stack", "score": number, "comment": string },
+    { "name": "Project Experience Depth", "score": number, "comment": string },
+    { "name": "Seniority & Experience Match", "score": number, "comment": string }
   ],
   "keywords": [
     { "word": string, "status": "match" | "partial" | "miss" }
@@ -154,7 +171,34 @@ JSON SCHEMA:
       "description": string,
       "context": string
     }
-  ]
+  ],
+  "roadmap": {
+    "suitability": string,
+    "dsaTarget": {
+      "recommendedCount": string,
+      "focusTopics": string[],
+      "advice": string
+    },
+    "projectsTarget": {
+      "additionalNeeded": string,
+      "recommendedProjects": [
+        {
+          "title": string,
+          "difficulty": "Beginner" | "Intermediate" | "Advanced",
+          "technologies": string[],
+          "description": string,
+          "whyItMatters": string
+        }
+      ]
+    },
+    "toolsMastery": [
+      {
+        "tool": string,
+        "status": "Mastered" | "Needs Practice" | "Must Learn",
+        "explanation": string
+      }
+    ]
+  }
 }`;
 
       userContent = `CANDIDATE RESUME:
@@ -167,59 +211,54 @@ TARGET JOB DESCRIPTION:
 ${jobDescription.trim()}
 """`;
     } else {
-      // General Resume Audit & ATS Readiness
-      systemPrompt = `You are MatchScope, an elite technical career auditor, Principal Software Architect, and top-tier ATS optimization engine.
-Your sole function is to execute an in-depth, rigorous forensic evaluation of a software engineering resume to maximize interview conversion rates.
+      // General Software Engineer Readiness Evaluation
+      systemPrompt = `You are MatchScope, a friendly, encouraging, and deeply experienced senior software engineer and mentor.
+Your job is to inspect the candidate's resume, check out their projects, skills, and tools, and give them honest, crystal-clear guidance in SIMPLE, EVERYDAY ENGLISH.
+Do NOT use confusing ATS recruitment jargon, complex corporate terminology, or robotic phrasing. Speak directly to the developer like a helpful mentor.
 
-INTERNAL ANALYTICAL PROTOCOL (THINK DEEPLY & EVALUATE RIGOROUSLY BEFORE GENERATING JSON):
-1. SPECIALIZATION & CAREER TRAJECTORY:
-   - Identify candidate specialization (e.g., Full-Stack, Backend, Distributed Systems, Frontend/UI, AI/ML, DevOps/Cloud).
-   - Assess career progression, continuity, and depth of technical ownership.
-2. TECHNICAL ARCHITECTURE & STACK DEPTH:
-   - Scrutinize whether technologies are merely listed in a skills section or proven through architectural implementation (e.g., microservices, caching layers, database indexing, message queues, Docker, CI/CD pipelines).
-3. GOOGLE XYZ IMPACT BENCHMARK:
-   - Analyze every bullet point against Google's XYZ formula: "Accomplished [X] as measured by [Y], by doing [Z]".
-   - Penalize generic task descriptions ("Built features", "Wrote unit tests", "Fixed bugs").
-   - Reward metrics: latency, throughput, cost savings, user base, automated test coverage, reliability %.
-4. ATS COMPLIANCE & RECRUITER READABILITY:
-   - Evaluate readability, standard headers (Summary, Skills, Experience, Projects, Education), chronological coherence, and scan-friendliness.
-5. MATHEMATICAL COHERENCE & CALIBRATION:
-   - You will score 4 distinct categories from 0 to 100:
-     a. "Technical Breadth & Stack": Modernity, depth of languages, frameworks, databases, and system design.
-     b. "Impact & Measurable Metrics": Proportion of bullets with concrete quantified results and XYZ structure.
-     c. "ATS Formatting & Parsability": Clean taxonomy, standard section headers, and semantic clarity.
-     d. "Software Engineering Competencies": Evidence of testing, CI/CD, code review, distributed design, performance tuning.
-   - The overall "score" MUST be the rounded arithmetic average of the four category scores.
-   - The "label" MUST be mathematically locked to the overall score:
-     * 90 to 100: "Excellent Fit"
-     * 75 to 89: "Strong Fit"
-     * 60 to 74: "Good Fit"
-     * 45 to 59: "Moderate Fit"
-     * 0 to 44: "Poor Fit"
-6. KEYWORD EXTRACTION (12 to 16 modern core engineering skills, tools, and paradigms):
-   - "match": Prominently demonstrated with real project/production experience.
-   - "partial": Listed in skills or mentioned without depth or impact metrics.
-   - "miss": High-value, industry-standard technology or concept missing from the resume that would drastically boost interview callbacks for this profile.
-7. ACTIONABLE BULLET REWRITES (4 to 6 items):
-   - In "context", quote the candidate's exact weak, unquantified, or passive bullet point.
-   - In "title", state the specific improvement angle (e.g., "Transform Task into Quantified XYZ Impact").
-   - In "description", provide a polished, copy-paste-ready rewrite of that bullet point utilizing strong action verbs, technical stack clarity, and estimated/placeholder metrics (e.g., "Reduced P99 latency by 35%...").
+WHAT YOU MUST EVALUATE:
+1. Projects Quality & Real-World Proof:
+   - Check out their projects. Are they real, useful applications with databases and user authentication, or just simple tutorial copies?
+   - Do their projects show they can actually build software from scratch?
+2. Tools & Skills Mastery:
+   - Go through their tools (like React, Node.js, Python, PostgreSQL, Docker, etc.).
+   - Mark which tools are truly "Mastered" (proven in real projects), which "Needs Practice" (only mentioned briefly or in a skills list), and which are "Must Learn" (essential tools for their career path that they haven't touched yet).
+3. Role Suitability Verdict:
+   - Plainly state: Are they ready for junior, mid-level, or internship developer jobs right now? What is the main thing they need to do to start getting interview calls?
+4. LeetCode & DSA Preparation Target:
+   - Recommend a realistic number of LeetCode / DSA problems they should solve based on current industry hiring bars (e.g. "60 to 80 LeetCode problems, focusing on Medium level").
+   - List the 4 to 6 top DSA topics they must practice (e.g. Arrays & Hashing, Two Pointers, Trees, Graphs, Dynamic Programming).
+   - Give practical advice on how to practice without burning out.
+5. Projects Needed & Focus Projects:
+   - Tell them how many more projects they need to build (e.g. "1 High-Impact Full-Stack Project").
+   - Give 2 specific, impressive project ideas tailored to their background with suggested tech stack, explaining why each project will impress hiring teams.
+6. Honest Scoring (0-100):
+   - Categories:
+     * "Real Projects Quality" (0-100)
+     * "Tool & Tech Mastery" (0-100)
+     * "Coding & Problem Solving" (0-100)
+     * "Resume Clarity & Impact" (0-100)
+   - Overall score MUST equal the rounded average of the 4 category scores.
+   - Label: 90-100: "Excellent Fit", 75-89: "Strong Fit", 60-74: "Good Fit", 45-59: "Moderate Fit", 0-44: "Poor Fit".
+7. Keywords (12 to 16 key skills/concepts):
+   - "match": Proven in projects or work experience.
+   - "partial": Only listed in skills list without depth or proof.
+   - "miss": Key industry tool missing that would significantly boost their profile.
+8. Suggestions (4 to 5 bullet upgrades):
+   - Quote the candidate's exact weak/vague line in "context".
+   - In "title", give a clear, simple tip.
+   - In "description", write a rewritten, impressive bullet point showing real action, tools used, and estimated results/numbers.
 
-CRITICAL FUNCTIONAL CONSTRAINTS:
-- Output MUST be 100% valid JSON matching the exact schema below.
-- Do NOT output any markdown fences (\`\`\`json or \`\`\`), greetings, intro, or concluding prose.
-- Output ONLY the raw JSON object.
-
-JSON SCHEMA:
+OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
 {
   "score": number,
   "label": "Poor Fit" | "Moderate Fit" | "Good Fit" | "Strong Fit" | "Excellent Fit",
   "summary": string,
   "categories": [
-    { "name": "Technical Breadth & Stack", "score": number, "comment": string },
-    { "name": "Impact & Measurable Metrics", "score": number, "comment": string },
-    { "name": "ATS Formatting & Parsability", "score": number, "comment": string },
-    { "name": "Software Engineering Competencies", "score": number, "comment": string }
+    { "name": "Real Projects Quality", "score": number, "comment": string },
+    { "name": "Tool & Tech Mastery", "score": number, "comment": string },
+    { "name": "Coding & Problem Solving", "score": number, "comment": string },
+    { "name": "Resume Clarity & Impact", "score": number, "comment": string }
   ],
   "keywords": [
     { "word": string, "status": "match" | "partial" | "miss" }
@@ -231,7 +270,34 @@ JSON SCHEMA:
       "description": string,
       "context": string
     }
-  ]
+  ],
+  "roadmap": {
+    "suitability": string,
+    "dsaTarget": {
+      "recommendedCount": string,
+      "focusTopics": string[],
+      "advice": string
+    },
+    "projectsTarget": {
+      "additionalNeeded": string,
+      "recommendedProjects": [
+        {
+          "title": string,
+          "difficulty": "Beginner" | "Intermediate" | "Advanced",
+          "technologies": string[],
+          "description": string,
+          "whyItMatters": string
+        }
+      ]
+    },
+    "toolsMastery": [
+      {
+        "tool": string,
+        "status": "Mastered" | "Needs Practice" | "Must Learn",
+        "explanation": string
+      }
+    ]
+  }
 }`;
 
       userContent = `CANDIDATE RESUME:
@@ -253,8 +319,8 @@ ${resume}
           { role: "system", content: systemPrompt },
           { role: "user", content: userContent },
         ],
-        temperature: 0.10, // Deterministic, rigorous analytical scoring
-        max_tokens: 3500,  // Deep, unconstrained analysis without truncation
+        temperature: 0.12,
+        max_tokens: 3800,
         response_format: { type: "json_object" },
       }),
     });
@@ -276,8 +342,8 @@ ${resume}
               { role: "system", content: systemPrompt },
               { role: "user", content: userContent },
             ],
-            temperature: 0.10,
-            max_tokens: 3500,
+            temperature: 0.12,
+            max_tokens: 3800,
             response_format: { type: "json_object" },
           }),
         });
@@ -304,7 +370,7 @@ ${resume}
       );
     }
 
-    // Strip markdown code fences if present
+    // Clean JSON response
     let cleaned = rawContent.trim();
     cleaned = cleaned.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "").trim();
 
@@ -325,10 +391,10 @@ ${resume}
       );
     }
 
-    // Process and validate categories
+    // Process categories
     const fallbackCategories = isTargetedMatch
-      ? ["Skills Match", "Experience Level", "Tech Stack", "Role Alignment"]
-      : ["Technical Breadth & Stack", "Impact & Measurable Metrics", "ATS Formatting & Parsability", "Software Engineering Competencies"];
+      ? ["Job Requirements Match", "Required Tech Stack", "Project Experience Depth", "Seniority & Experience Match"]
+      : ["Real Projects Quality", "Tool & Tech Mastery", "Coding & Problem Solving", "Resume Clarity & Impact"];
 
     let categories: MatchCategory[] = [];
     if (Array.isArray(parsed.categories) && parsed.categories.length > 0) {
@@ -341,21 +407,19 @@ ${resume}
       categories = fallbackCategories.map((name) => ({
         name,
         score: 70,
-        comment: "Detailed evaluation performed based on overall resume evidence.",
+        comment: "Evaluation based on overall profile and skills review.",
       }));
     }
 
-    // Mathematical Calibration: Calculate authentic average from categories
+    // Mathematical calibration
     const categorySum = categories.reduce((sum, cat) => sum + cat.score, 0);
     const categoryAverage = Math.round(categorySum / categories.length);
 
-    // Reconcile overall score with category average to guarantee flawless mathematical coherence
     let score = Math.max(0, Math.min(100, Math.round(Number(parsed.score) || categoryAverage)));
     if (Math.abs(score - categoryAverage) > 3) {
       score = categoryAverage;
     }
 
-    // Mathematically lock label to score
     let label: MatchScopeResponse["label"];
     if (score >= 90) label = "Excellent Fit";
     else if (score >= 75) label = "Strong Fit";
@@ -365,7 +429,7 @@ ${resume}
 
     const summary = typeof parsed.summary === "string" && parsed.summary.trim().length > 0
       ? parsed.summary.trim()
-      : `Candidate demonstrates a ${label.toLowerCase()} profile with solid foundational engineering strengths and strategic opportunities to boost quantified impact.`;
+      : `You have a solid foundation with good potential. By refining your project depth and practicing core problem-solving, you can significantly increase your interview conversion.`;
 
     let keywords: MatchKeyword[] = [];
     if (Array.isArray(parsed.keywords)) {
@@ -390,12 +454,77 @@ ${resume}
           rawPriority === "high" ? "high" : rawPriority === "low" ? "low" : "medium";
         return {
           priority,
-          title: typeof s.title === "string" && s.title.trim().length > 0 ? s.title.trim() : "Optimize Bullet Impact",
+          title: typeof s.title === "string" && s.title.trim().length > 0 ? s.title.trim() : "Improve Bullet Impact",
           description: typeof s.description === "string" ? s.description.trim() : "",
           context: typeof s.context === "string" ? s.context.trim() : "",
         };
       }).filter((s) => s.description.length > 0 || s.context.length > 0);
     }
+
+    // Process career roadmap (DSA targets, focus projects, tool mastery)
+    const rawRoadmap = (parsed.roadmap || {}) as Record<string, unknown>;
+    const rawDsa = (rawRoadmap.dsaTarget || {}) as Record<string, unknown>;
+    const rawProjects = (rawRoadmap.projectsTarget || {}) as Record<string, unknown>;
+
+    const roadmap: CareerRoadmap = {
+      suitability: typeof rawRoadmap.suitability === "string" && rawRoadmap.suitability.trim().length > 0
+        ? rawRoadmap.suitability.trim()
+        : `Suitable for junior to early mid-level software engineering roles. Building 1-2 production-ready capstone projects will make you competitive for top-tier companies.`,
+      dsaTarget: {
+        recommendedCount: typeof rawDsa.recommendedCount === "string" && rawDsa.recommendedCount.trim().length > 0
+          ? rawDsa.recommendedCount.trim()
+          : "60 to 80 LeetCode Problems (focus on Mediums)",
+        focusTopics: Array.isArray(rawDsa.focusTopics) && rawDsa.focusTopics.length > 0
+          ? (rawDsa.focusTopics as string[]).map((t) => String(t).trim()).filter(Boolean)
+          : ["Arrays & Hashing", "Two Pointers", "Trees & Binary Search", "Graphs & BFS/DFS", "Dynamic Programming"],
+        advice: typeof rawDsa.advice === "string" && rawDsa.advice.trim().length > 0
+          ? rawDsa.advice.trim()
+          : "Focus on understanding patterns (like Sliding Window, DFS/BFS, and Two Pointers) rather than memorizing solutions.",
+      },
+      projectsTarget: {
+        additionalNeeded: typeof rawProjects.additionalNeeded === "string" && rawProjects.additionalNeeded.trim().length > 0
+          ? rawProjects.additionalNeeded.trim()
+          : "1 Major Capstone Project",
+        recommendedProjects: Array.isArray(rawProjects.recommendedProjects) && rawProjects.recommendedProjects.length > 0
+          ? (rawProjects.recommendedProjects as Array<Record<string, unknown>>).map((p) => {
+              const diffRaw = String(p.difficulty || "").toLowerCase();
+              const difficulty: RoadmapProject["difficulty"] =
+                diffRaw === "beginner" ? "Beginner" : diffRaw === "advanced" ? "Advanced" : "Intermediate";
+              return {
+                title: typeof p.title === "string" ? p.title.trim() : "Full-Stack Distributed System",
+                difficulty,
+                technologies: Array.isArray(p.technologies) ? (p.technologies as string[]).map(String) : ["TypeScript", "Next.js", "PostgreSQL", "Redis"],
+                description: typeof p.description === "string" ? p.description.trim() : "Build an end-to-end web app with caching, authentication, and live data synchronization.",
+                whyItMatters: typeof p.whyItMatters === "string" ? p.whyItMatters.trim() : "Demonstrates hands-on mastery of system design and real-world backend scalability.",
+              };
+            })
+          : [
+              {
+                title: "Real-Time Collaborative Developer Workspace",
+                difficulty: "Intermediate",
+                technologies: ["TypeScript", "Next.js", "Node.js", "PostgreSQL", "Redis", "Docker"],
+                description: "Build an interactive platform with live document/code editing, role-based authentication, and Redis pub/sub messaging.",
+                whyItMatters: "Proves you know how to build low-latency systems and manage state beyond simple CRUD apps.",
+              },
+            ],
+      },
+      toolsMastery: Array.isArray(rawRoadmap.toolsMastery) && rawRoadmap.toolsMastery.length > 0
+        ? (rawRoadmap.toolsMastery as Array<Record<string, unknown>>).map((t) => {
+            const rawStatus = String(t.status || "").toLowerCase();
+            const status: RoadmapTool["status"] =
+              rawStatus.includes("master") ? "Mastered" : rawStatus.includes("learn") ? "Must Learn" : "Needs Practice";
+            return {
+              tool: typeof t.tool === "string" ? t.tool.trim() : "Core Tool",
+              status,
+              explanation: typeof t.explanation === "string" ? t.explanation.trim() : "Demonstrated in projects.",
+            };
+          })
+        : [
+            { tool: "React / Frontend", status: "Mastered", explanation: "Clear component structure and UI implementations in projects." },
+            { tool: "Databases & SQL", status: "Needs Practice", explanation: "Mentioned, but should showcase complex joins, indexing, or migration scripts." },
+            { tool: "Docker & CI/CD", status: "Must Learn", explanation: "Adding Docker containers and GitHub Actions will elevate your resume to industry standard." },
+          ],
+    };
 
     const result: MatchScopeResponse = {
       score,
@@ -404,6 +533,7 @@ ${resume}
       categories,
       keywords,
       suggestions,
+      roadmap,
     };
 
     return NextResponse.json({
