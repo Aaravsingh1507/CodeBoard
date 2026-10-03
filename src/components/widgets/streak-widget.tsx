@@ -129,7 +129,7 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
 
                 {/* Heatmap Grid */}
                 <div className="rounded-2xl border border-white/[0.07] bg-[#0c1122]/70 p-4 sm:p-5 backdrop-blur-md">
-                  <StreakHeatmap days={data.heatmap.slice(-196)} />
+                  <StreakHeatmap days={data.heatmap} />
                 </div>
               </>
             )}

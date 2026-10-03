@@ -265,3 +265,36 @@ img {
 }
 
 
+
+
+/* Heatmap sliding bar / horizontal scrollbar */
+.heatmap-scrollbar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(45, 212, 191, 0.5) rgba(255, 255, 255, 0.08);
+}
+
+.heatmap-scrollbar::-webkit-scrollbar {
+  height: 7px;
+}
+
+.heatmap-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  margin: 0 4px;
+}
+
+.heatmap-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(45, 212, 191, 0.45);
+  border-radius: 9999px;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.heatmap-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(45, 212, 191, 0.85);
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.7);
+}
+
+.heatmap-scrollbar::-webkit-scrollbar-thumb:active {
+  background: #2dd4bf;
+}

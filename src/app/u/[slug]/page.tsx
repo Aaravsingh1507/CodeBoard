@@ -60,7 +60,7 @@ export default async function PublicProfilePage({
 
         <div className="rounded-[22px] border border-[#1e263d] bg-gradient-to-b from-[#111728]/95 to-[#0d1220]/95 p-5 shadow-xl shadow-black/40 backdrop-blur-md">
           <h2 className="mb-3 text-sm font-bold tracking-tight text-white">Activity</h2>
-          <StreakHeatmap days={profile.heatmap.slice(-182)} />
+          <StreakHeatmap days={profile.heatmap} />
         </div>
 
         {profile.githubStats && (

@@ -1,4 +1,6 @@
-﻿"use client";
+"use client";
+
+import React, { useRef, useEffect, useState } from "react";
 
 interface HeatmapDay {
   date: string;
@@ -37,7 +39,19 @@ const DAY_LABELS = [
 ];
 
 export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
-  if (days.length === 0) return null;
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  // Auto-scroll to current day (far right) on mount/update so latest streak is seen first
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
+  }, [days]);
+
+  if (!days || days.length === 0) return null;
 
   // Align into weeks (columns), Monday-first (Mon=0, Tue=1, ... Sun=6)
   const first = new Date(days[0].date + "T00:00:00Z");
@@ -51,19 +65,47 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
     weeks.push(cells.slice(i, i + 7));
   }
 
+  // Determine where each month starts along the week columns
+  const monthLabels: { weekIndex: number; name: string }[] = [];
+  let lastMonth = -1;
+  weeks.forEach((week, wi) => {
+    for (const day of week) {
+      if (day) {
+        const m = new Date(day.date + "T00:00:00Z").getUTCMonth();
+        if (m !== lastMonth) {
+          monthLabels.push({ weekIndex: wi, name: MONTH_NAMES[m] });
+          lastMonth = m;
+          break;
+        }
+      }
+    }
+  });
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsMouseDown(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isMouseDown || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsMouseDown(false);
+  };
+
   return (
     <div className="relative select-none">
-      {/* Month labels across top */}
-      <div className="flex items-center justify-between pl-8 pr-1 pb-2 text-[11px] font-medium text-slate-400">
-        {MONTH_NAMES.map((m) => (
-          <span key={m}>{m}</span>
-        ))}
-      </div>
-
-      {/* Grid with Left-side Day Labels */}
+      {/* Grid with Left-side Day Labels & Scrollable Heatmap */}
       <div className="flex items-start gap-2">
-        {/* Day of Week Labels (Mon, Wed, Fri) */}
-        <div className="flex flex-col gap-1.5 text-[11px] font-medium text-slate-400 w-6 shrink-0 pt-0.5">
+        {/* Day of Week Labels (Mon, Wed, Fri) aligned with cell rows */}
+        <div className="flex flex-col gap-1.5 text-[11px] font-medium text-slate-400 w-6 shrink-0 pt-6">
           {DAY_LABELS.map((d, i) => (
             <div
               key={i}
@@ -74,11 +116,37 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
           ))}
         </div>
 
-        {/* Scrollable Columns */}
-        <div className="overflow-x-auto scrollbar-none flex-1 pb-1">
+        {/* Scrollable Columns with Visible Sliding Bar */}
+        <div
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          className={`overflow-x-auto heatmap-scrollbar flex-1 pb-3 cursor-grab ${
+            isMouseDown ? "cursor-grabbing" : ""
+          }`}
+        >
+          {/* Synchronized Month labels */}
+          <div className="flex gap-1.5 mb-2 h-4 relative">
+            {weeks.map((_, wi) => {
+              const label = monthLabels.find((m) => m.weekIndex === wi);
+              return (
+                <div key={wi} className="w-3 md:w-3.5 shrink-0 relative">
+                  {label && (
+                    <span className="absolute left-0 top-0 text-[11px] font-medium text-slate-400 whitespace-nowrap">
+                      {label.name}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Heatmap Columns */}
           <div className="flex gap-1.5 animate-fade-in">
             {weeks.map((week, wi) => (
-              <div key={wi} className="flex flex-col gap-1.5">
+              <div key={wi} className="flex flex-col gap-1.5 shrink-0">
                 {week.map((day, di) =>
                   day ? (
                     <div
@@ -96,15 +164,20 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="mt-3.5 flex items-center gap-2 text-xs font-medium text-slate-400">
-        <span>Less activity</span>
-        <div className="flex items-center gap-1.5">
-          {LEVEL_CLASSES.map((c, i) => (
-            <div key={i} className={`h-3 w-3 md:h-3.5 md:w-3.5 rounded-[4px] ${c}`} />
-          ))}
+      {/* Legend & Sliding Bar Hint */}
+      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-slate-400">
+        <div className="flex items-center gap-2">
+          <span>Less activity</span>
+          <div className="flex items-center gap-1.5">
+            {LEVEL_CLASSES.map((c, i) => (
+              <div key={i} className={`h-3 w-3 md:h-3.5 md:w-3.5 rounded-[4px] ${c}`} />
+            ))}
+          </div>
+          <span>More activity</span>
         </div>
-        <span>More activity</span>
+        <span className="text-[11px] text-teal-400/80 font-medium flex items-center gap-1">
+          <span>↔</span> Slide to view full year
+        </span>
       </div>
     </div>
   );

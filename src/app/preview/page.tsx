@@ -60,11 +60,22 @@ export default function PreviewPage() {
   };
 
   const previewStreak = {
-    currentStreak: 0,
-    longestStreak: 1,
-    heatmap: Array.from({ length: 182 }, (_, i) => {
-      const d = new Date(Date.now() - (181 - i) * 86400000);
-      const count = i === 155 ? 3 : 0;
+    currentStreak: 1,
+    longestStreak: 2,
+    heatmap: Array.from({ length: 365 }, (_, i) => {
+      const d = new Date(Date.now() - (364 - i) * 86400000);
+      const count =
+        i === 364 ? 2 :
+        i === 363 ? 1 :
+        i === 345 ? 3 :
+        i === 340 ? 2 :
+        i === 310 ? 4 :
+        i === 280 ? 1 :
+        i === 240 ? 3 :
+        i === 200 ? 2 :
+        i === 150 ? 4 :
+        i === 110 ? 1 :
+        i === 60 ? 3 : 0;
       return {
         date: d.toISOString().split("T")[0],
         count,
