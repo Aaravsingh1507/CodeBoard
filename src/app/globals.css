@@ -298,3 +298,8 @@ img {
 .heatmap-scrollbar::-webkit-scrollbar-thumb:active {
   background: #2dd4bf;
 }
+
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
