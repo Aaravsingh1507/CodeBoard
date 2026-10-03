@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
@@ -30,80 +30,119 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
   }
 
   return (
-    <Card className="overflow-hidden rounded-[22px] border border-border bg-surface p-0 shadow-xs dark:border-[#1e263d] dark:bg-gradient-to-b dark:from-[#111728]/95 dark:to-[#0d1220]/95 dark:shadow-2xl dark:shadow-black/50 dark:backdrop-blur-md">
-      <CardContent className="p-6">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-center">
+    <Card className="overflow-hidden rounded-[24px] border border-[#1e2846]/70 bg-gradient-to-b from-[#0e1426]/95 to-[#0a0f1e]/95 p-0 shadow-2xl shadow-black/60 backdrop-blur-md">
+      <CardContent className="p-5 sm:p-6 lg:p-7">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
           {/* Left Column (7 cols): Header, Stat Tiles, Heatmap */}
-          <div className="lg:col-span-7 flex flex-col">
+          <div className="lg:col-span-7 flex flex-col justify-between">
             {/* Header */}
-            <div className="flex items-center justify-between pb-4">
-              <div className="flex items-center gap-2.5">
-                <span className="text-xl">🔥</span>
-                <h3 className="text-base font-bold tracking-tight text-foreground dark:text-white">Coding streak</h3>
+            <div className="flex items-center justify-between pb-3">
+              <div className="flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/streak-flame-transparent.png"
+                  alt="Coding streak flame"
+                  className="h-9 w-auto object-contain drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]"
+                />
+                <div>
+                  <h3 className="text-xl font-bold tracking-tight text-white leading-tight">
+                    Coding streak
+                  </h3>
+                  <p className="mt-0.5 text-xs text-slate-400 font-normal leading-tight">
+                    Keep showing up. Every commit counts.
+                  </p>
+                </div>
               </div>
               <button
                 onClick={syncNow}
                 disabled={syncing}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-3 py-1.5 text-xs font-medium text-foreground dark:text-slate-300 transition-colors hover:bg-surface-2 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:text-white disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-medium text-slate-300 transition-all hover:bg-white/[0.08] hover:border-white/20 hover:text-white disabled:opacity-50 shadow-xs"
               >
-                <RefreshCw size={12} className={syncing ? "animate-spin text-purple-600 dark:text-purple-400" : "text-muted dark:text-slate-400"} />
+                <RefreshCw size={13} className={syncing ? "animate-spin text-teal-400" : "text-slate-400"} />
                 <span>Sync today</span>
               </button>
             </div>
 
-            {!previewData && loading && <Skeleton className="h-44 w-full rounded-xl" />}
+            {!previewData && loading && <Skeleton className="h-44 w-full rounded-2xl" />}
             {!previewData && error && <ErrorState message={error} onRetry={() => refetch()} />}
 
             {data && (
               <>
                 {/* Stat Tiles */}
-                <div className="mb-4 grid grid-cols-2 gap-3.5">
+                <div className="mb-3.5 grid grid-cols-2 gap-3.5">
                   {/* Day Streak */}
-                  <div className="flex items-center gap-3.5 rounded-xl border border-border bg-surface-2/60 p-3.5 shadow-inner dark:border-[#1c2438] dark:bg-[#121829]/70">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-500/15 text-orange-500 dark:text-orange-400 text-lg">
-                      🔥
+                  <div className="flex items-center justify-between rounded-2xl border border-white/[0.07] bg-[#12192e]/60 p-3.5 shadow-inner backdrop-blur-md">
+                    <div className="flex items-center">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-white/5 bg-[#172036]/80 p-1 shadow-inner">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/streak-flame-badge.png"
+                          alt="Streak flame badge"
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
+                      <div className="ml-3">
+                        <p className="font-data text-2xl font-bold leading-none text-white tracking-tight">
+                          {data.currentStreak}
+                        </p>
+                        <p className="mt-1 text-xs font-medium text-slate-400">day streak</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-data text-2xl font-bold leading-none text-foreground dark:text-white">
-                        {data.currentStreak}
-                      </p>
-                      <p className="mt-1 text-xs text-muted dark:text-slate-400 font-medium">day streak</p>
+                    {/* Cyan rising bars */}
+                    <div className="flex items-end gap-1 select-none pr-1">
+                      <span className="w-1.5 h-2 rounded-full bg-gradient-to-t from-teal-500/40 to-cyan-400/50" />
+                      <span className="w-1.5 h-3.5 rounded-full bg-gradient-to-t from-teal-500/60 to-cyan-400/70" />
+                      <span className="w-1.5 h-5 rounded-full bg-gradient-to-t from-teal-500 to-cyan-400 drop-shadow-[0_0_4px_rgba(6,182,212,0.5)]" />
+                      <span className="w-1.5 h-6.5 rounded-full bg-gradient-to-t from-teal-400 to-cyan-300 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" />
+                      <span className="w-1.5 h-8 rounded-full bg-gradient-to-t from-teal-300 to-cyan-200 drop-shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
                     </div>
                   </div>
 
                   {/* Longest Streak */}
-                  <div className="flex items-center gap-3.5 rounded-xl border border-border bg-surface-2/60 p-3.5 shadow-inner dark:border-[#1c2438] dark:bg-[#121829]/70">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/15 text-amber-500 dark:text-amber-400 text-lg">
-                      🏆
+                  <div className="flex items-center justify-between rounded-2xl border border-white/[0.07] bg-[#12192e]/60 p-3.5 shadow-inner backdrop-blur-md">
+                    <div className="flex items-center">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-white/5 bg-[#172036]/80 p-1 shadow-inner">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/streak-trophy-badge.png"
+                          alt="Longest streak trophy"
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
+                      <div className="ml-3">
+                        <p className="font-data text-2xl font-bold leading-none text-white tracking-tight">
+                          {data.longestStreak}
+                        </p>
+                        <p className="mt-1 text-xs font-medium text-slate-400">longest streak</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-data text-2xl font-bold leading-none text-foreground dark:text-white">
-                        {data.longestStreak}
-                      </p>
-                      <p className="mt-1 text-xs text-muted dark:text-slate-400 font-medium">longest streak</p>
+                    {/* Purple rising bars */}
+                    <div className="flex items-end gap-1 select-none pr-1">
+                      <span className="w-1.5 h-2 rounded-full bg-gradient-to-t from-indigo-500/40 to-purple-400/50" />
+                      <span className="w-1.5 h-3.5 rounded-full bg-gradient-to-t from-indigo-500/60 to-purple-400/70" />
+                      <span className="w-1.5 h-5 rounded-full bg-gradient-to-t from-indigo-500 to-purple-400 drop-shadow-[0_0_4px_rgba(168,85,247,0.5)]" />
+                      <span className="w-1.5 h-6.5 rounded-full bg-gradient-to-t from-indigo-400 to-purple-300 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]" />
+                      <span className="w-1.5 h-8 rounded-full bg-gradient-to-t from-indigo-300 to-purple-200 drop-shadow-[0_0_8px_rgba(192,132,252,0.9)]" />
                     </div>
                   </div>
                 </div>
 
                 {/* Heatmap Grid */}
-                <div className="rounded-xl border border-border bg-surface-2/40 p-3.5 dark:border-[#1c2438] dark:bg-[#0c101c]/60">
-                  <StreakHeatmap days={data.heatmap.slice(-182)} />
+                <div className="rounded-2xl border border-white/[0.07] bg-[#0c1122]/70 p-4 sm:p-5 backdrop-blur-md">
+                  <StreakHeatmap days={data.heatmap.slice(-196)} />
                 </div>
               </>
             )}
           </div>
 
           {/* Right Column (5 cols): 3D Developer Desk Artwork */}
-          <div className="relative hidden lg:flex lg:col-span-5 items-center justify-center select-none overflow-hidden py-1">
-            {/* Ambient Purple Glow */}
-            <div className="pointer-events-none absolute h-48 w-48 rounded-full bg-purple-600/20 blur-3xl" />
-
-            <div className="relative z-10 flex items-center justify-center max-w-full">
+          <div className="hidden lg:flex lg:col-span-5 h-full items-stretch">
+            <div className="relative w-full h-full min-h-[300px] rounded-2xl border border-white/10 bg-[#070b16] overflow-hidden shadow-2xl flex items-center justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/streak-desk-3d.png"
-                alt="Coding Desk"
-                className="max-h-[168px] w-auto max-w-full rounded-xl object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)]"
+                src="/streak-workspace.png"
+                alt="Developer Workspace"
+                className="w-full h-full object-cover object-center"
               />
             </div>
           </div>
