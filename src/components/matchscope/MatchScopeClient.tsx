@@ -5,7 +5,6 @@ import {
   Target,
   Sparkles,
   UploadCloud,
-  FileText,
   FileCheck,
   CheckCircle2,
   AlertCircle,
@@ -23,33 +22,6 @@ import {
   FileUp,
 } from "lucide-react";
 import type { MatchScopeResponse, MatchKeyword, MatchSuggestion, MatchCategory } from "@/app/api/matchscope/route";
-
-const SAMPLE_RESUME = `Aarav Singh
-Software Engineer | Full Stack & Systems
-aarav@example.com | github.com/Aaravsingh1507 | linkedin.com/in/aaravsingh
-
-SUMMARY
-Software engineer with 2+ years of experience building scalable web applications, distributed APIs, and developer platforms. Passionate about TypeScript, Next.js, Python, PostgreSQL, and high-performance cloud architectures.
-
-EXPERIENCE
-Software Engineer Intern | CloudScale Systems
-Jan 2024 - Present | Remote
-- Built real-time developer analytics platform using Next.js 15, React, and TailwindCSS, reducing dashboard latency by 35%.
-- Designed and deployed serverless REST & GraphQL APIs on AWS Lambda and Node.js handling 250k+ daily events.
-- Integrated PostgreSQL with Prisma ORM, optimizing slow join queries to decrease p95 response times from 420ms to 95ms.
-- Implemented GitHub OAuth and automated CI/CD pipeline using GitHub Actions, cutting release deployment cycles by 50%.
-
-Full Stack Developer | OpenSource Contributor
-Jun 2023 - Dec 2023 | Remote
-- Created automated LeetCode and GitHub streak tracker used by 1,200+ developers, tracking algorithmic progress and commit velocity.
-- Integrated Groq LLM API for automated code review summaries, delivering contextual weekly engineering insights.
-- Implemented Docker containerization and Redis caching layer to support high concurrency under peak traffic spikes.
-
-TECHNICAL SKILLS
-Languages: TypeScript, JavaScript, Python, SQL, C++, HTML5/CSS3
-Frameworks & Libraries: React, Next.js (App Router), Node.js, Express, TailwindCSS, Fastify
-Databases & Tools: PostgreSQL, Redis, Supabase, Prisma ORM, Docker, Git, Linux
-Cloud & AI: AWS (Lambda, S3), Vercel, Groq API, OpenAI API, REST APIs, CI/CD`;
 
 const SAMPLE_JD = `Role: Full Stack Software Engineer (Frontend / Product)
 Company: TechCorp Innovations
@@ -73,11 +45,9 @@ Qualifications & Requirements:
 - Demonstrated passion for developer tools, clean code, and AI model integrations.`;
 
 export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: boolean }) {
-  const [resumeText, setResumeText] = useState("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const [showJdPanel, setShowJdPanel] = useState(false);
-  const [showTextPreview, setShowTextPreview] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -102,20 +72,6 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
   function handleFileSelect(file: File) {
     setError(null);
     setUploadedFile(file);
-
-    const fileName = file.name.toLowerCase();
-    if (fileName.endsWith(".txt") || fileName.endsWith(".md") || file.type.startsWith("text/")) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const text = e.target?.result as string;
-        if (text) setResumeText(text);
-      };
-      reader.readAsText(file);
-    } else {
-      // For PDF, we preserve the File object to upload directly via FormData
-      // Also clear plain text if previously set to avoid stale content
-      setResumeText("");
-    }
   }
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
@@ -143,51 +99,33 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
 
   function handleClearFile() {
     setUploadedFile(null);
-    setResumeText("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   }
 
-  function handleUseSampleResume() {
-    setUploadedFile(null);
-    setResumeText(SAMPLE_RESUME);
-    setError(null);
-  }
-
   async function handleAnalyze() {
-    if (!uploadedFile && !resumeText.trim()) {
-      setError("Please upload your resume file or paste your resume text to begin.");
+    if (!uploadedFile) {
+      setError("Please select or upload your resume file to begin analysis.");
       return;
     }
 
+    setLoadingStep(0);
     setLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      let res: Response;
-
-      if (uploadedFile) {
-        const formData = new FormData();
-        formData.append("file", uploadedFile);
-        if (jobDescription.trim()) {
-          formData.append("jobDescription", jobDescription.trim());
-        }
-        res = await fetch("/api/matchscope", {
-          method: "POST",
-          body: formData,
-        });
-      } else {
-        res = await fetch("/api/matchscope", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            resume: resumeText.trim(),
-            jobDescription: jobDescription.trim(),
-          }),
-        });
+      const formData = new FormData();
+      formData.append("file", uploadedFile);
+      if (jobDescription.trim()) {
+        formData.append("jobDescription", jobDescription.trim());
       }
+
+      const res = await fetch("/api/matchscope", {
+        method: "POST",
+        body: formData,
+      });
 
       const json = await res.json();
 
@@ -208,7 +146,7 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
     }
   }
 
-  const hasResume = Boolean(uploadedFile || resumeText.trim());
+  const hasResume = Boolean(uploadedFile);
 
   return (
     <div className={`mx-auto max-w-5xl ${embeddedMode ? "p-0" : "px-4 py-8"}`}>
@@ -216,14 +154,14 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
       <div className="mb-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-[#7c3aed]/30 bg-[#7c3aed]/10 px-3.5 py-1 text-xs font-semibold text-[#a78bfa] mb-2.5 shadow-sm">
-            <Sparkles size={13} className="text-[#a78bfa] animate-pulse" />
-            <span>MatchScope AI • Instant ATS Engine</span>
+            <Sparkles size={13} className="text-[#a78bfa]" />
+            <span>MatchScope • Instant ATS Engine</span>
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground dark:text-white sm:text-4xl">
             Upload Resume, Get Instant Answers
           </h1>
           <p className="mt-1.5 text-sm text-muted dark:text-slate-400 max-w-2xl leading-relaxed">
-            Drop your resume to evaluate ATS readiness, detect technical strengths & missing keywords, and get high-impact bullet improvements.
+            Drop your resume file to evaluate ATS readiness, detect technical strengths & missing keywords, and get high-impact bullet improvements.
           </p>
         </div>
 
@@ -258,9 +196,9 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
         }}
       />
 
-      {/* Main Flow: Upload-First Resume Box */}
+      {/* Main Flow: Upload-Only Resume Box */}
       <div className="space-y-4">
-        {!uploadedFile && !resumeText ? (
+        {!uploadedFile ? (
           // Idle Dropzone
           <div
             onDrop={handleDrop}
@@ -278,74 +216,53 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
             </div>
 
             <h3 className="mt-4 text-base font-bold text-white tracking-wide">
-              {isDragging ? "Drop your resume here" : "Upload your resume to begin"}
+              {isDragging ? "Drop your resume here" : "Upload your resume file"}
             </h3>
             <p className="mt-1 text-xs text-slate-400 max-w-md">
-              Drag and drop your resume file here, or <span className="text-[#a78bfa] font-semibold underline">browse files</span>.
+              Drag and drop your resume file here, or click to browse.
             </p>
             <p className="mt-1 text-[11px] text-slate-500">
               Supports PDF, DOCX, TXT, or Markdown (Max 10MB)
             </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-6">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleUseSampleResume();
+                  fileInputRef.current?.click();
                 }}
-                className="rounded-xl border border-[#2d334d] bg-[#1a1f36] px-3.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:border-[#7c3aed] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] px-6 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#7c3aed]/25 hover:from-[#8b5cf6] hover:to-[#7c3aed] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
               >
-                Use sample SWE resume
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setResumeText(" ");
-                }}
-                className="rounded-xl border border-transparent px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
-              >
-                Or paste text directly
+                <FileUp size={15} />
+                <span>Choose Resume File</span>
               </button>
             </div>
           </div>
         ) : (
-          // File Loaded State Banner
+          // File Loaded State Card
           <div className="rounded-2xl border border-[#7c3aed]/40 bg-[#121629] p-5 shadow-xl transition-all">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1e2338]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3.5 min-w-0">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c3aed]/25 to-indigo-600/25 border border-[#7c3aed]/40 text-[#a78bfa]">
-                  {uploadedFile ? <FileCheck size={24} /> : <FileText size={24} />}
+                  <FileCheck size={24} />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="truncate text-sm font-bold text-white">
-                      {uploadedFile ? uploadedFile.name : "Custom Resume Text"}
+                      {uploadedFile.name}
                     </h3>
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
-                      <CheckCircle2 size={11} /> Ready for AI
+                      <CheckCircle2 size={11} /> Ready for analysis
                     </span>
                   </div>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    {uploadedFile
-                      ? `${(uploadedFile.size / 1024).toFixed(1)} KB • Uploaded file`
-                      : `${resumeText.trim().split(/\s+/).length} words ready`}
+                    {(uploadedFile.size / 1024).toFixed(1)} KB • Uploaded file
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setShowTextPreview(!showTextPreview)}
-                  className="rounded-xl border border-[#2a304e] bg-[#171c33] px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
-                >
-                  <FileText size={13} />
-                  <span>{showTextPreview ? "Hide Preview" : "View / Edit Text"}</span>
-                  {showTextPreview ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                </button>
-
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -365,27 +282,6 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
                 </button>
               </div>
             </div>
-
-            {/* Expandable Preview / Manual Editor */}
-            {showTextPreview && (
-              <div className="mt-4 pt-2 animate-fade-in">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-slate-400">
-                    Extracted / Editable Resume Content:
-                  </span>
-                  <span className="text-[11px] font-mono text-slate-500">
-                    {resumeText.trim() ? `${resumeText.trim().split(/\s+/).length} words` : "Parsed via server on submit"}
-                  </span>
-                </div>
-                <textarea
-                  value={resumeText}
-                  onChange={(e) => setResumeText(e.target.value)}
-                  placeholder="Paste or edit resume text here..."
-                  rows={8}
-                  className="w-full resize-y rounded-xl border border-[#1e2338] bg-[#0a0d17] p-3 text-xs font-mono leading-relaxed text-slate-200 placeholder:text-slate-600 focus:border-[#7c3aed] focus:outline-none"
-                />
-              </div>
-            )}
           </div>
         )}
 

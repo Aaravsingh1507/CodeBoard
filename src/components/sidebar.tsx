@@ -32,7 +32,7 @@ const NAV: NavItem[] = [
   { href: "/leetcode", label: "LeetCode", icon: Code2 },
   { href: "/applications", label: "Applications", icon: Briefcase },
   { href: "/circles", label: "Circles", icon: Users },
-  { href: "/matchscope", label: "MatchScope", icon: Target, tag: "AI" },
+  { href: "/matchscope", label: "MatchScope", icon: Target },
   { href: "/goals", label: "Goals", icon: Target },
   { href: "/reviews", label: "AI Reviews", icon: Sparkles },
   { href: "/settings", label: "Settings", icon: Settings },
