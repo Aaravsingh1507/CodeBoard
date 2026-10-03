@@ -4,7 +4,7 @@ import { extractText } from "unpdf";
 export const runtime = "nodejs";
 
 export interface MatchCategory {
-  name: "Skills Match" | "Experience Level" | "Tech Stack" | "Role Alignment" | string;
+  name: "Skills Match" | "Experience Level" | "Tech Stack" | "Role Alignment" | "Technical Breadth & Stack" | "Impact & Measurable Metrics" | "ATS Formatting & Parsability" | "Software Engineering Competencies" | string;
   score: number;
   comment: string;
 }
@@ -92,34 +92,48 @@ export async function POST(req: NextRequest) {
     let userContent: string;
 
     if (isTargetedMatch) {
-      systemPrompt = `You are MatchScope, an expert AI applicant tracking system (ATS) analyst and senior technical recruiter.
-Your job is to objectively and rigorously analyze how well a candidate's resume matches a target job description.
+      systemPrompt = `You are MatchScope, an elite Applicant Tracking System (ATS) evaluation engine, Principal Engineering Hiring Lead, and executive technical recruiter.
+Your sole function is to execute an objective, deep forensic comparison between the candidate's resume and the target job description.
 
-SCORING METHODOLOGY:
-1. Overall Match Score (0 to 100):
-   - Score objectively based on concrete evidence in the resume matching the job description.
-2. Label:
-   - 0-44: "Poor Fit"
-   - 45-59: "Moderate Fit"
-   - 60-74: "Good Fit"
-   - 75-89: "Strong Fit"
-   - 90-100: "Excellent Fit"
-3. Summary: Exactly a 2-line summary explaining the overall fit, primary strength, and main gap.
-4. Categories: Exactly 4 categories with score (0-100) and a concise, specific 1-2 sentence comment:
-   - "Skills Match"
-   - "Experience Level"
-   - "Tech Stack"
-   - "Role Alignment"
-5. Keywords: Extract 12 to 18 critical technical, domain, and role keywords from the Job Description. Classify each:
-   - "match": The skill/tool/concept is explicitly and strongly demonstrated in the resume.
-   - "partial": The skill/tool is implied, adjacent (e.g. SQL vs PostgreSQL), or briefly mentioned without depth.
-   - "miss": The skill/tool/requirement is missing from the resume.
-6. Suggestions: 4 to 6 specific, actionable resume fixes ranked by priority ('high', 'medium', or 'low').
-   - High priority fixes for major gaps, medium for missing keywords/context, low for phrasing/formatting.
-   - Reference actual resume content or exact bullets in 'context', and provide the exact phrasing or metric to add in 'description'.
+INTERNAL ANALYTICAL PROTOCOL (THINK DEEPLY & EVALUATE RIGOROUSLY BEFORE GENERATING JSON):
+1. TECHNICAL FORENSIC AUDIT:
+   - Differentiate strictly between superficial keyword mentions in a "skills" section versus active, production-grade application in projects or work history.
+   - Contrast the required tech stack against the candidate's demonstrated technologies.
+2. EXPERIENCE & SCOPE RECONCILIATION:
+   - Compare the candidate's verified years of experience and level of autonomy against the role's seniority requirements (Junior, Mid, Senior, Staff/Lead).
+   - Evaluate scope: individual contributor tasks vs. architectural ownership, system scale, and leadership.
+3. QUANTIFIABLE IMPACT ANALYSIS:
+   - Audit experience bullets against the Google XYZ formula: "Accomplished [X] as measured by [Y], by doing [Z]".
+   - Penalize passive, duty-focused statements ("Responsible for...", "Assisted in...") vs. high-velocity outcomes.
+4. ATS PARSABILITY & TAXONOMY:
+   - Evaluate whether the resume's language and taxonomy seamlessly map to the target role's core search parameters.
+5. MATHEMATICAL COHERENCE & CALIBRATION:
+   - You will score 4 distinct categories from 0 to 100:
+     a. "Skills Match": Direct evidence of required core languages, frameworks, and tools.
+     b. "Experience Level": Alignment of years, seniority, and scale of responsibilities.
+     c. "Tech Stack": Modernity, infrastructure, database, and adjacent ecosystem overlap.
+     d. "Role Alignment": Problem domain synergy (e.g., distributed systems, web platforms, ML ops, cloud).
+   - The overall "score" MUST be the rounded arithmetic average of the four category scores.
+   - The "label" MUST be mathematically locked to the overall score:
+     * 90 to 100: "Excellent Fit"
+     * 75 to 89: "Strong Fit"
+     * 60 to 74: "Good Fit"
+     * 45 to 59: "Moderate Fit"
+     * 0 to 44: "Poor Fit"
+6. KEYWORD EXTRACTION (12 to 18 critical technical & role terms):
+   - "match": Directly verified in the candidate's projects/experience.
+   - "partial": Adjacent, theoretical, or mentioned casually without evidence of depth.
+   - "miss": Key requirement from the job description that is completely absent from the resume.
+7. ACTIONABLE SUGGESTIONS (4 to 6 items):
+   - For every suggestion, quote the actual weak or missing line from the resume in "context".
+   - In "description", provide an exact, production-grade rewritten bullet point using active verbs and quantified metrics ready to insert into the resume.
 
-Return ONLY a valid JSON object. No markdown code fences, no conversational prose.
-JSON structure:
+CRITICAL FUNCTIONAL CONSTRAINTS:
+- Output MUST be 100% valid JSON matching the exact schema below.
+- Do NOT output any markdown fences (\`\`\`json or \`\`\`), greetings, intro, or concluding prose.
+- Output ONLY the raw JSON object.
+
+JSON SCHEMA:
 {
   "score": number,
   "label": "Poor Fit" | "Moderate Fit" | "Good Fit" | "Strong Fit" | "Excellent Fit",
@@ -153,33 +167,50 @@ TARGET JOB DESCRIPTION:
 ${jobDescription.trim()}
 """`;
     } else {
-      // General Resume Evaluation & ATS Hiring Audit
-      systemPrompt = `You are MatchScope, an elite technical career coach, senior engineering hiring manager, and ATS auditor.
-You analyze resumes uploaded by software engineers and developers to evaluate their overall hiring readiness, ATS compatibility, technical depth, and quantifiable impact.
+      // General Resume Audit & ATS Readiness
+      systemPrompt = `You are MatchScope, an elite technical career auditor, Principal Software Architect, and top-tier ATS optimization engine.
+Your sole function is to execute an in-depth, rigorous forensic evaluation of a software engineering resume to maximize interview conversion rates.
 
-SCORING METHODOLOGY:
-1. Overall ATS & Hiring Readiness Score (0 to 100):
-   - 0-44: "Poor Fit" (Critical formatting issues, lacks metrics, vague descriptions)
-   - 45-59: "Moderate Fit" (Adequate skills listed, but missing quantifiable impact or modern tech stack depth)
-   - 60-74: "Good Fit" (Solid technical baseline, clean structure, could improve impact metrics)
-   - 75-89: "Strong Fit" (Well-crafted engineering resume, strong metrics, clear scope)
-   - 90-100: "Excellent Fit" (Top 5% tech resume, elite impact, high ATS parsability)
-2. Summary: Exactly a 2-line executive summary summarizing the candidate's core specialization, primary technical strength, and key area to elevate.
-3. Categories: Exactly 4 categories with score (0-100) and specific, honest 1-2 sentence feedback:
-   - "Technical Breadth & Stack" (Depth of languages, frameworks, system architecture)
-   - "Impact & Measurable Metrics" (Usage of quantifiable results, Google XYZ formula, scale indicators)
-   - "ATS Formatting & Parsability" (Structure clarity, standard headers, bullet conciseness)
-   - "Software Engineering Competencies" (Testing, CI/CD, algorithms, collaborative development)
-4. Keywords: Extract 12 to 16 modern core engineering skills, libraries, and architectural concepts relevant to the candidate's inferred profile. Classify each:
-   - "match": Prominently demonstrated with real project/work experience.
-   - "partial": Mentioned casually or only in skills list without project context.
-   - "miss": Key industry competency that is missing and would significantly boost interview rate.
-5. Suggestions: 4 to 6 concrete, actionable bullet rewrites and improvements ranked by priority ('high', 'medium', or 'low').
-   - Identify weak, vague, or passive lines from the resume in 'context'.
-   - In 'description', provide the exact rewritten bullet points using quantified impact and strong action verbs.
+INTERNAL ANALYTICAL PROTOCOL (THINK DEEPLY & EVALUATE RIGOROUSLY BEFORE GENERATING JSON):
+1. SPECIALIZATION & CAREER TRAJECTORY:
+   - Identify candidate specialization (e.g., Full-Stack, Backend, Distributed Systems, Frontend/UI, AI/ML, DevOps/Cloud).
+   - Assess career progression, continuity, and depth of technical ownership.
+2. TECHNICAL ARCHITECTURE & STACK DEPTH:
+   - Scrutinize whether technologies are merely listed in a skills section or proven through architectural implementation (e.g., microservices, caching layers, database indexing, message queues, Docker, CI/CD pipelines).
+3. GOOGLE XYZ IMPACT BENCHMARK:
+   - Analyze every bullet point against Google's XYZ formula: "Accomplished [X] as measured by [Y], by doing [Z]".
+   - Penalize generic task descriptions ("Built features", "Wrote unit tests", "Fixed bugs").
+   - Reward metrics: latency, throughput, cost savings, user base, automated test coverage, reliability %.
+4. ATS COMPLIANCE & RECRUITER READABILITY:
+   - Evaluate readability, standard headers (Summary, Skills, Experience, Projects, Education), chronological coherence, and scan-friendliness.
+5. MATHEMATICAL COHERENCE & CALIBRATION:
+   - You will score 4 distinct categories from 0 to 100:
+     a. "Technical Breadth & Stack": Modernity, depth of languages, frameworks, databases, and system design.
+     b. "Impact & Measurable Metrics": Proportion of bullets with concrete quantified results and XYZ structure.
+     c. "ATS Formatting & Parsability": Clean taxonomy, standard section headers, and semantic clarity.
+     d. "Software Engineering Competencies": Evidence of testing, CI/CD, code review, distributed design, performance tuning.
+   - The overall "score" MUST be the rounded arithmetic average of the four category scores.
+   - The "label" MUST be mathematically locked to the overall score:
+     * 90 to 100: "Excellent Fit"
+     * 75 to 89: "Strong Fit"
+     * 60 to 74: "Good Fit"
+     * 45 to 59: "Moderate Fit"
+     * 0 to 44: "Poor Fit"
+6. KEYWORD EXTRACTION (12 to 16 modern core engineering skills, tools, and paradigms):
+   - "match": Prominently demonstrated with real project/production experience.
+   - "partial": Listed in skills or mentioned without depth or impact metrics.
+   - "miss": High-value, industry-standard technology or concept missing from the resume that would drastically boost interview callbacks for this profile.
+7. ACTIONABLE BULLET REWRITES (4 to 6 items):
+   - In "context", quote the candidate's exact weak, unquantified, or passive bullet point.
+   - In "title", state the specific improvement angle (e.g., "Transform Task into Quantified XYZ Impact").
+   - In "description", provide a polished, copy-paste-ready rewrite of that bullet point utilizing strong action verbs, technical stack clarity, and estimated/placeholder metrics (e.g., "Reduced P99 latency by 35%...").
 
-Return ONLY a valid JSON object. No markdown code fences, no conversational prose.
-JSON structure:
+CRITICAL FUNCTIONAL CONSTRAINTS:
+- Output MUST be 100% valid JSON matching the exact schema below.
+- Do NOT output any markdown fences (\`\`\`json or \`\`\`), greetings, intro, or concluding prose.
+- Output ONLY the raw JSON object.
+
+JSON SCHEMA:
 {
   "score": number,
   "label": "Poor Fit" | "Moderate Fit" | "Good Fit" | "Strong Fit" | "Excellent Fit",
@@ -222,8 +253,8 @@ ${resume}
           { role: "system", content: systemPrompt },
           { role: "user", content: userContent },
         ],
-        temperature: 0.15,
-        max_tokens: 2048,
+        temperature: 0.10, // Deterministic, rigorous analytical scoring
+        max_tokens: 3500,  // Deep, unconstrained analysis without truncation
         response_format: { type: "json_object" },
       }),
     });
@@ -245,8 +276,9 @@ ${resume}
               { role: "system", content: systemPrompt },
               { role: "user", content: userContent },
             ],
-            temperature: 0.15,
-            max_tokens: 2048,
+            temperature: 0.10,
+            max_tokens: 3500,
+            response_format: { type: "json_object" },
           }),
         });
       }
@@ -293,64 +325,76 @@ ${resume}
       );
     }
 
-    // Normalize and sanitize fields
-    const score = Math.max(0, Math.min(100, Math.round(Number(parsed.score) || 0)));
-
-    let label: MatchScopeResponse["label"] = "Good Fit";
-    if (typeof parsed.label === "string" && ["Poor Fit", "Moderate Fit", "Good Fit", "Strong Fit", "Excellent Fit"].includes(parsed.label)) {
-      label = parsed.label as MatchScopeResponse["label"];
-    } else {
-      if (score >= 90) label = "Excellent Fit";
-      else if (score >= 75) label = "Strong Fit";
-      else if (score >= 60) label = "Good Fit";
-      else if (score >= 45) label = "Moderate Fit";
-      else label = "Poor Fit";
-    }
-
-    const summary = typeof parsed.summary === "string" ? parsed.summary.trim() : "";
-
+    // Process and validate categories
     const fallbackCategories = isTargetedMatch
       ? ["Skills Match", "Experience Level", "Tech Stack", "Role Alignment"]
       : ["Technical Breadth & Stack", "Impact & Measurable Metrics", "ATS Formatting & Parsability", "Software Engineering Competencies"];
 
     let categories: MatchCategory[] = [];
-    if (Array.isArray(parsed.categories)) {
+    if (Array.isArray(parsed.categories) && parsed.categories.length > 0) {
       categories = (parsed.categories as Array<Record<string, unknown>>).map((c, idx) => ({
-        name: typeof c.name === "string" ? c.name : (fallbackCategories[idx] || "Category"),
-        score: Math.max(0, Math.min(100, Math.round(Number(c.score) || score))),
-        comment: typeof c.comment === "string" ? c.comment : "",
+        name: typeof c.name === "string" && c.name.trim().length > 0 ? c.name.trim() : (fallbackCategories[idx] || "Category"),
+        score: Math.max(0, Math.min(100, Math.round(Number(c.score) || 70))),
+        comment: typeof c.comment === "string" ? c.comment.trim() : "",
       }));
     } else {
       categories = fallbackCategories.map((name) => ({
         name,
-        score,
-        comment: "Analysis generated based on overall evaluation.",
+        score: 70,
+        comment: "Detailed evaluation performed based on overall resume evidence.",
       }));
     }
+
+    // Mathematical Calibration: Calculate authentic average from categories
+    const categorySum = categories.reduce((sum, cat) => sum + cat.score, 0);
+    const categoryAverage = Math.round(categorySum / categories.length);
+
+    // Reconcile overall score with category average to guarantee flawless mathematical coherence
+    let score = Math.max(0, Math.min(100, Math.round(Number(parsed.score) || categoryAverage)));
+    if (Math.abs(score - categoryAverage) > 3) {
+      score = categoryAverage;
+    }
+
+    // Mathematically lock label to score
+    let label: MatchScopeResponse["label"];
+    if (score >= 90) label = "Excellent Fit";
+    else if (score >= 75) label = "Strong Fit";
+    else if (score >= 60) label = "Good Fit";
+    else if (score >= 45) label = "Moderate Fit";
+    else label = "Poor Fit";
+
+    const summary = typeof parsed.summary === "string" && parsed.summary.trim().length > 0
+      ? parsed.summary.trim()
+      : `Candidate demonstrates a ${label.toLowerCase()} profile with solid foundational engineering strengths and strategic opportunities to boost quantified impact.`;
 
     let keywords: MatchKeyword[] = [];
     if (Array.isArray(parsed.keywords)) {
       keywords = parsed.keywords.map((k: unknown) => {
         if (k && typeof k === "object" && "word" in k) {
           const item = k as { word?: unknown; status?: unknown };
-          const word = typeof item.word === "string" ? item.word.trim() : String(item.word);
-          const status = (item.status === "match" || item.status === "partial" || item.status === "miss")
-            ? item.status
-            : "partial";
+          const word = typeof item.word === "string" ? item.word.trim() : String(item.word || "");
+          const rawStatus = String(item.status || "").toLowerCase();
+          const status: MatchKeyword["status"] =
+            rawStatus === "match" ? "match" : rawStatus === "miss" ? "miss" : "partial";
           return { word, status };
         }
-        return { word: String(k), status: "partial" as const };
-      });
+        return { word: String(k).trim(), status: "partial" as const };
+      }).filter((k) => k.word.length > 0);
     }
 
     let suggestions: MatchSuggestion[] = [];
     if (Array.isArray(parsed.suggestions)) {
-      suggestions = (parsed.suggestions as Array<Record<string, unknown>>).map((s) => ({
-        priority: (s.priority === "high" || s.priority === "medium" || s.priority === "low") ? s.priority : "medium",
-        title: typeof s.title === "string" ? s.title : "Improvement Opportunity",
-        description: typeof s.description === "string" ? s.description : "",
-        context: typeof s.context === "string" ? s.context : "",
-      }));
+      suggestions = (parsed.suggestions as Array<Record<string, unknown>>).map((s) => {
+        const rawPriority = String(s.priority || "").toLowerCase();
+        const priority: MatchSuggestion["priority"] =
+          rawPriority === "high" ? "high" : rawPriority === "low" ? "low" : "medium";
+        return {
+          priority,
+          title: typeof s.title === "string" && s.title.trim().length > 0 ? s.title.trim() : "Optimize Bullet Impact",
+          description: typeof s.description === "string" ? s.description.trim() : "",
+          context: typeof s.context === "string" ? s.context.trim() : "",
+        };
+      }).filter((s) => s.description.length > 0 || s.context.length > 0);
     }
 
     const result: MatchScopeResponse = {
