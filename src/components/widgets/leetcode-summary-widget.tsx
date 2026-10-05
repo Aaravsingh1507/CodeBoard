@@ -146,45 +146,48 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
 
         {!previewData && loading && <Skeleton className="my-3 h-12 w-full rounded-xl" />}
 
-        {/* 3 Stat Cards Row - responsive for mobile: no truncation */}
-        <div className="relative z-10 mt-3.5 sm:mt-4 grid grid-cols-3 gap-2 sm:gap-3">
-          {/* Problems Solved Card */}
-          <div className="rounded-2xl border border-border bg-surface-2/50 p-2 sm:p-3 flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3 dark:border-white/5 dark:bg-[#0d1322]/80 min-w-0">
-            <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-amber-50 border border-amber-200 text-amber-600 dark:bg-[#2b1f13] dark:border-[#52381e] dark:text-amber-400 shrink-0">
-              <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 stroke-[2.5]" />
+        {/* 3 Stat Cards Row - Vertical glassmorphic layout matching Image 1 */}
+        <div className="relative z-10 mt-3.5 sm:mt-4 grid grid-cols-3 gap-2.5 sm:gap-3.5">
+          {/* Problems Card */}
+          <div className="rounded-2xl border border-border/80 bg-surface-2/50 p-3 sm:p-4 flex flex-col items-center justify-center text-center dark:border-[#f59e0b]/30 dark:bg-[#0c101d]/90 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)] min-w-0 transition-all hover:border-amber-500/50">
+            {/* Glowing Amber Icon Box */}
+            <div className="flex h-[36px] w-[36px] sm:h-11 sm:w-11 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-amber-100 to-amber-50 border border-amber-300 text-amber-600 dark:from-[#35230f]/90 dark:to-[#1a1106]/95 dark:border-[#f59e0b]/45 dark:text-[#f59e0b] shrink-0 shadow-sm dark:shadow-[0_2px_14px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.15)]">
+              <Check className="h-4 w-4 sm:h-[18px] sm:w-[18px] stroke-[2.5]" />
             </div>
-            <div className="min-w-0 w-full">
-              <p className="text-[10px] sm:text-[11px] font-medium text-muted dark:text-slate-400 truncate">Problems Solved</p>
-              <p className="font-data text-base sm:text-xl font-bold text-foreground dark:text-white leading-tight mt-0.5">
-                {hasData && data ? data.totalSolved : "—"}
-              </p>
-            </div>
+            <span className="mt-2.5 sm:mt-3 text-[11px] sm:text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300 tracking-wide whitespace-nowrap">
+              Problems
+            </span>
+            <span className="mt-1 sm:mt-1.5 font-data text-xs sm:text-sm md:text-base font-bold text-foreground dark:text-white leading-none">
+              {loading && !data ? "—" : (hasData && data ? data.totalSolved : "—")}
+            </span>
           </div>
 
-          {/* Acceptance Rate Card */}
-          <div className="rounded-2xl border border-border bg-surface-2/50 p-2 sm:p-3 flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3 dark:border-white/5 dark:bg-[#0d1322]/80 min-w-0">
-            <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-amber-50 border border-amber-200 text-amber-600 dark:bg-[#2b1f13] dark:border-[#52381e] dark:text-amber-400 shrink-0">
-              <BarChart2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          {/* Acceptances Card */}
+          <div className="rounded-2xl border border-border/80 bg-surface-2/50 p-3 sm:p-4 flex flex-col items-center justify-center text-center dark:border-[#f59e0b]/30 dark:bg-[#0c101d]/90 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)] min-w-0 transition-all hover:border-amber-500/50">
+            {/* Glowing Amber Icon Box */}
+            <div className="flex h-[36px] w-[36px] sm:h-11 sm:w-11 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-amber-100 to-amber-50 border border-amber-300 text-amber-600 dark:from-[#35230f]/90 dark:to-[#1a1106]/95 dark:border-[#f59e0b]/45 dark:text-[#f59e0b] shrink-0 shadow-sm dark:shadow-[0_2px_14px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.15)]">
+              <BarChart2 className="h-4 w-4 sm:h-[18px] sm:w-[18px] stroke-[2.2]" />
             </div>
-            <div className="min-w-0 w-full">
-              <p className="text-[10px] sm:text-[11px] font-medium text-muted dark:text-slate-400 truncate">Acceptance Rate</p>
-              <p className="font-data text-base sm:text-xl font-bold text-foreground dark:text-white leading-tight mt-0.5">
-                {hasData && data?.acceptanceRate ? data.acceptanceRate : "—"}
-              </p>
-            </div>
+            <span className="mt-2.5 sm:mt-3 text-[11px] sm:text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300 tracking-wide whitespace-nowrap">
+              Acceptances
+            </span>
+            <span className="mt-1 sm:mt-1.5 font-data text-xs sm:text-sm md:text-base font-bold text-foreground dark:text-white leading-none">
+              {loading && !data ? "—" : (hasData && data?.acceptanceRate ? data.acceptanceRate : "—")}
+            </span>
           </div>
 
           {/* Ranking Card */}
-          <div className="rounded-2xl border border-border bg-surface-2/50 p-2 sm:p-3 flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3 dark:border-white/5 dark:bg-[#0d1322]/80 min-w-0">
-            <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-amber-50 border border-amber-200 text-amber-600 dark:bg-[#2b1f13] dark:border-[#52381e] dark:text-amber-400 shrink-0">
-              <Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <div className="rounded-2xl border border-border/80 bg-surface-2/50 p-3 sm:p-4 flex flex-col items-center justify-center text-center dark:border-[#f59e0b]/30 dark:bg-[#0c101d]/90 shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)] min-w-0 transition-all hover:border-amber-500/50">
+            {/* Glowing Amber Icon Box */}
+            <div className="flex h-[36px] w-[36px] sm:h-11 sm:w-11 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-amber-100 to-amber-50 border border-amber-300 text-amber-600 dark:from-[#35230f]/90 dark:to-[#1a1106]/95 dark:border-[#f59e0b]/45 dark:text-[#f59e0b] shrink-0 shadow-sm dark:shadow-[0_2px_14px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.15)]">
+              <Trophy className="h-4 w-4 sm:h-[18px] sm:w-[18px] stroke-[2]" />
             </div>
-            <div className="min-w-0 w-full">
-              <p className="text-[10px] sm:text-[11px] font-medium text-muted dark:text-slate-400 truncate">Ranking</p>
-              <p className="font-data text-base sm:text-xl font-bold text-foreground dark:text-white leading-tight mt-0.5">
-                {hasData && data?.ranking ? `#${data.ranking.toLocaleString()}` : "—"}
-              </p>
-            </div>
+            <span className="mt-2.5 sm:mt-3 text-[11px] sm:text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300 tracking-wide whitespace-nowrap">
+              Ranking
+            </span>
+            <span className="mt-1 sm:mt-1.5 font-data text-xs sm:text-sm md:text-base font-bold text-foreground dark:text-white leading-none">
+              {loading && !data ? "—" : (hasData && data?.ranking ? `#${data.ranking.toLocaleString()}` : "—")}
+            </span>
           </div>
         </div>
 
