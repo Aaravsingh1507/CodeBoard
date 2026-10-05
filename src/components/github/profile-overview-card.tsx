@@ -22,7 +22,7 @@ function NeonRepoIcon() {
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-purple-400 drop-shadow-[0_0_6px_rgba(168,85,247,0.7)]"
+      className="text-purple-600 dark:text-purple-400 dark:drop-shadow-[0_0_6px_rgba(168,85,247,0.7)]"
     >
       <rect
         x="6"
@@ -42,7 +42,7 @@ function NeonRepoIcon() {
         rx="4"
         stroke="currentColor"
         strokeWidth="2"
-        fill="#120c24"
+        className="fill-purple-100/60 dark:fill-[#120c24]"
         fillOpacity="0.7"
       />
       <path
@@ -69,14 +69,14 @@ function NeonStarIcon() {
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]"
+      className="text-amber-500 dark:text-amber-400 dark:drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]"
     >
       <path
         d="M18 4L22.2 12.8L32 14.2L24.9 21.1L26.6 30.8L18 26.2L9.4 30.8L11.1 21.1L4 14.2L13.8 12.8L18 4Z"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinejoin="round"
-        fill="#2a1e06"
+        className="fill-amber-100/60 dark:fill-[#2a1e06]"
         fillOpacity="0.5"
       />
       <path
@@ -98,7 +98,7 @@ function NeonFollowersIcon() {
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-cyan-400 drop-shadow-[0_0_6px_rgba(6,182,212,0.8)]"
+      className="text-cyan-600 dark:text-cyan-400 dark:drop-shadow-[0_0_6px_rgba(6,182,212,0.8)]"
     >
       <circle cx="15" cy="12" r="5" stroke="currentColor" strokeWidth="2" />
       <path
@@ -119,7 +119,7 @@ function NeonFollowersIcon() {
         strokeWidth="1.8"
         strokeLinecap="round"
       />
-      <circle cx="28" cy="10" r="4.5" stroke="currentColor" strokeWidth="1.6" fill="#071b26" />
+      <circle cx="28" cy="10" r="4.5" stroke="currentColor" strokeWidth="1.6" className="fill-cyan-100/60 dark:fill-[#071b26]" />
       <path d="M28 8V12M26 10H30" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
@@ -134,7 +134,7 @@ function NeonFollowingIcon() {
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-teal-400 drop-shadow-[0_0_6px_rgba(20,184,166,0.8)]"
+      className="text-teal-600 dark:text-teal-400 dark:drop-shadow-[0_0_6px_rgba(20,184,166,0.8)]"
     >
       <circle cx="17" cy="13" r="5" stroke="currentColor" strokeWidth="2" />
       <path
@@ -175,11 +175,11 @@ function NeonForksIcon() {
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-fuchsia-400 drop-shadow-[0_0_6px_rgba(217,70,239,0.8)]"
+      className="text-fuchsia-600 dark:text-fuchsia-400 dark:drop-shadow-[0_0_6px_rgba(217,70,239,0.8)]"
     >
-      <circle cx="12" cy="27" r="3.5" stroke="currentColor" strokeWidth="2" fill="#1e0b29" />
-      <circle cx="12" cy="10" r="3.5" stroke="currentColor" strokeWidth="2" fill="#1e0b29" />
-      <circle cx="26" cy="12" r="3.5" stroke="currentColor" strokeWidth="2" fill="#1e0b29" />
+      <circle cx="12" cy="27" r="3.5" stroke="currentColor" strokeWidth="2" className="fill-fuchsia-100/60 dark:fill-[#1e0b29]" />
+      <circle cx="12" cy="10" r="3.5" stroke="currentColor" strokeWidth="2" className="fill-fuchsia-100/60 dark:fill-[#1e0b29]" />
+      <circle cx="26" cy="12" r="3.5" stroke="currentColor" strokeWidth="2" className="fill-fuchsia-100/60 dark:fill-[#1e0b29]" />
       <path d="M12 23.5V13.5" stroke="currentColor" strokeWidth="2" />
       <path
         d="M12 20C17 20 23 18 24 15"
@@ -201,14 +201,14 @@ function NeonWatchersIcon() {
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-blue-400 drop-shadow-[0_0_6px_rgba(59,130,246,0.8)]"
+      className="text-blue-600 dark:text-blue-400 dark:drop-shadow-[0_0_6px_rgba(59,130,246,0.8)]"
     >
       <path
         d="M4 18C7 10 12 7 18 7C24 7 29 10 32 18C29 26 24 29 18 29C12 29 7 26 4 18Z"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinejoin="round"
-        fill="#08142b"
+        className="fill-blue-100/60 dark:fill-[#08142b]"
         fillOpacity="0.5"
       />
       <circle cx="18" cy="18" r="6" stroke="currentColor" strokeWidth="2" />
@@ -227,10 +227,10 @@ function NeonPullRequestsIcon() {
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-emerald-400 drop-shadow-[0_0_6px_rgba(16,185,129,0.8)]"
+      className="text-emerald-600 dark:text-emerald-400 dark:drop-shadow-[0_0_6px_rgba(16,185,129,0.8)]"
     >
-      <circle cx="10" cy="27" r="3.5" stroke="currentColor" strokeWidth="2" fill="#082218" />
-      <circle cx="10" cy="11" r="3.5" stroke="currentColor" strokeWidth="2" fill="#082218" />
+      <circle cx="10" cy="27" r="3.5" stroke="currentColor" strokeWidth="2" className="fill-emerald-100/60 dark:fill-[#082218]" />
+      <circle cx="10" cy="11" r="3.5" stroke="currentColor" strokeWidth="2" className="fill-emerald-100/60 dark:fill-[#082218]" />
       <path d="M10 14.5V23.5" stroke="currentColor" strokeWidth="2" />
       <path
         d="M10 11C16 11 20 12 22 14"
@@ -243,7 +243,7 @@ function NeonPullRequestsIcon() {
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinejoin="round"
-        fill="#082218"
+        className="fill-emerald-100/60 dark:fill-[#082218]"
       />
       <circle cx="21.5" cy="19.5" r="1.5" fill="currentColor" />
     </svg>
@@ -259,7 +259,7 @@ function NeonIssuesIcon() {
       viewBox="0 0 36 36"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="text-rose-400 drop-shadow-[0_0_6px_rgba(244,63,94,0.8)]"
+      className="text-rose-600 dark:text-rose-400 dark:drop-shadow-[0_0_6px_rgba(244,63,94,0.8)]"
     >
       <path
         d="M14 9L11 5M22 9L25 5"
@@ -283,7 +283,7 @@ function NeonIssuesIcon() {
         rx="6"
         stroke="currentColor"
         strokeWidth="2"
-        fill="#260b12"
+        className="fill-rose-100/60 dark:fill-[#260b12]"
         fillOpacity="0.5"
       />
       <path d="M18 12V28" stroke="currentColor" strokeWidth="1.6" />
@@ -386,22 +386,22 @@ export function ProfileOverviewCard({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl border border-cyan-500/25 bg-gradient-to-b from-[#0c1322]/95 via-[#080d1a]/95 to-[#050813]/98 p-4 sm:p-5 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] backdrop-blur-xl transition-all flex flex-col justify-between h-full ${className}`}
+      className={`relative overflow-hidden rounded-3xl border border-slate-200 dark:border-cyan-500/25 bg-white dark:bg-gradient-to-b dark:from-[#0c1322]/95 dark:via-[#080d1a]/95 dark:to-[#050813]/98 p-4 sm:p-5 shadow-sm dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] backdrop-blur-xl transition-all flex flex-col justify-between h-full ${className}`}
     >
       {/* Top ambient color glow */}
-      <div className="pointer-events-none absolute -top-24 left-1/4 h-48 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute -top-24 right-1/4 h-48 w-80 rounded-full bg-purple-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 left-1/4 h-48 w-80 rounded-full bg-cyan-500/10 blur-3xl opacity-30 dark:opacity-100" />
+      <div className="pointer-events-none absolute -top-24 right-1/4 h-48 w-80 rounded-full bg-purple-500/10 blur-3xl opacity-30 dark:opacity-100" />
 
       {/* Top specular edge reflection */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 dark:via-cyan-400/40 to-transparent" />
 
       {/* Card Header (Clean with speech bubble removed) */}
       <div className="relative z-10 flex items-center justify-between">
         <div>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             Profile overview
           </h2>
-          <p className="text-xs text-slate-300 font-serif italic tracking-wide">
+          <p className="text-xs text-slate-500 dark:text-slate-300 font-serif italic tracking-wide">
             A quick glance at your GitHub journey
           </p>
         </div>
@@ -414,17 +414,17 @@ export function ProfileOverviewCard({
           return (
             <div
               key={tile.id}
-              className={`group relative flex items-center gap-2.5 sm:gap-3 rounded-xl border border-slate-800/80 bg-[#0d1424]/75 p-2 sm:p-2.5 shadow-xs transition-all duration-200 hover:border-slate-700/80 hover:bg-[#111a2e]/90 hover:scale-[1.01] overflow-hidden ${
+              className={`group relative flex items-center gap-2.5 sm:gap-3 rounded-xl border border-slate-200/80 bg-slate-50/70 p-2 sm:p-2.5 shadow-xs transition-all duration-200 hover:border-slate-300 hover:bg-slate-100/90 dark:border-slate-800/80 dark:bg-[#0d1424]/75 dark:hover:border-slate-700/80 dark:hover:bg-[#111a2e]/90 hover:scale-[1.01] overflow-hidden ${
                 mounted ? `animate-slide-up ${delayClass}` : "opacity-0"
               }`}
             >
               {/* Top specular edge inside tile */}
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-slate-200/50 dark:via-white/10 to-transparent" />
 
               {/* Left: Compact Neon Icon with artistic brush smudge aura */}
               <div className="relative flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center">
                 <div
-                  className="absolute inset-0 rounded-xl blur-sm opacity-40 transition-opacity duration-300 group-hover:opacity-75"
+                  className="absolute inset-0 rounded-xl blur-sm opacity-20 dark:opacity-40 transition-opacity duration-300 group-hover:opacity-50 dark:group-hover:opacity-75"
                   style={{ backgroundColor: tile.glowColor }}
                 />
                 <div className="relative z-10 transition-transform duration-200 group-hover:scale-105">
@@ -434,10 +434,10 @@ export function ProfileOverviewCard({
 
               {/* Right: Number, Label & Glowing Gradient Bar */}
               <div className="min-w-0 flex-1">
-                <div className="font-data text-base sm:text-lg font-bold text-white tracking-tight leading-tight">
+                <div className="font-data text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
                   {tile.value.toLocaleString()}
                 </div>
-                <div className="text-[11px] font-medium text-slate-300/85 truncate">
+                <div className="text-[11px] font-medium text-slate-500 dark:text-slate-300/85 truncate">
                   {tile.label}
                 </div>
                 {/* Glowing Bottom Accent Bar */}

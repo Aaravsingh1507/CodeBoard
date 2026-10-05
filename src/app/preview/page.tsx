@@ -231,7 +231,7 @@ export default function PreviewPage() {
             {/* Preparation & Goals */}
             <div className="pt-2">
               <div className="flex items-center gap-3 mb-4">
-                <h2 className="text-xs font-bold tracking-widest uppercase text-slate-300">
+                <h2 className="text-xs font-bold tracking-widest uppercase text-slate-600 dark:text-slate-300">
                   Preparation & Goals
                 </h2>
                 <div className="h-[2px] w-28 bg-gradient-to-r from-purple-500 via-indigo-500 to-transparent rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)]" />

@@ -16,11 +16,11 @@ function levelFor(count: number) {
 }
 
 const LEVEL_CLASSES = [
-  "bg-[#1c2438] border border-slate-600/60 dark:bg-[#1a233b] dark:border-slate-600/70",
-  "bg-[#0d4f5b] border border-[#146b7b]",
-  "bg-[#0b7484] border border-[#0f9bb0]",
-  "bg-[#06b6d4] border border-[#22d3ee] shadow-[0_0_8px_rgba(6,182,212,0.6)]",
-  "bg-[#22d3ee] border border-cyan-100 shadow-[0_0_12px_rgba(34,211,238,0.95)]",
+  "bg-slate-100 border border-slate-200/90 dark:bg-[#1a233b] dark:border-slate-600/70",
+  "bg-teal-200/90 border border-teal-300 dark:bg-[#0d4f5b] dark:border-[#146b7b]",
+  "bg-teal-400 border border-teal-500/80 dark:bg-[#0b7484] dark:border-[#0f9bb0]",
+  "bg-teal-500 border border-teal-600 shadow-[0_0_6px_rgba(20,184,166,0.35)] dark:bg-[#06b6d4] dark:border-[#22d3ee] dark:shadow-[0_0_8px_rgba(6,182,212,0.6)]",
+  "bg-cyan-400 border border-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.5)] dark:bg-[#22d3ee] dark:border-cyan-100 dark:shadow-[0_0_12px_rgba(34,211,238,0.95)]",
 ];
 
 const MONTH_NAMES = [
@@ -105,7 +105,7 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
       {/* Grid with Left-side Day Labels & Scrollable Heatmap */}
       <div className="flex items-start gap-2 w-full min-w-0">
         {/* Day of Week Labels (Mon, Wed, Fri) aligned with cell rows */}
-        <div className="flex flex-col gap-1.5 text-[11px] font-medium text-slate-400 w-6 shrink-0 pt-6">
+        <div className="flex flex-col gap-1.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 w-6 shrink-0 pt-6">
           {DAY_LABELS.map((d, i) => (
             <div
               key={i}
@@ -135,7 +135,7 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
               return (
                 <div key={wi} className="w-3 md:w-3.5 shrink-0 relative">
                   {label && (
-                    <span className="absolute left-0 top-0 text-[11px] font-medium text-slate-400 whitespace-nowrap">
+                    <span className="absolute left-0 top-0 text-[11px] font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">
                       {label.name}
                     </span>
                   )}
@@ -166,7 +166,7 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
       </div>
 
       {/* Legend & Sliding Bar Hint */}
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-slate-400">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
         <div className="flex items-center gap-1.5 sm:gap-2">
           <span className="text-[11px] sm:text-xs">Less activity</span>
           <div className="flex items-center gap-1 sm:gap-1.5">
@@ -176,7 +176,7 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
           </div>
           <span className="text-[11px] sm:text-xs">More activity</span>
         </div>
-        <span className="text-[11px] text-teal-400/90 font-medium flex items-center gap-1 shrink-0 whitespace-nowrap">
+        <span className="text-[11px] text-teal-600 dark:text-teal-400/90 font-medium flex items-center gap-1 shrink-0 whitespace-nowrap">
           <span>↔</span> Slide to view full year
         </span>
       </div>

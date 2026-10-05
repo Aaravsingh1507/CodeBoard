@@ -217,21 +217,21 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
             onClick={() => fileInputRef.current?.click()}
             className={`group relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-10 text-center cursor-pointer transition-all duration-300 ${
               isDragging
-                ? "border-[#7c3aed] bg-[#7c3aed]/10 scale-[1.01] shadow-2xl shadow-[#7c3aed]/20"
-                : "border-[#2a304e] hover:border-[#7c3aed]/80 bg-[#101424] hover:bg-[#13182b] shadow-xl"
+                ? "border-purple-500 bg-purple-50/70 scale-[1.01] shadow-xl dark:border-[#7c3aed] dark:bg-[#7c3aed]/10 dark:shadow-2xl dark:shadow-[#7c3aed]/20"
+                : "border-slate-300 hover:border-purple-400 bg-slate-50/70 hover:bg-slate-100/80 shadow-xs dark:border-[#2a304e] dark:hover:border-[#7c3aed]/80 dark:bg-[#101424] dark:hover:bg-[#13182b] dark:shadow-xl"
             }`}
           >
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#7c3aed]/15 text-[#a78bfa] border border-[#7c3aed]/30 shadow-lg group-hover:scale-110 transition-transform duration-200">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-100 text-purple-600 border border-purple-200 shadow-sm dark:bg-[#7c3aed]/15 dark:text-[#a78bfa] dark:border-[#7c3aed]/30 dark:shadow-lg group-hover:scale-110 transition-transform duration-200">
               <UploadCloud size={32} />
             </div>
 
-            <h3 className="mt-4 text-base font-bold text-white tracking-wide">
+            <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white tracking-wide">
               {isDragging ? "Drop your resume here" : "Upload your resume file"}
             </h3>
-            <p className="mt-1 text-xs text-slate-400 max-w-md">
+            <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 max-w-md">
               Drag and drop your resume file here, or click to browse.
             </p>
-            <p className="mt-1 text-[11px] text-slate-500">
+            <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-500">
               Supports PDF, DOCX, TXT, or Markdown (Max 10MB)
             </p>
 
@@ -251,22 +251,22 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
           </div>
         ) : (
           // File Loaded State Card
-          <div className="rounded-2xl border border-[#7c3aed]/40 bg-[#121629] p-5 shadow-xl transition-all">
+          <div className="rounded-2xl border border-purple-200 bg-purple-50/50 p-5 shadow-sm dark:border-[#7c3aed]/40 dark:bg-[#121629] dark:shadow-xl transition-all">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3.5 min-w-0">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c3aed]/25 to-indigo-600/25 border border-[#7c3aed]/40 text-[#a78bfa]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-100 border border-purple-200 text-purple-600 dark:bg-gradient-to-br dark:from-[#7c3aed]/25 dark:to-indigo-600/25 dark:border-[#7c3aed]/40 dark:text-[#a78bfa]">
                   <FileCheck size={24} />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="truncate text-sm font-bold text-white">
+                    <h3 className="truncate text-sm font-bold text-slate-900 dark:text-white">
                       {uploadedFile.name}
                     </h3>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
                       <CheckCircle2 size={11} /> Ready for analysis
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     {(uploadedFile.size / 1024).toFixed(1)} KB • Uploaded file
                   </p>
                 </div>
@@ -276,7 +276,7 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="rounded-xl border border-[#2a304e] bg-[#171c33] px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:border-[#2a304e] dark:bg-[#171c33] dark:text-slate-300 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <FileUp size={13} />
                   <span>Change File</span>
@@ -285,7 +285,7 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
                 <button
                   type="button"
                   onClick={handleClearFile}
-                  className="rounded-xl p-1.5 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+                  className="rounded-xl p-1.5 text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
                   title="Remove resume"
                 >
                   <X size={16} />
@@ -296,18 +296,18 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
         )}
 
         {/* Optional Target Job Description Accordion */}
-        <div className="rounded-2xl border border-[#1e2338] bg-[#111424] overflow-hidden transition-all duration-200">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/70 dark:border-[#1e2338] dark:bg-[#111424] overflow-hidden transition-all duration-200">
           <button
             type="button"
             onClick={() => setShowJdPanel(!showJdPanel)}
-            className="w-full flex items-center justify-between p-4 text-left hover:bg-[#15192c] transition-colors cursor-pointer"
+            className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-100/80 dark:hover:bg-[#15192c] transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 border border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-400 dark:border-indigo-500/30">
                 <Building size={14} />
               </div>
               <div>
-                <span className="text-xs font-semibold text-white tracking-wide">
+                <span className="text-xs font-semibold text-slate-900 dark:text-white tracking-wide">
                   Target Job Description (Optional)
                 </span>
                 <span className="ml-2 text-[11px] text-slate-500">
@@ -316,15 +316,15 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-slate-400">
+            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
               <span>{showJdPanel ? "Collapse" : "Expand"}</span>
               {showJdPanel ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </div>
           </button>
 
           {showJdPanel && (
-            <div className="p-4 pt-1 border-t border-[#1a1f33] space-y-3 animate-fade-in">
-              <p className="text-xs text-slate-400">
+            <div className="p-4 pt-1 border-t border-slate-200 dark:border-[#1a1f33] space-y-3 animate-fade-in">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 Paste a specific job posting to check how well you match it, or leave blank to see how ready you are for general developer roles.
               </p>
               <textarea
@@ -332,14 +332,14 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
                 onChange={(e) => setJobDescription(e.target.value)}
                 placeholder="Paste target job posting here (required qualifications, responsibilities, tech stack)..."
                 rows={5}
-                className="w-full resize-y rounded-xl border border-[#1e2338] bg-[#0a0d17] p-3 text-xs font-mono leading-relaxed text-slate-200 placeholder:text-slate-600 focus:border-[#7c3aed] focus:outline-none"
+                className="w-full resize-y rounded-xl border border-slate-300 bg-white p-3 text-xs font-mono leading-relaxed text-slate-900 placeholder:text-slate-400 focus:border-[#7c3aed] focus:outline-none dark:border-[#1e2338] dark:bg-[#0a0d17] dark:text-slate-200 dark:placeholder:text-slate-600"
               />
               <div className="flex items-center justify-between text-xs text-slate-500">
                 <span>{jobDescription.trim() ? `${jobDescription.trim().split(/\s+/).length} words` : "0 words"}</span>
                 <button
                   type="button"
                   onClick={() => setJobDescription(SAMPLE_JD)}
-                  className="text-indigo-400 hover:text-indigo-300 hover:underline cursor-pointer"
+                  className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 hover:underline cursor-pointer"
                 >
                   Fill sample JD
                 </button>
@@ -491,15 +491,16 @@ function ScoreRing({
   const { stroke: strokeColor, badge: badgeClass } = getColor(score);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-[#1e2338] bg-gradient-to-br from-[#121629] via-[#0d101e] to-[#080b14] p-6 sm:p-8 shadow-2xl">
-      <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#7c3aed]/10 blur-3xl" />
+    <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-[#1e2338] dark:bg-gradient-to-br dark:from-[#121629] dark:via-[#0d101e] dark:to-[#080b14] p-6 sm:p-8 shadow-xl dark:shadow-2xl">
+      <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-purple-500/10 dark:bg-[#7c3aed]/10 blur-3xl" />
 
       <div className="flex flex-col md:flex-row items-center gap-8">
         {/* Circular Progress */}
         <div className="relative flex shrink-0 items-center justify-center">
           <svg height={radius * 2} width={radius * 2} className="-rotate-90">
             <circle
-              stroke="#1a1f33"
+              stroke="currentColor"
+              className="text-slate-100 dark:text-[#1a1f33]"
               fill="transparent"
               strokeWidth={stroke}
               r={normalizedRadius}
@@ -519,8 +520,8 @@ function ScoreRing({
             />
           </svg>
           <div className="absolute flex flex-col items-center justify-center">
-            <span className="text-3xl font-extrabold tracking-tight text-white">{score}</span>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Readiness</span>
+            <span className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">{score}</span>
+            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500 dark:text-slate-400">Readiness</span>
           </div>
         </div>
 
@@ -535,10 +536,10 @@ function ScoreRing({
             </span>
           </div>
 
-          <h2 className="text-lg font-bold text-white tracking-tight mb-2">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight mb-2">
             Overall Profile Assessment
           </h2>
-          <p className="text-sm leading-relaxed text-slate-300">
+          <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
             {summary}
           </p>
         </div>
@@ -557,35 +558,35 @@ function ActionPlanSection({
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <GraduationCap className="text-[#a78bfa]" size={20} />
+        <GraduationCap className="text-purple-600 dark:text-[#a78bfa]" size={20} />
         <div>
-          <h3 className="text-base font-bold text-white tracking-wide">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-wide">
             Your Action Plan & What to Learn Next
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Tailored advice on role suitability, coding problem targets, focus projects to build, and tool mastery.
           </p>
         </div>
       </div>
 
       {/* 1. Suitability Verdict Card */}
-      <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/30 via-[#12162d] to-[#0f1325] p-5 shadow-lg">
+      <div className="rounded-2xl border border-indigo-200 bg-indigo-50/60 dark:border-indigo-500/30 dark:bg-gradient-to-r dark:from-indigo-950/30 dark:via-[#12162d] dark:to-[#0f1325] p-5 shadow-sm dark:shadow-lg">
         <div className="flex items-start gap-3.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/40">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/40">
             <Lightbulb size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                 Role Suitability Verdict
               </h4>
               {detectedCandidateRole && (
-                <span className="rounded-full bg-indigo-500/20 border border-indigo-500/40 px-2.5 py-0.5 text-[10px] font-semibold text-indigo-200">
+                <span className="rounded-full bg-indigo-100 dark:bg-indigo-500/20 border border-indigo-200 dark:border-indigo-500/40 px-2.5 py-0.5 text-[10px] font-semibold text-indigo-700 dark:text-indigo-200">
                   {detectedCandidateRole}
                 </span>
               )}
             </div>
-            <p className="text-sm text-slate-200 leading-relaxed">
+            <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
               {roadmap.suitability}
             </p>
           </div>
@@ -595,31 +596,31 @@ function ActionPlanSection({
       {/* 2. Grid: LeetCode/DSA Target & Tool Mastery */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* LeetCode & DSA Target */}
-        <div className="rounded-2xl border border-[#1e2338] bg-[#101424] p-5 shadow-lg flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white dark:border-[#1e2338] dark:bg-[#101424] p-5 shadow-sm dark:shadow-lg flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Code2 size={16} className="text-emerald-400" />
-                <h4 className="text-sm font-bold text-white">DSA & Coding Practice Target</h4>
+                <Code2 size={16} className="text-emerald-500 dark:text-emerald-400" />
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white">DSA & Coding Practice Target</h4>
               </div>
-              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-400">
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                 {roadmap.dsaTarget.recommendedCount}
               </span>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed mb-3">
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
               {roadmap.dsaTarget.advice}
             </p>
 
             <div className="mt-3">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">
+              <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">
                 Priority Problem Patterns to Practice:
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {roadmap.dsaTarget.focusTopics.map((topic, i) => (
                   <span
                     key={i}
-                    className="rounded-lg border border-[#2a304e] bg-[#161a2e] px-2.5 py-1 text-xs text-slate-300 font-mono"
+                    className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700 font-mono dark:border-[#2a304e] dark:bg-[#161a2e] dark:text-slate-300"
                   >
                     {topic}
                   </span>
@@ -630,14 +631,14 @@ function ActionPlanSection({
         </div>
 
         {/* Tool Mastery Check */}
-        <div className="rounded-2xl border border-[#1e2338] bg-[#101424] p-5 shadow-lg flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white dark:border-[#1e2338] dark:bg-[#101424] p-5 shadow-sm dark:shadow-lg flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <Wrench size={16} className="text-cyan-400" />
-              <h4 className="text-sm font-bold text-white">Tool & Skills Mastery Check</h4>
+              <Wrench size={16} className="text-cyan-600 dark:text-cyan-400" />
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white">Tool & Skills Mastery Check</h4>
             </div>
 
-            <p className="text-xs text-slate-400 mb-3">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
               Do your projects prove you have mastered these tools, or do they need deeper hands-on work?
             </p>
 
@@ -645,23 +646,23 @@ function ActionPlanSection({
               {roadmap.toolsMastery.map((item, i) => {
                 const statusBadge =
                   item.status === "Mastered"
-                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
                     : item.status === "Must Learn"
-                    ? "bg-red-500/15 text-red-400 border-red-500/30"
-                    : "bg-amber-500/15 text-amber-400 border-amber-500/30";
+                    ? "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/30"
+                    : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30";
 
                 return (
                   <div
                     key={i}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl border border-[#1b2038] bg-[#0c1020] p-2.5 text-xs"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 text-xs dark:border-[#1b2038] dark:bg-[#0c1020]"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-white">{item.tool}</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">{item.tool}</span>
                       <span className={`rounded-md border px-2 py-0.5 text-[10px] font-bold ${statusBadge}`}>
                         {item.status}
                       </span>
                     </div>
-                    <span className="text-slate-400 text-[11px] sm:text-right">
+                    <span className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-right">
                       {item.explanation}
                     </span>
                   </div>
@@ -673,18 +674,18 @@ function ActionPlanSection({
       </div>
 
       {/* 3. Recommended Projects to Build */}
-      <div className="rounded-2xl border border-[#1e2338] bg-[#101424] p-5 shadow-lg">
+      <div className="rounded-2xl border border-slate-200 bg-white dark:border-[#1e2338] dark:bg-[#101424] p-5 shadow-sm dark:shadow-lg">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-2">
-            <FolderGit2 size={16} className="text-[#a78bfa]" />
-            <h4 className="text-sm font-bold text-white">Recommended Focus Projects to Build</h4>
+            <FolderGit2 size={16} className="text-purple-600 dark:text-[#a78bfa]" />
+            <h4 className="text-sm font-bold text-slate-900 dark:text-white">Recommended Focus Projects to Build</h4>
           </div>
-          <span className="text-xs font-semibold text-indigo-300 bg-indigo-500/15 border border-indigo-500/30 rounded-full px-3 py-0.5 self-start sm:self-auto">
+          <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/15 border border-indigo-200 dark:border-indigo-500/30 rounded-full px-3 py-0.5 self-start sm:self-auto">
             Need: {roadmap.projectsTarget.additionalNeeded}
           </span>
         </div>
 
-        <p className="text-xs text-slate-400 mb-4">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
           Instead of basic tutorial clones, build one of these focused projects to prove production-level competence:
         </p>
 
@@ -692,17 +693,17 @@ function ActionPlanSection({
           {roadmap.projectsTarget.recommendedProjects.map((p, i) => (
             <div
               key={i}
-              className="rounded-xl border border-[#1f253e] bg-[#0c1020] p-4 flex flex-col justify-between hover:border-[#7c3aed]/40 transition-colors"
+              className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 flex flex-col justify-between hover:border-purple-300 dark:border-[#1f253e] dark:bg-[#0c1020] dark:hover:border-[#7c3aed]/40 transition-colors"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <h5 className="text-sm font-bold text-white">{p.title}</h5>
-                  <span className="rounded-md border border-[#2a304e] bg-[#171c33] px-2 py-0.5 text-[10px] font-medium text-slate-300">
+                  <h5 className="text-sm font-bold text-slate-900 dark:text-white">{p.title}</h5>
+                  <span className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:border-[#2a304e] dark:bg-[#171c33] dark:text-slate-300">
                     {p.difficulty}
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed mb-3">
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
                   {p.description}
                 </p>
 
@@ -710,7 +711,7 @@ function ActionPlanSection({
                   {p.technologies.map((t, idx) => (
                     <span
                       key={idx}
-                      className="rounded bg-[#1a1f38] px-2 py-0.5 text-[10px] font-mono text-indigo-300"
+                      className="rounded bg-indigo-50 text-indigo-700 border border-indigo-200/50 px-2 py-0.5 text-[10px] font-mono dark:bg-[#1a1f38] dark:border-transparent dark:text-indigo-300"
                     >
                       {t}
                     </span>
@@ -718,8 +719,8 @@ function ActionPlanSection({
                 </div>
               </div>
 
-              <div className="border-t border-[#1b2038] pt-2 text-[11px] text-slate-400">
-                <span className="font-semibold text-slate-300">Why it stands out: </span>
+              <div className="border-t border-slate-200 dark:border-[#1b2038] pt-2 text-[11px] text-slate-500 dark:text-slate-400">
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Why it stands out: </span>
                 {p.whyItMatters}
               </div>
             </div>
@@ -733,8 +734,8 @@ function ActionPlanSection({
 function CategoryBreakdown({ categories }: { categories: MatchCategory[] }) {
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-        <Target size={15} className="text-[#a78bfa]" />
+      <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+        <Target size={15} className="text-purple-600 dark:text-[#a78bfa]" />
         Detailed Skills & Quality Breakdown
       </h3>
 
@@ -748,21 +749,21 @@ function CategoryBreakdown({ categories }: { categories: MatchCategory[] }) {
           return (
             <div
               key={idx}
-              className="rounded-2xl border border-[#1e2338] bg-[#101424] p-5 shadow-lg transition-all hover:border-[#2a304e]"
+              className="rounded-2xl border border-slate-200 bg-white dark:border-[#1e2338] dark:bg-[#101424] p-5 shadow-sm dark:shadow-lg transition-all hover:border-slate-300 dark:hover:border-[#2a304e]"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-white">{cat.name}</span>
-                <span className="font-mono text-sm font-bold text-slate-200">{cat.score}%</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-white">{cat.name}</span>
+                <span className="font-mono text-sm font-bold text-slate-700 dark:text-slate-200">{cat.score}%</span>
               </div>
 
-              <div className="h-2 w-full overflow-hidden rounded-full bg-[#1b2038] mb-3">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-[#1b2038] mb-3">
                 <div
                   className={`h-full rounded-full ${barColor} transition-all duration-700`}
                   style={{ width: `${cat.score}%` }}
                 />
               </div>
 
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                 {cat.comment}
               </p>
             </div>
@@ -786,11 +787,11 @@ function KeywordChips({ keywords }: { keywords: MatchKeyword[] }) {
   const filtered = filter === "all" ? keywords : keywords.filter((k) => k.status === filter);
 
   return (
-    <div className="rounded-2xl border border-[#1e2338] bg-[#101424] p-6 shadow-xl">
+    <div className="rounded-2xl border border-slate-200 bg-white dark:border-[#1e2338] dark:bg-[#101424] p-6 shadow-sm dark:shadow-xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <div>
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <Zap size={15} className="text-[#a78bfa]" />
+          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-2">
+            <Zap size={15} className="text-purple-600 dark:text-[#a78bfa]" />
             Skills & Tools Found in Resume
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -799,7 +800,7 @@ function KeywordChips({ keywords }: { keywords: MatchKeyword[] }) {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1 rounded-xl bg-[#0a0d17] p-1 border border-[#1e2338]">
+        <div className="flex items-center gap-1 rounded-xl bg-slate-100 dark:bg-[#0a0d17] p-1 border border-slate-200 dark:border-[#1e2338]">
           {(["all", "match", "partial", "miss"] as const).map((tab) => (
             <button
               key={tab}
@@ -807,8 +808,8 @@ function KeywordChips({ keywords }: { keywords: MatchKeyword[] }) {
               onClick={() => setFilter(tab)}
               className={`rounded-lg px-2.5 py-1 text-xs font-semibold capitalize transition-all cursor-pointer ${
                 filter === tab
-                  ? "bg-[#7c3aed] text-white shadow-sm"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-purple-600 dark:bg-[#7c3aed] text-white shadow-sm"
+                  : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
               {tab === "match" ? "Proven" : tab === "partial" ? "Mentioned" : tab === "miss" ? "Missing" : "All"} ({counts[tab]})
@@ -823,9 +824,9 @@ function KeywordChips({ keywords }: { keywords: MatchKeyword[] }) {
             return (
               <span
                 key={idx}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300"
               >
-                <CheckCircle2 size={13} className="text-emerald-400" />
+                <CheckCircle2 size={13} className="text-emerald-600 dark:text-emerald-400" />
                 <span>{k.word}</span>
               </span>
             );
@@ -834,9 +835,9 @@ function KeywordChips({ keywords }: { keywords: MatchKeyword[] }) {
             return (
               <span
                 key={idx}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-300"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-700 dark:text-amber-300"
               >
-                <MinusCircle size={13} className="text-amber-400" />
+                <MinusCircle size={13} className="text-amber-600 dark:text-amber-400" />
                 <span>{k.word}</span>
               </span>
             );
@@ -844,9 +845,9 @@ function KeywordChips({ keywords }: { keywords: MatchKeyword[] }) {
           return (
             <span
               key={idx}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-300"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-300"
             >
-              <XCircle size={13} className="text-red-400" />
+              <XCircle size={13} className="text-red-600 dark:text-red-400" />
               <span>{k.word}</span>
             </span>
           );
@@ -868,8 +869,8 @@ function SuggestedEdits({ suggestions }: { suggestions: MatchSuggestion[] }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-          <Sparkles size={15} className="text-[#a78bfa]" />
+        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-2">
+          <Sparkles size={15} className="text-purple-600 dark:text-[#a78bfa]" />
           Resume Bullet Upgrades ({suggestions.length})
         </h3>
         <span className="text-xs text-slate-500">Copy-paste ready rewrites</span>
@@ -879,33 +880,33 @@ function SuggestedEdits({ suggestions }: { suggestions: MatchSuggestion[] }) {
         {suggestions.map((s, idx) => {
           const priorityBadge =
             s.priority === "high"
-              ? "bg-red-500/15 text-red-400 border-red-500/30"
+              ? "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/30"
               : s.priority === "medium"
-              ? "bg-amber-500/15 text-amber-400 border-amber-500/30"
-              : "bg-blue-500/15 text-blue-400 border-blue-500/30";
+              ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
+              : "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30";
 
           return (
             <div
               key={idx}
-              className="rounded-2xl border border-[#1e2338] bg-[#101424] p-5 shadow-lg transition-all hover:border-[#2a304e]"
+              className="rounded-2xl border border-slate-200 bg-white dark:border-[#1e2338] dark:bg-[#101424] p-5 shadow-sm dark:shadow-lg transition-all hover:border-slate-300 dark:hover:border-[#2a304e]"
             >
               <div className="flex items-center justify-between gap-3 mb-2.5">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide shrink-0 ${priorityBadge}`}>
                     {s.priority} priority
                   </span>
-                  <h4 className="text-sm font-bold text-white truncate">{s.title}</h4>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">{s.title}</h4>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => handleCopy(s.description, idx)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#2a304e] bg-[#171c33] px-2.5 py-1 text-xs font-medium text-slate-300 hover:text-white transition-colors shrink-0 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:border-[#2a304e] dark:bg-[#171c33] dark:text-slate-300 dark:hover:text-white transition-colors shrink-0 cursor-pointer"
                 >
                   {copiedIdx === idx ? (
                     <>
-                      <Check size={12} className="text-emerald-400" />
-                      <span className="text-emerald-400 font-semibold">Copied</span>
+                      <Check size={12} className="text-emerald-500 dark:text-emerald-400" />
+                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Copied</span>
                     </>
                   ) : (
                     <>
@@ -917,17 +918,17 @@ function SuggestedEdits({ suggestions }: { suggestions: MatchSuggestion[] }) {
               </div>
 
               {s.context && (
-                <div className="mb-2.5 rounded-xl border border-[#1b2038] bg-[#090c17] p-2.5 text-xs text-slate-400">
-                  <span className="font-semibold text-slate-300">Current line in resume: </span>
+                <div className="mb-2.5 rounded-xl border border-slate-200 bg-slate-50/80 dark:border-[#1b2038] dark:bg-[#090c17] p-2.5 text-xs text-slate-600 dark:text-slate-400">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Current line in resume: </span>
                   <span className="italic">&ldquo;{s.context}&rdquo;</span>
                 </div>
               )}
 
-              <div className="rounded-xl border border-[#1d233a] bg-[#0e1222] p-3">
-                <span className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider block mb-1">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-[#1d233a] dark:bg-[#0e1222]">
+                <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-1">
                   Upgraded Version (Shows Real Impact & Numbers):
                 </span>
-                <p className="text-xs text-slate-200 leading-relaxed font-mono">
+                <p className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-mono">
                   {s.description}
                 </p>
               </div>

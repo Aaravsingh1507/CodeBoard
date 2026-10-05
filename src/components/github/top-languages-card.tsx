@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 export interface LanguageItem {
   name: string;
@@ -172,13 +172,13 @@ export function TopLanguagesCard({
   if (!data || data.length === 0) {
     return (
       <div
-        className={`relative overflow-hidden rounded-3xl border border-cyan-500/20 bg-gradient-to-b from-[#0c1322]/95 via-[#080d1a]/95 to-[#050813]/98 p-5 text-center backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)] flex flex-col justify-between h-full ${className}`}
+        className={`relative overflow-hidden rounded-3xl border border-slate-200 dark:border-cyan-500/20 bg-white dark:bg-gradient-to-b dark:from-[#0c1322]/95 dark:via-[#080d1a]/95 dark:to-[#050813]/98 p-5 text-center backdrop-blur-xl shadow-sm dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)] flex flex-col justify-between h-full ${className}`}
       >
         <div>
-          <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">Top languages</h2>
-          <p className="mt-0.5 text-xs text-slate-400 italic">Languages used across your repositories</p>
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">Top languages</h2>
+          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 italic">Languages used across your repositories</p>
         </div>
-        <div className="py-16 text-sm text-slate-400">No language data available yet.</div>
+        <div className="py-16 text-sm text-slate-500 dark:text-slate-400">No language data available yet.</div>
       </div>
     );
   }
@@ -186,50 +186,52 @@ export function TopLanguagesCard({
   const total = data.reduce((s, d) => s + d.bytes, 0);
 
   // Compute angles for each slice (starting at -115 deg to match Image 1's orientation)
-  let currentAngle = -115;
-  const gapAngle = data.length > 1 ? 2.5 : 0;
-  const totalGap = gapAngle * data.length;
-  const availableDegrees = 360 - totalGap;
+  const slices = useMemo(() => {
+    let angle = -115;
+    const gapAngle = data.length > 1 ? 2.5 : 0;
+    const totalGap = gapAngle * data.length;
+    const availableDegrees = 360 - totalGap;
 
-  const slices = data.map((d, i) => {
-    const pct = total > 0 ? (d.bytes / total) * 100 : 0;
-    const sliceSpan = (pct / 100) * availableDegrees;
-    const startAngle = currentAngle;
-    const endAngle = currentAngle + sliceSpan;
-    const midAngle = startAngle + sliceSpan / 2;
-    currentAngle = endAngle + gapAngle;
+    return data.map((d, i) => {
+      const pct = total > 0 ? (d.bytes / total) * 100 : 0;
+      const sliceSpan = (pct / 100) * availableDegrees;
+      const startAngle = angle;
+      const endAngle = angle + sliceSpan;
+      const midAngle = startAngle + sliceSpan / 2;
+      angle = endAngle + gapAngle;
 
-    const meta = getLanguageMeta(d.name, i);
-    return {
-      ...d,
-      pct,
-      startAngle,
-      endAngle,
-      midAngle,
-      meta,
-    };
-  });
+      const meta = getLanguageMeta(d.name, i);
+      return {
+        ...d,
+        pct,
+        startAngle,
+        endAngle,
+        midAngle,
+        meta,
+      };
+    });
+  }, [data, total]);
 
   const activeItem = activeIndex !== null && slices[activeIndex] ? slices[activeIndex] : null;
 
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl border border-cyan-500/25 bg-gradient-to-b from-[#0c1322]/95 via-[#080d1a]/95 to-[#050813]/98 p-4 sm:p-5 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] backdrop-blur-xl transition-all flex flex-col justify-between h-full ${className}`}
+      className={`relative overflow-hidden rounded-3xl border border-slate-200 dark:border-cyan-500/25 bg-white dark:bg-gradient-to-b dark:from-[#0c1322]/95 dark:via-[#080d1a]/95 dark:to-[#050813]/98 p-4 sm:p-5 shadow-sm dark:shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)] backdrop-blur-xl transition-all flex flex-col justify-between h-full ${className}`}
     >
       {/* Top ambient color glow */}
-      <div className="pointer-events-none absolute -top-24 left-1/4 h-48 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute -top-24 right-1/4 h-48 w-80 rounded-full bg-purple-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 left-1/4 h-48 w-80 rounded-full bg-cyan-500/10 blur-3xl opacity-30 dark:opacity-100" />
+      <div className="pointer-events-none absolute -top-24 right-1/4 h-48 w-80 rounded-full bg-purple-500/10 blur-3xl opacity-30 dark:opacity-100" />
 
       {/* Top specular edge reflection */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 dark:via-cyan-400/40 to-transparent" />
 
       {/* Card Header (Clean with scribble/badge removed) */}
       <div className="relative z-10 flex items-center justify-between">
         <div>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             Top languages
           </h2>
-          <p className="text-xs text-slate-300 font-serif italic tracking-wide">
+          <p className="text-xs text-slate-500 dark:text-slate-300 font-serif italic tracking-wide">
             Languages used across your repositories
           </p>
         </div>
@@ -334,10 +336,8 @@ export function TopLanguagesCard({
                 cx="120"
                 cy="120"
                 r="62"
-                fill="#070c17"
-                stroke="rgba(6, 182, 212, 0.3)"
+                className="fill-slate-50 dark:fill-[#070c17] stroke-cyan-500/25 dark:stroke-cyan-500/30"
                 strokeWidth="1.5"
-                className="shadow-inner"
               />
 
               {/* Center Content Overlay */}
@@ -360,11 +360,10 @@ export function TopLanguagesCard({
                       x="120"
                       y="114"
                       textAnchor="middle"
-                      fill="#cbd5e1"
+                      className="fill-slate-700 dark:fill-slate-300 font-sans truncate"
                       fontSize="11"
                       fontWeight="600"
                       letterSpacing="0.04em"
-                      className="font-sans truncate"
                     >
                       {activeItem.name}
                     </text>
@@ -373,12 +372,10 @@ export function TopLanguagesCard({
                       x="120"
                       y="136"
                       textAnchor="middle"
-                      fill="#ffffff"
+                      className="fill-slate-900 dark:fill-white font-data dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
                       fontSize="18"
                       fontWeight="800"
                       letterSpacing="-0.02em"
-                      className="font-data"
-                      filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))"
                     >
                       {activeItem.pct.toFixed(0)}%
                     </text>
@@ -387,9 +384,8 @@ export function TopLanguagesCard({
                       x="120"
                       y="152"
                       textAnchor="middle"
-                      fill="#94a3b8"
+                      className="fill-slate-500 dark:fill-slate-400 font-data"
                       fontSize="10"
-                      className="font-data"
                     >
                       {formatBytes(activeItem.bytes)}
                     </text>
@@ -400,13 +396,10 @@ export function TopLanguagesCard({
                     <g transform="translate(110, 78)">
                       <path
                         d="M2 5C2 3.89543 2.89543 3 4 3H8.5L10.5 5.5H16C17.1046 5.5 18 6.39543 18 7.5V14C18 15.1046 17.1046 16 16 16H4C2.89543 16 2 15.1046 2 14V5Z"
-                        stroke="#22d3ee"
                         strokeWidth="1.8"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        fill="#081e28"
-                        fillOpacity="0.6"
-                        filter="drop-shadow(0 0 6px #06b6d4)"
+                        className="stroke-cyan-600 dark:stroke-[#22d3ee] fill-cyan-100/70 dark:fill-[#081e28] dark:drop-shadow-[0_0_6px_#06b6d4]"
                       />
                     </g>
                     {/* Number of Repositories */}
@@ -414,12 +407,10 @@ export function TopLanguagesCard({
                       x="120"
                       y="126"
                       textAnchor="middle"
-                      fill="#ffffff"
+                      className="fill-slate-900 dark:fill-white font-data dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
                       fontSize="24"
                       fontWeight="800"
                       letterSpacing="-0.02em"
-                      className="font-data"
-                      filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))"
                     >
                       {repoCount}
                     </text>
@@ -428,11 +419,10 @@ export function TopLanguagesCard({
                       x="120"
                       y="144"
                       textAnchor="middle"
-                      fill="#94a3b8"
+                      className="fill-slate-500 dark:fill-slate-400 font-sans"
                       fontSize="11"
                       fontWeight="600"
                       letterSpacing="0.04em"
-                      className="font-sans"
                     >
                       {repoCount === 1 ? "Repository" : "Repositories"}
                     </text>
@@ -456,8 +446,8 @@ export function TopLanguagesCard({
                   mounted ? `animate-slide-up ${delayClass}` : "opacity-0"
                 } ${
                   isHovered
-                    ? "bg-[#111a2f]/95 shadow-sm scale-[1.01]"
-                    : "bg-[#0d1424]/75 hover:bg-[#10182b]/90"
+                    ? "bg-slate-100/90 dark:bg-[#111a2f]/95 shadow-sm scale-[1.01]"
+                    : "bg-slate-50/70 hover:bg-slate-100/80 dark:bg-[#0d1424]/75 dark:hover:bg-[#10182b]/90"
                 }`}
                 style={{
                   borderColor: isHovered ? slice.meta.color : `${slice.meta.color}40`,
@@ -474,11 +464,11 @@ export function TopLanguagesCard({
                 {/* Right Details */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1.5">
-                    <span className="font-semibold text-white text-xs sm:text-sm truncate">
+                    <span className="font-semibold text-slate-800 dark:text-white text-xs sm:text-sm truncate">
                       {slice.name}
                     </span>
                     <div className="flex items-baseline gap-1.5 shrink-0">
-                      <span className="font-data text-[10px] sm:text-[11px] text-slate-400">
+                      <span className="font-data text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">
                         {formatBytes(slice.bytes)}
                       </span>
                       <span
@@ -494,7 +484,7 @@ export function TopLanguagesCard({
                   </div>
 
                   {/* Compact Progress Bar Track */}
-                  <div className="mt-1.5 h-1.5 w-full rounded-full bg-[#0a0e1a] border border-white/5 p-[1px] overflow-hidden">
+                  <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-200/80 border border-slate-300/40 dark:bg-[#0a0e1a] dark:border-white/5 p-[1px] overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-700 ease-out"
                       style={{

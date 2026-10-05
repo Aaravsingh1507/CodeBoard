@@ -22,7 +22,7 @@ function CompanyLogo({ name }: { name: string }) {
   const n = name.toLowerCase();
   if (n.includes("google")) {
     return (
-      <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 shadow-sm">
+      <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 dark:bg-white/5 dark:border-white/10 flex items-center justify-center shrink-0 shadow-xs">
         <svg className="w-4 h-4" viewBox="0 0 24 24">
           <path
             fill="#4285F4"
@@ -46,7 +46,7 @@ function CompanyLogo({ name }: { name: string }) {
   }
   if (n.includes("microsoft")) {
     return (
-      <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 shadow-sm">
+      <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 dark:bg-white/5 dark:border-white/10 flex items-center justify-center shrink-0 shadow-xs">
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
           <rect x="2" y="2" width="9" height="9" fill="#F25022" />
           <rect x="13" y="2" width="9" height="9" fill="#7FBA00" />
@@ -58,13 +58,13 @@ function CompanyLogo({ name }: { name: string }) {
   }
   if (n.includes("amazon")) {
     return (
-      <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 shadow-sm text-[#FF9900] font-black text-sm">
+      <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 dark:bg-white/5 dark:border-white/10 flex items-center justify-center shrink-0 shadow-xs text-[#FF9900] font-black text-sm">
         <span className="font-serif leading-none mt-0.5">a</span>
       </div>
     );
   }
   return (
-    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500/25 to-indigo-600/25 border border-purple-400/35 flex items-center justify-center text-xs font-bold text-purple-200 shrink-0 shadow-sm">
+    <div className="w-8 h-8 rounded-xl bg-purple-100 border border-purple-200 text-purple-700 dark:bg-gradient-to-br dark:from-purple-500/25 dark:to-indigo-600/25 dark:border-purple-400/35 dark:text-purple-200 flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
       {name.charAt(0).toUpperCase()}
     </div>
   );
@@ -75,27 +75,27 @@ export function CompanyPrepWidget({ previewData }: { previewData?: Profile[] } =
   const displayProfiles = previewData ?? (data && data.length > 0 ? data : DEFAULT_COMPANIES);
 
   return (
-    <div className="relative rounded-[28px] border border-purple-500/40 bg-gradient-to-b from-[#0e1233]/90 via-[#0a0d26]/95 to-[#07091a]/98 p-5 sm:p-6 shadow-[0_0_35px_rgba(168,85,247,0.22),0_12px_44px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.2)] flex flex-col justify-between overflow-hidden h-full">
+    <div className="relative rounded-[28px] border border-purple-200 dark:border-purple-500/40 bg-white dark:bg-gradient-to-b dark:from-[#0e1233]/90 dark:via-[#0a0d26]/95 dark:to-[#07091a]/98 p-5 sm:p-6 shadow-sm dark:shadow-[0_0_35px_rgba(168,85,247,0.22),0_12px_44px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.2)] flex flex-col justify-between overflow-hidden h-full">
       {/* Top specular highlight & ambient glow */}
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-purple-400/50 to-transparent pointer-events-none" />
-      <div className="absolute -top-14 left-1/2 -translate-x-1/2 w-56 h-28 bg-purple-600/20 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-purple-300/40 dark:via-purple-400/50 to-transparent pointer-events-none" />
+      <div className="absolute -top-14 left-1/2 -translate-x-1/2 w-56 h-28 bg-purple-600/20 blur-3xl rounded-full pointer-events-none opacity-20 dark:opacity-100" />
 
       {/* Main Content */}
       <div className="relative z-10 flex-1 flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-500/30 via-indigo-600/25 to-purple-600/20 border border-purple-400/45 text-purple-200 flex items-center justify-center shadow-[0_0_16px_rgba(99,102,241,0.35)] shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-100 via-indigo-100 to-purple-50 border border-purple-200 text-purple-700 dark:from-purple-500/30 dark:via-indigo-600/25 dark:to-purple-600/20 dark:border-purple-400/45 dark:text-purple-200 flex items-center justify-center shadow-xs dark:shadow-[0_0_16px_rgba(99,102,241,0.35)] shrink-0">
               <Briefcase size={22} className="stroke-[2.2]" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white tracking-tight leading-tight">Company prep focus</h3>
-              <p className="text-xs text-[#94a3b8] mt-0.5">Key topics to strengthen.</p>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight">Company prep focus</h3>
+              <p className="text-xs text-slate-500 dark:text-[#94a3b8] mt-0.5">Key topics to strengthen.</p>
             </div>
           </div>
           <Link
             href="/applications"
-            className="flex items-center gap-1 text-xs text-[#94a3b8] hover:text-white transition-colors shrink-0 font-medium"
+            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 dark:text-[#94a3b8] dark:hover:text-white transition-colors shrink-0 font-medium"
           >
             Track jobs <ArrowRight size={13} />
           </Link>
@@ -105,25 +105,25 @@ export function CompanyPrepWidget({ previewData }: { previewData?: Profile[] } =
         <div className="mt-4 flex-1 space-y-2.5">
           {loading && !previewData && !data && (
             <div className="space-y-2.5">
-              <Skeleton className="h-20 w-full rounded-2xl bg-white/5" />
-              <Skeleton className="h-20 w-full rounded-2xl bg-white/5" />
-              <Skeleton className="h-20 w-full rounded-2xl bg-white/5" />
+              <Skeleton className="h-20 w-full rounded-2xl bg-slate-100 dark:bg-white/5" />
+              <Skeleton className="h-20 w-full rounded-2xl bg-slate-100 dark:bg-white/5" />
+              <Skeleton className="h-20 w-full rounded-2xl bg-slate-100 dark:bg-white/5" />
             </div>
           )}
 
           {displayProfiles.slice(0, 3).map((p) => (
             <div
               key={p.name}
-              className="rounded-2xl border border-white/10 bg-[#13173a]/75 backdrop-blur-md p-3.5 shadow-sm transition-all duration-200 hover:border-purple-500/40 hover:bg-[#161c46]/85"
+              className="rounded-2xl border border-slate-200/90 bg-slate-50/70 backdrop-blur-md p-3.5 shadow-xs transition-all duration-200 hover:border-purple-300 hover:bg-slate-100/80 dark:border-white/10 dark:bg-[#13173a]/75 dark:hover:border-purple-500/40 dark:hover:bg-[#161c46]/85"
             >
               <div className="flex items-center justify-between gap-2 mb-2.5">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <CompanyLogo name={p.name} />
-                  <span className="text-sm font-bold text-white tracking-tight truncate">
+                  <span className="text-sm font-bold text-slate-900 dark:text-white tracking-tight truncate">
                     {p.name}
                   </span>
                 </div>
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-purple-300/80 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20 shrink-0">
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-purple-700 bg-purple-100/90 border border-purple-200 dark:text-purple-300/80 dark:bg-purple-500/10 dark:border-purple-500/20 px-2 py-0.5 rounded-full shrink-0">
                   Top focus
                 </span>
               </div>
@@ -135,7 +135,7 @@ export function CompanyPrepWidget({ previewData }: { previewData?: Profile[] } =
                     <span
                       key={f}
                       title={f}
-                      className="inline-flex items-center rounded-lg border border-purple-500/25 bg-[#20153f]/75 px-2.5 py-1 text-[11px] font-medium text-purple-200 shadow-[0_0_8px_rgba(168,85,247,0.1)] transition-colors hover:border-purple-400 hover:bg-[#2b1950]"
+                      className="inline-flex items-center rounded-lg border border-purple-200 bg-purple-50/80 text-purple-800 hover:border-purple-300 hover:bg-purple-100 dark:border-purple-500/25 dark:bg-[#20153f]/75 dark:text-purple-200 shadow-xs transition-colors dark:hover:border-purple-400 dark:hover:bg-[#2b1950] px-2.5 py-1 text-[11px] font-medium"
                     >
                       {cleanLabel}
                     </span>

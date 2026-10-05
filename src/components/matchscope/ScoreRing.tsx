@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 
@@ -32,8 +32,8 @@ export function ScoreRing({
   else ringColor = "#ef4444";
 
   return (
-    <div className="rounded-2xl border border-[#1e2338] bg-gradient-to-b from-[#13131f] to-[#0d0d14] p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-      <div className="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-[#7c3aed]/12 blur-[100px]" />
+    <div className="rounded-2xl border border-slate-200 bg-white dark:border-[#1e2338] dark:bg-gradient-to-b dark:from-[#13131f] dark:to-[#0d0d14] p-6 sm:p-8 shadow-xl dark:shadow-2xl relative overflow-hidden">
+      <div className="pointer-events-none absolute right-0 top-0 h-80 w-80 rounded-full bg-purple-500/10 dark:bg-[#7c3aed]/12 blur-[100px]" />
 
       <div className="relative z-10 flex flex-col md:flex-row items-center gap-7 md:gap-9">
         {/* SVG Circular Animated Progress */}
@@ -43,7 +43,8 @@ export function ScoreRing({
               cx="85"
               cy="85"
               r={radius}
-              stroke="#181c30"
+              stroke="currentColor"
+              className="text-slate-100 dark:text-[#181c30]"
               strokeWidth={strokeWidth}
               fill="transparent"
             />
@@ -65,10 +66,10 @@ export function ScoreRing({
           </svg>
 
           <div className="absolute flex flex-col items-center justify-center text-center">
-            <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white font-mono">
+            <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white font-mono">
               {score}
             </span>
-            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-0.5">
+            <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider mt-0.5">
               Match Score
             </span>
           </div>
@@ -77,13 +78,13 @@ export function ScoreRing({
         {/* Assessment & 2-Line Summary */}
         <div className="flex-1 space-y-3 text-center md:text-left">
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
-            <span className="text-xs uppercase tracking-wider font-semibold text-slate-400">
+            <span className="text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">
               Alignment Status
             </span>
             <FitBadge label={label} score={score} />
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
             {label === "Excellent Fit" && "Outstanding Fit — Strong Candidate Profile"}
             {label === "Strong Fit" && "High Alignment — Competitive for Technical Interview"}
             {label === "Good Fit" && "Solid Base Alignment — Key Gaps to Address"}
@@ -91,7 +92,7 @@ export function ScoreRing({
             {label === "Poor Fit" && "Low Role Alignment — Substantial Gap in Requirements"}
           </h3>
 
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
             {summary}
           </p>
         </div>

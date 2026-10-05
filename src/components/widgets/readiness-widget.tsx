@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 export function ReadinessWidget(props?: { previewData?: unknown }) {
   void props;
   return (
-    <Card className="relative overflow-hidden rounded-[24px] border border-white/10 bg-[#080c18] p-0 shadow-2xl shadow-purple-950/40">
+    <Card className="relative overflow-hidden rounded-[24px] border border-slate-200 bg-white dark:border-white/10 dark:bg-[#080c18] p-0 shadow-xl shadow-slate-200/50 dark:shadow-2xl dark:shadow-purple-950/40">
       <div className="relative w-full aspect-[1024/341] overflow-hidden select-none cursor-default">
         {/* Subtle ambient backlight glow */}
         <div className="pointer-events-none absolute -inset-4 bg-gradient-to-r from-purple-600/20 via-pink-600/10 to-indigo-600/20 blur-2xl opacity-60" />

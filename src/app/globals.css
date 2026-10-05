@@ -278,6 +278,10 @@ img {
 .heatmap-scrollbar {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
+  scrollbar-color: rgba(13, 148, 136, 0.4) rgba(0, 0, 0, 0.05);
+}
+
+.dark .heatmap-scrollbar {
   scrollbar-color: rgba(45, 212, 191, 0.5) rgba(255, 255, 255, 0.08);
 }
 
@@ -286,23 +290,40 @@ img {
 }
 
 .heatmap-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 9999px;
   margin: 0 4px;
 }
 
+.dark .heatmap-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+}
+
 .heatmap-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(45, 212, 191, 0.45);
+  background: rgba(13, 148, 136, 0.35);
   border-radius: 9999px;
   transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
+.dark .heatmap-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(45, 212, 191, 0.45);
+}
+
 .heatmap-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(13, 148, 136, 0.65);
+  box-shadow: 0 0 8px rgba(13, 148, 136, 0.3);
+}
+
+.dark .heatmap-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(45, 212, 191, 0.85);
   box-shadow: 0 0 10px rgba(45, 212, 191, 0.7);
 }
 
 .heatmap-scrollbar::-webkit-scrollbar-thumb:active {
+  background: #0d9488;
+}
+
+.dark .heatmap-scrollbar::-webkit-scrollbar-thumb:active {
   background: #2dd4bf;
 }
 
