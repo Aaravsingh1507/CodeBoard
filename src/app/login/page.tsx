@@ -1,6 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { auth, signIn } from "@/lib/auth";
 import { GithubIcon } from "@/components/icons";
 
@@ -45,16 +43,6 @@ export default async function LoginPage() {
         <p className="mt-4 text-xs text-slate-500">
           We use your GitHub sign-in to pull your public stats — repos, stars, and contributions.
         </p>
-
-        <div className="mt-5 border-t border-border/60 pt-4">
-          <Link
-            href="/preview"
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-medium text-slate-300 transition-all hover:bg-white/10 hover:text-white"
-          >
-            <span>Explore Live Dashboard Demo</span>
-            <ArrowRight size={13} />
-          </Link>
-        </div>
       </div>
     </div>
   );
