@@ -81,7 +81,7 @@ export default function GithubPage() {
           </Card>
 
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 min-w-0 w-full items-stretch">
-            <TopLanguagesCard data={data.topLanguages} />
+            <TopLanguagesCard data={data.topLanguages} repoCount={data.publicRepos} />
             <ProfileOverviewCard
               stats={{
                 publicRepos: data.publicRepos,

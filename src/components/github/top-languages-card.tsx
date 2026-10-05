@@ -154,9 +154,11 @@ function describeArc(
 
 export function TopLanguagesCard({
   data,
+  repoCount = 0,
   className = "",
 }: {
   data: LanguageItem[];
+  repoCount?: number;
   className?: string;
 }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -340,59 +342,101 @@ export function TopLanguagesCard({
 
               {/* Center Content Overlay */}
               <g pointerEvents="none">
-                {/* Glowing Code Brackets Icon */}
-                <g transform="translate(109, 82)">
-                  <path
-                    d="M6 4L1 10L6 16M14 4L19 10L14 16"
-                    stroke="#22d3ee"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    filter="drop-shadow(0 0 5px #06b6d4)"
-                  />
-                </g>
-
-                {/* "TOTAL" or Hovered Language Name */}
-                <text
-                  x="120"
-                  y="118"
-                  textAnchor="middle"
-                  fill="#94a3b8"
-                  fontSize="11"
-                  fontWeight="600"
-                  letterSpacing="0.06em"
-                  className="uppercase font-sans truncate"
-                >
-                  {activeItem ? activeItem.name : "TOTAL"}
-                </text>
-
-                {/* Total KB Value or Active Percentage */}
-                <text
-                  x="120"
-                  y="138"
-                  textAnchor="middle"
-                  fill="#ffffff"
-                  fontSize="15"
-                  fontWeight="800"
-                  letterSpacing="-0.02em"
-                  className="font-data"
-                  filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))"
-                >
-                  {activeItem ? `${activeItem.pct.toFixed(0)}%` : formatBytes(total)}
-                </text>
-
-                {/* Subtitle byte count when hovered */}
-                {activeItem && (
-                  <text
-                    x="120"
-                    y="152"
-                    textAnchor="middle"
-                    fill="#94a3b8"
-                    fontSize="10"
-                    className="font-data"
-                  >
-                    {formatBytes(activeItem.bytes)}
-                  </text>
+                {activeItem ? (
+                  <>
+                    {/* Glowing Code Brackets Icon in Language Theme Color */}
+                    <g transform="translate(109, 80)">
+                      <path
+                        d="M6 4L1 10L6 16M14 4L19 10L14 16"
+                        stroke={activeItem.meta.color}
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        filter={`drop-shadow(0 0 6px ${activeItem.meta.color})`}
+                      />
+                    </g>
+                    {/* Hovered Language Name */}
+                    <text
+                      x="120"
+                      y="114"
+                      textAnchor="middle"
+                      fill="#cbd5e1"
+                      fontSize="11"
+                      fontWeight="600"
+                      letterSpacing="0.04em"
+                      className="font-sans truncate"
+                    >
+                      {activeItem.name}
+                    </text>
+                    {/* Active Percentage */}
+                    <text
+                      x="120"
+                      y="136"
+                      textAnchor="middle"
+                      fill="#ffffff"
+                      fontSize="18"
+                      fontWeight="800"
+                      letterSpacing="-0.02em"
+                      className="font-data"
+                      filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))"
+                    >
+                      {activeItem.pct.toFixed(0)}%
+                    </text>
+                    {/* Byte size */}
+                    <text
+                      x="120"
+                      y="152"
+                      textAnchor="middle"
+                      fill="#94a3b8"
+                      fontSize="10"
+                      className="font-data"
+                    >
+                      {formatBytes(activeItem.bytes)}
+                    </text>
+                  </>
+                ) : (
+                  <>
+                    {/* Default: Number of Repositories Analyzed */}
+                    <g transform="translate(110, 78)">
+                      <path
+                        d="M2 5C2 3.89543 2.89543 3 4 3H8.5L10.5 5.5H16C17.1046 5.5 18 6.39543 18 7.5V14C18 15.1046 17.1046 16 16 16H4C2.89543 16 2 15.1046 2 14V5Z"
+                        stroke="#22d3ee"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        fill="#081e28"
+                        fillOpacity="0.6"
+                        filter="drop-shadow(0 0 6px #06b6d4)"
+                      />
+                    </g>
+                    {/* Number of Repositories */}
+                    <text
+                      x="120"
+                      y="126"
+                      textAnchor="middle"
+                      fill="#ffffff"
+                      fontSize="24"
+                      fontWeight="800"
+                      letterSpacing="-0.02em"
+                      className="font-data"
+                      filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))"
+                    >
+                      {repoCount}
+                    </text>
+                    {/* Repositories Label */}
+                    <text
+                      x="120"
+                      y="144"
+                      textAnchor="middle"
+                      fill="#94a3b8"
+                      fontSize="11"
+                      fontWeight="600"
+                      letterSpacing="0.04em"
+                      className="font-sans"
+                    >
+                      {repoCount === 1 ? "Repository" : "Repositories"}
+                    </text>
+                  </>
                 )}
               </g>
             </svg>
