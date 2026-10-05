@@ -30,7 +30,7 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
   }
 
   return (
-    <Card className="overflow-hidden min-w-0 max-w-full rounded-[24px] border border-slate-200 dark:border-[#1e2846]/70 bg-white dark:bg-gradient-to-b dark:from-[#0e1426]/95 dark:to-[#0a0f1e]/95 p-0 shadow-sm dark:shadow-2xl dark:shadow-black/60 backdrop-blur-md">
+    <Card className="overflow-hidden min-w-0 max-w-full rounded-[24px] border border-slate-200 dark:border-[#1e2846]/70 bg-white dark:bg-gradient-to-b dark:from-[#0e1426]/95 dark:to-[#0a0f1e]/95 p-0 shadow-sm dark:shadow-2xl dark:shadow-black/60 md:backdrop-blur-md">
       <CardContent className="p-4 sm:p-6 lg:p-7 min-w-0">
         <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-12 items-stretch min-w-0">
           {/* Left Column (7 cols): Header, Stat Tiles, Heatmap */}
@@ -71,7 +71,7 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
                 {/* Stat Tiles - formatted so text doesn't awkwardly stack on mobile */}
                 <div className="mb-3.5 grid grid-cols-2 gap-2 sm:gap-3.5 min-w-0">
                   {/* Day Streak */}
-                  <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-slate-200/90 bg-slate-50/70 p-2.5 sm:p-3.5 shadow-xs dark:border-white/[0.07] dark:bg-[#12192e]/60 dark:shadow-inner backdrop-blur-md min-w-0">
+                  <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-slate-200/90 bg-slate-50/70 p-2.5 sm:p-3.5 shadow-xs dark:border-white/[0.07] dark:bg-[#12192e]/60 dark:shadow-inner md:backdrop-blur-md min-w-0">
                     <div className="flex items-center min-w-0">
                       <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-orange-200/80 bg-gradient-to-b from-orange-100/90 to-amber-50/90 p-1 shadow-xs dark:border-orange-500/30 dark:bg-gradient-to-b dark:from-[#2a1a0f]/90 dark:to-[#1a1008]/95 dark:shadow-[0_2px_8px_rgba(249,115,22,0.2)]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -101,7 +101,7 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
                   </div>
 
                   {/* Longest Streak */}
-                  <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-slate-200/90 bg-slate-50/70 p-2.5 sm:p-3.5 shadow-xs dark:border-white/[0.07] dark:bg-[#12192e]/60 dark:shadow-inner backdrop-blur-md min-w-0">
+                  <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-slate-200/90 bg-slate-50/70 p-2.5 sm:p-3.5 shadow-xs dark:border-white/[0.07] dark:bg-[#12192e]/60 dark:shadow-inner md:backdrop-blur-md min-w-0">
                     <div className="flex items-center min-w-0">
                       <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-amber-200/80 bg-gradient-to-b from-amber-100/90 to-yellow-50/90 p-1 shadow-xs dark:border-amber-500/30 dark:bg-gradient-to-b dark:from-[#281e0c]/90 dark:to-[#181206]/95 dark:shadow-[0_2px_8px_rgba(245,158,11,0.2)]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -132,7 +132,7 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
                 </div>
 
                 {/* Heatmap Grid */}
-                <div className="rounded-2xl border border-slate-200/90 bg-slate-50/60 p-3 sm:p-5 backdrop-blur-md min-w-0 overflow-hidden dark:border-white/[0.07] dark:bg-[#0c1122]/70">
+                <div className="rounded-2xl border border-slate-200/90 bg-slate-50/60 p-3 sm:p-5 md:backdrop-blur-md min-w-0 overflow-hidden dark:border-white/[0.07] dark:bg-[#0c1122]/70">
                   <StreakHeatmap days={data.heatmap} />
                 </div>
               </>

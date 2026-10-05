@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Lightbulb, TrendingUp } from "lucide-react";
+import { Sparkles, Lightbulb, TrendingUp, Trash2 } from "lucide-react";
 import { useFetch } from "@/lib/use-fetch";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,6 +24,7 @@ export default function ReviewsPage() {
   const { data, loading, error, refetch } = useFetch<Review[]>("/api/reviews");
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function generateNow() {
     setGenerating(true);
@@ -38,13 +39,26 @@ export default function ReviewsPage() {
     refetch();
   }
 
+  async function handleDeleteReview(id: string) {
+    if (!confirm("Are you sure you want to erase this review?")) return;
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/reviews?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      if (res.ok) {
+        refetch();
+      }
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl">AI weekly reviews</h1>
           <p className="mt-1 text-sm text-muted dark:text-slate-400">
-            A short, honest look back — generated automatically every Sunday night, or on demand.
+            A short, honest look back — CodeBoard retains your current review and previous review. Older reviews are automatically erased.
           </p>
         </div>
         <Button onClick={generateNow} disabled={generating}>
@@ -73,12 +87,37 @@ export default function ReviewsPage() {
       )}
 
       <div className="space-y-4">
-        {(data ?? []).map((r) => (
+        {(data ?? []).map((r, idx) => (
           <Card key={r.id} className="p-5">
-            <p className="mb-2 text-xs text-muted">
-              Week of {formatDate(r.weekStart)} – {formatDate(r.weekEnd)} · generated{" "}
-              {formatDate(r.generatedAt)}
-            </p>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-border/40 pb-2.5">
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide ${
+                    idx === 0
+                      ? "bg-indigo-500/15 text-indigo-400 border border-indigo-500/30"
+                      : "bg-slate-700/30 text-slate-300 border border-slate-700/50"
+                  }`}
+                >
+                  {idx === 0 ? "Current review" : "Previous review"}
+                </span>
+                <span className="text-xs text-muted">
+                  Week of {formatDate(r.weekStart)} – {formatDate(r.weekEnd)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-muted">Generated {formatDate(r.generatedAt)}</span>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteReview(r.id)}
+                  disabled={deletingId === r.id}
+                  className="rounded p-1 text-muted hover:bg-danger/10 hover:text-danger transition-colors"
+                  title="Erase review"
+                >
+                  <Trash2 size={13} className={deletingId === r.id ? "animate-spin" : ""} />
+                </button>
+              </div>
+            </div>
+
             <p className="text-sm text-foreground leading-relaxed">{r.summaryText}</p>
 
             {r.observations.length > 0 && (

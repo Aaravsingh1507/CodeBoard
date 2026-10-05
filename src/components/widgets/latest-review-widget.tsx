@@ -66,7 +66,7 @@ export function LatestReviewWidget({ previewData }: { previewData?: Review } = {
           )}
 
           {latest && (
-            <div className="rounded-2xl border border-slate-200/90 bg-slate-50/70 p-5 shadow-xs dark:border-white/10 dark:bg-[#13173a]/75 backdrop-blur-md relative overflow-hidden transition-all duration-200 hover:border-purple-300 hover:bg-slate-100/80 dark:hover:border-purple-500/40 dark:hover:bg-[#161c46]/85">
+            <div className="rounded-2xl border border-slate-200/90 bg-slate-50/70 p-5 shadow-xs dark:border-white/10 dark:bg-[#13173a]/75 md:backdrop-blur-md relative overflow-hidden transition-all duration-200 hover:border-purple-300 hover:bg-slate-100/80 dark:hover:border-purple-500/40 dark:hover:bg-[#161c46]/85">
               {/* Glowing Quote Icon */}
               <div className="text-purple-600 dark:text-purple-400 text-3xl font-serif font-black leading-none mb-3 select-none drop-shadow-none dark:drop-shadow-[0_0_10px_rgba(168,85,247,0.7)]">
                 “

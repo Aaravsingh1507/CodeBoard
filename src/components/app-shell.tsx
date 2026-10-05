@@ -55,7 +55,7 @@ export function AppShell({
       {open && (
         <div className="fixed inset-0 z-40 md:hidden" aria-modal="true" role="dialog">
           <div
-            className={`absolute inset-0 bg-black/60 backdrop-blur-[3px] ${
+            className={`absolute inset-0 bg-black/70 md:backdrop-blur-[3px] ${
               closing ? "animate-backdrop-out" : "animate-backdrop-in"
             }`}
             onClick={closeSidebar}
@@ -72,7 +72,7 @@ export function AppShell({
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* Mobile Header Bar (hidden on desktop) */}
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background/90 px-4 backdrop-blur-md md:hidden">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background/95 px-4 md:bg-background/90 md:backdrop-blur-md md:hidden">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setOpen(true)}
@@ -107,14 +107,24 @@ export function AppShell({
           )}
         </header>
 
-        {/* Main Content Area with Subtle Ambient Glow */}
+        {/* Main Content Area with Optimized Ambient Background */}
         <main
           className="relative flex-1 overflow-y-auto overflow-x-hidden scroll-touch bg-background dark:bg-[#080c17] w-full max-w-full"
-          style={{ WebkitOverflowScrolling: "touch", willChange: "scroll-position" }}
+          style={{ WebkitOverflowScrolling: "touch" }}
         >
-          {/* Subtle Ambient Nebula Glows */}
-          <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] max-w-full rounded-full bg-purple-500/5 dark:bg-purple-600/12 blur-[140px]" />
-          <div className="pointer-events-none absolute left-1/4 top-40 h-[400px] w-[400px] max-w-full rounded-full bg-indigo-500/5 dark:bg-indigo-600/10 blur-[130px]" />
+          {/* High-Performance Radial Gradient Background Glows */}
+          <div
+            className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] max-w-full rounded-full opacity-60 dark:opacity-75"
+            style={{
+              background: "radial-gradient(circle, rgba(147, 51, 234, 0.12) 0%, rgba(147, 51, 234, 0) 70%)",
+            }}
+          />
+          <div
+            className="pointer-events-none absolute left-1/4 top-40 h-[400px] w-[400px] max-w-full rounded-full opacity-50 dark:opacity-60"
+            style={{
+              background: "radial-gradient(circle, rgba(79, 70, 229, 0.10) 0%, rgba(79, 70, 229, 0) 70%)",
+            }}
+          />
 
           <div className="relative z-10 mx-auto max-w-7xl w-full min-w-0 px-4 pt-4 pb-24 sm:px-6 md:px-8 md:py-7 animate-fade-in">
             {children}

@@ -25,6 +25,7 @@ import {
   FileText,
   Copy,
   Check,
+  Trash2,
 } from "lucide-react";
 import { MatchScopeClient } from "@/components/matchscope/MatchScopeClient";
 import { TopLanguagesCard } from "@/components/github/top-languages-card";
@@ -145,11 +146,62 @@ export default function PreviewPage() {
     },
   ];
 
-  const previewReview = {
-    weekStart: "2026-09-27",
-    weekEnd: "2026-10-03",
-    summaryText: "You made a modest start this week with a handful of GitHub contributions, but there's plenty of room to build momentum. Keep the streak alive and aim for deeper engagement.",
-  };
+  const [previewReviews, setPreviewReviews] = useState([
+    {
+      id: "rev-today",
+      weekStart: "2026-09-28",
+      weekEnd: "2026-10-04",
+      generatedAt: "2026-10-04T20:00:00.000Z",
+      summaryText: "Great start to the new week. You maintained your momentum with consistent daily commits and advanced your prep goals.",
+      observations: [
+        "Logged 8 commits across 2 key repositories.",
+        "Maintained active streak with zero reset days.",
+        "Advanced Microsoft full-stack engineer application to technical interview.",
+      ],
+      suggestions: [
+        "Tackle 2 medium graph/tree problems on LeetCode before the technical round.",
+        "Open a pull request on your primary portfolio project to document architectural decisions.",
+      ],
+    },
+    {
+      id: "rev-prev-monday",
+      weekStart: "2026-09-21",
+      weekEnd: "2026-09-27",
+      generatedAt: "2026-09-28T09:30:00.000Z",
+      summaryText: "You made a modest start this week with a handful of GitHub contributions. Sunday review was erased to retain only this Monday review and today's active review.",
+      observations: [
+        "Completed foundational data structures review.",
+        "Strengthened commit cadence compared to earlier weeks.",
+      ],
+      suggestions: [
+        "Schedule a dedicated 30-minute coding block each day to protect your streak.",
+        "Apply to at least 2 target companies on your wishlist.",
+      ],
+    },
+  ]);
+
+  function generatePreviewReview() {
+    const newReview = {
+      id: `rev-${Date.now()}`,
+      weekStart: new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10),
+      weekEnd: new Date().toISOString().slice(0, 10),
+      generatedAt: new Date().toISOString(),
+      summaryText: "Newly generated review: Coding momentum is strong this week with balanced problem solving and GitHub activity.",
+      observations: [
+        "Active consistency across all tracked platforms.",
+        "Prepared mock interview answers for upcoming technical round.",
+      ],
+      suggestions: [
+        "Keep up the daily cadence and schedule your next mock round.",
+      ],
+    };
+    // Enforce retention: keep only the latest 2 reviews (new review + previous review)
+    setPreviewReviews((prev) => [newReview, ...prev].slice(0, 2));
+  }
+
+  function deletePreviewReview(id: string) {
+    setPreviewReviews((prev) => prev.filter((r) => r.id !== id));
+  }
 
   const previewCompanyPrep = [
     {
@@ -238,7 +290,7 @@ export default function PreviewPage() {
               </div>
               <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 items-stretch">
                 <GoalsSummaryWidget previewData={previewGoals} />
-                <LatestReviewWidget previewData={previewReview} />
+                <LatestReviewWidget previewData={previewReviews[0]} />
                 <CompanyPrepWidget previewData={previewCompanyPrep} />
               </div>
             </div>
@@ -507,63 +559,89 @@ export default function PreviewPage() {
               <div>
                 <h1 className="text-xl font-bold tracking-tight text-foreground dark:text-white">AI weekly reviews</h1>
                 <p className="mt-1 text-sm text-muted dark:text-slate-400">
-                  A short, honest look back — generated automatically every Sunday night, or on demand.
+                  A short, honest look back — CodeBoard retains your current review and previous review. Older reviews are automatically erased.
                 </p>
               </div>
-              <Button>
+              <Button onClick={generatePreviewReview}>
                 <Sparkles size={15} /> Generate this week&apos;s review
               </Button>
             </div>
 
-            <Card className="p-5">
-              <p className="mb-2 text-xs font-medium text-muted">
-                Week of Aug 27, 2026 – Sep 2, 2026 · generated Sep 2, 2026
-              </p>
-              <p className="text-sm text-foreground leading-relaxed">
-                It looks like this week was a quiet period for coding activities, which can happen to anyone.
-                Use this as a fresh start to build momentum next week!
-              </p>
-
-              <div className="mt-4 pt-3 border-t border-border/60">
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
-                  <TrendingUp size={13} className="text-teal-600 dark:text-accent-2" /> Observations
-                </p>
-                <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
-                  <li className="flex items-start gap-2 leading-relaxed">
-                    <span className="text-muted shrink-0 mt-0.5">•</span>
-                    <span>No GitHub contributions, pull requests, or LeetCode submissions were recorded.</span>
-                  </li>
-                  <li className="flex items-start gap-2 leading-relaxed">
-                    <span className="text-muted shrink-0 mt-0.5">•</span>
-                    <span>Both the current streak and longest streak reflect minimal activity.</span>
-                  </li>
-                  <li className="flex items-start gap-2 leading-relaxed">
-                    <span className="text-muted shrink-0 mt-0.5">•</span>
-                    <span>No job applications were added or advanced, and no progress was logged toward any goals.</span>
-                  </li>
-                </ul>
+            {previewReviews.length === 0 && (
+              <div className="rounded-2xl border border-border bg-surface p-8 text-center">
+                <Sparkles className="mx-auto h-8 w-8 text-muted" />
+                <p className="mt-2 text-sm font-semibold text-foreground">No reviews yet</p>
+                <p className="text-xs text-muted mt-1">Click &ldquo;Generate this week&apos;s review&rdquo; above.</p>
               </div>
+            )}
 
-              <div className="mt-4 pt-3 border-t border-border/60">
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
-                  <Lightbulb size={13} className="text-amber-600 dark:text-warn" /> For next week
-                </p>
-                <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
-                  <li className="flex items-start gap-2 leading-relaxed">
-                    <span className="text-muted shrink-0 mt-0.5">•</span>
-                    <span>Set a small, achievable goal for the next week, such as making one GitHub commit or solving one easy LeetCode problem.</span>
-                  </li>
-                  <li className="flex items-start gap-2 leading-relaxed">
-                    <span className="text-muted shrink-0 mt-0.5">•</span>
-                    <span>Schedule a dedicated 30-minute coding block each day to create consistency and rebuild your streak.</span>
-                  </li>
-                  <li className="flex items-start gap-2 leading-relaxed">
-                    <span className="text-muted shrink-0 mt-0.5">•</span>
-                    <span>Update your goals list with specific, time-bound items and track progress daily.</span>
-                  </li>
-                </ul>
-              </div>
-            </Card>
+            <div className="space-y-4">
+              {previewReviews.map((r, idx) => (
+                <Card key={r.id} className="p-5">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-border/40 pb-2.5">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide ${
+                          idx === 0
+                            ? "bg-indigo-500/15 text-indigo-400 border border-indigo-500/30"
+                            : "bg-slate-700/30 text-slate-300 border border-slate-700/50"
+                        }`}
+                      >
+                        {idx === 0 ? "Current review" : "Previous review"}
+                      </span>
+                      <span className="text-xs text-muted">
+                        Week of {r.weekStart} – {r.weekEnd}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-muted">Generated {new Date(r.generatedAt).toLocaleDateString()}</span>
+                      <button
+                        type="button"
+                        onClick={() => deletePreviewReview(r.id)}
+                        className="rounded p-1 text-muted hover:bg-danger/10 hover:text-danger transition-colors"
+                        title="Erase review"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-foreground leading-relaxed">{r.summaryText}</p>
+
+                  {r.observations.length > 0 && (
+                    <div className="mt-4 pt-3 border-t border-border/60">
+                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                        <TrendingUp size={13} className="text-teal-600 dark:text-accent-2" /> Observations
+                      </p>
+                      <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
+                        {r.observations.map((o, i) => (
+                          <li key={i} className="flex items-start gap-2 leading-relaxed">
+                            <span className="text-muted shrink-0 mt-0.5">•</span>
+                            <span>{o}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {r.suggestions.length > 0 && (
+                    <div className="mt-4 pt-3 border-t border-border/60">
+                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-200">
+                        <Lightbulb size={13} className="text-amber-600 dark:text-warn" /> For next week
+                      </p>
+                      <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
+                        {r.suggestions.map((s, i) => (
+                          <li key={i} className="flex items-start gap-2 leading-relaxed">
+                            <span className="text-muted shrink-0 mt-0.5">•</span>
+                            <span>{s}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
           </div>
         )}
 

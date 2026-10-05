@@ -123,10 +123,10 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          className={`overflow-x-auto heatmap-scrollbar min-w-0 flex-1 pb-2 cursor-grab touch-pan-x overscroll-x-contain ${
+          className={`overflow-x-auto heatmap-scrollbar min-w-0 flex-1 pb-2 cursor-grab touch-pan-x touch-pan-y overscroll-x-contain ${
             isMouseDown ? "cursor-grabbing" : ""
           }`}
-          style={{ overscrollBehaviorX: "contain", touchAction: "pan-x" }}
+          style={{ overscrollBehaviorX: "contain", touchAction: "pan-x pan-y" }}
         >
           {/* Synchronized Month labels */}
           <div className="flex gap-1.5 mb-2 h-4 relative">

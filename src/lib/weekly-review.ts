@@ -72,7 +72,7 @@ export async function generateAndStoreWeeklyReview(userId: string) {
   const input = await buildWeeklyReviewInput(userId);
   const output = await generateWeeklyReview(input);
 
-  return prisma.weeklyReview.upsert({
+  const review = await prisma.weeklyReview.upsert({
     where: { userId_weekStart: { userId, weekStart: start } },
     update: {
       weekEnd: end,
@@ -90,4 +90,21 @@ export async function generateAndStoreWeeklyReview(userId: string) {
       suggestions: JSON.stringify(output.suggestions),
     },
   });
+
+  // Retain only the current (latest) review and immediate previous review.
+  // Erase any older reviews from the database.
+  const allReviews = await prisma.weeklyReview.findMany({
+    where: { userId },
+    orderBy: [{ generatedAt: "desc" }, { weekStart: "desc" }],
+    select: { id: true },
+  });
+
+  if (allReviews.length > 2) {
+    const toDelete = allReviews.slice(2).map((r) => r.id);
+    await prisma.weeklyReview.deleteMany({
+      where: { id: { in: toDelete } },
+    });
+  }
+
+  return review;
 }

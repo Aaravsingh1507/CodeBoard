@@ -153,8 +153,7 @@ export function LanguageDonut({
                 }`}
                 onMouseEnter={() => setActiveIndex(i)}
                 onMouseLeave={() => setActiveIndex(null)}
-                onTouchStart={() => setActiveIndex(i)}
-                onTouchEnd={() => setActiveIndex(null)}
+                onClick={() => setActiveIndex(activeIndex === i ? null : i)}
               >
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2.5 min-w-0">

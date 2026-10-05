@@ -103,8 +103,26 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
 
   const areaPath = `${linePath} L ${points[points.length - 1].x} ${baseY} L ${points[0].x} ${baseY} Z`;
 
-  // Pointer scrubbing logic
+  // Pointer scrubbing logic - non-blocking on mobile touch
   const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
+    // If it's a mobile touch event, do not hijack so vertical scrolling stays buttery smooth
+    if (e.pointerType === "touch") return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const svgX = ((e.clientX - rect.left) / rect.width) * 490;
+    let closestIdx = 0;
+    let minDiff = Infinity;
+    points.forEach((p, idx) => {
+      const diff = Math.abs(p.x - svgX);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIdx = idx;
+      }
+    });
+    setActivePointIndex(closestIdx);
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const svgX = ((e.clientX - rect.left) / rect.width) * 490;
     let closestIdx = 0;
@@ -197,7 +215,7 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
   }, [data]);
 
   return (
-    <Card className="relative overflow-visible rounded-[22px] border border-border bg-surface p-4 sm:p-6 shadow-xs dark:border-[#1e263d] dark:bg-gradient-to-b dark:from-[#111728]/95 dark:to-[#0d1220]/95 dark:shadow-2xl dark:shadow-black/50 dark:backdrop-blur-md flex-1 flex flex-col justify-between">
+    <Card className="relative overflow-visible rounded-[22px] border border-border bg-surface p-4 sm:p-6 shadow-xs dark:border-[#1e263d] dark:bg-gradient-to-b dark:from-[#111728]/95 dark:to-[#0d1220]/95 dark:shadow-2xl dark:shadow-black/50 md:dark:backdrop-blur-md flex-1 flex flex-col justify-between">
       <CardContent className="p-0 flex flex-col justify-between h-full">
         {/* Top Row: Title + Full stats link */}
         <div className="flex items-center justify-between pb-1">
@@ -345,11 +363,12 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
         </div>
 
         {/* Chart Area with Pointer Scrubbing & Active Tooltip */}
-        <div className="relative mt-2 w-full select-none touch-none">
+        <div className="relative mt-2 w-full select-none touch-pan-y">
           <svg
             viewBox="0 0 490 155"
-            className="w-full h-auto overflow-visible cursor-crosshair"
+            className="w-full h-auto overflow-visible cursor-crosshair touch-pan-y"
             onPointerMove={handlePointerMove}
+            onPointerDown={handlePointerDown}
             onPointerLeave={handlePointerLeave}
           >
             <defs>
