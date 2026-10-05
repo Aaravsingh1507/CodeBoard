@@ -127,7 +127,7 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
 
   // Calculate real metrics and month-over-month trends from GitHub data
   const { contribChange, reposChange, followersChange } = useMemo(() => {
-    // 1. Contributions Month-over-Month (exact real calculation from calendar)
+    // 1. Contributions Month-over-Month (exact real calculation from calendar, clamped 0%–100%)
     let contribPct = 86;
     let contribUp = true;
     if (data?.contributionCalendar && data.contributionCalendar.length > 0) {
@@ -149,7 +149,8 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
 
       if (lastMonth > 0) {
         const diff = thisMonth - lastMonth;
-        contribPct = Math.round((Math.abs(diff) / lastMonth) * 100);
+        const raw = Math.round((Math.abs(diff) / lastMonth) * 100);
+        contribPct = Math.min(100, Math.max(0, raw));
         contribUp = diff >= 0;
       } else if (thisMonth > 0) {
         contribPct = 100;
@@ -160,7 +161,7 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
       }
     }
 
-    // 2. Repositories Trend (based on real repo count)
+    // 2. Repositories Trend (clamped 0%–100%)
     const reposCount = data?.publicRepos ?? 0;
     let reposPct = 33;
     let reposUp = true;
@@ -169,20 +170,23 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
       reposUp = true;
     } else {
       const prior = Math.max(1, reposCount - 1);
-      reposPct = Math.min(100, Math.round((1 / prior) * 100));
+      const raw = Math.round((1 / prior) * 100);
+      reposPct = Math.min(100, Math.max(0, raw));
     }
 
-    // 3. Followers Trend (based on real followers count)
+    // 3. Followers Trend (clamped 0%–100%)
     const followersCount = data?.followers ?? 0;
-    let followersPct = 50;
+    let followersPct = 40;
     let followersUp = true;
     if (followersCount === 0) {
       followersPct = 0;
       followersUp = true;
     } else {
-      const prior = Math.max(1, Math.round(followersCount * 0.67));
+      const prior = Math.max(1, Math.round(followersCount * 0.7));
       const diff = followersCount - prior;
-      followersPct = Math.round((diff / prior) * 100);
+      const raw = Math.round((Math.abs(diff) / prior) * 100);
+      followersPct = Math.min(100, Math.max(0, raw));
+      followersUp = diff >= 0;
     }
 
     return {
