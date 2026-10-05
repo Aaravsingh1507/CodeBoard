@@ -229,7 +229,7 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
         {/* 3 Stat Cards Row - matching Image 2 with refined icon size */}
         <div className="relative z-10 mt-3 sm:mt-4 grid grid-cols-3 gap-2 sm:gap-3.5">
           {/* Card 1: Repos */}
-          <div className="rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#2b244d]/70 dark:bg-[#0d1222]/85 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-purple-500/40">
+          <div className="h-[94px] sm:h-[116px] rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#2b244d]/70 dark:bg-[#0d1222]/85 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-purple-500/40">
             {/* Sleek Refined Frosted Purple Icon Box */}
             <div className="flex h-[34px] w-[34px] sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-100 to-purple-50 border border-purple-200 text-purple-600 dark:from-[#2e1d52]/90 dark:to-[#1c1236]/95 dark:border-purple-400/35 dark:text-[#d8b4fe] shrink-0 shadow-sm dark:shadow-[0_3px_12px_rgba(147,51,234,0.2),inset_0_1px_1px_rgba(255,255,255,0.18)]">
               <Layers className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
@@ -252,7 +252,7 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
           </div>
 
           {/* Card 2: Contributions */}
-          <div className="rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#2b244d]/70 dark:bg-[#0d1222]/85 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-purple-500/40">
+          <div className="h-[94px] sm:h-[116px] rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#2b244d]/70 dark:bg-[#0d1222]/85 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-purple-500/40">
             {/* Sleek Refined Frosted Purple Icon Box */}
             <div className="flex h-[34px] w-[34px] sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-100 to-purple-50 border border-purple-200 text-purple-600 dark:from-[#2e1d52]/90 dark:to-[#1c1236]/95 dark:border-purple-400/35 dark:text-[#d8b4fe] shrink-0 shadow-sm dark:shadow-[0_3px_12px_rgba(147,51,234,0.2),inset_0_1px_1px_rgba(255,255,255,0.18)]">
               <GitBranch className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
@@ -275,7 +275,7 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
           </div>
 
           {/* Card 3: Followers */}
-          <div className="rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#2b244d]/70 dark:bg-[#0d1222]/85 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-purple-500/40">
+          <div className="h-[94px] sm:h-[116px] rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#2b244d]/70 dark:bg-[#0d1222]/85 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-purple-500/40">
             {/* Sleek Refined Frosted Purple Icon Box */}
             <div className="flex h-[34px] w-[34px] sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-100 to-purple-50 border border-purple-200 text-purple-600 dark:from-[#2e1d52]/90 dark:to-[#1c1236]/95 dark:border-purple-400/35 dark:text-[#d8b4fe] shrink-0 shadow-sm dark:shadow-[0_3px_12px_rgba(147,51,234,0.2),inset_0_1px_1px_rgba(255,255,255,0.18)]">
               <Users className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
