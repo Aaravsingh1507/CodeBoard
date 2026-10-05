@@ -33,10 +33,13 @@ export default function DashboardPage() {
 
       {/* Preparation & Goals */}
       <div className="pt-2">
-        <h2 className="mb-4 text-xs font-bold tracking-wider uppercase text-slate-400">
-          Preparation & Goals
-        </h2>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="mb-4">
+          <h2 className="text-xs font-bold tracking-wider uppercase text-slate-300">
+            Preparation & Goals
+          </h2>
+          <div className="h-[2px] w-24 bg-gradient-to-r from-purple-500 via-indigo-500 to-transparent mt-1.5 rounded-full" />
+        </div>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 items-stretch">
           <GoalsSummaryWidget />
           <LatestReviewWidget />
           <CompanyPrepWidget />
