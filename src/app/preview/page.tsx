@@ -6,6 +6,9 @@ import { ReadinessWidget } from "@/components/widgets/readiness-widget";
 import { StreakWidget } from "@/components/widgets/streak-widget";
 import { GithubSummaryWidget } from "@/components/widgets/github-summary-widget";
 import { LeetcodeSummaryWidget } from "@/components/widgets/leetcode-summary-widget";
+import { GoalsSummaryWidget } from "@/components/widgets/goals-summary-widget";
+import { LatestReviewWidget } from "@/components/widgets/latest-review-widget";
+import { CompanyPrepWidget } from "@/components/widgets/company-prep-widget";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
@@ -121,6 +124,51 @@ export default function PreviewPage() {
 
   const previewLeetcode: LeetcodeStats | undefined = undefined;
 
+  const previewGoals = [
+    {
+      id: "goal-1",
+      label: "Automate my full work by using agentic AI, learning How to build agents",
+      current: 0,
+      target: 1,
+      deadline: "2026-10-20",
+      status: "in_progress",
+      type: "custom",
+    },
+    {
+      id: "goal-2",
+      label: "Setup a automatic income source using ai agents for youtube",
+      current: 0,
+      target: 2,
+      deadline: "2026-10-30",
+      status: "in_progress",
+      type: "custom",
+    },
+  ];
+
+  const previewReview = {
+    weekStart: "2026-09-27",
+    weekEnd: "2026-10-03",
+    summaryText: "You made a modest start this week with a handful of GitHub contributions, but there's plenty of room to build momentum. Keep the streak alive and aim for deeper engagement.",
+  };
+
+  const previewCompanyPrep = [
+    {
+      name: "Google",
+      focusAreas: ["Graphs", "Dynamic Programming", "System Design (senior roles)"],
+      note: "Fewer but harder problems, strong focus on clean code and edge-case handling over speed.",
+    },
+    {
+      name: "Microsoft",
+      focusAreas: ["Arrays & Strings", "Trees", "Object-Oriented Design"],
+      note: "Broad DSA coverage; on-campus rounds often include a design/OOP round.",
+    },
+    {
+      name: "Amazon",
+      focusAreas: ["Trees & Graphs", "OOP Design", "Leadership Principles (behavioral)"],
+      note: "Heavy emphasis on behavioral answers tied to their Leadership Principles alongside DSA — prep STAR-format stories, not just code.",
+    },
+  ];
+
   const [copiedBullet, setCopiedBullet] = useState<number | null>(null);
 
   const tabs = [
@@ -178,6 +226,21 @@ export default function PreviewPage() {
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <GithubSummaryWidget previewData={previewGithub} />
               <LeetcodeSummaryWidget previewData={previewLeetcode} />
+            </div>
+
+            {/* Preparation & Goals */}
+            <div className="pt-2">
+              <div className="mb-4">
+                <h2 className="text-xs font-bold tracking-wider uppercase text-slate-300">
+                  Preparation & Goals
+                </h2>
+                <div className="h-[2px] w-24 bg-gradient-to-r from-purple-500 via-indigo-500 to-transparent mt-1.5 rounded-full" />
+              </div>
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-3 items-stretch">
+                <GoalsSummaryWidget previewData={previewGoals} />
+                <LatestReviewWidget previewData={previewReview} />
+                <CompanyPrepWidget previewData={previewCompanyPrep} />
+              </div>
             </div>
           </div>
         )}

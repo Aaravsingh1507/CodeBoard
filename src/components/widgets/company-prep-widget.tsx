@@ -22,7 +22,7 @@ export function CompanyPrepWidget({ previewData }: { previewData?: Profile[] } =
   const displayProfiles = previewData ?? (data && data.length > 0 ? data : DEFAULT_COMPANIES);
 
   return (
-    <div className="relative rounded-[28px] border border-purple-500/25 bg-gradient-to-b from-[#0e122b]/95 via-[#090d22]/95 to-[#060919]/98 p-5 sm:p-6 shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(147,51,234,0.12),inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col justify-between overflow-hidden h-full min-h-[520px]">
+    <div className="relative rounded-[28px] border border-[#a855f7]/30 bg-gradient-to-b from-[#0c0f24] via-[#090b1c] to-[#060814] p-5 sm:p-6 shadow-[0_0_35px_rgba(147,51,234,0.18),0_10px_40px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col justify-between overflow-hidden h-full min-h-[520px]">
       {/* Top specular highlight */}
       <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-purple-400/40 to-transparent pointer-events-none" />
 
@@ -30,12 +30,12 @@ export function CompanyPrepWidget({ previewData }: { previewData?: Profile[] } =
       <div className="relative z-10 flex-1 flex flex-col">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-b from-indigo-500/30 to-purple-600/20 border border-indigo-400/40 text-indigo-300 flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.35)] shrink-0">
-            <Briefcase size={20} className="stroke-[2.2]" />
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-b from-indigo-500/25 to-purple-600/20 border border-indigo-400/40 text-indigo-300 flex items-center justify-center shadow-[0_0_18px_rgba(99,102,241,0.35)] shrink-0">
+            <Briefcase size={22} className="stroke-[2.2]" />
           </div>
           <div>
-            <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">Company prep focus</h3>
-            <p className="text-xs text-slate-400">Key topics to strengthen.</p>
+            <h3 className="text-base sm:text-[17px] font-bold text-white tracking-tight leading-tight">Company prep focus</h3>
+            <p className="text-xs text-[#7c8ba1] mt-0.5">Key topics to strengthen.</p>
           </div>
         </div>
 
@@ -48,38 +48,43 @@ export function CompanyPrepWidget({ previewData }: { previewData?: Profile[] } =
             </div>
           )}
 
-          {displayProfiles.slice(0, 3).map((p) => (
-            <div key={p.name} className="space-y-1.5">
-              <p className="text-sm font-bold text-white tracking-wide">{p.name}</p>
-              <div className="flex flex-wrap gap-1.5">
-                {p.focusAreas.map((f) => (
-                  <span
-                    key={f}
-                    className="inline-flex items-center rounded-full border border-purple-500/35 bg-[#21143d]/80 px-3 py-1 text-xs font-medium text-purple-200 shadow-[0_0_8px_rgba(168,85,247,0.15)] transition-colors hover:border-purple-400 hover:bg-[#2b1950]"
-                  >
-                    {f}
-                  </span>
-                ))}
+          {displayProfiles.slice(0, 3).map((p, idx) => {
+            const isAmazon = p.name.toLowerCase().includes("amazon") || idx === 2;
+            return (
+              <div key={p.name} className="space-y-1.5">
+                <p className="text-[15px] font-bold text-white tracking-wide">{p.name}</p>
+                <div className={`flex flex-wrap gap-1.5 ${isAmazon ? "max-w-[70%]" : ""}`}>
+                  {p.focusAreas.map((f) => (
+                    <span
+                      key={f}
+                      className="inline-flex items-center rounded-full border border-purple-500/40 bg-gradient-to-r from-[#2a174e]/90 to-[#1c1842]/90 px-3 py-1 text-xs font-medium text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.2)] transition-all hover:border-purple-400 hover:brightness-110"
+                    >
+                      {f}
+                    </span>
+                  ))}
+                </div>
+                <p className={`text-xs text-[#7c8ba1] leading-relaxed pt-0.5 ${isAmazon ? "max-w-[72%]" : ""}`}>
+                  {p.note}
+                </p>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed pt-0.5">{p.note}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
       {/* Bottom Row: Disclaimer & Floating 3D Cubes */}
-      <div className="relative mt-5 pt-3 flex items-end justify-between min-h-[60px]">
-        <div className="flex items-start gap-1.5 text-[11px] text-slate-400 max-w-[210px] leading-tight z-10 relative">
-          <Info size={14} className="text-slate-400 shrink-0 mt-0.5" />
+      <div className="relative mt-5 pt-3 flex items-end justify-between min-h-[64px]">
+        <div className="flex items-start gap-1.5 text-[11px] text-[#7c8ba1] max-w-[190px] sm:max-w-[200px] leading-tight z-10 relative">
+          <Info size={14} className="text-[#7c8ba1] shrink-0 mt-0.5" />
           <span>General guidance from public prep community knowledge, not official or guaranteed.</span>
         </div>
 
-        {/* Floating 3D Cubes */}
-        <div className="absolute -right-3 -bottom-4 w-28 h-28 pointer-events-none select-none overflow-hidden">
+        {/* Floating 3D Cubes positioned cleanly in the corner without overlapping text */}
+        <div className="absolute right-0 bottom-0 w-24 h-40 pointer-events-none select-none overflow-hidden flex items-end justify-end">
           <img
             src="/images/prep/company-cubes.png"
             alt=""
-            className="w-full h-full object-contain mix-blend-screen opacity-95"
+            className="w-full h-full object-contain object-bottom-right drop-shadow-[0_0_15px_rgba(168,85,247,0.35)]"
           />
         </div>
       </div>
