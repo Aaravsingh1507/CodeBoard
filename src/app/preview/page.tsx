@@ -24,19 +24,22 @@ import {
   Check,
 } from "lucide-react";
 import { MatchScopeClient } from "@/components/matchscope/MatchScopeClient";
+import { TopLanguagesCard } from "@/components/github/top-languages-card";
+import { ProfileOverviewCard } from "@/components/github/profile-overview-card";
+import { StreakHeatmap } from "@/components/streak-heatmap";
 import type { GithubStats } from "@/lib/github";
 import type { LeetcodeStats } from "@/lib/leetcode";
 
 export default function PreviewPage() {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "matchscope" | "settings" | "resume" | "goals" | "circles" | "reviews" | "applications"
+    "overview" | "github" | "matchscope" | "settings" | "resume" | "goals" | "circles" | "reviews" | "applications"
   >("overview");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get("tab") as any;
-      if (tab && ["overview", "matchscope", "settings", "resume", "goals", "circles", "reviews", "applications"].includes(tab)) {
+      if (tab && ["overview", "github", "matchscope", "settings", "resume", "goals", "circles", "reviews", "applications"].includes(tab)) {
         setActiveTab(tab);
       }
     }
@@ -90,7 +93,7 @@ export default function PreviewPage() {
     publicRepos: 4,
     followers: 7,
     following: 10,
-    totalStars: 0,
+    totalStars: 4,
     totalForks: 0,
     totalWatchers: 0,
     totalPRs: 0,
@@ -104,7 +107,12 @@ export default function PreviewPage() {
       { date: "2026-08-31", count: 3 },
       { date: "2026-09-14", count: 3 },
     ],
-    topLanguages: [{ name: "Python", bytes: 45000 }, { name: "TypeScript", bytes: 32000 }],
+    topLanguages: [
+      { name: "TypeScript", bytes: 498000 },
+      { name: "CSS", bytes: 136000 },
+      { name: "JavaScript", bytes: 10000 },
+      { name: "HTML", bytes: 4000 },
+    ],
     recentActivity: [],
     totalClones: 0,
     totalViews: 0,
@@ -117,6 +125,7 @@ export default function PreviewPage() {
 
   const tabs = [
     { id: "overview", label: "Overview" },
+    { id: "github", label: "GitHub" },
     { id: "settings", label: "Settings" },
     { id: "resume", label: "Resume" },
     { id: "goals", label: "Goals" },
@@ -169,6 +178,48 @@ export default function PreviewPage() {
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <GithubSummaryWidget previewData={previewGithub} />
               <LeetcodeSummaryWidget previewData={previewLeetcode} />
+            </div>
+          </div>
+        )}
+
+        {/* GITHUB TAB */}
+        {activeTab === "github" && (
+          <div className="space-y-6 animate-fade-in">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-foreground dark:text-white sm:text-4xl">
+                Git<span className="gradient-title-view">Hub</span>
+              </h1>
+              <p className="mt-1.5 text-sm text-muted dark:text-slate-400">
+                Track your contributions, languages, and repo statistics.
+              </p>
+            </div>
+
+            <Card className="overflow-hidden min-w-0 max-w-full">
+              <div className="p-5 flex items-center justify-between border-b border-border/60">
+                <h3 className="font-semibold text-foreground dark:text-white text-base">Contribution activity</h3>
+                <span className="font-data text-xs text-muted">
+                  {previewGithub.totalContributionsLastYear} in the last year
+                </span>
+              </div>
+              <div className="p-5 min-w-0 overflow-hidden">
+                <StreakHeatmap days={previewGithub.contributionCalendar} />
+              </div>
+            </Card>
+
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 min-w-0 w-full items-start">
+              <TopLanguagesCard data={previewGithub.topLanguages} />
+              <ProfileOverviewCard
+                stats={{
+                  publicRepos: previewGithub.publicRepos,
+                  totalStars: previewGithub.totalStars,
+                  followers: previewGithub.followers,
+                  following: previewGithub.following,
+                  totalForks: previewGithub.totalForks,
+                  totalWatchers: previewGithub.totalWatchers,
+                  totalPRs: previewGithub.totalPRs,
+                  totalIssues: previewGithub.totalIssues,
+                }}
+              />
             </div>
           </div>
         )}

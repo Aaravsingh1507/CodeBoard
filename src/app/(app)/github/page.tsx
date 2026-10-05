@@ -25,35 +25,9 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { StreakHeatmap } from "@/components/streak-heatmap";
-import { LanguageDonut } from "@/components/language-donut";
+import { TopLanguagesCard } from "@/components/github/top-languages-card";
+import { ProfileOverviewCard } from "@/components/github/profile-overview-card";
 import type { GithubStats } from "@/lib/github";
-
-function StatTile({
-  icon,
-  label,
-  value,
-  color,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  color: string;
-}) {
-  return (
-    <div className="flex items-center gap-3 rounded-xl border border-border bg-surface-2/60 dark:border-[#1c2438] dark:bg-[#121829]/70 px-3 py-2.5 shadow-xs transition-colors">
-      <div
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm"
-        style={{ background: color }}
-      >
-        {icon}
-      </div>
-      <div className="min-w-0">
-        <p className="font-data text-lg font-bold leading-tight text-foreground dark:text-white">{value.toLocaleString()}</p>
-        <p className="truncate text-[11px] text-muted dark:text-slate-400">{label}</p>
-      </div>
-    </div>
-  );
-}
 
 export default function GithubPage() {
   const { data, loading, error, warning, refetch } = useFetch<GithubStats>("/api/github/stats");
@@ -106,80 +80,20 @@ export default function GithubPage() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 min-w-0 w-full">
-            <Card className="flex flex-col overflow-hidden min-w-0 max-w-full">
-              <CardHeader>
-                <CardTitle>Top languages</CardTitle>
-                {data.topLanguages.length > 0 && (
-                  <span className="font-data text-xs text-muted">
-                    {data.topLanguages.length} {data.topLanguages.length === 1 ? "language" : "languages"}
-                  </span>
-                )}
-              </CardHeader>
-              <CardContent className="flex flex-1 flex-col justify-between min-w-0 overflow-hidden">
-                {data.topLanguages.length === 0 ? (
-                  <EmptyState title="No language data yet" description="Push some code to see this fill in." />
-                ) : (
-                  <LanguageDonut data={data.topLanguages} />
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="flex flex-col">
-              <CardHeader>
-                <CardTitle>Profile overview</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-2 gap-2.5">
-                <StatTile
-                  icon={<BookOpen size={15} className="text-white" />}
-                  label="Repositories"
-                  value={data.publicRepos}
-                  color="hsl(250 70% 55%)"
-                />
-                <StatTile
-                  icon={<Star size={15} className="text-white" />}
-                  label="Stars earned"
-                  value={data.totalStars}
-                  color="hsl(45 90% 50%)"
-                />
-                <StatTile
-                  icon={<Users size={15} className="text-white" />}
-                  label="Followers"
-                  value={data.followers}
-                  color="hsl(200 75% 50%)"
-                />
-                <StatTile
-                  icon={<UserPlus size={15} className="text-white" />}
-                  label="Following"
-                  value={data.following ?? 0}
-                  color="hsl(170 60% 45%)"
-                />
-                <StatTile
-                  icon={<GitFork size={15} className="text-white" />}
-                  label="Forks"
-                  value={data.totalForks ?? 0}
-                  color="hsl(280 60% 55%)"
-                />
-                <StatTile
-                  icon={<Eye size={15} className="text-white" />}
-                  label="Watchers"
-                  value={data.totalWatchers ?? 0}
-                  color="hsl(220 65% 55%)"
-                />
-                <StatTile
-                  icon={<GitPullRequest size={15} className="text-white" />}
-                  label="Pull requests"
-                  value={data.totalPRs ?? 0}
-                  color="hsl(150 60% 45%)"
-                />
-                <StatTile
-                  icon={<Bug size={15} className="text-white" />}
-                  label="Issues"
-                  value={data.totalIssues ?? 0}
-                  color="hsl(0 65% 55%)"
-                />
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 min-w-0 w-full items-start">
+            <TopLanguagesCard data={data.topLanguages} />
+            <ProfileOverviewCard
+              stats={{
+                publicRepos: data.publicRepos,
+                totalStars: data.totalStars,
+                followers: data.followers,
+                following: data.following ?? 0,
+                totalForks: data.totalForks ?? 0,
+                totalWatchers: data.totalWatchers ?? 0,
+                totalPRs: data.totalPRs ?? 0,
+                totalIssues: data.totalIssues ?? 0,
+              }}
+            />
           </div>
 
           {/* Traffic Insights — 14 day window */}
