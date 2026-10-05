@@ -59,10 +59,114 @@ export interface MatchScopeResponse {
   keywords: MatchKeyword[];
   suggestions: MatchSuggestion[];
   roadmap: CareerRoadmap;
+  detectedCandidateRole?: string;
 }
 
 const DEFAULT_MODEL = "openai/gpt-oss-120b";
 const FALLBACK_MODEL = "qwen/qwen3.8-27b";
+
+/**
+ * Fast heuristic validation to detect documents that are obviously NOT resumes
+ * (e.g. academic research papers, invoices, receipts, legal agreements, syllabi, or empty text)
+ */
+function validateResumeHeuristics(text: string): { isValid: boolean; reason?: string } {
+  const cleaned = text.trim();
+  const words = cleaned.split(/\s+/).filter(Boolean);
+
+  if (cleaned.length < 100 || words.length < 25) {
+    return {
+      isValid: false,
+      reason:
+        "The uploaded document contains very little or no readable text. If you uploaded a scanned PDF, please ensure it contains selectable text, or upload a standard PDF, DOCX, TXT, or Markdown resume.",
+    };
+  }
+
+  const lower = cleaned.toLowerCase();
+
+  // Resume section / keyword markers
+  const resumeMarkers = [
+    "education", "university", "college", "school", "bachelor", "master", "ph.d",
+    "b.tech", "b.e", "b.s", "m.tech", "m.s", "degree", "gpa", "cgpa",
+    "experience", "work history", "employment", "intern", "internship",
+    "developer", "engineer", "software", "programmer", "architect",
+    "projects", "personal projects", "academic projects",
+    "skills", "technical skills", "technologies", "frameworks", "programming languages",
+    "curriculum vitae", "resume", "certifications", "achievements",
+    "summary", "objective"
+  ];
+
+  let matchedMarkers = 0;
+  for (const marker of resumeMarkers) {
+    if (lower.includes(marker)) {
+      matchedMarkers++;
+    }
+  }
+
+  // 1. Academic Research Papers
+  const first2000 = lower.substring(0, 2000);
+  const hasAbstract = first2000.includes("abstract");
+  const hasPaperTerms =
+    lower.includes("arxiv:") ||
+    lower.includes("doi.org") ||
+    lower.includes("ieee") ||
+    lower.includes("in this paper") ||
+    lower.includes("we propose") ||
+    lower.includes("et al.") ||
+    lower.includes("conference on") ||
+    lower.includes("proceedings of");
+  const hasCitations = /references\s*\[\d+\]|references\s*\n\s*\[1\]|bibliography/i.test(lower);
+  const hasPaperSections =
+    lower.includes("methodology") ||
+    lower.includes("related work") ||
+    lower.includes("experimental results") ||
+    lower.includes("experiments");
+
+  if ((hasAbstract || hasPaperTerms) && (hasCitations || hasPaperSections) && matchedMarkers < 3) {
+    return {
+      isValid: false,
+      reason:
+        "This document appears to be an academic or research paper, not a personal resume. MatchScope only evaluates candidate resumes and CVs. Please upload your personal resume or CV with your education, skills, projects, and work experience.",
+    };
+  }
+
+  // 2. Invoices / Receipts / Financial Bills
+  const isInvoice =
+    (lower.includes("invoice") || lower.includes("receipt") || lower.includes("bill to") || lower.includes("amount due") || lower.includes("tax invoice")) &&
+    (lower.includes("subtotal") || lower.includes("payment terms") || lower.includes("due date") || lower.includes("total amount"));
+  if (isInvoice && matchedMarkers < 2) {
+    return {
+      isValid: false,
+      reason:
+        "This document appears to be a financial invoice or receipt, not a personal resume. Please upload a valid candidate resume or CV.",
+    };
+  }
+
+  // 3. Legal Contracts / Terms / Privacy Policies
+  const isLegalDoc =
+    (lower.includes("terms and conditions") || lower.includes("privacy policy") || lower.includes("nondisclosure agreement") || lower.includes("hereby agree")) &&
+    (lower.includes("governing law") || lower.includes("confidential information") || lower.includes("intellectual property rights") || lower.includes("warranties"));
+  if (isLegalDoc && matchedMarkers < 2) {
+    return {
+      isValid: false,
+      reason:
+        "This document appears to be a legal agreement or policy document, not a personal resume. Please upload a valid candidate resume or CV.",
+    };
+  }
+
+  // 4. Course Syllabi / Homework Assignments
+  const isAssignment =
+    (lower.includes("syllabus") || lower.includes("homework assignment") || lower.includes("final exam") || lower.includes("problem set")) &&
+    (lower.includes("grading policy") || lower.includes("office hours") || lower.includes("due date:"));
+  if (isAssignment && matchedMarkers < 2) {
+    return {
+      isValid: false,
+      reason:
+        "This document appears to be a course syllabus or assignment, not a personal resume. Please upload a valid candidate resume or CV.",
+    };
+  }
+
+  return { isValid: true };
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -110,9 +214,25 @@ export async function POST(req: NextRequest) {
       jobDescription = (body.jobDescription || "").trim();
     }
 
+    // Strip unprintable control / binary characters
+    resume = resume.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, " ").trim();
+
     if (!resume) {
       return NextResponse.json(
         { error: "Please upload your resume file (PDF/TXT/MD) or provide resume text for analysis." },
+        { status: 400 }
+      );
+    }
+
+    // Fast heuristic pre-check
+    const heuristicCheck = validateResumeHeuristics(resume);
+    if (!heuristicCheck.isValid) {
+      return NextResponse.json(
+        {
+          success: false,
+          isValidResume: false,
+          error: heuristicCheck.reason,
+        },
         { status: 400 }
       );
     }
@@ -127,7 +247,28 @@ export async function POST(req: NextRequest) {
 Your job is to read the candidate's resume and compare it against the target job posting.
 Explain everything in SIMPLE, PLAIN, BEGINNER-FRIENDLY ENGLISH. Do not use confusing recruitment jargon or corporate buzzwords.
 
-WHAT YOU MUST EVALUATE:
+CRITICAL STEP 1 - RESUME VALIDITY GATE (MANDATORY BEFORE ANY EVALUATION):
+Before performing any evaluation, determine whether the provided CANDIDATE RESUME is genuinely an individual person's resume or CV.
+A genuine resume details an individual candidate's qualifications: their contact details, education, work experience, technical/professional skills, or personal projects.
+
+NON-RESUMES INCLUDE (YOU MUST STRICTLY REJECT THESE):
+- Academic or scientific research papers, preprints, journal articles (e.g. papers on machine learning, algorithms, physics, biology, etc.)
+- Course lecture slides, textbooks, homework assignments, problem sets, syllabi
+- Invoices, receipts, financial records, bank statements
+- Legal agreements, contracts, licenses, terms of service, privacy policies
+- Technical documentation, software manuals, README files, API specifications, architectural whitepapers
+- Random notes, essays, blog posts, fiction, news articles, blank or garbled documents
+
+IF THE DOCUMENT IS NOT A PROPER RESUME:
+You MUST immediately reject it and return ONLY valid JSON matching this schema:
+{
+  "isValidResume": false,
+  "rejectionReason": "This document is not a proper resume. [Brief 1-sentence friendly explanation of what this document appears to be, and a clear request to upload their personal resume or CV with education, skills, projects, and work history to get evaluated.]"
+}
+CRITICAL: If isValidResume is false, do NOT invent scores, do NOT invent categories, do NOT create a roadmap, and do NOT claim suitability or unsuitability for any role (e.g. do NOT evaluate for AI Engineer or Software Engineer or any role).
+
+IF AND ONLY IF THE DOCUMENT IS A VALID RESUME:
+Set "isValidResume": true, specify the candidate's target role in "detectedCandidateRole" (e.g. "Full Stack Developer", "Frontend Developer", "Backend Developer", "AI/ML Engineer", "Data Engineer", "DevOps Engineer", "Mobile Developer", or matching the target job), and evaluate:
 1. Real Project Quality: Did they build actual working software, or just follow simple tutorials? Are their projects relevant to what this job asks for?
 2. Tools & Skills Mastery: Which tools listed in their resume are genuinely mastered in real code, versus just listed as buzzwords in a skills list?
 3. Role Suitability: Tell them plainly: Are they ready for this specific job right now? If not, what exact gaps are holding them back?
@@ -152,6 +293,8 @@ WHAT YOU MUST EVALUATE:
 
 OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
 {
+  "isValidResume": true,
+  "detectedCandidateRole": string,
   "score": number,
   "label": "Poor Fit" | "Moderate Fit" | "Good Fit" | "Strong Fit" | "Excellent Fit",
   "summary": string,
@@ -211,12 +354,33 @@ TARGET JOB DESCRIPTION:
 ${jobDescription.trim()}
 """`;
     } else {
-      // General Software Engineer Readiness Evaluation
+      // General Software Developer Readiness Evaluation
       systemPrompt = `You are MatchScope, a friendly, encouraging, and deeply experienced senior software engineer and mentor.
 Your job is to inspect the candidate's resume, check out their projects, skills, and tools, and give them honest, crystal-clear guidance in SIMPLE, EVERYDAY ENGLISH.
 Do NOT use confusing ATS recruitment jargon, complex corporate terminology, or robotic phrasing. Speak directly to the developer like a helpful mentor.
 
-WHAT YOU MUST EVALUATE:
+CRITICAL STEP 1 - RESUME VALIDITY GATE (MANDATORY BEFORE ANY EVALUATION):
+Before performing any evaluation, determine whether the provided CANDIDATE RESUME is genuinely an individual person's resume or CV.
+A genuine resume details an individual candidate's qualifications: their contact details, education, work experience, technical/professional skills, or personal projects.
+
+NON-RESUMES INCLUDE (YOU MUST STRICTLY REJECT THESE):
+- Academic or scientific research papers, preprints, journal articles (e.g. papers on machine learning, algorithms, physics, biology, etc.)
+- Course lecture slides, textbooks, homework assignments, problem sets, syllabi
+- Invoices, receipts, financial records, bank statements
+- Legal agreements, contracts, licenses, terms of service, privacy policies
+- Technical documentation, software manuals, README files, API specifications, architectural whitepapers
+- Random notes, essays, blog posts, fiction, news articles, blank or garbled documents
+
+IF THE DOCUMENT IS NOT A PROPER RESUME:
+You MUST immediately reject it and return ONLY valid JSON matching this schema:
+{
+  "isValidResume": false,
+  "rejectionReason": "This document is not a proper resume. [Brief 1-sentence friendly explanation of what this document appears to be, and a clear request to upload their personal resume or CV with education, skills, projects, and work history to get evaluated.]"
+}
+CRITICAL: If isValidResume is false, do NOT invent scores, do NOT invent categories, do NOT create a roadmap, and do NOT claim suitability or unsuitability for any role (e.g. do NOT evaluate for AI Engineer or Software Engineer or any role).
+
+IF AND ONLY IF THE DOCUMENT IS A VALID RESUME:
+Set "isValidResume": true, identify the candidate's primary technical domain/role in "detectedCandidateRole" (e.g. "Full Stack Developer", "Frontend Developer", "Backend Developer", "AI/ML Engineer", "Data Engineer", "DevOps Engineer", "Mobile Developer", etc.), and evaluate:
 1. Projects Quality & Real-World Proof:
    - Check out their projects. Are they real, useful applications with databases and user authentication, or just simple tutorial copies?
    - Do their projects show they can actually build software from scratch?
@@ -224,13 +388,13 @@ WHAT YOU MUST EVALUATE:
    - Go through their tools (like React, Node.js, Python, PostgreSQL, Docker, etc.).
    - Mark which tools are truly "Mastered" (proven in real projects), which "Needs Practice" (only mentioned briefly or in a skills list), and which are "Must Learn" (essential tools for their career path that they haven't touched yet).
 3. Role Suitability Verdict:
-   - Plainly state: Are they ready for junior, mid-level, or internship developer jobs right now? What is the main thing they need to do to start getting interview calls?
+   - Plainly state: Are they ready for junior, mid-level, or internship developer jobs in their domain right now? What is the main thing they need to do to start getting interview calls?
 4. LeetCode & DSA Preparation Target:
    - Recommend a realistic number of LeetCode / DSA problems they should solve based on current industry hiring bars (e.g. "60 to 80 LeetCode problems, focusing on Medium level").
    - List the 4 to 6 top DSA topics they must practice (e.g. Arrays & Hashing, Two Pointers, Trees, Graphs, Dynamic Programming).
    - Give practical advice on how to practice without burning out.
 5. Projects Needed & Focus Projects:
-   - Tell them how many more projects they need to build (e.g. "1 High-Impact Full-Stack Project").
+   - Tell them how many more projects they need to build (e.g. "1 High-Impact Capstone Project").
    - Give 2 specific, impressive project ideas tailored to their background with suggested tech stack, explaining why each project will impress hiring teams.
 6. Honest Scoring (0-100):
    - Categories:
@@ -251,6 +415,8 @@ WHAT YOU MUST EVALUATE:
 
 OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
 {
+  "isValidResume": true,
+  "detectedCandidateRole": string,
   "score": number,
   "label": "Poor Fit" | "Moderate Fit" | "Good Fit" | "Strong Fit" | "Excellent Fit",
   "summary": string,
@@ -391,6 +557,41 @@ ${resume}
       );
     }
 
+    // CRITICAL CHECK: Did the AI identify that this document is not a proper resume?
+    if (parsed.isValidResume === false) {
+      const rejectionReason =
+        typeof parsed.rejectionReason === "string" && parsed.rejectionReason.trim().length > 0
+          ? parsed.rejectionReason.trim()
+          : "This document is not a proper resume. Please upload a valid candidate resume or CV containing your education, skills, projects, and work experience.";
+      return NextResponse.json(
+        {
+          success: false,
+          isValidResume: false,
+          error: rejectionReason,
+        },
+        { status: 400 }
+      );
+    }
+
+    // Safety fallback: if rejectionReason was populated without a score
+    if (typeof parsed.rejectionReason === "string" && parsed.rejectionReason.trim().length > 0 && !parsed.score) {
+      return NextResponse.json(
+        {
+          success: false,
+          isValidResume: false,
+          error: parsed.rejectionReason.trim(),
+        },
+        { status: 400 }
+      );
+    }
+
+    const detectedCandidateRole =
+      typeof parsed.detectedCandidateRole === "string" && parsed.detectedCandidateRole.trim().length > 0
+        ? parsed.detectedCandidateRole.trim()
+        : isTargetedMatch
+        ? "Target Role"
+        : "Software Engineer";
+
     // Process categories
     const fallbackCategories = isTargetedMatch
       ? ["Job Requirements Match", "Required Tech Stack", "Project Experience Depth", "Seniority & Experience Match"]
@@ -469,7 +670,7 @@ ${resume}
     const roadmap: CareerRoadmap = {
       suitability: typeof rawRoadmap.suitability === "string" && rawRoadmap.suitability.trim().length > 0
         ? rawRoadmap.suitability.trim()
-        : `Suitable for junior to early mid-level software engineering roles. Building 1-2 production-ready capstone projects will make you competitive for top-tier companies.`,
+        : `Suitable for junior to early mid-level ${detectedCandidateRole} roles. Building 1-2 production-ready capstone projects will make you competitive for top-tier companies.`,
       dsaTarget: {
         recommendedCount: typeof rawDsa.recommendedCount === "string" && rawDsa.recommendedCount.trim().length > 0
           ? rawDsa.recommendedCount.trim()
@@ -534,6 +735,7 @@ ${resume}
       keywords,
       suggestions,
       roadmap,
+      detectedCandidateRole,
     };
 
     return NextResponse.json({

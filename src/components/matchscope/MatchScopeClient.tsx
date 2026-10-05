@@ -350,11 +350,49 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
       </div>
 
       {/* Central Analyze CTA Button */}
-      <div className="flex flex-col items-center justify-center my-8 space-y-3">
+      <div className="flex flex-col items-center justify-center my-8 space-y-4">
         {error && (
-          <div className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-950/40 px-4 py-2.5 text-xs text-red-300 max-w-lg animate-fade-in shadow-lg">
-            <AlertCircle size={15} className="shrink-0 text-red-400" />
-            <span>{error}</span>
+          <div className="w-full max-w-2xl rounded-2xl border border-rose-500/40 bg-gradient-to-br from-rose-950/50 via-[#181324] to-[#101424] p-5 shadow-2xl animate-fade-in">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                <AlertCircle size={20} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <h4 className="text-sm font-bold text-white">
+                    {error.toLowerCase().includes("resume") ? "Invalid Document Uploaded" : "Analysis Notice"}
+                  </h4>
+                  {error.toLowerCase().includes("resume") && (
+                    <span className="rounded-full bg-rose-500/20 border border-rose-500/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-rose-300">
+                      Not a Resume
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-rose-200/90 leading-relaxed">
+                  {error}
+                </p>
+                <div className="mt-3.5 flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleClearFile();
+                      fileInputRef.current?.click();
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600/30 hover:bg-rose-600/50 border border-rose-500/40 px-3.5 py-1.5 text-xs font-semibold text-rose-100 transition-colors cursor-pointer"
+                  >
+                    <FileUp size={13} />
+                    <span>Upload a Proper Resume</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setError(null)}
+                    className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -370,7 +408,7 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
             <>
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
               <span>
-                {loadingStep === 0 && "Checking your projects & tools..."}
+                {loadingStep === 0 && "Checking document validity & skills..."}
                 {loadingStep === 1 && "Evaluating role readiness & DSA benchmarks..."}
                 {loadingStep === 2 && "Creating your personalized action plan..."}
               </span>
@@ -403,7 +441,12 @@ export function MatchScopeClient({ embeddedMode = false }: { embeddedMode?: bool
           />
 
           {/* Part 2: Career & Preparation Roadmap (DSA, Focus Projects, Tool Mastery) */}
-          {result.roadmap && <ActionPlanSection roadmap={result.roadmap} />}
+          {result.roadmap && (
+            <ActionPlanSection
+              roadmap={result.roadmap}
+              detectedCandidateRole={result.detectedCandidateRole}
+            />
+          )}
 
           {/* Part 3: Category Breakdown */}
           <CategoryBreakdown categories={result.categories} />
@@ -504,7 +547,13 @@ function ScoreRing({
   );
 }
 
-function ActionPlanSection({ roadmap }: { roadmap: CareerRoadmap }) {
+function ActionPlanSection({
+  roadmap,
+  detectedCandidateRole,
+}: {
+  roadmap: CareerRoadmap;
+  detectedCandidateRole?: string;
+}) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -526,9 +575,16 @@ function ActionPlanSection({ roadmap }: { roadmap: CareerRoadmap }) {
             <Lightbulb size={18} />
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1">
-              Role Suitability Verdict
-            </h4>
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300">
+                Role Suitability Verdict
+              </h4>
+              {detectedCandidateRole && (
+                <span className="rounded-full bg-indigo-500/20 border border-indigo-500/40 px-2.5 py-0.5 text-[10px] font-semibold text-indigo-200">
+                  {detectedCandidateRole}
+                </span>
+              )}
+            </div>
             <p className="text-sm text-slate-200 leading-relaxed">
               {roadmap.suitability}
             </p>
