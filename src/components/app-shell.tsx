@@ -109,14 +109,14 @@ export function AppShell({
 
         {/* Main Content Area with Subtle Ambient Glow */}
         <main
-          className="relative flex-1 overflow-y-auto scroll-touch bg-background dark:bg-[#080c17]"
+          className="relative flex-1 overflow-y-auto overflow-x-hidden scroll-touch bg-background dark:bg-[#080c17] w-full max-w-full"
           style={{ WebkitOverflowScrolling: "touch", willChange: "scroll-position" }}
         >
           {/* Subtle Ambient Nebula Glows */}
-          <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-purple-500/5 dark:bg-purple-600/12 blur-[140px]" />
-          <div className="pointer-events-none absolute left-1/4 top-40 h-[400px] w-[400px] rounded-full bg-indigo-500/5 dark:bg-indigo-600/10 blur-[130px]" />
+          <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] max-w-full rounded-full bg-purple-500/5 dark:bg-purple-600/12 blur-[140px]" />
+          <div className="pointer-events-none absolute left-1/4 top-40 h-[400px] w-[400px] max-w-full rounded-full bg-indigo-500/5 dark:bg-indigo-600/10 blur-[130px]" />
 
-          <div className="relative z-10 mx-auto max-w-7xl px-4 py-5 sm:px-6 md:px-8 md:py-7 animate-fade-in">
+          <div className="relative z-10 mx-auto max-w-7xl w-full min-w-0 px-4 pt-4 pb-24 sm:px-6 md:px-8 md:py-7 animate-fade-in">
             {children}
           </div>
         </main>

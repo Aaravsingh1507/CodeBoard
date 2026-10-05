@@ -88,7 +88,7 @@ export default function CirclesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-20 sm:pb-8 min-w-0 max-w-full">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl">Circles</h1>

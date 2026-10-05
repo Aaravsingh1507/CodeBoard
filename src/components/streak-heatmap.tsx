@@ -16,7 +16,7 @@ function levelFor(count: number) {
 }
 
 const LEVEL_CLASSES = [
-  "bg-[#131b2e] border border-[#1b253d]/80",
+  "bg-[#1c2438] border border-slate-600/60 dark:bg-[#1a233b] dark:border-slate-600/70",
   "bg-[#0d4f5b] border border-[#146b7b]",
   "bg-[#0b7484] border border-[#0f9bb0]",
   "bg-[#06b6d4] border border-[#22d3ee] shadow-[0_0_8px_rgba(6,182,212,0.6)]",
@@ -101,9 +101,9 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
   };
 
   return (
-    <div className="relative select-none">
+    <div className="relative select-none w-full min-w-0 max-w-full">
       {/* Grid with Left-side Day Labels & Scrollable Heatmap */}
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-2 w-full min-w-0">
         {/* Day of Week Labels (Mon, Wed, Fri) aligned with cell rows */}
         <div className="flex flex-col gap-1.5 text-[11px] font-medium text-slate-400 w-6 shrink-0 pt-6">
           {DAY_LABELS.map((d, i) => (
@@ -123,9 +123,10 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          className={`overflow-x-auto heatmap-scrollbar flex-1 pb-3 cursor-grab ${
+          className={`overflow-x-auto heatmap-scrollbar min-w-0 flex-1 pb-2 cursor-grab touch-pan-x overscroll-x-contain ${
             isMouseDown ? "cursor-grabbing" : ""
           }`}
+          style={{ overscrollBehaviorX: "contain", touchAction: "pan-x" }}
         >
           {/* Synchronized Month labels */}
           <div className="flex gap-1.5 mb-2 h-4 relative">
@@ -144,7 +145,7 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
           </div>
 
           {/* Heatmap Columns */}
-          <div className="flex gap-1.5 animate-fade-in">
+          <div className="flex gap-1.5 animate-fade-in w-max">
             {weeks.map((week, wi) => (
               <div key={wi} className="flex flex-col gap-1.5 shrink-0">
                 {week.map((day, di) =>
@@ -152,7 +153,7 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
                     <div
                       key={di}
                       title={`${day.date}: ${day.count} activity event${day.count === 1 ? "" : "s"}`}
-                      className={`h-3 w-3 md:h-3.5 md:w-3.5 rounded-[4px] transition-all duration-200 hover:scale-125 hover:z-10 ${LEVEL_CLASSES[levelFor(day.count)]}`}
+                      className={`h-3 w-3 md:h-3.5 md:w-3.5 rounded-[3px] transition-all duration-200 hover:scale-125 hover:z-10 ${LEVEL_CLASSES[levelFor(day.count)]}`}
                     />
                   ) : (
                     <div key={di} className="h-3 w-3 md:h-3.5 md:w-3.5" />
@@ -165,17 +166,17 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
       </div>
 
       {/* Legend & Sliding Bar Hint */}
-      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-slate-400">
-        <div className="flex items-center gap-2">
-          <span>Less activity</span>
-          <div className="flex items-center gap-1.5">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-slate-400">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <span className="text-[11px] sm:text-xs">Less activity</span>
+          <div className="flex items-center gap-1 sm:gap-1.5">
             {LEVEL_CLASSES.map((c, i) => (
-              <div key={i} className={`h-3 w-3 md:h-3.5 md:w-3.5 rounded-[4px] ${c}`} />
+              <div key={i} className={`h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-[3px] shrink-0 ${c}`} />
             ))}
           </div>
-          <span>More activity</span>
+          <span className="text-[11px] sm:text-xs">More activity</span>
         </div>
-        <span className="text-[11px] text-teal-400/80 font-medium flex items-center gap-1">
+        <span className="text-[11px] text-teal-400/90 font-medium flex items-center gap-1 shrink-0 whitespace-nowrap">
           <span>↔</span> Slide to view full year
         </span>
       </div>

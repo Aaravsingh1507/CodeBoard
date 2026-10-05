@@ -42,9 +42,9 @@ export function LanguageDonut({
   const activePercent = total > 0 ? ((activeItem.bytes / total) * 100).toFixed(1) : "0";
 
   return (
-    <div className="flex h-full w-full flex-col justify-between gap-3">
+    <div className="flex h-full w-full min-w-0 max-w-full flex-col justify-between gap-3 overflow-hidden">
       {/* Top stacked multi-color language proportion bar */}
-      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-surface-2 p-0.5">
+      <div className="flex h-2.5 w-full min-w-0 overflow-hidden rounded-full bg-surface-2 p-0.5">
         {data.map((d, i) => {
           const pct = total > 0 ? (d.bytes / total) * 100 : 0;
           const color = COLORS[i % COLORS.length];
@@ -72,10 +72,10 @@ export function LanguageDonut({
       </div>
 
       {/* Main content: Left large donut chart, Right language cards filling full height */}
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center flex-1 py-1">
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center flex-1 py-1 w-full min-w-0">
         {/* Large Donut Chart on Left (6 cols for significantly larger diameter) */}
         <div
-          className={`sm:col-span-6 relative flex items-center justify-center h-60 sm:h-72 w-full ${
+          className={`sm:col-span-6 relative flex items-center justify-center h-52 sm:h-72 w-full min-w-0 max-w-full mx-auto ${
             mounted ? "animate-donut-reveal" : "opacity-0"
           }`}
         >
@@ -85,8 +85,10 @@ export function LanguageDonut({
                 data={data}
                 dataKey="bytes"
                 nameKey="name"
-                innerRadius="64%"
-                outerRadius="92%"
+                cx="50%"
+                cy="50%"
+                innerRadius="58%"
+                outerRadius="86%"
                 paddingAngle={3}
                 stroke="none"
                 onMouseEnter={(_, index) => setActiveIndex(index)}

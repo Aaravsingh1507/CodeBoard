@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
@@ -30,25 +30,25 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
   }
 
   return (
-    <Card className="overflow-hidden rounded-[24px] border border-[#1e2846]/70 bg-gradient-to-b from-[#0e1426]/95 to-[#0a0f1e]/95 p-0 shadow-2xl shadow-black/60 backdrop-blur-md">
-      <CardContent className="p-5 sm:p-6 lg:p-7">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
+    <Card className="overflow-hidden min-w-0 max-w-full rounded-[24px] border border-[#1e2846]/70 bg-gradient-to-b from-[#0e1426]/95 to-[#0a0f1e]/95 p-0 shadow-2xl shadow-black/60 backdrop-blur-md">
+      <CardContent className="p-4 sm:p-6 lg:p-7 min-w-0">
+        <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-12 items-stretch min-w-0">
           {/* Left Column (7 cols): Header, Stat Tiles, Heatmap */}
-          <div className="lg:col-span-7 flex flex-col justify-between">
+          <div className="lg:col-span-7 flex flex-col justify-between min-w-0">
             {/* Header */}
-            <div className="flex items-center justify-between pb-3">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between gap-2 pb-3 min-w-0">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/streak-flame-transparent.png"
                   alt="Coding streak flame"
-                  className="h-9 w-auto object-contain drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]"
+                  className="h-8 w-auto sm:h-9 shrink-0 object-contain drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]"
                 />
-                <div>
-                  <h3 className="text-xl font-bold tracking-tight text-white leading-tight">
+                <div className="min-w-0">
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">
                     Coding streak
                   </h3>
-                  <p className="mt-0.5 text-xs text-slate-400 font-normal leading-tight">
+                  <p className="mt-0.5 text-xs text-slate-400 font-normal leading-tight truncate">
                     Keep showing up. Every commit counts.
                   </p>
                 </div>
@@ -56,7 +56,7 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
               <button
                 onClick={syncNow}
                 disabled={syncing}
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-medium text-slate-300 transition-all hover:bg-white/[0.08] hover:border-white/20 hover:text-white disabled:opacity-50 shadow-xs"
+                className="inline-flex shrink-0 items-center gap-1.5 sm:gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 sm:px-4 text-xs font-medium text-slate-300 transition-all hover:bg-white/[0.08] hover:border-white/20 hover:text-white disabled:opacity-50 shadow-xs cursor-pointer"
               >
                 <RefreshCw size={13} className={syncing ? "animate-spin text-teal-400" : "text-slate-400"} />
                 <span>Sync today</span>
@@ -68,12 +68,12 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
 
             {data && (
               <>
-                {/* Stat Tiles */}
-                <div className="mb-3.5 grid grid-cols-2 gap-3.5">
+                {/* Stat Tiles - formatted so text doesn't awkwardly stack on mobile */}
+                <div className="mb-3.5 grid grid-cols-2 gap-2 sm:gap-3.5 min-w-0">
                   {/* Day Streak */}
-                  <div className="flex items-center justify-between rounded-2xl border border-white/[0.07] bg-[#12192e]/60 p-3.5 shadow-inner backdrop-blur-md">
-                    <div className="flex items-center">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-white/5 bg-[#172036]/80 p-1 shadow-inner">
+                  <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-white/[0.07] bg-[#12192e]/60 p-2.5 sm:p-3.5 shadow-inner backdrop-blur-md min-w-0">
+                    <div className="flex items-center min-w-0">
+                      <div className="flex h-9 w-9 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg sm:rounded-xl overflow-hidden border border-white/5 bg-[#172036]/80 p-0.5 sm:p-1 shadow-inner">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src="/streak-flame-badge.png"
@@ -81,27 +81,29 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
                           className="h-full w-full object-contain"
                         />
                       </div>
-                      <div className="ml-3">
-                        <p className="font-data text-2xl font-bold leading-none text-white tracking-tight">
+                      <div className="ml-2 sm:ml-3 min-w-0">
+                        <p className="font-data text-xl sm:text-2xl font-bold leading-none text-white tracking-tight">
                           {data.currentStreak}
                         </p>
-                        <p className="mt-1 text-xs font-medium text-slate-400">day streak</p>
+                        <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs font-medium text-slate-400 whitespace-nowrap truncate">
+                          day streak
+                        </p>
                       </div>
                     </div>
                     {/* Cyan rising bars */}
-                    <div className="flex items-end gap-1 select-none pr-1">
-                      <span className="w-1.5 h-2 rounded-full bg-gradient-to-t from-teal-500/40 to-cyan-400/50" />
-                      <span className="w-1.5 h-3.5 rounded-full bg-gradient-to-t from-teal-500/60 to-cyan-400/70" />
-                      <span className="w-1.5 h-5 rounded-full bg-gradient-to-t from-teal-500 to-cyan-400 drop-shadow-[0_0_4px_rgba(6,182,212,0.5)]" />
-                      <span className="w-1.5 h-6.5 rounded-full bg-gradient-to-t from-teal-400 to-cyan-300 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" />
-                      <span className="w-1.5 h-8 rounded-full bg-gradient-to-t from-teal-300 to-cyan-200 drop-shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
+                    <div className="flex items-end gap-0.5 sm:gap-1 select-none shrink-0 pl-1 pr-0.5 sm:pr-1">
+                      <span className="w-1 sm:w-1.5 h-2 rounded-full bg-gradient-to-t from-teal-500/40 to-cyan-400/50" />
+                      <span className="w-1 sm:w-1.5 h-3 sm:h-3.5 rounded-full bg-gradient-to-t from-teal-500/60 to-cyan-400/70" />
+                      <span className="w-1 sm:w-1.5 h-4 sm:h-5 rounded-full bg-gradient-to-t from-teal-500 to-cyan-400 drop-shadow-[0_0_4px_rgba(6,182,212,0.5)]" />
+                      <span className="w-1 sm:w-1.5 h-5 sm:h-6.5 rounded-full bg-gradient-to-t from-teal-400 to-cyan-300 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" />
+                      <span className="w-1 sm:w-1.5 h-6.5 sm:h-8 rounded-full bg-gradient-to-t from-teal-300 to-cyan-200 drop-shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
                     </div>
                   </div>
 
                   {/* Longest Streak */}
-                  <div className="flex items-center justify-between rounded-2xl border border-white/[0.07] bg-[#12192e]/60 p-3.5 shadow-inner backdrop-blur-md">
-                    <div className="flex items-center">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-white/5 bg-[#172036]/80 p-1 shadow-inner">
+                  <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-white/[0.07] bg-[#12192e]/60 p-2.5 sm:p-3.5 shadow-inner backdrop-blur-md min-w-0">
+                    <div className="flex items-center min-w-0">
+                      <div className="flex h-9 w-9 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg sm:rounded-xl overflow-hidden border border-white/5 bg-[#172036]/80 p-0.5 sm:p-1 shadow-inner">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src="/streak-trophy-badge.png"
@@ -109,26 +111,28 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
                           className="h-full w-full object-contain"
                         />
                       </div>
-                      <div className="ml-3">
-                        <p className="font-data text-2xl font-bold leading-none text-white tracking-tight">
+                      <div className="ml-2 sm:ml-3 min-w-0">
+                        <p className="font-data text-xl sm:text-2xl font-bold leading-none text-white tracking-tight">
                           {data.longestStreak}
                         </p>
-                        <p className="mt-1 text-xs font-medium text-slate-400">longest streak</p>
+                        <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs font-medium text-slate-400 whitespace-nowrap truncate">
+                          longest streak
+                        </p>
                       </div>
                     </div>
                     {/* Purple rising bars */}
-                    <div className="flex items-end gap-1 select-none pr-1">
-                      <span className="w-1.5 h-2 rounded-full bg-gradient-to-t from-indigo-500/40 to-purple-400/50" />
-                      <span className="w-1.5 h-3.5 rounded-full bg-gradient-to-t from-indigo-500/60 to-purple-400/70" />
-                      <span className="w-1.5 h-5 rounded-full bg-gradient-to-t from-indigo-500 to-purple-400 drop-shadow-[0_0_4px_rgba(168,85,247,0.5)]" />
-                      <span className="w-1.5 h-6.5 rounded-full bg-gradient-to-t from-indigo-400 to-purple-300 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]" />
-                      <span className="w-1.5 h-8 rounded-full bg-gradient-to-t from-indigo-300 to-purple-200 drop-shadow-[0_0_8px_rgba(192,132,252,0.9)]" />
+                    <div className="flex items-end gap-0.5 sm:gap-1 select-none shrink-0 pl-1 pr-0.5 sm:pr-1">
+                      <span className="w-1 sm:w-1.5 h-2 rounded-full bg-gradient-to-t from-indigo-500/40 to-purple-400/50" />
+                      <span className="w-1 sm:w-1.5 h-3 sm:h-3.5 rounded-full bg-gradient-to-t from-indigo-500/60 to-purple-400/70" />
+                      <span className="w-1 sm:w-1.5 h-4 sm:h-5 rounded-full bg-gradient-to-t from-indigo-500 to-purple-400 drop-shadow-[0_0_4px_rgba(168,85,247,0.5)]" />
+                      <span className="w-1 sm:w-1.5 h-5 sm:h-6.5 rounded-full bg-gradient-to-t from-indigo-400 to-purple-300 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]" />
+                      <span className="w-1 sm:w-1.5 h-6.5 sm:h-8 rounded-full bg-gradient-to-t from-indigo-300 to-purple-200 drop-shadow-[0_0_8px_rgba(192,132,252,0.9)]" />
                     </div>
                   </div>
                 </div>
 
                 {/* Heatmap Grid */}
-                <div className="rounded-2xl border border-white/[0.07] bg-[#0c1122]/70 p-4 sm:p-5 backdrop-blur-md">
+                <div className="rounded-2xl border border-white/[0.07] bg-[#0c1122]/70 p-3 sm:p-5 backdrop-blur-md min-w-0 overflow-hidden">
                   <StreakHeatmap days={data.heatmap} />
                 </div>
               </>

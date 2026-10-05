@@ -61,7 +61,7 @@ export default function GithubPage() {
   const notConnected = error?.includes("No GitHub account");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-w-0 max-w-full overflow-hidden">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white sm:text-3xl">GitHub</h1>
@@ -89,25 +89,25 @@ export default function GithubPage() {
       )}
 
       {data && (
-        <div className="space-y-5">
+        <div className="space-y-5 min-w-0 max-w-full">
           {warning && (
             <p className="rounded-lg bg-warn/10 px-3 py-2 text-xs text-warn">{warning}</p>
           )}
 
-          <Card>
+          <Card className="overflow-hidden min-w-0 max-w-full">
             <CardHeader>
               <CardTitle>Contribution activity</CardTitle>
               <span className="font-data text-xs text-muted">
                 {data.totalContributionsLastYear} in the last year
               </span>
             </CardHeader>
-            <CardContent>
+            <CardContent className="min-w-0 overflow-hidden">
               <StreakHeatmap days={data.contributionCalendar} />
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <Card className="flex flex-col">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 min-w-0 w-full">
+            <Card className="flex flex-col overflow-hidden min-w-0 max-w-full">
               <CardHeader>
                 <CardTitle>Top languages</CardTitle>
                 {data.topLanguages.length > 0 && (
@@ -116,7 +116,7 @@ export default function GithubPage() {
                   </span>
                 )}
               </CardHeader>
-              <CardContent className="flex flex-1 flex-col justify-between">
+              <CardContent className="flex flex-1 flex-col justify-between min-w-0 overflow-hidden">
                 {data.topLanguages.length === 0 ? (
                   <EmptyState title="No language data yet" description="Push some code to see this fill in." />
                 ) : (
