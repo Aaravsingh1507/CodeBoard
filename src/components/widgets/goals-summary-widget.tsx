@@ -63,7 +63,7 @@ export function GoalsSummaryWidget({ previewData }: { previewData?: Goal[] } = {
   const active = (data ?? []).filter((g) => g.status === "in_progress").slice(0, 2);
 
   return (
-    <div className="relative rounded-[28px] border border-purple-500/40 bg-gradient-to-b from-[#0e1233]/90 via-[#0a0d26]/95 to-[#07091a]/98 p-5 sm:p-6 shadow-[0_0_35px_rgba(168,85,247,0.22),0_12px_44px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.2)] flex flex-col justify-between overflow-hidden min-h-[520px] h-full">
+    <div className="relative rounded-[28px] border border-purple-500/40 bg-gradient-to-b from-[#0e1233]/90 via-[#0a0d26]/95 to-[#07091a]/98 p-5 sm:p-6 shadow-[0_0_35px_rgba(168,85,247,0.22),0_12px_44px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.2)] flex flex-col justify-between overflow-hidden h-full">
       {/* Top specular highlight & ambient glow */}
       <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-purple-400/50 to-transparent pointer-events-none" />
       <div className="absolute -top-14 left-1/2 -translate-x-1/2 w-56 h-28 bg-purple-600/20 blur-3xl rounded-full pointer-events-none" />
@@ -151,15 +151,6 @@ export function GoalsSummaryWidget({ previewData }: { previewData?: Goal[] } = {
               );
             })}
         </div>
-      </div>
-
-      {/* Bottom 3D Graphic */}
-      <div className="relative mt-auto -mx-5 -mb-5 sm:-mx-6 sm:-mb-6 h-44 overflow-hidden pointer-events-none select-none">
-        <img
-          src="/images/prep/goals-target.png"
-          alt=""
-          className="w-full h-full object-cover object-left-bottom mix-blend-screen opacity-95"
-        />
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ export function CompanyPrepWidget({ previewData }: { previewData?: Profile[] } =
   const displayProfiles = previewData ?? (data && data.length > 0 ? data : DEFAULT_COMPANIES);
 
   return (
-    <div className="relative rounded-[28px] border border-purple-500/40 bg-gradient-to-b from-[#0e1233]/90 via-[#0a0d26]/95 to-[#07091a]/98 p-5 sm:p-6 shadow-[0_0_35px_rgba(168,85,247,0.22),0_12px_44px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.2)] flex flex-col justify-between overflow-hidden min-h-[520px] h-full">
+    <div className="relative rounded-[28px] border border-purple-500/40 bg-gradient-to-b from-[#0e1233]/90 via-[#0a0d26]/95 to-[#07091a]/98 p-5 sm:p-6 shadow-[0_0_35px_rgba(168,85,247,0.22),0_12px_44px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.2)] flex flex-col justify-between overflow-hidden h-full">
       {/* Top specular highlight & ambient glow */}
       <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-purple-400/50 to-transparent pointer-events-none" />
       <div className="absolute -top-14 left-1/2 -translate-x-1/2 w-56 h-28 bg-purple-600/20 blur-3xl rounded-full pointer-events-none" />
@@ -49,45 +49,31 @@ export function CompanyPrepWidget({ previewData }: { previewData?: Profile[] } =
             </div>
           )}
 
-          {displayProfiles.slice(0, 3).map((p, idx) => {
-            const isAmazon = p.name.toLowerCase().includes("amazon") || idx === 2;
-            return (
-              <div key={p.name} className="space-y-1">
-                <p className="text-sm font-bold text-white tracking-wide">{p.name}</p>
-                <div className={`flex flex-wrap gap-1.5 ${isAmazon ? "max-w-[70%]" : ""}`}>
-                  {p.focusAreas.map((f) => (
-                    <span
-                      key={f}
-                      className="inline-flex items-center rounded-full border border-purple-500/35 bg-[#20153f]/80 px-2.5 py-0.5 text-[11px] font-medium text-purple-200 shadow-[0_0_8px_rgba(168,85,247,0.15)] transition-colors hover:border-purple-400 hover:bg-[#2b1950]"
-                    >
-                      {f}
-                    </span>
-                  ))}
-                </div>
-                <p className={`text-[11px] text-[#94a3b8] leading-relaxed ${isAmazon ? "max-w-[70%]" : ""}`}>
-                  {p.note}
-                </p>
+          {displayProfiles.slice(0, 3).map((p) => (
+            <div key={p.name} className="space-y-1">
+              <p className="text-sm font-bold text-white tracking-wide">{p.name}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {p.focusAreas.map((f) => (
+                  <span
+                    key={f}
+                    className="inline-flex items-center rounded-full border border-purple-500/35 bg-[#20153f]/80 px-2.5 py-0.5 text-[11px] font-medium text-purple-200 shadow-[0_0_8px_rgba(168,85,247,0.15)] transition-colors hover:border-purple-400 hover:bg-[#2b1950]"
+                  >
+                    {f}
+                  </span>
+                ))}
               </div>
-            );
-          })}
+              <p className="text-[11px] text-[#94a3b8] leading-relaxed">
+                {p.note}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Bottom Row: Disclaimer & Floating 3D Cubes */}
-      <div className="relative mt-auto pt-3 flex items-end justify-between min-h-[50px]">
-        <div className="flex items-start gap-1.5 text-[10.5px] text-[#7c8ba1] max-w-[210px] leading-tight z-10 relative">
-          <Info size={13} className="text-[#7c8ba1] shrink-0 mt-0.5" />
-          <span>General guidance from public prep community knowledge, not official or guaranteed.</span>
-        </div>
-
-        {/* Floating 3D Cubes */}
-        <div className="absolute right-0 bottom-0 w-24 h-36 pointer-events-none select-none overflow-hidden flex items-end justify-end">
-          <img
-            src="/images/prep/company-cubes.png"
-            alt=""
-            className="w-full h-full object-contain object-bottom-right mix-blend-screen opacity-95"
-          />
-        </div>
+      {/* Disclaimer Footer */}
+      <div className="mt-4 pt-3 flex items-start gap-1.5 text-[10.5px] text-[#7c8ba1] leading-tight">
+        <Info size={13} className="text-[#7c8ba1] shrink-0 mt-0.5" />
+        <span>General guidance from public prep community knowledge, not official or guaranteed.</span>
       </div>
     </div>
   );
