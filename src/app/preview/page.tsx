@@ -206,7 +206,7 @@ export default function PreviewPage() {
               </div>
             </Card>
 
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 min-w-0 w-full items-start">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 min-w-0 w-full items-stretch">
               <TopLanguagesCard data={previewGithub.topLanguages} />
               <ProfileOverviewCard
                 stats={{
