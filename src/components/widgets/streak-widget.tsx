@@ -40,9 +40,9 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
               <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/streak-flame-transparent.png"
+                  src="/streak-flame-clean.png"
                   alt="Coding streak flame"
-                  className="h-8 w-auto sm:h-9 shrink-0 object-contain drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]"
+                  className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 object-contain drop-shadow-[0_0_10px_rgba(249,115,22,0.6)]"
                 />
                 <div className="min-w-0">
                   <h3 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
@@ -73,19 +73,19 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
                   {/* Day Streak */}
                   <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-slate-200/90 bg-slate-50/70 p-2.5 sm:p-3.5 shadow-xs dark:border-white/[0.07] dark:bg-[#12192e]/60 dark:shadow-inner backdrop-blur-md min-w-0">
                     <div className="flex items-center min-w-0">
-                      <div className="flex h-9 w-9 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg sm:rounded-xl overflow-hidden border border-slate-200 bg-white p-0.5 sm:p-1 shadow-xs dark:border-white/5 dark:bg-[#172036]/80 dark:shadow-inner">
+                      <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-orange-200/80 bg-gradient-to-b from-orange-100/90 to-amber-50/90 p-1 shadow-xs dark:border-orange-500/30 dark:bg-gradient-to-b dark:from-[#2a1a0f]/90 dark:to-[#1a1008]/95 dark:shadow-[0_2px_8px_rgba(249,115,22,0.2)]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src="/streak-flame-badge.png"
+                          src="/streak-flame-clean.png"
                           alt="Streak flame badge"
                           className="h-full w-full object-contain"
                         />
                       </div>
-                      <div className="ml-2 sm:ml-3 min-w-0">
+                      <div className="ml-2.5 sm:ml-3 min-w-0 flex flex-col justify-center">
                         <p className="font-data text-xl sm:text-2xl font-bold leading-none text-slate-900 dark:text-white tracking-tight">
                           {data.currentStreak}
                         </p>
-                        <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap truncate">
+                        <p className="mt-1 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap truncate leading-none">
                           day streak
                         </p>
                       </div>
@@ -103,19 +103,19 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
                   {/* Longest Streak */}
                   <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-slate-200/90 bg-slate-50/70 p-2.5 sm:p-3.5 shadow-xs dark:border-white/[0.07] dark:bg-[#12192e]/60 dark:shadow-inner backdrop-blur-md min-w-0">
                     <div className="flex items-center min-w-0">
-                      <div className="flex h-9 w-9 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg sm:rounded-xl overflow-hidden border border-slate-200 bg-white p-0.5 sm:p-1 shadow-xs dark:border-white/5 dark:bg-[#172036]/80 dark:shadow-inner">
+                      <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-amber-200/80 bg-gradient-to-b from-amber-100/90 to-yellow-50/90 p-1 shadow-xs dark:border-amber-500/30 dark:bg-gradient-to-b dark:from-[#281e0c]/90 dark:to-[#181206]/95 dark:shadow-[0_2px_8px_rgba(245,158,11,0.2)]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src="/streak-trophy-badge.png"
+                          src="/streak-trophy-clean.png"
                           alt="Longest streak trophy"
                           className="h-full w-full object-contain"
                         />
                       </div>
-                      <div className="ml-2 sm:ml-3 min-w-0">
+                      <div className="ml-2.5 sm:ml-3 min-w-0 flex flex-col justify-center">
                         <p className="font-data text-xl sm:text-2xl font-bold leading-none text-slate-900 dark:text-white tracking-tight">
                           {data.longestStreak}
                         </p>
-                        <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap truncate">
+                        <p className="mt-1 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap truncate leading-none">
                           longest streak
                         </p>
                       </div>
