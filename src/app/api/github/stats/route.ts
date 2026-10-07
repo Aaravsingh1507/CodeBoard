@@ -16,11 +16,12 @@ export async function GET(req: Request) {
     );
   }
 
+  const GITHUB_CACHE_MS = 5 * 60 * 1000; // 5 minutes cache TTL
   const isFresh =
     !force &&
     user.githubStatsCache &&
     user.githubStatsSyncedAt &&
-    Date.now() - user.githubStatsSyncedAt.getTime() < GITHUB_CACHE_HOURS * 60 * 60 * 1000;
+    Date.now() - user.githubStatsSyncedAt.getTime() < GITHUB_CACHE_MS;
 
   if (isFresh) {
     return NextResponse.json({

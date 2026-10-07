@@ -18,9 +18,27 @@ export async function syncActivityForUser(userId: string) {
   if (user.githubUsername && user.githubAccessToken) {
     try {
       const stats = await fetchGithubStats(user.githubUsername, user.githubAccessToken);
-      const todayStr = today.toISOString().slice(0, 10);
-      const todayEntry = stats.contributionCalendar.find((d) => d.date === todayStr);
+      const now = new Date();
+      const todayUTCStr = today.toISOString().slice(0, 10);
+      const todayLocalStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      const todayEntry =
+        stats.contributionCalendar.find((d) => d.date === todayUTCStr) ??
+        stats.contributionCalendar.find((d) => d.date === todayLocalStr);
       githubContributions = todayEntry?.count ?? 0;
+
+      // Double-check real commits in recent activity for today
+      const todayCommitsInActivity = (stats.recentActivity ?? []).filter((a) => {
+        if (a.type !== "commit") return false;
+        const aDate = new Date(a.date);
+        const aDateUTC = aDate.toISOString().slice(0, 10);
+        const aDateLocal = `${aDate.getFullYear()}-${String(aDate.getMonth() + 1).padStart(2, "0")}-${String(aDate.getDate()).padStart(2, "0")}`;
+        return aDateUTC === todayUTCStr || aDateLocal === todayLocalStr || (now.getTime() - aDate.getTime() < 24 * 60 * 60 * 1000);
+      }).length;
+
+      if (todayCommitsInActivity > githubContributions) {
+        githubContributions = todayCommitsInActivity;
+      }
+
       await prisma.user.update({
         where: { id: userId },
         data: { githubStatsCache: JSON.stringify(stats), githubStatsSyncedAt: new Date() },
