@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Input } from "@/components/ui/input";
@@ -44,6 +45,22 @@ export default async function OnboardingPage() {
       <div className="pointer-events-none absolute left-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full bg-indigo-600/15 blur-[140px]" />
 
       <div className="relative z-10 w-full max-w-md rounded-[24px] border border-[#1e263d] bg-gradient-to-b from-[#111728]/95 to-[#0d1220]/95 p-8 shadow-2xl shadow-black/60 backdrop-blur-md">
+        <div className="mb-5 flex items-center gap-3">
+          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl shadow-lg shadow-purple-900/30 border border-purple-500/20 ring-1 ring-purple-500/20">
+            <Image
+              src="/logo.png"
+              alt="CodeBoard Logo"
+              width={40}
+              height={40}
+              priority
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <span className="text-lg font-bold tracking-tight text-white">
+            Code<span className="text-[#818cf8]">Board</span>
+          </span>
+        </div>
+
         <h1 className="text-xl font-bold tracking-tight text-white">Set up your dashboard</h1>
         <p className="mt-1 text-sm text-slate-400">
           Signed in as <span className="font-data font-semibold text-purple-400">@{user.githubUsername}</span>. A

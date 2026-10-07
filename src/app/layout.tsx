@@ -18,8 +18,27 @@ export const metadata: Metadata = {
   description:
     "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.png", type: "image/png" },
+      { url: "/logo.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png" },
+      { url: "/logo.png" },
+    ],
+  },
+  openGraph: {
+    title: "CodeBoard",
+    description:
+      "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
+    images: [{ url: "/logo.png", width: 1024, height: 1024, alt: "CodeBoard Logo" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "CodeBoard",
+    description: "Are you actually placement-ready? One readiness score.",
+    images: ["/logo.png"],
   },
 };
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import {
@@ -61,14 +62,25 @@ export function Sidebar({
       <div className="pointer-events-none absolute -bottom-14 -left-14 h-56 w-56 rounded-full bg-purple-600/10 dark:bg-purple-900/20 blur-3xl" />
 
       {/* Brand Header */}
-      <div className="flex items-center gap-3 px-5 py-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md shadow-indigo-500/30">
-          <span className="font-mono text-xs font-bold text-white">&lt;/&gt;</span>
+      <Link
+        href="/dashboard"
+        onClick={onNavigate}
+        className="group flex items-center gap-3 px-5 py-6 transition-opacity hover:opacity-95"
+      >
+        <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl shadow-md shadow-purple-500/25 ring-1 ring-purple-500/20 transition-transform duration-200 group-hover:scale-105">
+          <Image
+            src="/logo.png"
+            alt="CodeBoard Logo"
+            width={36}
+            height={36}
+            priority
+            className="h-full w-full object-cover"
+          />
         </div>
         <span className="text-lg font-bold tracking-tight text-foreground dark:text-white">
           Code<span className="text-indigo-500 dark:text-indigo-400">Board</span>
         </span>
-      </div>
+      </Link>
 
       {/* Navigation Links in a single flat sequence */}
       <nav className="flex-1 space-y-1 px-3 overflow-y-auto scroll-touch">

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { auth, signIn } from "@/lib/auth";
 import { GithubIcon } from "@/components/icons";
 
@@ -13,8 +14,15 @@ export default async function LoginPage() {
       <div className="pointer-events-none absolute left-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full bg-indigo-600/15 blur-[140px]" />
 
       <div className="relative z-10 w-full max-w-sm rounded-[24px] border border-[#1e263d] bg-gradient-to-b from-[#111728]/95 to-[#0d1220]/95 p-8 text-center shadow-2xl shadow-black/60 backdrop-blur-md">
-        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 font-mono text-sm font-bold text-white shadow-lg shadow-indigo-500/30">
-          {"</>"}
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl shadow-xl shadow-purple-900/40 border border-purple-500/30 ring-1 ring-purple-500/20">
+          <Image
+            src="/logo.png"
+            alt="CodeBoard Logo"
+            width={64}
+            height={64}
+            priority
+            className="h-full w-full object-cover"
+          />
         </div>
         <h1 className="text-2xl font-extrabold tracking-tight text-white">
           Code<span className="text-[#818cf8]">Board</span>

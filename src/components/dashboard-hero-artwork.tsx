@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export function DashboardHeroArtwork() {
   return (
     <div className="hidden items-center gap-7 lg:flex select-none">
@@ -58,8 +60,14 @@ export function DashboardHeroArtwork() {
         </div>
 
         {/* Code badge floating on top right of editor */}
-        <div className="absolute -right-3 -top-2.5 flex h-10 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/40 border border-indigo-400/40">
-          <span className="font-mono text-xs font-bold text-white">&lt;/&gt;</span>
+        <div className="absolute -right-3 -top-2.5 flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-[#080c17] shadow-lg shadow-indigo-500/40 border border-indigo-400/40">
+          <Image
+            src="/logo.png"
+            alt="CodeBoard Logo"
+            width={40}
+            height={40}
+            className="h-full w-full object-cover"
+          />
         </div>
       </div>
 

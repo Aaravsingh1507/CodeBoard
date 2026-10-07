@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { Menu, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Sidebar } from "./sidebar";
@@ -81,14 +83,21 @@ export function AppShell({
             >
               <Menu size={20} />
             </button>
-            <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
-                <span className="font-mono text-xs font-bold text-white">&lt;/&gt;</span>
+            <Link href="/dashboard" className="flex items-center gap-2.5">
+              <div className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg shadow-xs ring-1 ring-purple-500/20">
+                <Image
+                  src="/logo.png"
+                  alt="CodeBoard Logo"
+                  width={28}
+                  height={28}
+                  priority
+                  className="h-full w-full object-cover"
+                />
               </div>
               <span className="text-sm font-bold tracking-tight text-foreground dark:text-white">
                 Code<span className="text-indigo-500 dark:text-indigo-400">Board</span>
               </span>
-            </div>
+            </Link>
           </div>
 
           {/* Quick Mobile Theme Toggle */}

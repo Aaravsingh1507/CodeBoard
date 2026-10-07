@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getPublicProfile } from "@/lib/public-profile";
 import { StreakHeatmap } from "@/components/streak-heatmap";
 
@@ -97,12 +98,21 @@ export default async function PublicProfilePage({
           </div>
         )}
 
-        <p className="pt-4 text-center text-xs text-slate-500">
-          Built with{" "}
-          <Link href="/" className="font-semibold text-indigo-400 hover:underline">
+        <div className="pt-4 flex items-center justify-center gap-1.5 text-xs text-slate-500">
+          <span>Built with</span>
+          <Link href="/" className="inline-flex items-center gap-1.5 font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+            <span className="relative inline-flex h-4 w-4 overflow-hidden rounded-[4px] ring-1 ring-purple-500/20">
+              <Image
+                src="/logo.png"
+                alt="CodeBoard"
+                width={16}
+                height={16}
+                className="h-full w-full object-cover"
+              />
+            </span>
             CodeBoard
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
