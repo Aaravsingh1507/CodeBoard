@@ -13,17 +13,32 @@ const UPLOAD_DIR = IS_VERCEL
   ? "/tmp/uploads"
   : path.join(process.cwd(), "public", "uploads");
 
+export function isValidPdfBuffer(buffer: Buffer): boolean {
+  if (!buffer || buffer.length < 4) return false;
+  return buffer.subarray(0, 4).toString("utf-8") === "%PDF";
+}
+
 export async function saveFile(buffer: Buffer, originalName: string): Promise<string> {
   await mkdir(UPLOAD_DIR, { recursive: true });
-  const safeName = `${Date.now()}-${originalName.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+  const sanitizedOriginal = path.basename(originalName).replace(/[^a-zA-Z0-9._-]/g, "_");
+  const safeName = `${Date.now()}-${sanitizedOriginal}`;
   await writeFile(path.join(UPLOAD_DIR, safeName), buffer);
   return `/uploads/${safeName}`;
 }
 
 export async function deleteFile(fileUrl: string): Promise<void> {
-  const fileName = fileUrl.replace("/uploads/", "");
+  const rawFileName = path.basename(fileUrl);
+  const safeFileName = rawFileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const resolvedUploadDir = path.resolve(UPLOAD_DIR);
+  const targetPath = path.resolve(UPLOAD_DIR, safeFileName);
+
+  // Guard against directory traversal
+  if (!targetPath.startsWith(resolvedUploadDir)) {
+    return;
+  }
+
   try {
-    await unlink(path.join(UPLOAD_DIR, fileName));
+    await unlink(targetPath);
   } catch {
     // Already gone — not fatal.
   }

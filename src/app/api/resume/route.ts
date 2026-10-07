@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
-import { saveFile, MAX_RESUME_SIZE_BYTES, ALLOWED_RESUME_TYPE } from "@/lib/storage";
+import { saveFile, isValidPdfBuffer, MAX_RESUME_SIZE_BYTES, ALLOWED_RESUME_TYPE } from "@/lib/storage";
 
 export async function GET() {
   const { user, error } = await requireUser();
@@ -37,6 +37,10 @@ export async function POST(req: Request) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
+  if (!isValidPdfBuffer(buffer)) {
+    return NextResponse.json({ error: "Uploaded file is not a valid PDF document." }, { status: 400 });
+  }
+
   const fileUrl = await saveFile(buffer, file.name);
 
   const isFirst = (await prisma.resumeVersion.count({ where: { userId: user.id } })) === 0;

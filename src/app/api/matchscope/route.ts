@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractText } from "unpdf";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -170,6 +171,22 @@ function validateResumeHeuristics(text: string): { isValid: boolean; reason?: st
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    const rateCheck = checkRateLimit(`matchscope:${ip}`, { limit: 12, windowMs: 60_000 });
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { error: `Too many requests. Please wait ${rateCheck.reset}s before analyzing another resume.` },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateCheck.reset),
+            "X-RateLimit-Limit": String(rateCheck.limit),
+            "X-RateLimit-Remaining": "0",
+          },
+        }
+      );
+    }
+
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
