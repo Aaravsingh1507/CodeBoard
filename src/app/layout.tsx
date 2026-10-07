@@ -40,6 +40,11 @@ export const metadata: Metadata = {
     description: "Are you actually placement-ready? One readiness score.",
     images: ["/logo.png"],
   },
+  verification: {
+    google:
+      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+      process.env.GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 export default function RootLayout({
