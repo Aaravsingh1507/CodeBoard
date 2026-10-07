@@ -129,6 +129,10 @@ main {
   from { width: 0; }
 }
 
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
 /* ── Animation utility classes ── */
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out both;

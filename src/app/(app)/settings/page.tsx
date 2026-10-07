@@ -1,38 +1,23 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import {
-  RotateCcw,
-  ChevronRight,
-  ChevronDown,
   Link2,
-  Globe,
   User,
-  Briefcase,
-  Building2,
-  BarChart2,
-  Calendar,
-  Save,
   LogOut,
-  Check,
 } from "lucide-react";
 import { auth, signIn, signOut } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensurePublicSlug } from "@/lib/public-profile";
-import { CopyLink } from "@/components/copy-link";
 import { GithubIcon } from "@/components/icons";
+import { ProfileDetailsForm } from "@/components/settings/profile-details-form";
+import { ReconnectGithubButton } from "@/components/settings/reconnect-github-button";
+import { PublicProfileToggle } from "@/components/settings/public-profile-toggle";
 
-interface SettingsPageProps {
-  searchParams: Promise<{ saved?: string }>;
-}
-
-export default async function SettingsPage({ searchParams }: SettingsPageProps) {
+export default async function SettingsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user) redirect("/login");
-
-  const resolvedParams = await searchParams;
-  const isSaved = resolvedParams.saved === "1";
 
   const hdrs = await headers();
   const origin = `${hdrs.get("x-forwarded-proto") ?? "http"}://${hdrs.get("host") ?? "localhost:3000"}`;
@@ -40,22 +25,26 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   async function updateProfile(formData: FormData) {
     "use server";
     const s = await auth();
-    if (!s?.user) redirect("/login");
+    if (!s?.user) return { success: false, error: "Not authenticated" };
 
     const placementDateRaw = String(formData.get("placementDate") ?? "").trim();
 
-    await prisma.user.update({
-      where: { id: (s.user as any).id },
-      data: {
-        leetcodeUsername: String(formData.get("leetcodeUsername") ?? "").trim() || null,
-        targetRole: String(formData.get("targetRole") ?? "").trim() || null,
-        targetCompanies: String(formData.get("targetCompanies") ?? "").trim() || null,
-        jobSearchStatus: String(formData.get("jobSearchStatus") ?? "not_looking"),
-        placementDate: placementDateRaw ? new Date(placementDateRaw) : null,
-        digestEnabled: formData.get("digestEnabled") === "on",
-      },
-    });
-    redirect("/settings?saved=1");
+    try {
+      await prisma.user.update({
+        where: { id: (s.user as any).id },
+        data: {
+          leetcodeUsername: String(formData.get("leetcodeUsername") ?? "").trim() || null,
+          targetRole: String(formData.get("targetRole") ?? "").trim() || null,
+          targetCompanies: String(formData.get("targetCompanies") ?? "").trim() || null,
+          jobSearchStatus: String(formData.get("jobSearchStatus") ?? "not_looking"),
+          placementDate: placementDateRaw ? new Date(placementDateRaw) : null,
+          digestEnabled: formData.get("digestEnabled") === "on",
+        },
+      });
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err?.message || "Failed to update profile." };
+    }
   }
 
   async function togglePublicProfile(formData: FormData) {
@@ -110,16 +99,6 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         <p className="mt-1 text-sm text-slate-400 font-normal">Your profile and connections.</p>
       </div>
 
-      {/* Success Notification Banner */}
-      {isSaved && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-xs sm:text-sm font-medium text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.15)] animate-fade-in">
-          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
-            <Check size={13} className="stroke-[2.5]" />
-          </div>
-          <span>Changes saved successfully.</span>
-        </div>
-      )}
-
       {/* 1. GitHub Card */}
       <div className="relative overflow-hidden rounded-[24px] border border-indigo-500/25 bg-[#090d1f]/90 p-5 sm:p-6 shadow-[0_0_35px_rgba(99,102,241,0.14),inset_0_1px_1px_rgba(255,255,255,0.06)] backdrop-blur-xl transition-all hover:border-indigo-500/40">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -151,17 +130,8 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
             </div>
           </div>
 
-          {/* Right: Reconnect Action Button */}
-          <form action={reconnectGithub} className="shrink-0">
-            <button
-              type="submit"
-              className="inline-flex items-center gap-2 rounded-xl border border-indigo-400/25 bg-[#141933]/90 hover:bg-[#1b2246] hover:border-indigo-400/45 px-4 py-2 sm:px-4.5 sm:py-2.5 text-xs sm:text-sm font-medium text-slate-200 hover:text-white transition-all shadow-[0_0_15px_rgba(99,102,241,0.15)] cursor-pointer"
-            >
-              <RotateCcw size={14} className="text-slate-300" />
-              <span>Reconnect GitHub</span>
-              <ChevronRight size={14} className="text-slate-400" />
-            </button>
-          </form>
+          {/* Right: Reconnect Action Button with Animation */}
+          <ReconnectGithubButton action={reconnectGithub} />
         </div>
       </div>
 
@@ -195,36 +165,13 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
             </div>
           </div>
 
-          {/* Action Row */}
+          {/* Action Row with Animation */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-3 pt-1">
-            {user.publicProfileEnabled && publicUrl ? (
-              <div className="flex w-full flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <CopyLink url={publicUrl} />
-                </div>
-                <form action={togglePublicProfile} className="shrink-0">
-                  <input type="hidden" name="enable" value="false" />
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-950/40 hover:bg-red-900/60 hover:border-red-500/50 px-4 py-2 text-xs font-semibold text-red-300 hover:text-white transition-all cursor-pointer"
-                  >
-                    <span>Disable public profile</span>
-                  </button>
-                </form>
-              </div>
-            ) : (
-              <form action={togglePublicProfile}>
-                <input type="hidden" name="enable" value="true" />
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-[0_0_20px_rgba(99,102,241,0.45)] transition-all cursor-pointer"
-                >
-                  <Globe size={14} />
-                  <span>Enable public profile</span>
-                  <ChevronRight size={14} />
-                </button>
-              </form>
-            )}
+            <PublicProfileToggle
+              isEnabled={Boolean(user.publicProfileEnabled)}
+              publicUrl={publicUrl}
+              action={togglePublicProfile}
+            />
           </div>
         </div>
       </div>
@@ -239,151 +186,19 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
           <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-tight">Profile Details</h2>
         </div>
 
-        {/* Form Grid */}
-        <form action={updateProfile} className="mt-5 space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-            {/* Field 1: LeetCode username */}
-            <div>
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-                <User size={13} className="text-slate-400" />
-                <span>LeetCode username</span>
-              </label>
-              <div className="relative flex items-center">
-                <User size={14} className="absolute left-3.5 text-slate-500 pointer-events-none" />
-                <input
-                  name="leetcodeUsername"
-                  defaultValue={user.leetcodeUsername ?? ""}
-                  placeholder="LeetCode username"
-                  className="h-11 w-full rounded-xl border border-slate-700/70 bg-[#0b0e1e]/90 pl-10 pr-3.5 text-sm text-white placeholder:text-slate-600 transition-all focus:border-indigo-500/80 focus:bg-[#0e1226] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 shadow-inner"
-                />
-              </div>
-            </div>
-
-            {/* Field 2: Target role */}
-            <div>
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-                <Briefcase size={13} className="text-slate-400" />
-                <span>Target role</span>
-              </label>
-              <div className="relative flex items-center">
-                <select
-                  name="targetRole"
-                  defaultValue={user.targetRole ?? "Generative AI Engineer"}
-                  className="h-11 w-full appearance-none rounded-xl border border-slate-700/70 bg-[#0b0e1e]/90 px-3.5 pr-10 text-sm text-white transition-all focus:border-indigo-500/80 focus:bg-[#0e1226] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 shadow-inner cursor-pointer"
-                >
-                  {user.targetRole && !standardRoles.includes(user.targetRole) && (
-                    <option value={user.targetRole} className="bg-[#0b0e1e] text-white">
-                      {user.targetRole}
-                    </option>
-                  )}
-                  {standardRoles.map((role) => (
-                    <option key={role} value={role} className="bg-[#0b0e1e] text-white">
-                      {role}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={14} className="absolute right-3.5 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Field 3: Target companies */}
-            <div>
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-                <Building2 size={13} className="text-slate-400" />
-                <span>Target companies</span>
-              </label>
-              <div className="relative flex items-center">
-                <input
-                  name="targetCompanies"
-                  defaultValue={user.targetCompanies ?? ""}
-                  placeholder="Google, Microsoft, Amazon"
-                  className="h-11 w-full rounded-xl border border-slate-700/70 bg-[#0b0e1e]/90 px-3.5 text-sm text-white placeholder:text-slate-600 transition-all focus:border-indigo-500/80 focus:bg-[#0e1226] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 shadow-inner"
-                />
-              </div>
-            </div>
-
-            {/* Field 4: Job search status */}
-            <div>
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-                <BarChart2 size={13} className="text-slate-400" />
-                <span>Job search status</span>
-              </label>
-              <div className="relative flex items-center">
-                <select
-                  name="jobSearchStatus"
-                  defaultValue={user.jobSearchStatus ?? "passive"}
-                  className="h-11 w-full appearance-none rounded-xl border border-slate-700/70 bg-[#0b0e1e]/90 px-3.5 pr-10 text-sm text-white transition-all focus:border-indigo-500/80 focus:bg-[#0e1226] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 shadow-inner cursor-pointer"
-                >
-                  <option value="passive" className="bg-[#0b0e1e] text-white">
-                    Open to opportunities
-                  </option>
-                  <option value="active" className="bg-[#0b0e1e] text-white">
-                    Actively applying
-                  </option>
-                  <option value="not_looking" className="bg-[#0b0e1e] text-white">
-                    Not looking
-                  </option>
-                </select>
-                <ChevronDown size={14} className="absolute right-3.5 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Field 5: Placement date (Full Width) */}
-            <div className="sm:col-span-2">
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-                <Calendar size={13} className="text-slate-400" />
-                <span>Placement date (used to pace your goals)</span>
-              </label>
-              <div className="relative flex items-center">
-                <User size={14} className="absolute left-3.5 text-slate-500 pointer-events-none" />
-                <input
-                  name="placementDate"
-                  type="date"
-                  defaultValue={user.placementDate ? user.placementDate.toISOString().slice(0, 10) : ""}
-                  className="h-11 w-full rounded-xl border border-slate-700/70 bg-[#0b0e1e]/90 pl-10 pr-10 text-sm text-white placeholder:text-slate-600 transition-all focus:border-indigo-500/80 focus:bg-[#0e1226] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 shadow-inner cursor-pointer [color-scheme:dark]"
-                />
-                <Calendar size={15} className="absolute right-3.5 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Field 6: Weekly Email Digest Checkbox (Full Width) */}
-            <div className="sm:col-span-2 pt-1">
-              <label className="flex items-start gap-3 cursor-pointer select-none group">
-                <div className="relative flex items-center pt-0.5">
-                  <input
-                    type="checkbox"
-                    name="digestEnabled"
-                    defaultChecked={user.digestEnabled}
-                    className="peer sr-only"
-                  />
-                  <div className="h-5 w-5 rounded-md border border-slate-600/80 bg-[#0b0e1e] transition-all peer-checked:border-indigo-400 peer-checked:bg-gradient-to-br peer-checked:from-indigo-600 peer-checked:to-purple-600 shadow-xs flex items-center justify-center">
-                    <Check size={13} className="text-white opacity-0 peer-checked:opacity-100 transition-opacity stroke-[2.5]" />
-                  </div>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs sm:text-sm font-medium text-slate-200 group-hover:text-white transition-colors">
-                    Send me a weekly email digest of my readiness score and nudges
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
-                    Get personalized tips, progress updates and opportunities straight to your inbox.
-                  </p>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          {/* Save Changes Button (Bottom Right) */}
-          <div className="flex justify-end pt-2">
-            <button
-              type="submit"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-600 to-blue-500 hover:from-indigo-400 hover:to-blue-400 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-[0_0_22px_rgba(147,51,234,0.45)] transition-all cursor-pointer"
-            >
-              <Save size={15} />
-              <span>Save changes</span>
-              <ChevronRight size={14} />
-            </button>
-          </div>
-        </form>
+        {/* Real Profile Details Form with Animations */}
+        <ProfileDetailsForm
+          initialData={{
+            leetcodeUsername: user.leetcodeUsername,
+            targetRole: user.targetRole,
+            targetCompanies: user.targetCompanies,
+            jobSearchStatus: user.jobSearchStatus,
+            placementDate: user.placementDate ? user.placementDate.toISOString().slice(0, 10) : null,
+            digestEnabled: user.digestEnabled,
+          }}
+          standardRoles={standardRoles}
+          action={updateProfile}
+        />
       </div>
 
       {/* Sign Out Button (Bottom Left) */}
