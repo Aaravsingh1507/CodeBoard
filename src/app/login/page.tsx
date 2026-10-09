@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { auth, signIn } from "@/lib/auth";
 import { GithubIcon } from "@/components/icons";
 
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Sign in to CodeBoard with GitHub. Calculate your placement readiness score from real GitHub, LeetCode, and job application activity.",
   alternates: {
-    canonical: "/login",
+    canonical: "/",
   },
 };
 
@@ -61,6 +62,16 @@ export default async function LoginPage() {
         <p className="mt-4 text-xs text-slate-500">
           We use your GitHub sign-in to pull your public stats — repos, stars, and contributions.
         </p>
+
+        <div className="mt-6 border-t border-[#1e263d]/80 pt-4 text-center">
+          <Link
+            href="/preview"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-400 transition-colors hover:text-indigo-300"
+          >
+            <span>Explore live interactive demo</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+        </div>
       </div>
     </div>
   );
