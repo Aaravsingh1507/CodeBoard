@@ -211,31 +211,6 @@ export function ProfileDetailsForm({
               <Calendar size={15} className="absolute right-3.5 text-slate-400 pointer-events-none" />
             </div>
           </div>
-
-          {/* Field 6: Weekly Email Digest Checkbox (Full Width) */}
-          <div className="sm:col-span-2 pt-1">
-            <label className="flex items-start gap-3 cursor-pointer select-none group">
-              <div className="relative flex items-center pt-0.5">
-                <input
-                  type="checkbox"
-                  name="digestEnabled"
-                  defaultChecked={initialData.digestEnabled}
-                  className="peer sr-only"
-                />
-                <div className="h-5 w-5 rounded-md border border-slate-600/80 bg-[#0b0e1e] transition-all peer-checked:border-indigo-400 peer-checked:bg-gradient-to-br peer-checked:from-indigo-600 peer-checked:to-purple-600 shadow-xs flex items-center justify-center">
-                  <Check size={13} className="text-white opacity-0 peer-checked:opacity-100 transition-opacity stroke-[2.5]" />
-                </div>
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs sm:text-sm font-medium text-slate-200 group-hover:text-white transition-colors">
-                  Send me a weekly email digest of my readiness score and nudges
-                </p>
-                <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
-                  Get personalized tips, progress updates and opportunities straight to your inbox.
-                </p>
-              </div>
-            </label>
-          </div>
         </div>
 
         {/* Save Changes Button with Fluid Micro-Animations */}

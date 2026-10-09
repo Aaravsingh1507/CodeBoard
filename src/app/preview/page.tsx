@@ -406,14 +406,6 @@ export default function PreviewPage() {
                   </label>
                   <Input type="date" defaultValue="2026-02-17" />
                 </div>
-                <label className="flex items-center gap-2.5 text-xs text-muted cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    defaultChecked
-                    className="h-4 w-4 rounded-md border-border/80 bg-surface-2/80 accent-purple-600 focus:ring-1 focus:ring-accent/30"
-                  />
-                  Send me a weekly email digest of my readiness score and nudges
-                </label>
                 <Button type="button" className="w-full sm:w-auto">
                   Save changes
                 </Button>

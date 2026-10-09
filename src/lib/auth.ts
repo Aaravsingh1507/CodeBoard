@@ -1,7 +1,9 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
+import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
+import { fetchLeetcodeStats } from "@/lib/leetcode";
 
 // Auth.js normalizes each provider's profile down to {id, name, email, image}
 // before it ever reaches events — GitHub's `login` (username) and
@@ -44,12 +46,72 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Request repo + read:user scope so we can pull contribution/stat data
       authorization: { params: { scope: "read:user user:email repo" } },
     }),
+    Credentials({
+      id: "leetcode",
+      name: "LeetCode",
+      credentials: {
+        username: { label: "LeetCode Username", type: "text" },
+      },
+      async authorize(credentials) {
+        const username = String(credentials?.username ?? "").trim();
+        if (!username) return null;
+
+        try {
+          const stats = await fetchLeetcodeStats(username);
+          if (!stats || !stats.username) return null;
+
+          let user = await prisma.user.findFirst({
+            where: {
+              leetcodeUsername: {
+                equals: stats.username,
+                mode: "insensitive",
+              },
+            },
+          });
+
+          if (!user) {
+            user = await prisma.user.create({
+              data: {
+                leetcodeUsername: stats.username,
+                name: stats.username,
+                image: `https://avatar.vercel.sh/${encodeURIComponent(stats.username)}.png`,
+                onboarded: true,
+                leetcodeStatsCache: JSON.stringify(stats),
+                leetcodeStatsSyncedAt: new Date(),
+              },
+            });
+          } else {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                leetcodeStatsCache: JSON.stringify(stats),
+                leetcodeStatsSyncedAt: new Date(),
+              },
+            });
+          }
+
+          return {
+            id: user.id,
+            name: user.name ?? stats.username,
+            image: user.image,
+          };
+        } catch {
+          return null;
+        }
+      },
+    }),
   ],
-  session: { strategy: "database" },
+  session: { strategy: "jwt" },
   callbacks: {
-    async session({ session, user }) {
+    async jwt({ token, user }) {
+      if (user?.id) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = user.id;
+        (session.user as any).id = (token.id as string) || (token.sub as string);
       }
       return session;
     },

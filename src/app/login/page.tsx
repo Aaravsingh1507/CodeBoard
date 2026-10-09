@@ -5,10 +5,12 @@ import Link from "next/link";
 import { auth, signIn } from "@/lib/auth";
 import { GithubIcon } from "@/components/icons";
 
+import { LeetcodeLoginForm } from "@/components/auth/leetcode-login-form";
+
 export const metadata: Metadata = {
   title: "Login",
   description:
-    "Sign in to CodeBoard with GitHub. Calculate your placement readiness score from real GitHub, LeetCode, and job application activity.",
+    "Sign in to CodeBoard with GitHub or LeetCode. Calculate your placement readiness score from real GitHub, LeetCode, and job application activity.",
   alternates: {
     canonical: "/",
   },
@@ -19,13 +21,13 @@ export default async function LoginPage() {
   if (session?.user) redirect("/dashboard");
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#080c17] px-4">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#080c17] px-4 py-8">
       {/* Subtle Ambient Nebula Glows */}
       <div className="pointer-events-none absolute right-1/4 top-1/4 h-[500px] w-[500px] rounded-full bg-purple-600/15 blur-[140px]" />
       <div className="pointer-events-none absolute left-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full bg-indigo-600/15 blur-[140px]" />
 
-      <div className="relative z-10 w-full max-w-sm rounded-[24px] border border-[#1e263d] bg-gradient-to-b from-[#111728]/95 to-[#0d1220]/95 p-8 text-center shadow-2xl shadow-black/60 backdrop-blur-md">
-        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl shadow-xl shadow-purple-900/40 border border-purple-500/30 ring-1 ring-purple-500/20">
+      <div className="relative z-10 w-full max-w-sm rounded-[24px] border border-[#1e263d] bg-gradient-to-b from-[#111728]/95 to-[#0d1220]/95 p-6 sm:p-8 text-center shadow-2xl shadow-black/60 backdrop-blur-md">
+        <div className="mx-auto mb-4 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center overflow-hidden rounded-2xl shadow-xl shadow-purple-900/40 border border-purple-500/30 ring-1 ring-purple-500/20">
           <Image
             src="/logo.png"
             alt="CodeBoard Logo"
@@ -43,6 +45,7 @@ export default async function LoginPage() {
           and application activity.
         </p>
 
+        {/* Option 1: GitHub */}
         <form
           className="mt-6"
           action={async () => {
@@ -52,15 +55,27 @@ export default async function LoginPage() {
         >
           <button
             type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:from-indigo-500 hover:to-violet-500 shadow-md shadow-indigo-500/25 active:scale-[0.99]"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white transition-all hover:from-indigo-500 hover:to-violet-500 shadow-md shadow-indigo-500/25 active:scale-[0.99] cursor-pointer"
           >
             <GithubIcon size={16} />
             Continue with GitHub
           </button>
         </form>
 
-        <p className="mt-4 text-xs text-slate-500">
-          We use your GitHub sign-in to pull your public stats — repos, stars, and contributions.
+        {/* Divider */}
+        <div className="my-4 flex items-center gap-3">
+          <div className="h-px flex-1 bg-slate-800" />
+          <span className="text-[10px] font-semibold tracking-wider text-slate-500 uppercase">
+            or with LeetCode
+          </span>
+          <div className="h-px flex-1 bg-slate-800" />
+        </div>
+
+        {/* Option 2: LeetCode Username */}
+        <LeetcodeLoginForm />
+
+        <p className="mt-4 text-[11px] text-slate-500 leading-relaxed">
+          Sign in with GitHub or your LeetCode username to automatically pull your real activity and calculate readiness.
         </p>
 
         <div className="mt-6 border-t border-[#1e263d]/80 pt-4 text-center">
