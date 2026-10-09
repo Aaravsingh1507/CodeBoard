@@ -237,8 +237,8 @@ export default function PreviewPage() {
   return (
     <AppShell user={previewUser}>
       <div className="space-y-6">
-        {/* Quick Page Preview Switcher */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-border/60 scrollbar-none">
+        {/* Quick Page Preview Switcher - Sticky on mobile and desktop */}
+        <div className="sticky top-0 z-20 -mx-4 -mt-4 mb-6 flex items-center gap-1.5 overflow-x-auto border-b border-border/60 bg-background/95 px-4 py-2.5 backdrop-blur-md scrollbar-none supports-[backdrop-filter]:bg-background/80 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8">
           <span className="text-xs text-muted pr-2 font-medium shrink-0">Live Preview:</span>
           {tabs.map((tab) => (
             <button
@@ -246,7 +246,7 @@ export default function PreviewPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`shrink-0 rounded-xl px-3 py-1.5 text-xs font-medium transition-all ${
                 activeTab === tab.id
-                  ? "bg-accent text-white shadow-sm shadow-purple-900/30"
+                  ? "bg-accent text-white shadow-sm shadow-purple-900/30 font-semibold"
                   : "bg-surface-2/60 text-muted hover:bg-surface-2 hover:text-foreground"
               }`}
             >

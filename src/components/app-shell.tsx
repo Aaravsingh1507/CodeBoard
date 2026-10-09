@@ -3,9 +3,12 @@
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, Sun, Moon } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Menu, Sun, Moon, LayoutGrid, Target } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Sidebar } from "./sidebar";
+import { GithubIcon, LeetcodeIcon } from "./icons";
+import { cn } from "@/lib/utils";
 
 export function AppShell({
   user,
@@ -17,6 +20,7 @@ export function AppShell({
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -46,8 +50,36 @@ export function AppShell({
     };
   }, [open]);
 
+  // Mobile bottom navigation items
+  const mobileNav = [
+    {
+      href: "/dashboard",
+      label: "Overview",
+      icon: LayoutGrid,
+      isActive: pathname === "/dashboard" || pathname === "/preview",
+    },
+    {
+      href: "/github",
+      label: "GitHub",
+      icon: GithubIcon,
+      isActive: pathname.startsWith("/github"),
+    },
+    {
+      href: "/leetcode",
+      label: "LeetCode",
+      icon: LeetcodeIcon,
+      isActive: pathname.startsWith("/leetcode"),
+    },
+    {
+      href: "/matchscope",
+      label: "Prep",
+      icon: Target,
+      isActive: pathname.startsWith("/matchscope"),
+    },
+  ];
+
   return (
-    <div className="flex h-screen overflow-hidden bg-background text-foreground">
+    <div className="flex h-[100dvh] min-h-[100dvh] w-full overflow-hidden bg-background text-foreground">
       {/* Desktop sidebar */}
       <div className="hidden md:block">
         <Sidebar user={user} />
@@ -55,9 +87,9 @@ export function AppShell({
 
       {/* Mobile drawer */}
       {open && (
-        <div className="fixed inset-0 z-40 md:hidden" aria-modal="true" role="dialog">
+        <div className="fixed inset-0 z-50 md:hidden" aria-modal="true" role="dialog">
           <div
-            className={`absolute inset-0 bg-black/70 md:backdrop-blur-[3px] ${
+            className={`absolute inset-0 bg-black/70 backdrop-blur-[3px] ${
               closing ? "animate-backdrop-out" : "animate-backdrop-in"
             }`}
             onClick={closeSidebar}
@@ -72,9 +104,9 @@ export function AppShell({
         </div>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        {/* Mobile Header Bar (hidden on desktop) */}
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background/95 px-4 md:bg-background/90 md:backdrop-blur-md md:hidden">
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+        {/* Mobile Header Bar (hidden on desktop) - Sticky top */}
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background/95 px-4 backdrop-blur-md md:hidden supports-[backdrop-filter]:bg-background/80">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setOpen(true)}
@@ -118,8 +150,8 @@ export function AppShell({
 
         {/* Main Content Area with Optimized Ambient Background */}
         <main
-          className="relative flex-1 overflow-y-auto overflow-x-hidden scroll-touch bg-background dark:bg-[#080c17] w-full max-w-full"
-          style={{ WebkitOverflowScrolling: "touch" }}
+          className="relative flex-1 overflow-y-auto overflow-x-hidden scroll-touch bg-background dark:bg-[#080c17] w-full max-w-full pb-20 md:pb-0"
+          style={{ WebkitOverflowScrolling: "touch", overscrollBehaviorY: "contain" }}
         >
           {/* High-Performance Radial Gradient Background Glows */}
           <div
@@ -135,10 +167,63 @@ export function AppShell({
             }}
           />
 
-          <div className="relative z-10 mx-auto max-w-7xl w-full min-w-0 px-4 pt-4 pb-24 sm:px-6 md:px-8 md:py-7 animate-fade-in">
+          <div className="relative z-10 mx-auto max-w-7xl w-full min-w-0 px-4 pt-4 pb-16 sm:px-6 md:px-8 md:py-7 animate-fade-in">
             {children}
           </div>
         </main>
+
+        {/* Mobile Bottom Navigation Bar (hidden on desktop) */}
+        <nav
+          aria-label="Mobile Navigation"
+          className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center justify-around border-t border-border/70 bg-background/95 px-2 backdrop-blur-xl md:hidden supports-[backdrop-filter]:bg-background/85"
+          style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+        >
+          {mobileNav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex flex-1 flex-col items-center justify-center py-1 text-[11px] font-medium transition-all active:scale-95",
+                item.isActive
+                  ? "text-indigo-500 dark:text-indigo-400 font-semibold"
+                  : "text-muted hover:text-foreground"
+              )}
+            >
+              <div
+                className={cn(
+                  "flex h-8 w-8 items-center justify-center rounded-xl transition-all",
+                  item.isActive && "bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-500 dark:text-indigo-400"
+                )}
+              >
+                <item.icon size={18} />
+              </div>
+              <span className="mt-0.5 text-[10px] leading-tight tracking-tight">{item.label}</span>
+            </Link>
+          ))}
+
+          {/* More / Menu Drawer Trigger */}
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className={cn(
+              "flex flex-1 flex-col items-center justify-center py-1 text-[11px] font-medium transition-all active:scale-95 cursor-pointer",
+              open
+                ? "text-indigo-500 dark:text-indigo-400 font-semibold"
+                : "text-muted hover:text-foreground"
+            )}
+            aria-label="Open menu"
+          >
+            <div
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-xl transition-all",
+                open && "bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-500 dark:text-indigo-400"
+              )}
+            >
+              <Menu size={18} />
+            </div>
+            <span className="mt-0.5 text-[10px] leading-tight tracking-tight">More</span>
+          </button>
+        </nav>
       </div>
     </div>
   );
