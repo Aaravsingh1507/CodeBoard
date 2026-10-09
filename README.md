@@ -199,6 +199,15 @@ that wasn't reachable from the sandbox this was built in, so that one
 specific step needs to run on your machine. First thing after `npm install`:
 `npx prisma generate && npm run build` to confirm a clean compile.
 
+---
+
+## 👤 Author & Creator
+
+**Aarav Singh**
+- 🌐 **Live App**: [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app)
+- 💼 **LinkedIn**: [aarav-singh-821806388](https://www.linkedin.com/in/aarav-singh-821806388)
+- 🐙 **GitHub**: [@Aaravsingh1507](https://github.com/Aaravsingh1507)
+- 🚀 **Portfolio**: [aarav-portfolio-1f2b9.web.app](https://aarav-portfolio-1f2b9.web.app/)
+
 <!-- Trigger Vercel Build -->
 
-<!-- Trigger Vercel Build After Reconnect -->

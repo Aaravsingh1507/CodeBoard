@@ -30,3 +30,19 @@ export function LeetcodeIcon({ size = 16, className }: { size?: number; classNam
     </svg>
   );
 }
+
+export function LinkedinIcon({ size = 16, className }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76c-.95 0-1.72-.78-1.72-1.73a1.73 1.73 0 0 1 1.72-1.73c.96 0 1.73.78 1.73 1.73 0 .95-.77 1.73-1.73 1.73m1.38 10.74V9.97H5.08v9.53h2.76Z" />
+    </svg>
+  );
+}
+

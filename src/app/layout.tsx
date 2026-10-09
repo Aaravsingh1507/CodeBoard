@@ -32,6 +32,18 @@ export const metadata: Metadata = {
     "placement prep",
     "software engineer dashboard",
   ],
+  authors: [
+    {
+      name: "Aarav Singh",
+      url: "https://www.linkedin.com/in/aarav-singh-821806388",
+    },
+    {
+      name: "Aarav Singh",
+      url: "https://github.com/Aaravsingh1507",
+    },
+  ],
+  creator: "Aarav Singh",
+  publisher: "Aarav Singh",
   alternates: {
     canonical: baseUrl,
   },
@@ -83,13 +95,36 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "CodeBoard",
-    url: baseUrl,
-    description:
-      "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
-    applicationCategory: "DeveloperApplication",
-    operatingSystem: "Web",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": `${baseUrl}/#webapp`,
+        name: "CodeBoard",
+        url: baseUrl,
+        description:
+          "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
+        applicationCategory: "DeveloperApplication",
+        operatingSystem: "Web",
+        author: {
+          "@id": `${baseUrl}/#creator`,
+        },
+        creator: {
+          "@id": `${baseUrl}/#creator`,
+        },
+      },
+      {
+        "@type": "Person",
+        "@id": `${baseUrl}/#creator`,
+        name: "Aarav Singh",
+        jobTitle: "Software Developer & Creator of CodeBoard",
+        url: "https://aarav-portfolio-1f2b9.web.app/",
+        sameAs: [
+          "https://www.linkedin.com/in/aarav-singh-821806388",
+          "https://github.com/Aaravsingh1507",
+          "https://aarav-portfolio-1f2b9.web.app/",
+        ],
+      },
+    ],
   };
 
   return (

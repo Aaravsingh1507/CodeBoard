@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { auth, signIn } from "@/lib/auth";
-import { GithubIcon } from "@/components/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/icons";
 
 import { LeetcodeLoginForm } from "@/components/auth/leetcode-login-form";
 
@@ -88,6 +88,42 @@ export default async function LoginPage() {
           </Link>
         </div>
       </div>
+
+      {/* Creator Attribution Footer for SEO & Knowledge Graph Linking */}
+      <footer className="relative z-10 mt-8 text-center">
+        <p className="text-xs text-slate-400">
+          Created by{" "}
+          <span className="font-semibold text-slate-200">Aarav Singh</span>
+        </p>
+        <div className="mt-2.5 flex items-center justify-center gap-3 text-xs text-slate-400">
+          <a
+            href="https://github.com/Aaravsingh1507"
+            target="_blank"
+            rel="noopener noreferrer author"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900/60 px-2.5 py-1 text-slate-300 transition-all hover:border-slate-700 hover:text-white hover:bg-slate-800/80"
+          >
+            <GithubIcon size={13} />
+            <span>GitHub</span>
+          </a>
+          <a
+            href="https://www.linkedin.com/in/aarav-singh-821806388"
+            target="_blank"
+            rel="noopener noreferrer author"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900/60 px-2.5 py-1 text-slate-300 transition-all hover:border-blue-500/40 hover:text-[#38bdf8] hover:bg-slate-800/80"
+          >
+            <LinkedinIcon size={13} />
+            <span>LinkedIn</span>
+          </a>
+          <a
+            href="https://aarav-portfolio-1f2b9.web.app/"
+            target="_blank"
+            rel="noopener noreferrer author"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900/60 px-2.5 py-1 text-slate-300 transition-all hover:border-purple-500/40 hover:text-purple-300 hover:bg-slate-800/80"
+          >
+            <span>Portfolio</span>
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
