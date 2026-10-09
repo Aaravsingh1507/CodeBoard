@@ -13,10 +13,39 @@ export const viewport: Viewport = {
   themeColor: "#080c17",
 };
 
+const baseUrl = process.env.NEXTAUTH_URL || "https://codeboard-rho.vercel.app";
+
 export const metadata: Metadata = {
-  title: "CodeBoard",
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: "CodeBoard — Developer Placement Readiness & Tracker",
+    template: "%s | CodeBoard",
+  },
   description:
-    "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
+    "Are you actually placement-ready? CodeBoard unifies your GitHub, LeetCode, job applications, and goals into one real readiness score.",
+  keywords: [
+    "CodeBoard",
+    "placement readiness",
+    "developer activity tracker",
+    "leetcode tracker",
+    "github activity tracker",
+    "placement prep",
+    "software engineer dashboard",
+  ],
+  alternates: {
+    canonical: baseUrl,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -29,14 +58,18 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "CodeBoard",
+    title: "CodeBoard — Developer Placement Readiness & Tracker",
     description:
       "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
+    url: baseUrl,
+    siteName: "CodeBoard",
+    locale: "en_US",
+    type: "website",
     images: [{ url: "/logo.png", width: 1024, height: 1024, alt: "CodeBoard Logo" }],
   },
   twitter: {
-    card: "summary",
-    title: "CodeBoard",
+    card: "summary_large_image",
+    title: "CodeBoard — Developer Placement Readiness & Tracker",
     description: "Are you actually placement-ready? One readiness score.",
     images: ["/logo.png"],
   },
@@ -48,6 +81,17 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "CodeBoard",
+    url: baseUrl,
+    description:
+      "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Web",
+  };
+
   return (
     <html
       lang="en"
@@ -55,6 +99,10 @@ export default function RootLayout({
       className={`${sans.variable} ${jbMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground selection:bg-purple-500/30 selection:text-white">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           {children}
         </ThemeProvider>

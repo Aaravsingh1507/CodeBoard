@@ -1,7 +1,17 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { auth, signIn } from "@/lib/auth";
 import { GithubIcon } from "@/components/icons";
+
+export const metadata: Metadata = {
+  title: "Login",
+  description:
+    "Sign in to CodeBoard with GitHub. Calculate your placement readiness score from real GitHub, LeetCode, and job application activity.",
+  alternates: {
+    canonical: "/login",
+  },
+};
 
 export default async function LoginPage() {
   const session = await auth();
