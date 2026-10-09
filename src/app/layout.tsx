@@ -116,7 +116,13 @@ export default function RootLayout({
         "@type": "Person",
         "@id": `${baseUrl}/#creator`,
         name: "Aarav Singh",
-        jobTitle: "Software Developer & Creator of CodeBoard",
+        jobTitle: "AI & Web Developer | Creator of CodeBoard",
+        description:
+          "First-Year Artificial Intelligence student at Noida Institute of Engineering and Technology (NIET) focusing on AI, Machine Learning, Python Development, and Web Technologies.",
+        affiliation: {
+          "@type": "EducationalOrganization",
+          name: "Noida Institute of Engineering and Technology (NIET)",
+        },
         url: "https://aarav-portfolio-1f2b9.web.app/",
         sameAs: [
           "https://www.linkedin.com/in/aarav-singh-821806388",
