@@ -18,14 +18,14 @@ const baseUrl = process.env.NEXTAUTH_URL || "https://codeboard-rho.vercel.app";
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "CodeBoard — Developer Placement Readiness & Tracker",
+    default: "CodeBoard — Developer Placement Prep & Tracker",
     template: "%s | CodeBoard",
   },
   description:
-    "Are you actually placement-ready? CodeBoard unifies your GitHub, LeetCode, job applications, and goals into one real readiness score.",
+    "All your placement prep in one place. CodeBoard unifies your GitHub, LeetCode, job applications, and goals into one dashboard.",
   keywords: [
     "CodeBoard",
-    "placement readiness",
+    "placement preparation",
     "developer activity tracker",
     "leetcode tracker",
     "github activity tracker",
@@ -70,9 +70,9 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "CodeBoard — Developer Placement Readiness & Tracker",
+    title: "CodeBoard — Developer Placement Prep & Tracker",
     description:
-      "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
+      "All your placement prep in one place. Your GitHub, LeetCode, applications, and goals.",
     url: baseUrl,
     siteName: "CodeBoard",
     locale: "en_US",
@@ -81,8 +81,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "CodeBoard — Developer Placement Readiness & Tracker",
-    description: "Are you actually placement-ready? One readiness score.",
+    title: "CodeBoard — Developer Placement Prep & Tracker",
+    description: "All your placement prep in one place. Your GitHub, LeetCode, applications, and goals.",
     images: ["/logo.png"],
   },
   verification: {
@@ -102,7 +102,7 @@ export default function RootLayout({
         name: "CodeBoard",
         url: baseUrl,
         description:
-          "Are you actually placement-ready? Your GitHub, LeetCode, applications, and goals — one readiness score.",
+          "All your placement prep in one place. Your GitHub, LeetCode, applications, and goals.",
         applicationCategory: "DeveloperApplication",
         operatingSystem: "Web",
         author: {

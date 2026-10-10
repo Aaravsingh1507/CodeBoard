@@ -13,19 +13,19 @@
 
 ---
 
-### Are you actually placement-ready?
+### All your placement prep in one place
 
-**CodeBoard** is a career readiness dashboard for students and developers. It brings your GitHub coding activity, LeetCode practice, job applications, and goals into one place.
+**CodeBoard** is a career preparation dashboard for students and developers. It brings your GitHub coding activity, LeetCode practice, job applications, and goals into one place.
 
-Instead of guessing your progress, CodeBoard gives you a clear **Readiness Score (0–100)** and tells you what to focus on each week to get hired.
+Instead of switching between different sites, CodeBoard gives you clear visibility into your progress and helps you focus on what to do each week to get hired.
 
 ---
 
 ## 🌟 What CodeBoard Does
 
-- 🎯 **Readiness Score (0–100)**: A single score that shows how prepared you are for placements based on your coding consistency and practice.
+- 📊 **Activity Dashboard**: Track your coding consistency, streaks, and progress across all your accounts in one unified view.
 - 💡 **Smart Nudges**: Helpful reminders when your streak breaks, when you haven't solved problems recently, or when applications need follow-up.
-- 📄 **MatchScope (AI Resume Matcher)**: Upload your resume and paste a job description. AI checks your match score and points out missing keywords.
+- 📄 **MatchScope (AI Resume Matcher)**: Upload your resume and paste a job description. AI checks how well your resume matches the role and points out missing keywords.
 - 🗺️ **Personalized Roadmap**: Suggests DSA topics to practice, projects to build, and tools to learn for your target job.
 - 🐙 **GitHub Tracker**: See your daily commits, contribution streaks, and top programming languages in real time.
 - ⚡ **LeetCode Stats**: View solved problems by difficulty (Easy, Medium, Hard) and see your coverage across topics like Arrays, Trees, and DP.
@@ -68,7 +68,7 @@ You can get started in three easy ways:
 src/
 ├── app/
 │   ├── (app)/                  # Main dashboard pages
-│   │   ├── dashboard/          # Readiness score, banner, and streak
+│   │   ├── dashboard/          # Overview, banner, and coding streaks
 │   │   ├── github/             # GitHub statistics and language breakdown
 │   │   ├── leetcode/           # LeetCode stats and DSA topic coverage
 │   │   ├── matchscope/         # AI Resume ↔ Job Description matcher
@@ -101,4 +101,4 @@ src/
 
 ---
 
-*CodeBoard helps students turn daily coding habits into job readiness.*
+*CodeBoard helps students turn daily coding habits into placement success.*

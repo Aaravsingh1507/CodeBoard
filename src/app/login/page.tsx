@@ -10,7 +10,7 @@ import { LeetcodeLoginForm } from "@/components/auth/leetcode-login-form";
 export const metadata: Metadata = {
   title: "Login",
   description:
-    "Sign in to CodeBoard with GitHub or LeetCode. Calculate your placement readiness score from real GitHub, LeetCode, and job application activity.",
+    "Sign in to CodeBoard with GitHub or LeetCode. Track your coding activity, LeetCode practice, and job applications in one place.",
   alternates: {
     canonical: "/",
   },
@@ -41,7 +41,7 @@ export default async function LoginPage() {
           Code<span className="text-[#818cf8]">Board</span>
         </h1>
         <p className="mt-2 text-xs text-slate-400 leading-relaxed">
-          One score for how placement-ready you actually are — built from your real GitHub, LeetCode,
+          One unified dashboard for your placement prep — built from your real GitHub, LeetCode,
           and application activity.
         </p>
 
@@ -75,7 +75,7 @@ export default async function LoginPage() {
         <LeetcodeLoginForm />
 
         <p className="mt-4 text-[11px] text-slate-500 leading-relaxed">
-          Sign in with GitHub or your LeetCode username to automatically pull your real activity and calculate readiness.
+          Sign in with GitHub or your LeetCode username to automatically pull your real activity and track your prep.
         </p>
 
         <div className="mt-6 border-t border-[#1e263d]/80 pt-4 text-center">
