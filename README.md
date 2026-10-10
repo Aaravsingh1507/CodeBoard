@@ -1,202 +1,259 @@
 # CodeBoard 🚀
 
-**Live Demo**: [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app)
+[![Next.js](https://img.shields.io/badge/Next.js_14-black?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![Neon](https://img.shields.io/badge/Neon_Postgres-00E599?style=flat-square&logo=postgresql&logoColor=black)](https://neon.tech/)
+[![Groq AI](https://img.shields.io/badge/Groq_AI-F05A28?style=flat-square&logo=fastapi&logoColor=white)](https://groq.com/)
+[![Vercel](https://img.shields.io/badge/Vercel_Deployment-000000?style=flat-square&logo=vercel&logoColor=white)](https://codeboard-rho.vercel.app)
 
-**Are you actually placement-ready?**
-
-CodeBoard is a career-readiness dashboard for engineering students — it pulls
-your real GitHub activity, LeetCode practice, job applications, and goals
-into one place, and turns them into a single **Readiness Score** with
-specific, actionable nudges. Not another generic "commit tracker" — this is
-built around one question: *what should I actually do this week to get
-hired?*
-
-Real Next.js 14 (App Router) + TypeScript + Prisma app. Every number on
-screen comes from a real API call — GitHub, LeetCode, and Groq — not
-placeholder data.
+**Live Web App**: [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app)  
+**Explore Live Interactive Demo**: [https://codeboard-rho.vercel.app/preview](https://codeboard-rho.vercel.app/preview)
 
 ---
 
-## What makes this different
+### Are you actually placement-ready?
 
-Search "devtrack" or "dev tracker" and you'll find a dozen commit-counters
-and roadmap-learning apps. CodeBoard isn't trying to be a better commit
-counter. It's the only tool that combines:
+**CodeBoard** is an end-to-end career readiness dashboard built specifically for engineering and CS students. It pulls your real GitHub activity, live LeetCode practice, job applications pipeline, and placement goals into one unified command center — condensing them into a single, calibrated **Readiness Score (0–100)** with actionable weekly nudges.
 
-- **A single Readiness Score (0–100)** — coding consistency, LeetCode
-  volume, job-search momentum, and goal follow-through in one number.
-- **Smart nudges** — specific and actionable, not a wall of charts.
-- **AI resume bullets generated from your actual activity** — no invented
-  metrics, drafted from your real last-30-days GitHub/LeetCode data.
-- **Topic-wise DSA coverage** — not just Easy/Medium/Hard counts, but which
-  actual topics (graphs, DP, trees...) you've covered vs. haven't.
-- **Company-specific prep focus** — general, publicly-known interview
-  patterns matched against your target companies.
-- **Interview round tracking with debriefs** — log what was actually asked
-  in each round so patterns show up over time.
-- **A public, shareable profile page** — one clean link for your resume or
-  LinkedIn, showing verified stats without exposing your applications or
-  resume files.
-- **Placement-date countdown** — goals recompute their weekly pace against
-  your actual placement date instead of a static deadline.
-- **Study circles** — small opt-in groups where a few batchmates see each
-  other's streak and readiness score, for real accountability.
-- **A weekly email digest** — reaches people who've gone quiet, not just
-  people who remember to open the dashboard.
+Built with **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS**, and **Prisma ORM**. Every metric is powered by live APIs (**GitHub GraphQL/REST**, **LeetCode GraphQL**, and **Groq AI**) — zero mock numbers or fake data fallbacks.
 
-## 1. Prerequisites
+---
 
-- Node.js 18.18+ and npm
-- A free [GitHub OAuth App](https://github.com/settings/developers)
-- A [Groq API key](https://console.groq.com/) (for AI reviews and resume bullets)
-- Optionally, a free [Resend API key](https://resend.com) for the weekly email digest
+## 🌟 Key Features & Capabilities
 
-## 2. Setup
+### 🎯 1. Composite Readiness Score & Smart Nudges
+- **Single 0–100 Readiness Metric**: Synthesizes coding streak consistency, LeetCode problem volume, job-application momentum, and placement goal pace into one reliable indicator.
+- **Actionable Smart Nudges**: Context-aware suggestions triggered by real gaps (e.g., stale applications, broken coding streaks, or unbalanced topic practice).
+- **Milestone Banner**: High-DPI Retina banner celebrating consistency and small daily progress.
+
+### 🎯 2. MatchScope — AI Resume ↔ JD ATS Matcher
+- **In-Memory PDF Parsing**: Instant text extraction from uploaded resume PDFs via `unpdf` with magic bytes (`%PDF`) validation.
+- **AI ATS Match Score (0–100)**: Evaluates resumes against specific Job Descriptions using Groq AI (`openai/gpt-oss-120b`) with mathematical calibration and rating labels (*Poor Fit* to *Excellent Fit*).
+- **Category Breakdown**: Granular scoring across Technical Skills, Domain Experience, Education, and Engineering Depth.
+- **Keyword Intelligence**: Classifies job requirements into matched, partial, and critical missing keywords.
+- **Prioritized Resume Edits**: Actionable high/medium/low priority bullet point improvements with context.
+- **Personalized Career Roadmap**:
+  - **DSA Targets**: Recommended problem counts and focus topics tailored to the role.
+  - **Focus Projects**: Curated real-world project recommendations complete with recommended tech stacks and business impact.
+  - **Tool Mastery Matrix**: Clear breakdown of tools into *Mastered*, *Needs Practice*, and *Must Learn*.
+
+### 🐙 3. Real-Time GitHub Analytics
+- **Repository Analyzer**: Inspects your public and private repositories, auto-calculating total analyzed repos.
+- **Multi-Language Donut Chart**: Interactive breakdown of languages used across your projects with central repo counter.
+- **Month-over-Month Velocity**: Real-time commit tracking and capped percentage trend comparisons.
+- **Live Activity Sync**: Automatically synchronizes contributions made today with cache optimization.
+
+### ⚡ 4. Live LeetCode Analytics
+- **GraphQL Integration**: Connects to LeetCode's live GraphQL engine without requiring private credentials.
+- **Glowing Amber Summary Cards**: Solved counts categorized across Easy, Medium, and Hard tiers.
+- **Topic-Wise DSA Breakdown**: Automatically maps your submissions across Fundamental, Intermediate, and Advanced DSA topics (Arrays, Trees, Graphs, DP).
+- **Recent Submissions Log**: Real-time feed of recently accepted solutions and problem ratings.
+
+### 💼 5. Applications Kanban & Interview Round Tracker
+- **Stage-Based Pipeline**: Visual Kanban board for job applications (*Wishlist*, *Applied*, *Screening*, *Interviewing*, *Offer*, *Rejected*).
+- **Interview Round Tracking**: Log per-application interview rounds with round types, dates, outcomes, and free-text debrief notes to track interview patterns over time.
+
+### 👥 6. Study Circles
+- **Peer Accountability**: Create or join private peer circles via unique invite codes.
+- **Weekly Leaderboards**: Track batchmates' streak consistency, score deltas, and current readiness scores.
+- **7-Day Mini Heatmaps**: Expandable contribution heatmaps for every member in your circle.
+
+### ⏳ 7. Placement Countdown & Company Prep Focus
+- **Dynamic Placement Countdown**: Set your placement target date in Settings; goals automatically back-calculate your required weekly pace.
+- **Company Prep Focus**: Curated guidance matched against target companies (Google, Amazon, Microsoft, etc.) with company logos and key technical patterns.
+
+### 🧠 8. AI Weekly Reviews
+- **Automated AI Retrospectives**: Generates comprehensive weekly summaries analyzing your coding volume and application velocity.
+- **Auto-Pruning Engine**: Automatically keeps current and previous week reviews, ensuring instant load times and lean database storage.
+
+### 🌓 9. Cyberpunk Glassmorphism UI & Dual Themes
+- **Dark & Light Modes**: Seamless switching between glowing cyberpunk dark mode and crisp high-contrast light mode via `next-themes`.
+- **Micro-Animations & Toasts**: Smooth checkmark bounces, floating toasts on save, and responsive mobile navigation bar with sticky header and `100dvh` viewport containment.
+
+### 🔐 10. Production Security & SEO Architecture
+- **Enterprise Security**: Hardened HTTP headers (CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy), sliding-window rate limiting, and timing-safe authentication.
+- **Rich SEO & Google Knowledge Graph**: Native `sitemap.ts`, `robots.ts`, Search Console verification, and Schema.org `Person` & `WebApplication` structured data linking.
+
+---
+
+## 🔑 Authentication Options
+
+CodeBoard provides three frictionless ways to use the platform:
+
+1. **GitHub OAuth**: Full NextAuth (Auth.js v5) sign-in with repository access for deep commit analytics.
+2. **LeetCode Direct Sign-In**: Sign in instantly with just your **LeetCode username** — no GitHub account required to track DSA progress and use MatchScope.
+3. **Interactive Demo Preview (`/preview`)**: Test and explore all pages, widgets, and MatchScope with preloaded interactive data without logging in.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Framework** | Next.js 14 (App Router, Server Actions, Route Handlers) |
+| **Language** | TypeScript (Strict mode) |
+| **Styling** | Tailwind CSS + Lucide Icons + next-themes |
+| **Database** | Neon Postgres (Production) / SQLite (Local development) |
+| **ORM** | Prisma ORM with `@prisma/adapter-neon` |
+| **Authentication** | NextAuth.js (Auth.js v5) — GitHub OAuth & LeetCode Credentials |
+| **AI Engine** | Groq API (`openai/gpt-oss-120b`) |
+| **PDF Processing** | `unpdf` (In-memory serverless PDF parsing) |
+| **Data Fetching** | SWR + Next.js Server Components |
+| **Hosting & Crons** | Vercel (Edge CDN, Serverless Functions & Cron Jobs) |
+
+---
+
+## 🚀 Getting Started Locally
+
+### 1. Prerequisites
+- **Node.js**: 18.18+ and `npm`
+- **GitHub OAuth App**: (Optional for GitHub login) from [GitHub Developer Settings](https://github.com/settings/developers)
+- **Groq API Key**: (Optional for AI MatchScope and Weekly Reviews) from [Groq Console](https://console.groq.com/)
+
+### 2. Installation & Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/Aaravsingh1507/CodeBoard.git
+cd CodeBoard
+
+# Install dependencies
 npm install
+
+# Copy environment template
 cp .env.example .env
 ```
 
-Fill in `.env`:
+### 3. Environment Variables (`.env`)
 
-- **`AUTH_SECRET`** — run `npx auth secret` and paste the result.
-- **`GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`** — create an OAuth App at
-  https://github.com/settings/developers with:
-  - Homepage URL: `http://localhost:3000`
-  - Authorization callback URL: `http://localhost:3000/api/auth/callback/github`
-- **`GROQ_API_KEY`** — from console.groq.com. Without this, everything
-  else works; only AI weekly reviews and resume bullet generation show an error.
-- **`GROQ_MODEL`** — optional. Defaults to `openai/gpt-oss-120b` if not set.
-- **`CRON_SECRET`** — any random string.
-- **`RESEND_API_KEY` / `DIGEST_FROM_EMAIL`** — optional. Without these, the
-  weekly digest cron simply no-ops instead of sending email.
-- **`DATABASE_URL`** — already set to a local SQLite file, no action needed.
+Configure the following variables in your `.env` file:
 
-Then:
+```env
+# Database (SQLite for local dev)
+DATABASE_URL="file:./dev.db"
+
+# Auth.js / NextAuth
+AUTH_SECRET="your-auth-secret" # Generate with: npx auth secret
+NEXTAUTH_URL="http://localhost:3000"
+
+# GitHub OAuth (Optional if using LeetCode login)
+GITHUB_CLIENT_ID="your_github_client_id"
+GITHUB_CLIENT_SECRET="your_github_client_secret"
+
+# Groq AI (Required for MatchScope & AI Reviews)
+GROQ_API_KEY="your_groq_api_key"
+GROQ_MODEL="openai/gpt-oss-120b"
+
+# Cron Security
+CRON_SECRET="your_random_cron_secret"
+```
+
+### 4. Database Initialization & Run
 
 ```bash
+# Generate Prisma Client & push schema to local database
 npx prisma generate
 npx prisma db push
-npm run build      # confirms a clean compile before you start developing
+
+# Start development server
 npm run dev
 ```
 
-Visit `http://localhost:3000`, sign in with GitHub, and you're in.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 3. What's actually implemented
+---
 
-| Feature | Status |
-|---|---|
-| GitHub OAuth login | Real — NextAuth (Auth.js v5) + GitHub provider |
-| **Readiness Score** | Real — computed server-side from your actual streak, LeetCode totals, application response rate, and goal pace |
-| **Smart nudges** | Real — derived from the same live data (LeetCode inactivity, stale applications, broken streaks) |
-| **AI resume bullet generator** | Real — Groq API, grounded in your last 30 days of real GitHub/LeetCode activity |
-| **Topic-wise DSA breakdown** | Real — LeetCode's `tagProblemCounts` GraphQL field, fundamental/intermediate/advanced |
-| **Company prep focus** | Curated static dataset matched against your target companies — general public guidance, not scraped/official data |
-| **Interview round tracking** | Real — per-application rounds with outcome + free-text debrief, stored in the database |
-| **Public shareable profile** | Real — opt-in `/u/[slug]` page, deliberately excludes applications/resume/email |
-| **Placement countdown + goal pacing** | Real — set a placement date in Settings, goals show a back-calculated weekly target |
-| **Study circles** | Real — create/join via invite code, members see each other's streak + readiness score |
-| **Weekly email digest** | Real send via Resend if configured; safe no-op otherwise |
-| GitHub stats, LeetCode stats, streak heatmap, resume tracker, application Kanban, AI weekly review, goal planner | Real, as before |
-| Dark mode, loading/empty/error states, responsive layout | Implemented throughout |
+## 🌐 Deployment (Vercel + Neon Postgres)
 
+The web app is deployed in production at [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app).
 
+To deploy your own instance:
 
-## 4. Important: file storage before deploying
+1. **Push to GitHub** and import the repository into [Vercel](https://vercel.com).
+2. **Create a Neon Database**:
+   - In your Vercel Project dashboard, go to the **Storage** tab and create a **Neon Postgres** database.
+   - Vercel automatically sets `DATABASE_URL` in your environment variables.
+3. **Set Environment Variables** in Vercel Project Settings:
+   - `AUTH_SECRET`: Run `npx auth secret` locally and paste the output.
+   - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`: Your GitHub OAuth App credentials.
+   - `NEXTAUTH_URL`: Your production Vercel URL (e.g. `https://codeboard-rho.vercel.app`).
+   - `GROQ_API_KEY`: Your Groq API key.
+   - `CRON_SECRET`: Random secret string for securing scheduled tasks.
+4. **Update GitHub OAuth App Callback URL**:
+   - Set Authorization callback URL to `https://your-domain.vercel.app/api/auth/callback/github`.
+5. **Automatic Crons**:
+   - `vercel.json` automatically registers cron jobs for daily activity syncing, weekly reviews, and weekly digest.
 
-`src/lib/storage.ts` saves resume PDFs to `public/uploads` on local disk.
-This works locally but **will not persist on Vercel** (ephemeral filesystem
-outside `/tmp`). Swap `saveFile`/`deleteFile` in that one file for Supabase
-Storage or S3 before deploying — the API routes that call it don't change.
+---
 
-## 5. Deploying
-
-The app is already deployed at [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app) using:
-
-- **Vercel** for hosting (serverless Next.js)
-- **Neon Postgres** (via Vercel's native integration) for the database
-- **Prisma** (with `@prisma/adapter-neon`) for the ORM
-
-To deploy your own fork:
-
-1. Fork this repo and import it into [Vercel](https://vercel.com).
-2. Create a **Neon Postgres** database from the Vercel Storage tab and connect it to your project.
-3. Add these env vars in Vercel Project Settings → Environment Variables:
-   - `AUTH_SECRET` — run `npx auth secret` locally and paste the result
-   - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` — create a GitHub OAuth App
-   - `NEXTAUTH_URL` — your Vercel production URL (e.g. `https://yourapp.vercel.app`)
-   - `GROQ_API_KEY` — optional, for AI features
-   - `GROQ_MODEL` — optional, defaults to `openai/gpt-oss-120b`
-   - `CRON_SECRET` — any random string for securing cron endpoints
-   - `RESEND_API_KEY` / `DIGEST_FROM_EMAIL` — optional, for email digest
-4. In your **GitHub OAuth App**, set the callback URL to:
-   `https://yourapp.vercel.app/api/auth/callback/github`
-5. Vercel will run `prisma db push` and `next build` automatically on each deploy.
-6. `vercel.json` defines cron jobs for daily activity sync and weekly reviews — Vercel picks these up automatically.
-
-## 6. Project structure
+## 📁 Project Structure
 
 ```
 src/
-  app/
-    login/, onboarding/              pre-auth pages
-    u/[slug]/                        public shareable profile (no auth)
-    (app)/                           authenticated shell (sidebar nav)
-      dashboard/                     Readiness score + streak + summaries
-      github/ leetcode/ resume/ applications/ goals/ circles/ reviews/ settings/
-    api/
-      auth/[...nextauth]/            NextAuth handler
-      readiness/                     the composite readiness score
-      resume/bullets/                AI resume bullet generator
-      company-prep/                  company-specific prep matcher
-      placement/                     placement countdown
-      circles/ circles/join/         study circles
-      applications/[id]/rounds/      interview round tracking
-      github/stats/ leetcode/stats/  cached external stats
-      activity/sync/ activity/streak/  streak engine
-      resume/ applications/ goals/ reviews/  CRUD
-      cron/daily-activity/ cron/weekly-review/ cron/weekly-digest/  scheduled jobs
-  components/                        UI + dashboard widgets
-  lib/
-    readiness.ts                     readiness score + nudge logic
-    resume-bullets.ts                AI bullet generation
-    company-prep.ts                  curated company prep dataset
-    placement.ts                     countdown + weekly goal pacing
-    public-profile.ts                sanitized public profile data
-    email.ts                         weekly digest via Resend
-    github.ts leetcode.ts groq.ts activity.ts weekly-review.ts
-    auth.ts prisma.ts storage.ts
-prisma/schema.prisma                 full data model
-vercel.json                          cron schedule (3 jobs)
+├── app/
+│   ├── (app)/                          # Authenticated Shell (Sidebar Navigation)
+│   │   ├── applications/               # Applications Kanban & Interview Round Tracker
+│   │   ├── circles/                    # Peer Study Circles & Leaderboards
+│   │   ├── dashboard/                  # Main Overview, Small Steps Banner & Streak
+│   │   ├── github/                     # GitHub Deep Analytics & Language Donut
+│   │   ├── goals/                      # Placement Goals & Target Countdown
+│   │   ├── leetcode/                   # LeetCode GraphQL Analytics & Topic DSA
+│   │   ├── matchscope/                 # AI Resume ↔ JD ATS Matcher & Career Roadmap
+│   │   ├── reviews/                    # AI Weekly Reviews (Current & Previous)
+│   │   └── settings/                   # Cyberpunk Glassmorphic Profile & Config
+│   ├── api/
+│   │   ├── activity/                   # Daily commit & streak synchronization
+│   │   ├── applications/               # Applications CRUD & interview rounds
+│   │   ├── auth/[...nextauth]/         # NextAuth GitHub & LeetCode handlers
+│   │   ├── circles/                    # Circles creation & invite-code joining
+│   │   ├── company-prep/               # Curated target company intelligence
+│   │   ├── cron/                       # Scheduled activity sync & review crons
+│   │   ├── github/stats/               # Live GitHub statistics fetcher
+│   │   ├── leetcode/stats/             # Unofficial LeetCode GraphQL fetcher
+│   │   ├── matchscope/                 # Serverless in-memory PDF extraction & ATS scoring
+│   │   ├── placement/                  # Placement date & weekly pacing engine
+│   │   ├── readiness/                  # Composite readiness score engine
+│   │   └── reviews/                    # Weekly AI retrospectives generator
+│   ├── login/                          # Dual sign-in (GitHub OAuth & LeetCode username)
+│   ├── onboarding/                     # First-time profile & placement target onboarding
+│   ├── preview/                        # Interactive live demo (no login required)
+│   ├── u/[slug]/                       # Public sanitized shareable developer profile
+│   ├── robots.ts & sitemap.ts          # SEO and Google indexing directives
+│   └── layout.tsx                      # Root layout, fonts, and Schema.org Person graph
+├── components/
+│   ├── matchscope/                     # Category breakdown, score ring, keyword chips
+│   ├── github/                         # Language donut chart, profile overview card
+│   ├── widgets/                        # Small Steps banner, readiness card, streak widget
+│   ├── ui/                             # Buttons, inputs, modals, cards, badges
+│   ├── app-shell.tsx                   # Responsive layout with sticky mobile navigation
+│   └── sidebar.tsx                     # Sidebar navigation with theme toggles
+├── lib/
+│   ├── auth.ts                         # NextAuth configuration (GitHub + Credentials)
+│   ├── github.ts & leetcode.ts         # Live API clients
+│   ├── groq.ts                         # Groq AI client configuration
+│   ├── readiness.ts                    # Mathematical readiness formula & smart nudges
+│   ├── rate-limit.ts                   # In-memory rate limiting guard
+│   └── storage.ts                      # Magic bytes validation & temporary upload handling
+├── prisma/
+│   └── schema.prisma                   # PostgreSQL / SQLite unified database schema
+└── vercel.json                         # Cron schedules for background automated tasks
 ```
-
-## 7. A note on the LeetCode integration
-
-LeetCode has no official public API. This app uses the same unofficial
-GraphQL endpoint LeetCode's own website calls. It needs no auth, but it can
-change or rate-limit without notice — every caller catches failures and
-falls back to the last successfully cached data instead of crashing the page.
-
-## 8. A note on how this was built
-
-Everything here was verified via static type-checking against hand-written
-types matching the real Prisma schema, plus a full `next build` compile
-pass — `npx prisma generate` itself needs a binary from `binaries.prisma.sh`
-that wasn't reachable from the sandbox this was built in, so that one
-specific step needs to run on your machine. First thing after `npm install`:
-`npx prisma generate && npm run build` to confirm a clean compile.
 
 ---
 
 ## 👤 Author & Creator
 
-**Aarav Singh**
-- 🌐 **Live App**: [https://codeboard-rho.vercel.app](https://codeboard-rho.vercel.app)
-- 💼 **LinkedIn**: [aarav-singh-821806388](https://www.linkedin.com/in/aarav-singh-821806388)
+**Aarav Singh**  
+*Computer Science & AI Student, NIET | Python Developer & AI/ML Enthusiast*
+
+- 🌐 **Live Web App**: [codeboard-rho.vercel.app](https://codeboard-rho.vercel.app)
+- 🚀 **Interactive Demo**: [codeboard-rho.vercel.app/preview](https://codeboard-rho.vercel.app/preview)
+- 💼 **LinkedIn**: [linkedin.com/in/aarav-singh-821806388](https://www.linkedin.com/in/aarav-singh-821806388)
 - 🐙 **GitHub**: [@Aaravsingh1507](https://github.com/Aaravsingh1507)
-- 🚀 **Portfolio**: [aarav-portfolio-1f2b9.web.app](https://aarav-portfolio-1f2b9.web.app/)
+- ⚡ **Personal Portfolio**: [aarav-portfolio-1f2b9.web.app](https://aarav-portfolio-1f2b9.web.app/)
 
-<!-- Trigger Vercel Build -->
+---
 
+*CodeBoard is actively maintained and built to empower students to turn everyday coding into verifiable placement readiness.*
