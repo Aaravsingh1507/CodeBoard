@@ -92,11 +92,7 @@ export default function ReviewsPage() {
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-border/40 pb-2.5">
               <div className="flex items-center gap-2">
                 <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide ${
-                    idx === 0
-                      ? "bg-indigo-500/15 text-indigo-400 border border-indigo-500/30"
-                      : "bg-slate-700/30 text-slate-300 border border-slate-700/50"
-                  }`}
+                  className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide bg-indigo-500/15 text-indigo-400 border border-indigo-500/30"
                 >
                   {idx === 0 ? "Current review" : "Previous review"}
                 </span>
