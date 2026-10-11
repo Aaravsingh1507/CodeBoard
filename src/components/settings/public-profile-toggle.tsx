@@ -37,11 +37,11 @@ export function PublicProfileToggle({
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-950/40 hover:bg-red-900/60 hover:border-red-500/50 px-4 py-2 text-xs font-semibold text-red-300 hover:text-white transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 dark:border-red-500/30 dark:bg-red-950/40 dark:hover:bg-red-900/60 dark:hover:border-red-500/50 dark:text-red-300 dark:hover:text-white px-4 py-2 text-xs font-semibold transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
-                <Loader2 size={13} className="animate-spin text-red-300" />
+                <Loader2 size={13} className="animate-spin text-rose-500 dark:text-red-300" />
                 <span>Disabling...</span>
               </>
             ) : (

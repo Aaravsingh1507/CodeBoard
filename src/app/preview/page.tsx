@@ -343,7 +343,9 @@ export default function PreviewPage() {
         {activeTab === "settings" && (
           <div className="max-w-xl space-y-5 animate-fade-in">
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-foreground dark:text-white">Settings</h1>
+              <h1 className="text-3xl font-extrabold tracking-tight text-foreground dark:text-white sm:text-4xl">
+                Sett<span className="gradient-title-view">ings</span>
+              </h1>
               <p className="mt-1 text-sm text-muted dark:text-slate-400">Your profile and connections.</p>
             </div>
 

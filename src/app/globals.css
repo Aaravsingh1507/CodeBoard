@@ -293,6 +293,12 @@ img {
 }
 
 .gradient-title-view {
+  background: linear-gradient(90deg, #7c3aed 0%, #6366f1 45%, #9333ea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .gradient-title-view {
   background: linear-gradient(90deg, #c084fc 0%, #d8b4fe 40%, #f472b6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
