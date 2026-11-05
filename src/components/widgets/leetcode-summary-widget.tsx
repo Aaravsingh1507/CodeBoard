@@ -121,19 +121,19 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
     <Card className="relative overflow-visible rounded-[22px] border border-border bg-surface p-4 sm:p-6 shadow-xs dark:border-[#1e263d] dark:bg-gradient-to-b dark:from-[#111728]/95 dark:to-[#0d1220]/95 dark:shadow-2xl dark:shadow-black/50 md:dark:backdrop-blur-md flex-1 flex flex-col justify-between">
       <CardContent className="p-0 flex flex-col justify-between h-full">
         {/* Top Row: Title + Full stats link */}
-        <div className="flex items-center justify-between pb-1">
-          <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className="flex items-center justify-between gap-3 pb-1">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-amber-50 border border-amber-200 text-[#f59e0b] dark:bg-[#231911] dark:border-[#543b18] shrink-0 shadow-inner">
               <LeetcodeIcon size={20} className="text-[#f59e0b] sm:w-[22px] sm:h-[22px]" />
             </div>
-            <div>
-              <h3 className="text-base sm:text-lg font-bold tracking-tight text-foreground dark:text-white leading-tight">LeetCode</h3>
-              <p className="text-xs text-muted dark:text-slate-400 font-normal">Practice. Improve. Land your dream.</p>
+            <div className="min-w-0">
+              <h3 className="text-base sm:text-lg font-bold tracking-tight text-foreground dark:text-white leading-tight truncate">LeetCode</h3>
+              <p className="text-xs text-muted dark:text-slate-400 font-normal truncate">Practice. Improve. Land your dream.</p>
             </div>
           </div>
           <Link
             href="/leetcode"
-            className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-medium text-foreground dark:text-slate-300 transition-colors hover:bg-surface-2 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:text-white"
+            className="shrink-0 whitespace-nowrap flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-medium text-foreground dark:text-slate-300 transition-colors hover:bg-surface-2 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:hover:text-white"
           >
             <span>Full stats</span>
             <span className="text-xs">↗</span>
