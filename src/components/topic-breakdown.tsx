@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 export interface TopicItem {
   tag: string;
@@ -24,170 +24,150 @@ const FALLBACK_TOPICS: TopicItem[] = [
   { tag: "Divide & Conquer", solved: 1, level: "advanced" },
 ];
 
-// Helper to render topic vector icon by key
-function renderTopicIcon(tag: string, x: number, y: number) {
-  const norm = tag.toLowerCase();
+// Specialized vector icons for DSA topics
+function renderTopicIcon(tag: string) {
+  const norm = tag.toLowerCase().trim();
 
   if (norm.includes("array")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
-        <polyline points="13 14 17 10 13 6" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <polyline points="7 6 3 10 7 14" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      </g>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="13 14 17 10 13 6" />
+        <polyline points="7 6 3 10 7 14" />
+      </svg>
     );
   }
   if (norm.includes("search") || norm.includes("binary search")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
-        <circle cx="9.5" cy="9.5" r="5" stroke="#34d399" strokeWidth="2" fill="none" />
-        <line x1="13.5" y1="13.5" x2="17.5" y2="17.5" stroke="#34d399" strokeWidth="2" strokeLinecap="round" />
-      </g>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="9" cy="9" r="5" />
+        <line x1="13" y1="13" x2="17" y2="17" />
+      </svg>
     );
   }
   if (norm.includes("pointer")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
-        <path d="M6 14l-3-3 3-3" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <path d="M3 11h9" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
-        <path d="M14 6l3 3-3 3" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <path d="M17 9H8" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
-      </g>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 14l-3-3 3-3" />
+        <path d="M3 11h9" />
+        <path d="M14 6l3 3-3 3" />
+        <path d="M17 9H8" />
+      </svg>
     );
   }
   if (norm.includes("math")) {
-    return (
-      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="14" fontWeight="900" fill="#34d399" fontFamily="serif">
-        Σ
-      </text>
-    );
+    return <span className="font-serif font-extrabold text-sm leading-none text-[#34d399]">Σ</span>;
   }
   if (norm.includes("matrix")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
-        <rect x="4" y="4" width="12" height="12" rx="1.5" stroke="#34d399" strokeWidth="1.5" fill="none" />
-        <line x1="8" y1="4" x2="8" y2="16" stroke="#34d399" strokeWidth="1.2" />
-        <line x1="12" y1="4" x2="12" y2="16" stroke="#34d399" strokeWidth="1.2" />
-        <line x1="4" y1="8" x2="16" y2="8" stroke="#34d399" strokeWidth="1.2" />
-        <line x1="4" y1="12" x2="16" y2="12" stroke="#34d399" strokeWidth="1.2" />
-      </g>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="14" height="14" rx="2" />
+        <line x1="7.5" y1="3" x2="7.5" y2="17" />
+        <line x1="12.5" y1="3" x2="12.5" y2="17" />
+        <line x1="3" y1="7.5" x2="17" y2="7.5" />
+        <line x1="3" y1="12.5" x2="17" y2="12.5" />
+      </svg>
     );
   }
   if (norm.includes("string")) {
-    return (
-      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="13" fontWeight="900" fill="#34d399" fontFamily="monospace">
-        “ ”
-      </text>
-    );
+    return <span className="font-mono font-bold text-xs leading-none text-[#34d399]">“ ”</span>;
   }
   if (norm.includes("sort")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
-        <line x1="6" y1="4" x2="6" y2="16" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
-        <polyline points="3 7 6 4 9 7" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <line x1="14" y1="16" x2="14" y2="4" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
-        <polyline points="11 13 14 16 17 13" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      </g>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="6" y1="4" x2="6" y2="16" />
+        <polyline points="3 7 6 4 9 7" />
+        <line x1="14" y1="16" x2="14" y2="4" />
+        <polyline points="11 13 14 16 17 13" />
+      </svg>
     );
   }
   if (norm.includes("simulat")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
-        <rect x="3" y="6" width="14" height="9" rx="2.5" stroke="#34d399" strokeWidth="1.5" fill="none" />
-        <path d="M6 10.5h2M7 9.5v2" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="13" cy="9.5" r="0.8" fill="#34d399" />
-        <circle cx="14.5" cy="11.5" r="0.8" fill="#34d399" />
-      </g>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2.5" y="5.5" width="15" height="9" rx="3" />
+        <path d="M5.5 10h2M6.5 9v2" />
+        <circle cx="12.5" cy="9" r="0.8" fill="#34d399" />
+        <circle cx="14" cy="11" r="0.8" fill="#34d399" />
+      </svg>
     );
   }
   if (norm.includes("hash")) {
-    return (
-      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="14" fontWeight="900" fill="#34d399">
-        #
-      </text>
-    );
+    return <span className="font-extrabold text-sm leading-none text-[#34d399]">#</span>;
   }
   if (norm.includes("recursi")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="10" r="6" stroke="#34d399" strokeWidth="1.8" fill="none" strokeDasharray="28 8" />
-        <polyline points="8 4 10 2 12 4" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <circle cx="10" cy="10" r="2.2" fill="#34d399" />
-      </g>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="10" cy="10" r="6" strokeDasharray="26 8" />
+        <polyline points="8 4 10 2 12 4" />
+        <circle cx="10" cy="10" r="2" fill="#34d399" />
+      </svg>
     );
   }
   if (norm.includes("dynamic") || norm.includes("dp")) {
-    return (
-      <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#34d399" fontFamily="monospace">
-        &lt;/&gt;
-      </text>
-    );
+    return <span className="font-mono font-bold text-[10px] leading-none text-[#34d399]">&lt;/&gt;</span>;
   }
   if (norm.includes("divide") || norm.includes("conquer") || norm.includes("tree")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="10" cy="4" r="2" fill="#34d399" />
         <circle cx="5" cy="15" r="2" fill="#34d399" />
         <circle cx="15" cy="15" r="2" fill="#34d399" />
-        <path d="M10 6v3m0 0l-5 4m5-4l5 4" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      </g>
+        <path d="M10 6v3m0 0l-5 4m5-4l5 4" />
+      </svg>
     );
   }
   if (norm.includes("dfs") || norm.includes("depth")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round">
         <circle cx="10" cy="4" r="2" fill="#34d399" />
-        <circle cx="10" cy="10.5" r="2" fill="#34d399" />
-        <circle cx="10" cy="16.5" r="2" fill="#34d399" />
-        <line x1="10" y1="6" x2="10" y2="8.5" stroke="#34d399" strokeWidth="1.5" />
-        <line x1="10" y1="12.5" x2="10" y2="14.5" stroke="#34d399" strokeWidth="1.5" />
-      </g>
+        <circle cx="10" cy="10" r="2" fill="#34d399" />
+        <circle cx="10" cy="16" r="2" fill="#34d399" />
+        <line x1="10" y1="6" x2="10" y2="8" />
+        <line x1="10" y1="12" x2="10" y2="14" />
+      </svg>
     );
   }
   if (norm.includes("bfs") || norm.includes("breadth")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round">
         <circle cx="4" cy="10" r="2" fill="#34d399" />
         <circle cx="10" cy="10" r="2" fill="#34d399" />
         <circle cx="16" cy="10" r="2" fill="#34d399" />
-        <line x1="6" y1="10" x2="8" y2="10" stroke="#34d399" strokeWidth="1.5" />
-        <line x1="12" y1="10" x2="14" y2="10" stroke="#34d399" strokeWidth="1.5" />
-      </g>
+        <line x1="6" y1="10" x2="8" y2="10" />
+        <line x1="12" y1="10" x2="14" y2="10" />
+      </svg>
     );
   }
   if (norm.includes("list")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round">
         <circle cx="5" cy="10" r="2" fill="#34d399" />
         <circle cx="15" cy="10" r="2" fill="#34d399" />
-        <line x1="7" y1="10" x2="13" y2="10" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" />
-      </g>
+        <line x1="7" y1="10" x2="13" y2="10" />
+      </svg>
     );
   }
   if (norm.includes("stack") || norm.includes("queue")) {
     return (
-      <g transform={`translate(${x}, ${y})`}>
-        <path d="M4 6h12M4 10h12M4 14h12" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
-      </g>
+      <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round">
+        <path d="M4 6h12M4 10h12M4 14h12" />
+      </svg>
     );
   }
   if (norm.includes("bit")) {
-    return (
-      <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="10" fontWeight="900" fill="#34d399" fontFamily="monospace">
-        01
-      </text>
-    );
+    return <span className="font-mono font-bold text-[10px] leading-none text-[#34d399]">01</span>;
   }
 
-  // Default fallback
+  // Fallback
   return (
-    <g transform={`translate(${x}, ${y})`}>
-      <polyline points="13 14 17 10 13 6" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      <polyline points="7 6 3 10 7 14" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </g>
+    <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="13 14 17 10 13 6" />
+      <polyline points="7 6 3 10 7 14" />
+    </svg>
   );
 }
 
-// Splits topic label into 2 lines for perfect centered alignment
+// Split topic label into 2 lines for clean centered display
 function splitTopicLabel(tag: string): [string, string] {
   const norm = tag.trim();
   if (norm === "Binary Search") return ["Binary", "Search"];
@@ -205,10 +185,11 @@ function splitTopicLabel(tag: string): [string, string] {
 }
 
 export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
-  // Use real data from LeetCode; fallback to demo data only if no data has ever arrived
+  const [hoveredTopic, setHoveredTopic] = useState<TopicItem | null>(null);
+
+  // Real data computation
   const displayTopics = topics && topics.length > 0 ? topics : FALLBACK_TOPICS;
 
-  // Real data calculations
   const totalProblems = displayTopics.reduce((acc, t) => acc + t.solved, 0);
 
   const fundSolved = displayTopics
@@ -229,20 +210,20 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
   const top12 = [...displayTopics].sort((a, b) => b.solved - a.solved).slice(0, 12);
   const top3 = top12.slice(0, 3);
 
-  // Y-axis max calculation (neatly steps by 5s or 2s)
+  // Dynamic Y-axis scale calculation
   const maxSolved = top12.length > 0 ? Math.max(...top12.map((t) => t.solved)) : 10;
   const yMax = Math.max(10, Math.ceil(maxSolved / 5) * 5);
   const yTicks = [
-    { val: yMax, y: 132 },
-    { val: Math.round(yMax * 0.8), y: 155 },
-    { val: Math.round(yMax * 0.6), y: 178 },
-    { val: Math.round(yMax * 0.4), y: 201 },
-    { val: Math.round(yMax * 0.2), y: 224 },
-    { val: 0, y: 248 },
+    yMax,
+    Math.round(yMax * 0.8),
+    Math.round(yMax * 0.6),
+    Math.round(yMax * 0.4),
+    Math.round(yMax * 0.2),
+    0,
   ];
 
   // Donut Gauge Arc Calculations
-  const radius = 64;
+  const radius = 62;
   const circumference = 2 * Math.PI * radius;
   const fundLen = totalProblems > 0 ? (fundPct / 100) * circumference : 0;
   const interLen = totalProblems > 0 ? (interPct / 100) * circumference : 0;
@@ -253,7 +234,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
   const arcInter = Math.max(0, interLen - gap);
   const arcAdv = Math.max(0, advLen - gap);
 
-  // Dominant tier calculation for Coverage Insight prose
+  // Tier ranking for Coverage Insight prose
   const tiers = [
     { name: "Fundamental", pct: fundPct, count: fundSolved },
     { name: "Intermediate", pct: interPct, count: interSolved },
@@ -264,769 +245,551 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
   const second = tiers[1];
   const third = tiers[2];
 
+  // Real Coverage Insight Bar heights (scale to max 52px, min 10px)
+  const maxTierPct = Math.max(fundPct, interPct, advPct, 1);
+  const hFund = Math.max(12, Math.round((fundPct / maxTierPct) * 52));
+  const hInter = Math.max(12, Math.round((interPct / maxTierPct) * 52));
+  const hAdv = Math.max(12, Math.round((advPct / maxTierPct) * 52));
+
   return (
-    <div className="w-full overflow-hidden select-none">
-      <svg
-        viewBox="0 0 1024 520"
-        className="w-full h-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.85)]"
-        style={{ fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
-      >
-        <defs>
-          {/* Main Outer Gradient */}
-          <linearGradient id="tcOuterBg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#082216" stopOpacity="0.95" />
-            <stop offset="50%" stopColor="#04140d" stopOpacity="0.97" />
-            <stop offset="100%" stopColor="#020a06" stopOpacity="0.99" />
-          </linearGradient>
+    <div className="relative w-full rounded-[32px] p-6 sm:p-7 overflow-hidden text-white transition-all bg-gradient-to-br from-[#082216]/95 via-[#04140d]/97 to-[#020a06]/99 border-[1.5px] border-emerald-500/35 backdrop-blur-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85),inset_0_1px_2px_rgba(255,255,255,0.2),inset_0_0_40px_rgba(16,185,129,0.06),0_0_35px_rgba(16,185,129,0.15)]">
+      {/* Dynamic Ambient Glow Behind Glass */}
+      <div className="pointer-events-none absolute -top-32 -left-32 w-96 h-96 rounded-full bg-emerald-500/15 blur-[90px]" />
+      <div className="pointer-events-none absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-lime-500/12 blur-[90px]" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-emerald-600/10 blur-[110px]" />
 
-          {/* Subcard Glass Fill */}
-          <linearGradient id="tcCardBg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#07281c" stopOpacity="0.82" />
-            <stop offset="100%" stopColor="#03150e" stopOpacity="0.92" />
-          </linearGradient>
+      {/* 1. HEADER SECTION */}
+      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        {/* Title + Subtitle + 3D Layers Badge */}
+        <div className="flex items-center gap-3.5">
+          {/* 3D Stacked Layers Icon Badge */}
+          <div className="relative shrink-0 flex items-center justify-center w-12 h-12 rounded-[14px] bg-gradient-to-br from-[#166534] to-[#052e16] border border-emerald-400/50 shadow-[0_0_14px_rgba(34,197,94,0.55),inset_0_1px_1px_rgba(255,255,255,0.3)]">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <defs>
+                <linearGradient id="hdrTopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#86efac" />
+                  <stop offset="100%" stopColor="#22c55e" />
+                </linearGradient>
+                <linearGradient id="hdrMidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#4ade80" />
+                  <stop offset="100%" stopColor="#16a34a" />
+                </linearGradient>
+                <linearGradient id="hdrBotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#22c55e" />
+                  <stop offset="100%" stopColor="#15803d" />
+                </linearGradient>
+              </defs>
+              {/* Bottom Layer */}
+              <path d="M16 23 L24 19 L16 15 L8 19 Z" fill="url(#hdrBotGrad)" opacity="0.65" />
+              <path d="M8 19 L16 23 L24 19 L24 21 L16 25 L8 21 Z" fill="#047857" opacity="0.9" />
+              {/* Middle Layer */}
+              <path d="M16 18.5 L24 14.5 L16 10.5 L8 14.5 Z" fill="url(#hdrMidGrad)" opacity="0.85" />
+              <path d="M8 14.5 L16 18.5 L24 14.5 L24 16.5 L16 20.5 L8 16.5 Z" fill="#059669" opacity="0.9" />
+              {/* Top Layer */}
+              <path d="M16 14 L24 10 L16 6 L8 10 Z" fill="url(#hdrTopGrad)" />
+              <path d="M8 10 L16 14 L24 10 L24 12 L16 16 L8 12 Z" fill="#10b981" />
+            </svg>
+          </div>
 
-          {/* Outer Border Gradient with Specular Sheen */}
-          <linearGradient id="tcOuterBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4ade80" stopOpacity="0.6" />
-            <stop offset="40%" stopColor="#22c55e" stopOpacity="0.3" />
-            <stop offset="80%" stopColor="#15803d" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#86efac" stopOpacity="0.5" />
-          </linearGradient>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+              Topic Coverage
+            </h2>
+            <p className="text-xs sm:text-sm font-medium text-emerald-300/80 mt-0.5">
+              Problem distribution across DSA topics
+            </p>
+          </div>
+        </div>
 
-          {/* Subcard Border Gradient */}
-          <linearGradient id="tcSubBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4ade80" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#15803d" stopOpacity="0.25" />
-          </linearGradient>
+        {/* Legend Filter Pills */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Fundamental */}
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-500/40 bg-[#062518]/90 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform hover:scale-105">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981]" />
+            <span className="text-xs font-bold text-white tracking-wide">Fundamental</span>
+          </div>
 
-          {/* Pill Badge Border */}
-          <linearGradient id="tcPillBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4ade80" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="#166534" stopOpacity="0.3" />
-          </linearGradient>
+          {/* Intermediate */}
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-lime-500/40 bg-[#0d2813]/90 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform hover:scale-105">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#84cc16] shadow-[0_0_8px_#84cc16]" />
+            <span className="text-xs font-bold text-white tracking-wide">Intermediate</span>
+          </div>
 
-          {/* Donut Gradients */}
-          <linearGradient id="tcDonutFund" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#34d399" />
-            <stop offset="100%" stopColor="#059669" />
-          </linearGradient>
-          <linearGradient id="tcDonutInter" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#a3e635" />
-            <stop offset="100%" stopColor="#65a30d" />
-          </linearGradient>
-          <linearGradient id="tcDonutAdv" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#facc15" />
-            <stop offset="100%" stopColor="#ca8a04" />
-          </linearGradient>
+          {/* Advanced */}
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-yellow-500/40 bg-[#1a2b0e]/90 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform hover:scale-105">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#eab308] shadow-[0_0_8px_#eab308]" />
+            <span className="text-xs font-bold text-white tracking-wide">Advanced</span>
+          </div>
+        </div>
+      </div>
 
-          {/* Bar Gradients */}
-          <linearGradient id="tcBarFund" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#34d399" />
-            <stop offset="60%" stopColor="#059669" />
-            <stop offset="100%" stopColor="#022c19" />
-          </linearGradient>
-          <linearGradient id="tcBarInter" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#bef264" />
-            <stop offset="60%" stopColor="#65a30d" />
-            <stop offset="100%" stopColor="#1a2e05" />
-          </linearGradient>
-          <linearGradient id="tcBarAdv" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#fde047" />
-            <stop offset="60%" stopColor="#ca8a04" />
-            <stop offset="100%" stopColor="#422006" />
-          </linearGradient>
+      {/* 2. MAIN LAYOUT GRID */}
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        {/* LEFT COLUMN: Donut Gauge & Summary (Col 1-4) */}
+        <div className="lg:col-span-4 xl:col-span-3.5 rounded-2xl p-5 sm:p-6 flex flex-col justify-between border border-emerald-500/30 bg-gradient-to-br from-[#07281c]/80 to-[#03150e]/90 backdrop-blur-xl shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.5)]">
+          {/* Donut Gauge Visual */}
+          <div className="relative flex items-center justify-center my-1">
+            <svg width="190" height="190" viewBox="0 0 190 190" className="transform -rotate-90">
+              <defs>
+                <linearGradient id="dFundGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#34d399" />
+                  <stop offset="100%" stopColor="#059669" />
+                </linearGradient>
+                <linearGradient id="dInterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#a3e635" />
+                  <stop offset="100%" stopColor="#65a30d" />
+                </linearGradient>
+                <linearGradient id="dAdvGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#facc15" />
+                  <stop offset="100%" stopColor="#ca8a04" />
+                </linearGradient>
+                <filter id="dGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#10b981" floodOpacity="0.55" />
+                </filter>
+              </defs>
 
-          {/* 3D Stacked Layers Icon Gradients */}
-          <linearGradient id="tcLayerBadge" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#166534" />
-            <stop offset="100%" stopColor="#052e16" />
-          </linearGradient>
-          <linearGradient id="tcLayerTop" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#86efac" />
-            <stop offset="100%" stopColor="#22c55e" />
-          </linearGradient>
-          <linearGradient id="tcLayerMid" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4ade80" />
-            <stop offset="100%" stopColor="#16a34a" />
-          </linearGradient>
-          <linearGradient id="tcLayerBot" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="100%" stopColor="#15803d" />
-          </linearGradient>
+              {/* Background Track Circle */}
+              <circle cx="95" cy="95" r={radius} fill="none" stroke="#052417" strokeWidth="16" />
 
-          {/* Rising 3D Chart Gradients */}
-          <linearGradient id="tcRise1" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#4ade80" />
-            <stop offset="100%" stopColor="#15803d" />
-          </linearGradient>
-          <linearGradient id="tcRise2" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#86efac" />
-            <stop offset="100%" stopColor="#16a34a" />
-          </linearGradient>
-          <linearGradient id="tcRise3" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#a7f3d0" />
-            <stop offset="100%" stopColor="#22c55e" />
-          </linearGradient>
-          <linearGradient id="tcArrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="60%" stopColor="#86efac" />
-            <stop offset="100%" stopColor="#ffffff" />
-          </linearGradient>
+              {/* Inner Dark Glass Disc */}
+              <circle cx="95" cy="95" r={radius - 10} fill="#04150e" stroke="rgba(74, 222, 128, 0.25)" strokeWidth="1" />
 
-          {/* Glow Filters */}
-          <filter id="tcGlowOuter" x="-10%" y="-10%" width="120%" height="120%">
-            <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#22c55e" floodOpacity="0.25" />
-          </filter>
-          <filter id="tcGlowGreen" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#10b981" floodOpacity="0.8" />
-          </filter>
-          <filter id="tcGlowLime" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#84cc16" floodOpacity="0.8" />
-          </filter>
-          <filter id="tcGlowYellow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#eab308" floodOpacity="0.8" />
-          </filter>
-          <filter id="tcGlowDonut" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#10b981" floodOpacity="0.5" />
-          </filter>
-        </defs>
-
-        {/* 1. OUTER MAIN CONTAINER */}
-        <rect
-          x="18"
-          y="18"
-          width="988"
-          height="484"
-          rx="34"
-          fill="url(#tcOuterBg)"
-          stroke="url(#tcOuterBorder)"
-          strokeWidth="1.6"
-          filter="url(#tcGlowOuter)"
-        />
-
-        {/* Specular Edge Highlight on Container */}
-        <path
-          d="M 52 20 L 972 20"
-          stroke="rgba(255, 255, 255, 0.22)"
-          strokeWidth="1"
-          strokeLinecap="round"
-        />
-
-        {/* Soft Ambient Radial Lights */}
-        <circle cx="120" cy="80" r="160" fill="#10b981" opacity="0.06" filter="blur(40px)" />
-        <circle cx="860" cy="440" r="180" fill="#84cc16" opacity="0.05" filter="blur(50px)" />
-
-        {/* 2. HEADER BAR */}
-        {/* 3D Stacked Layers Icon Badge */}
-        <g transform="translate(44, 38)">
-          <rect
-            width="46"
-            height="46"
-            rx="14"
-            fill="url(#tcLayerBadge)"
-            stroke="rgba(74, 222, 128, 0.5)"
-            strokeWidth="1.4"
-            filter="url(#tcGlowGreen)"
-          />
-          {/* Bottom Layer */}
-          <path d="M23 29 L33 24 L23 19 L13 24 Z" fill="url(#tcLayerBot)" opacity="0.6" />
-          <path d="M13 24 L23 29 L33 24 L33 26 L23 31 L13 26 Z" fill="#047857" opacity="0.9" />
-          {/* Middle Layer */}
-          <path d="M23 24.5 L33 19.5 L23 14.5 L13 19.5 Z" fill="url(#tcLayerMid)" opacity="0.85" />
-          <path d="M13 19.5 L23 24.5 L33 19.5 L33 21.5 L23 26.5 L13 21.5 Z" fill="#059669" opacity="0.9" />
-          {/* Top Layer */}
-          <path d="M23 20 L33 15 L23 10 L13 15 Z" fill="url(#tcLayerTop)" />
-          <path d="M13 15 L23 20 L33 15 L33 17 L23 22 L13 17 Z" fill="#10b981" />
-        </g>
-
-        {/* Title + Subtitle */}
-        <text x="104" y="60" fontSize="23" fontWeight="800" fill="#ffffff" letterSpacing="-0.5">
-          Topic Coverage
-        </text>
-        <text x="104" y="77" fontSize="12.5" fontWeight="500" fill="#a7f3d0" opacity="0.85">
-          Problem distribution across DSA topics
-        </text>
-
-        {/* Legend Filter Pills (Top Right) */}
-        {/* Fundamental */}
-        <g transform="translate(580, 44)">
-          <rect
-            width="126"
-            height="34"
-            rx="17"
-            fill="#062518"
-            stroke="url(#tcPillBorder)"
-            strokeWidth="1.2"
-          />
-          <circle cx="18" cy="17" r="5" fill="#10b981" filter="url(#tcGlowGreen)" />
-          <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
-            Fundamental
-          </text>
-        </g>
-
-        {/* Intermediate */}
-        <g transform="translate(720, 44)">
-          <rect
-            width="134"
-            height="34"
-            rx="17"
-            fill="#0d2813"
-            stroke="url(#tcPillBorder)"
-            strokeWidth="1.2"
-          />
-          <circle cx="18" cy="17" r="5" fill="#84cc16" filter="url(#tcGlowLime)" />
-          <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
-            Intermediate
-          </text>
-        </g>
-
-        {/* Advanced */}
-        <g transform="translate(868, 44)">
-          <rect
-            width="114"
-            height="34"
-            rx="17"
-            fill="#1a2b0e"
-            stroke="url(#tcPillBorder)"
-            strokeWidth="1.2"
-          />
-          <circle cx="18" cy="17" r="5" fill="#eab308" filter="url(#tcGlowYellow)" />
-          <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
-            Advanced
-          </text>
-        </g>
-
-        {/* 3. LEFT SUBCARD: Donut Gauge & Summary */}
-        <g transform="translate(44, 98)">
-          {/* Background Card */}
-          <rect
-            width="224"
-            height="384"
-            rx="24"
-            fill="url(#tcCardBg)"
-            stroke="url(#tcSubBorder)"
-            strokeWidth="1.2"
-          />
-
-          {/* Donut Gauge Visual (Center 112, 106) */}
-          <g transform="translate(112, 106)">
-            {/* Background Track Circle */}
-            <circle cx="0" cy="0" r={radius} fill="none" stroke="#052417" strokeWidth="16" />
-
-            {/* Inner Glass Disc */}
-            <circle cx="0" cy="0" r="54" fill="#04150e" stroke="rgba(74, 222, 128, 0.25)" strokeWidth="1" />
-
-            {/* Arcs rotated from top (-90deg) */}
-            <g transform="rotate(-90)">
               {/* Fundamental Arc */}
               {arcFund > 0 && (
                 <circle
-                  cx="0"
-                  cy="0"
+                  cx="95"
+                  cy="95"
                   r={radius}
                   fill="none"
-                  stroke="url(#tcDonutFund)"
+                  stroke="url(#dFundGrad)"
                   strokeWidth="16"
                   strokeDasharray={`${arcFund} ${circumference}`}
                   strokeDashoffset={0}
                   strokeLinecap="round"
-                  filter="url(#tcGlowDonut)"
+                  filter="url(#dGlow)"
+                  className="transition-all duration-700 ease-out"
                 />
               )}
 
               {/* Intermediate Arc */}
               {arcInter > 0 && (
                 <circle
-                  cx="0"
-                  cy="0"
+                  cx="95"
+                  cy="95"
                   r={radius}
                   fill="none"
-                  stroke="url(#tcDonutInter)"
+                  stroke="url(#dInterGrad)"
                   strokeWidth="16"
                   strokeDasharray={`${arcInter} ${circumference}`}
                   strokeDashoffset={-fundLen}
                   strokeLinecap="round"
-                  filter="url(#tcGlowDonut)"
+                  filter="url(#dGlow)"
+                  className="transition-all duration-700 ease-out"
                 />
               )}
 
               {/* Advanced Arc */}
               {arcAdv > 0 && (
                 <circle
-                  cx="0"
-                  cy="0"
+                  cx="95"
+                  cy="95"
                   r={radius}
                   fill="none"
-                  stroke="url(#tcDonutAdv)"
+                  stroke="url(#dAdvGrad)"
                   strokeWidth="16"
                   strokeDasharray={`${arcAdv} ${circumference}`}
                   strokeDashoffset={-(fundLen + interLen)}
                   strokeLinecap="round"
-                  filter="url(#tcGlowDonut)"
+                  filter="url(#dGlow)"
+                  className="transition-all duration-700 ease-out"
                 />
               )}
-            </g>
+            </svg>
 
-            {/* Center Content: </> Badge, Total Count, Label */}
-            <rect
-              x="-15"
-              y="-38"
-              width="30"
-              height="18"
-              rx="5"
-              fill="#062a1b"
-              stroke="rgba(74, 222, 128, 0.5)"
-              strokeWidth="1"
-            />
-            <text x="0" y="-25" textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#6ee7b7" fontFamily="monospace">
-              &lt;/&gt;
-            </text>
-
-            <text x="0" y="8" textAnchor="middle" fontSize="38" fontWeight="900" fill="#ffffff" letterSpacing="-1">
-              {totalProblems}
-            </text>
-
-            <text x="0" y="27" textAnchor="middle" fontSize="11" fontWeight="600" fill="#86efac" opacity="0.8">
-              Total Problems
-            </text>
-          </g>
+            {/* Center Content Inside Donut */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none select-none">
+              {/* </> Code Badge */}
+              <div className="px-2 py-0.5 rounded-md bg-[#062a1b] border border-emerald-500/50 text-emerald-300 font-mono text-[11px] font-black shadow-[0_0_8px_rgba(16,185,129,0.35)] mb-1">
+                &lt;/&gt;
+              </div>
+              <div className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-none">
+                {totalProblems}
+              </div>
+              <div className="text-[11px] font-bold text-emerald-200/80 mt-1">
+                Total Problems
+              </div>
+            </div>
+          </div>
 
           {/* Breakdown Percentage Rows */}
-          {/* Row 1: Fundamental */}
-          <circle cx="24" cy="214" r="4.5" fill="#10b981" filter="url(#tcGlowGreen)" />
-          <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e6fffa">
-            Fundamental
-          </text>
-          <text x="204" y="218" textAnchor="end" fontSize="12.5" fontWeight="800" fill="#ffffff">
-            {fundSolved}{" "}
-            <tspan fontWeight="500" fill="#86efac" opacity="0.85">
-              ({fundPct.toFixed(1)}%)
-            </tspan>
-          </text>
+          <div className="space-y-3 mt-5">
+            {/* Fundamental */}
+            <div className="flex items-center justify-between text-xs sm:text-sm">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981]" />
+                <span className="font-semibold text-emerald-100">Fundamental</span>
+              </div>
+              <span className="font-black text-white tracking-wide">
+                {fundSolved}{" "}
+                <span className="font-normal text-emerald-300/85">({fundPct.toFixed(1)}%)</span>
+              </span>
+            </div>
 
-          {/* Row 2: Intermediate */}
-          <circle cx="24" cy="242" r="4.5" fill="#84cc16" filter="url(#tcGlowLime)" />
-          <text x="36" y="246" fontSize="12" fontWeight="600" fill="#e6fffa">
-            Intermediate
-          </text>
-          <text x="204" y="246" textAnchor="end" fontSize="12.5" fontWeight="800" fill="#ffffff">
-            {interSolved}{" "}
-            <tspan fontWeight="500" fill="#bef264" opacity="0.85">
-              ({interPct.toFixed(1)}%)
-            </tspan>
-          </text>
+            {/* Intermediate */}
+            <div className="flex items-center justify-between text-xs sm:text-sm">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#84cc16] shadow-[0_0_8px_#84cc16]" />
+                <span className="font-semibold text-emerald-100">Intermediate</span>
+              </div>
+              <span className="font-black text-white tracking-wide">
+                {interSolved}{" "}
+                <span className="font-normal text-lime-300/85">({interPct.toFixed(1)}%)</span>
+              </span>
+            </div>
 
-          {/* Row 3: Advanced */}
-          <circle cx="24" cy="270" r="4.5" fill="#eab308" filter="url(#tcGlowYellow)" />
-          <text x="36" y="274" fontSize="12" fontWeight="600" fill="#e6fffa">
-            Advanced
-          </text>
-          <text x="204" y="274" textAnchor="end" fontSize="12.5" fontWeight="800" fill="#ffffff">
-            {advSolved}{" "}
-            <tspan fontWeight="500" fill="#fde047" opacity="0.85">
-              ({advPct.toFixed(1)}%)
-            </tspan>
-          </text>
+            {/* Advanced */}
+            <div className="flex items-center justify-between text-xs sm:text-sm">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#eab308] shadow-[0_0_8px_#eab308]" />
+                <span className="font-semibold text-emerald-100">Advanced</span>
+              </div>
+              <span className="font-black text-white tracking-wide">
+                {advSolved}{" "}
+                <span className="font-normal text-yellow-300/85">({advPct.toFixed(1)}%)</span>
+              </span>
+            </div>
+          </div>
 
-          {/* Bottom 3-Stat Strip Box */}
-          <g transform="translate(10, 304)">
-            <rect
-              width="204"
-              height="66"
-              rx="15"
-              fill="#03150e"
-              stroke="rgba(74, 222, 128, 0.22)"
-              strokeWidth="1"
-            />
-            {/* Dividers */}
-            <line x1="68" y1="12" x2="68" y2="54" stroke="rgba(74, 222, 128, 0.2)" strokeWidth="1" />
-            <line x1="136" y1="12" x2="136" y2="54" stroke="rgba(74, 222, 128, 0.2)" strokeWidth="1" />
+          {/* Mini 3-Stat Bottom Strip */}
+          <div className="mt-6 pt-3.5 border-t border-emerald-500/20 grid grid-cols-3 divide-x divide-emerald-500/20 text-center rounded-xl p-2.5 border border-emerald-500/20 bg-[#03150e]/90 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
+            <div className="px-1">
+              <div className="text-base font-black text-white">{displayTopics.length}</div>
+              <div className="text-[10px] font-bold text-emerald-300/75 uppercase tracking-wider mt-0.5">
+                Topics
+              </div>
+            </div>
+            <div className="px-1">
+              <div className="text-base font-black text-white">{totalProblems}</div>
+              <div className="text-[10px] font-bold text-emerald-300/75 uppercase tracking-wider mt-0.5">
+                Problems
+              </div>
+            </div>
+            <div className="px-1">
+              <div className="text-base font-black text-white">{fundPct.toFixed(1)}%</div>
+              <div className="text-[10px] font-bold text-emerald-300/75 uppercase tracking-wider mt-0.5 truncate">
+                Fundamental
+              </div>
+            </div>
+          </div>
+        </div>
 
-            {/* Stat 1: Topics */}
-            <text x="34" y="32" textAnchor="middle" fontSize="16" fontWeight="900" fill="#ffffff">
-              {displayTopics.length}
-            </text>
-            <text x="34" y="48" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
-              Topics
-            </text>
+        {/* RIGHT COLUMN: Vertical Bar Chart & Bottom Cards (Col 5-12) */}
+        <div className="lg:col-span-8 xl:col-span-8.5 flex flex-col gap-4">
+          {/* TOP CARD: Stylized Vertical Bar Chart */}
+          <div className="rounded-2xl p-5 sm:p-6 border border-emerald-500/30 bg-gradient-to-br from-[#07281c]/80 to-[#03150e]/90 backdrop-blur-xl shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+            {/* Chart Area with Y-Axis and Bars */}
+            <div className="relative flex items-stretch gap-2.5 overflow-x-auto pb-2 scrollbar-thin">
+              {/* Y-Axis */}
+              <div className="flex flex-col justify-between items-end pr-2.5 pb-20 text-right select-none border-r border-emerald-500/35 min-w-[28px] h-[220px]">
+                {yTicks.map((tick, i) => (
+                  <span key={i} className="text-[11px] font-bold text-emerald-200/85 leading-none">
+                    {tick}
+                  </span>
+                ))}
+              </div>
 
-            {/* Stat 2: Problems */}
-            <text x="102" y="32" textAnchor="middle" fontSize="16" fontWeight="900" fill="#ffffff">
-              {totalProblems}
-            </text>
-            <text x="102" y="48" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
-              Problems
-            </text>
+              {/* Grid Lines + 12 Bars Container */}
+              <div className="relative flex-1 flex items-end justify-between gap-2 sm:gap-3.5 min-w-[580px] h-[220px] pb-20">
+                {/* Horizontal Reference Grid Lines */}
+                <div className="pointer-events-none absolute inset-x-0 top-0 bottom-20 flex flex-col justify-between">
+                  {yTicks.slice(0, 5).map((_, i) => (
+                    <div key={i} className="w-full border-b border-emerald-500/10 border-dashed" />
+                  ))}
+                  <div className="w-full border-b border-emerald-500/35" />
+                </div>
 
-            {/* Stat 3: Fundamental % */}
-            <text x="170" y="32" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
-              {fundPct.toFixed(1)}%
-            </text>
-            <text x="170" y="48" textAnchor="middle" fontSize="9" fontWeight="700" fill="#6ee7b7" opacity="0.8">
-              Fundamental
-            </text>
-          </g>
-        </g>
+                {/* Vertical Topic Bars */}
+                {top12.map((item, idx) => {
+                  const barHeightPct = Math.min(100, Math.max(10, (item.solved / yMax) * 100));
 
-        {/* 4. CENTER/RIGHT TOP: Vertical Bar Chart */}
-        <g transform="translate(282, 98)">
-          {/* Background Card */}
-          <rect
-            width="698"
-            height="256"
-            rx="24"
-            fill="url(#tcCardBg)"
-            stroke="url(#tcSubBorder)"
-            strokeWidth="1.2"
-          />
+                  const isFund = item.level === "fundamental";
+                  const isInter = item.level === "intermediate";
 
-          {/* Y-Axis Line */}
-          <line x1="44" y1="30" x2="44" y2="152" stroke="rgba(74, 222, 128, 0.38)" strokeWidth="1.2" />
+                  const barBg = isFund
+                    ? "linear-gradient(to top, #047857 0%, #059669 45%, #34d399 100%)"
+                    : isInter
+                    ? "linear-gradient(to top, #4d7c0f 0%, #65a30d 45%, #a3e635 100%)"
+                    : "linear-gradient(to top, #a16207 0%, #ca8a04 45%, #facc15 100%)";
 
-          {/* Horizontal Reference Lines & Y-Axis Ticks */}
-          {yTicks.map((t, idx) => (
-            <g key={idx}>
-              <line
-                x1="44"
-                y1={t.y - 98}
-                x2="676"
-                y2={t.y - 98}
-                stroke="rgba(74, 222, 128, 0.1)"
-                strokeDasharray={t.val === 0 ? "none" : "3 3"}
-                strokeWidth={t.val === 0 ? "1.4" : "1"}
-              />
-              <line x1="40" y1={t.y - 98} x2="44" y2={t.y - 98} stroke="rgba(74, 222, 128, 0.4)" strokeWidth="1.2" />
-              <text
-                x="34"
-                y={t.y - 98 + 4}
-                textAnchor="end"
-                fontSize="11"
-                fontWeight="700"
-                fill="#a7f3d0"
-                opacity="0.85"
-              >
-                {t.val}
-              </text>
-            </g>
-          ))}
+                  const barGlow = isFund
+                    ? "0 0 14px rgba(52, 211, 153, 0.5)"
+                    : isInter
+                    ? "0 0 14px rgba(163, 230, 53, 0.5)"
+                    : "0 0 14px rgba(250, 204, 21, 0.5)";
 
-          {/* 12 Vertical Topic Columns */}
-          {top12.map((item, i) => {
-            const colX = 70 + i * 50.8;
-            const barHeight = Math.max(8, (item.solved / yMax) * 118);
-            const barY = 152 - barHeight;
+                  const [labelLine1, labelLine2] = splitTopicLabel(item.tag);
 
-            // Pick color gradient based on level
-            const isFund = item.level === "fundamental";
-            const isInter = item.level === "intermediate";
-            const barFill = isFund ? "url(#tcBarFund)" : isInter ? "url(#tcBarInter)" : "url(#tcBarAdv)";
-            const [labelLine1, labelLine2] = splitTopicLabel(item.tag);
+                  return (
+                    <div
+                      key={item.tag + idx}
+                      onMouseEnter={() => setHoveredTopic(item)}
+                      onMouseLeave={() => setHoveredTopic(null)}
+                      className="relative flex-1 flex flex-col items-center justify-end h-full group z-10 cursor-pointer"
+                    >
+                      {/* Number Above Bar */}
+                      <span className="text-xs sm:text-sm font-black text-white mb-1.5 transition-transform group-hover:scale-125">
+                        {item.solved}
+                      </span>
 
-            return (
-              <g key={item.tag + i}>
-                {/* Count Number on top of bar */}
-                <text
-                  x={colX}
-                  y={barY - 5}
-                  textAnchor="middle"
-                  fontSize="12.5"
-                  fontWeight="800"
-                  fill="#ffffff"
-                >
-                  {item.solved}
-                </text>
+                      {/* The 3D Glass Bar */}
+                      <div
+                        className="relative w-full max-w-[34px] min-w-[24px] rounded-t-lg rounded-b-sm transition-all duration-500 ease-out group-hover:brightness-125"
+                        style={{
+                          height: `${barHeightPct}%`,
+                          background: barBg,
+                          boxShadow: barGlow,
+                        }}
+                      >
+                        {/* Specular highlight down the left edge */}
+                        <div className="absolute top-1 left-1 w-1 h-[calc(100%-8px)] bg-white/35 rounded-full blur-[0.5px]" />
+                      </div>
 
-                {/* Vertical Bar */}
-                <rect
-                  x={colX - 15}
-                  y={barY}
-                  width="30"
-                  height={barHeight}
-                  rx="6"
-                  fill={barFill}
-                  stroke="rgba(255, 255, 255, 0.15)"
-                  strokeWidth="0.8"
-                />
+                      {/* Bottom Section: Rounded Icon Box + Label */}
+                      <div className="absolute top-[148px] flex flex-col items-center">
+                        {/* Rounded Square Icon Box */}
+                        <div className="w-8 h-8 rounded-lg bg-[#07251a]/95 border border-emerald-400/50 flex items-center justify-center text-emerald-300 shadow-[0_0_10px_rgba(52,211,153,0.3)] transition-all duration-300 group-hover:border-emerald-300 group-hover:scale-110">
+                          {renderTopicIcon(item.tag)}
+                        </div>
 
-                {/* 3D Specular Highlight down the left side */}
-                <rect
-                  x={colX - 13}
-                  y={barY + 2}
-                  width="2.5"
-                  height={Math.max(2, barHeight - 4)}
-                  rx="1"
-                  fill="#ffffff"
-                  opacity="0.28"
-                />
+                        {/* Centered Topic Name (2 lines) */}
+                        <div className="text-[10px] sm:text-[10.5px] font-bold text-emerald-100/90 text-center leading-tight mt-1 max-w-[56px] truncate">
+                          <div>{labelLine1}</div>
+                          {labelLine2 && <div>{labelLine2}</div>}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
 
-                {/* Rounded Square Icon Box below baseline */}
-                <rect
-                  x={colX - 15}
-                  y="166"
-                  width="30"
-                  height="30"
-                  rx="8"
-                  fill="#07251a"
-                  stroke="rgba(74, 222, 128, 0.45)"
-                  strokeWidth="1.2"
-                />
+            {/* Real-time Tooltip on Hover */}
+            {hoveredTopic && (
+              <div className="mt-2 text-center text-xs font-semibold text-emerald-200 bg-emerald-950/60 rounded-lg py-1 border border-emerald-500/20">
+                <span className="text-white font-bold">{hoveredTopic.tag}</span>: {hoveredTopic.solved} solved ({hoveredTopic.level.toUpperCase()} • {((hoveredTopic.solved / totalProblems) * 100).toFixed(1)}% of total)
+              </div>
+            )}
+          </div>
 
-                {/* Topic Vector Icon */}
-                {renderTopicIcon(item.tag, colX - 10, 171)}
+          {/* BOTTOM ROW: "Top Covered Topics" & "Coverage Insight" */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 1. TOP COVERED TOPICS CARD */}
+            <div className="rounded-2xl p-4 sm:p-5 border border-emerald-500/30 bg-gradient-to-br from-[#07281c]/80 to-[#03150e]/90 backdrop-blur-xl shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+              {/* Header with Bullseye Target Icon */}
+              <div className="flex items-center gap-2">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 drop-shadow-[0_0_8px_rgba(74,222,128,0.6)]">
+                  <circle cx="12" cy="12" r="10" stroke="#34d399" strokeWidth="2" />
+                  <circle cx="12" cy="12" r="6" stroke="#34d399" strokeWidth="1.8" />
+                  <circle cx="12" cy="12" r="2.5" fill="#34d399" />
+                </svg>
+                <h3 className="text-sm sm:text-base font-black text-white tracking-tight">
+                  Top Covered Topics
+                </h3>
+              </div>
 
-                {/* Topic Name Label (Centered, 2 lines if needed) */}
-                <text
-                  x={colX}
-                  y="210"
-                  textAnchor="middle"
-                  fontSize="9.5"
-                  fontWeight="700"
-                  fill="#d1fae5"
-                >
-                  {labelLine1}
-                </text>
-                {labelLine2 && (
-                  <text
-                    x={colX}
-                    y="221"
-                    textAnchor="middle"
-                    fontSize="9.5"
-                    fontWeight="700"
-                    fill="#d1fae5"
-                  >
-                    {labelLine2}
-                  </text>
+              {/* 3 Real Badges */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mt-3.5">
+                {/* 1st Place */}
+                {top3[0] && (
+                  <div className="flex flex-col items-center sm:items-start p-2.5 rounded-2xl border border-emerald-400/50 bg-[#08291a]/95 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-transform hover:scale-105">
+                    <div className="flex items-center gap-1.5 w-full">
+                      {/* Golden Trophy Icon Badge */}
+                      <div className="w-6 h-6 rounded-full bg-[#047857] border border-[#34d399] flex items-center justify-center shrink-0">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                          <path d="M8 7h8v3a4 4 0 0 1-8 0V7z" fill="#facc15" stroke="#eab308" strokeWidth="1" />
+                          <path d="M8 8H6a2 2 0 0 0 2 2v-2zm8 0h2a2 2 0 0 1-2 2v-2z" fill="#fde047" />
+                          <path d="M11 14h2v3h-2z" fill="#facc15" />
+                          <path d="M9 17h6v1.5h-6z" fill="#ca8a04" />
+                        </svg>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[11px] font-bold text-white truncate">{top3[0].tag}</div>
+                        <div className="text-xs font-black text-[#34d399]">({top3[0].solved})</div>
+                      </div>
+                    </div>
+                    {/* Mini Real Progress Line */}
+                    <div className="w-full h-1 bg-[#052417] rounded-full mt-2 overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-emerald-500 to-lime-400 rounded-full" style={{ width: "100%" }} />
+                    </div>
+                  </div>
                 )}
-              </g>
-            );
-          })}
-        </g>
 
-        {/* 5. BOTTOM LEFT/CENTER: Top Covered Topics */}
-        <g transform="translate(282, 368)">
-          {/* Background Card */}
-          <rect
-            width="338"
-            height="114"
-            rx="20"
-            fill="url(#tcCardBg)"
-            stroke="url(#tcSubBorder)"
-            strokeWidth="1.2"
-          />
-
-          {/* Header with Target / Bullseye Icon */}
-          <g transform="translate(18, 16)">
-            <circle cx="8" cy="8" r="8" stroke="#34d399" strokeWidth="1.8" fill="none" />
-            <circle cx="8" cy="8" r="4.8" stroke="#34d399" strokeWidth="1.5" fill="none" />
-            <circle cx="8" cy="8" r="1.8" fill="#34d399" />
-            <text x="24" y="12" fontSize="13.5" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
-              Top Covered Topics
-            </text>
-          </g>
-
-          {/* 3 Pill Badges */}
-          {/* Badge 1 (1st place) */}
-          {top3[0] && (() => {
-            const [t1w1, t1w2] = splitTopicLabel(top3[0].tag);
-            return (
-              <g transform="translate(14, 46)">
-                <rect
-                  width="98"
-                  height="52"
-                  rx="14"
-                  fill="#08291a"
-                  stroke="url(#tcPillBorder)"
-                  strokeWidth="1.2"
-                />
-                {/* Golden Trophy Icon Badge */}
-                <circle cx="18" cy="26" r="10.5" fill="#047857" stroke="#34d399" strokeWidth="1.2" />
-                <path d="M14 21h8v3a4 4 0 0 1-8 0v-3z" fill="#facc15" stroke="#eab308" strokeWidth="0.8" />
-                <path d="M14 22h-2a2 2 0 0 0 2 2v-2zm8 0h2a2 2 0 0 1-2 2v-2z" fill="#fde047" />
-                <path d="M17 28h2v3h-2z" fill="#facc15" />
-                <path d="M15 31h6v1.5h-6z" fill="#ca8a04" />
-
-                {/* Text */}
-                {t1w2 ? (
-                  <>
-                    <text x="33" y="19" fontSize="8.5" fontWeight="700" fill="#ffffff">
-                      {t1w1}
-                    </text>
-                    <text x="33" y="29" fontSize="8.5" fontWeight="700" fill="#ffffff">
-                      {t1w2}
-                    </text>
-                    <text x="33" y="44" fontSize="10.5" fontWeight="800" fill="#34d399">
-                      ({top3[0].solved})
-                    </text>
-                  </>
-                ) : (
-                  <>
-                    <text x="33" y="24" fontSize="10.5" fontWeight="700" fill="#ffffff">
-                      {t1w1}
-                    </text>
-                    <text x="33" y="40" fontSize="11" fontWeight="800" fill="#34d399">
-                      ({top3[0].solved})
-                    </text>
-                  </>
+                {/* 2nd Place */}
+                {top3[1] && (
+                  <div className="flex flex-col items-center sm:items-start p-2.5 rounded-2xl border border-emerald-400/50 bg-[#08291a]/95 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-transform hover:scale-105">
+                    <div className="flex items-center gap-1.5 w-full">
+                      {/* Lime Medal Icon Badge */}
+                      <div className="w-6 h-6 rounded-full bg-[#065f46] border border-[#4ade80] flex items-center justify-center shrink-0">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                          <circle cx="12" cy="14" r="5" fill="#22c55e" stroke="#86efac" strokeWidth="1" />
+                          <path d="M12 11.5l0.8 1.6 1.8 0.3-1.3 1.3 0.3 1.8-1.6-0.8-1.6 0.8 0.3-1.8-1.3-1.3 1.8-0.3z" fill="#ffffff" />
+                        </svg>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[11px] font-bold text-white truncate">{top3[1].tag}</div>
+                        <div className="text-xs font-black text-[#34d399]">({top3[1].solved})</div>
+                      </div>
+                    </div>
+                    {/* Mini Real Progress Line */}
+                    <div className="w-full h-1 bg-[#052417] rounded-full mt-2 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-emerald-500 to-lime-400 rounded-full"
+                        style={{ width: `${top3[0] ? (top3[1].solved / top3[0].solved) * 100 : 80}%` }}
+                      />
+                    </div>
+                  </div>
                 )}
-              </g>
-            );
-          })()}
 
-          {/* Badge 2 (2nd place) */}
-          {top3[1] && (() => {
-            const [t2w1, t2w2] = splitTopicLabel(top3[1].tag);
-            return (
-              <g transform="translate(120, 46)">
-                <rect
-                  width="102"
-                  height="52"
-                  rx="14"
-                  fill="#08291a"
-                  stroke="url(#tcPillBorder)"
-                  strokeWidth="1.2"
-                />
-                {/* Lime Medal Icon Badge */}
-                <circle cx="18" cy="26" r="10.5" fill="#065f46" stroke="#4ade80" strokeWidth="1.2" />
-                <path d="M15 18l3 4 3-4" stroke="#a7f3d0" strokeWidth="1.2" strokeLinecap="round" />
-                <circle cx="18" cy="26" r="4.5" fill="#22c55e" stroke="#86efac" strokeWidth="0.8" />
-                <path d="M18 24l0.6 1.3 1.4 0.2-1 1 0.2 1.4-1.2-0.6-1.2 0.6 0.2-1.4-1-1 1.4-0.2z" fill="#ffffff" />
-
-                {/* Text */}
-                {t2w2 ? (
-                  <>
-                    <text x="33" y="19" fontSize="8.5" fontWeight="700" fill="#ffffff">
-                      {t2w1}
-                    </text>
-                    <text x="33" y="29" fontSize="8.5" fontWeight="700" fill="#ffffff">
-                      {t2w2}
-                    </text>
-                    <text x="33" y="44" fontSize="10.5" fontWeight="800" fill="#34d399">
-                      ({top3[1].solved})
-                    </text>
-                  </>
-                ) : (
-                  <>
-                    <text x="33" y="24" fontSize="10.5" fontWeight="700" fill="#ffffff">
-                      {t2w1}
-                    </text>
-                    <text x="33" y="40" fontSize="11" fontWeight="800" fill="#34d399">
-                      ({top3[1].solved})
-                    </text>
-                  </>
+                {/* 3rd Place */}
+                {top3[2] && (
+                  <div className="flex flex-col items-center sm:items-start p-2.5 rounded-2xl border border-emerald-400/50 bg-[#08291a]/95 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-transform hover:scale-105">
+                    <div className="flex items-center gap-1.5 w-full">
+                      {/* Lime Medal Icon Badge */}
+                      <div className="w-6 h-6 rounded-full bg-[#065f46] border border-[#4ade80] flex items-center justify-center shrink-0">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                          <circle cx="12" cy="14" r="5" fill="#22c55e" stroke="#86efac" strokeWidth="1" />
+                          <path d="M12 11.5l0.8 1.6 1.8 0.3-1.3 1.3 0.3 1.8-1.6-0.8-1.6 0.8 0.3-1.8-1.3-1.3 1.8-0.3z" fill="#ffffff" />
+                        </svg>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[11px] font-bold text-white truncate">{top3[2].tag}</div>
+                        <div className="text-xs font-black text-[#34d399]">({top3[2].solved})</div>
+                      </div>
+                    </div>
+                    {/* Mini Real Progress Line */}
+                    <div className="w-full h-1 bg-[#052417] rounded-full mt-2 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-emerald-500 to-lime-400 rounded-full"
+                        style={{ width: `${top3[0] ? (top3[2].solved / top3[0].solved) * 100 : 60}%` }}
+                      />
+                    </div>
+                  </div>
                 )}
-              </g>
-            );
-          })()}
+              </div>
+            </div>
 
-          {/* Badge 3 (3rd place) */}
-          {top3[2] && (() => {
-            const [t3w1, t3w2] = splitTopicLabel(top3[2].tag);
-            return (
-              <g transform="translate(230, 46)">
-                <rect
-                  width="96"
-                  height="52"
-                  rx="14"
-                  fill="#08291a"
-                  stroke="url(#tcPillBorder)"
-                  strokeWidth="1.2"
-                />
-                {/* Lime Medal Icon Badge */}
-                <circle cx="18" cy="26" r="10.5" fill="#065f46" stroke="#4ade80" strokeWidth="1.2" />
-                <path d="M15 18l3 4 3-4" stroke="#a7f3d0" strokeWidth="1.2" strokeLinecap="round" />
-                <circle cx="18" cy="26" r="4.5" fill="#22c55e" stroke="#86efac" strokeWidth="0.8" />
-                <path d="M18 24l0.6 1.3 1.4 0.2-1 1 0.2 1.4-1.2-0.6-1.2 0.6 0.2-1.4-1-1 1.4-0.2z" fill="#ffffff" />
+            {/* 2. COVERAGE INSIGHT CARD (With REAL Graphical Data) */}
+            <div className="rounded-2xl p-4 sm:p-5 border border-emerald-500/30 bg-gradient-to-br from-[#07281c]/80 to-[#03150e]/90 backdrop-blur-xl shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3">
+              {/* Left Side: Real-time Prose Commentary */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <div className="flex items-end gap-0.5 h-4">
+                    <span className="w-1 h-2 rounded-sm bg-[#34d399] shadow-[0_0_6px_#34d399]" />
+                    <span className="w-1 h-3 rounded-sm bg-[#4ade80] shadow-[0_0_6px_#4ade80]" />
+                    <span className="w-1 h-4 rounded-sm bg-[#86efac] shadow-[0_0_6px_#86efac]" />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-black text-white tracking-tight">
+                    Coverage Insight
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-[13px] text-emerald-100/90 leading-relaxed font-medium">
+                  Most problems are <span className="font-bold text-white">{dominant.name}</span> ({dominant.pct.toFixed(1)}%), with a good mix of <span className="font-bold text-white">{second.name}</span> ({second.pct.toFixed(1)}%) and <span className="font-bold text-white">{third.name}</span> ({third.pct.toFixed(1)}%).
+                </p>
+              </div>
 
-                {/* Text */}
-                {t3w2 ? (
-                  <>
-                    <text x="33" y="19" fontSize="8.5" fontWeight="700" fill="#ffffff">
-                      {t3w1}
-                    </text>
-                    <text x="33" y="29" fontSize="8.5" fontWeight="700" fill="#ffffff">
-                      {t3w2}
-                    </text>
-                    <text x="33" y="44" fontSize="10.5" fontWeight="800" fill="#34d399">
-                      ({top3[2].solved})
-                    </text>
-                  </>
-                ) : (
-                  <>
-                    <text x="33" y="24" fontSize="10.5" fontWeight="700" fill="#ffffff">
-                      {t3w1}
-                    </text>
-                    <text x="33" y="40" fontSize="11" fontWeight="800" fill="#34d399">
-                      ({top3[2].solved})
-                    </text>
-                  </>
-                )}
-              </g>
-            );
-          })()}
-        </g>
+              {/* Right Side: REAL Dynamic Graphical Tier Chart + Glowing Neon Upward Arrow */}
+              <div className="relative shrink-0 flex items-end justify-center w-24 h-20 select-none">
+                <svg width="96" height="80" viewBox="0 0 96 80" fill="none" className="drop-shadow-[0_0_16px_rgba(74,222,128,0.6)]">
+                  <defs>
+                    <linearGradient id="realBar1" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#4ade80" />
+                      <stop offset="100%" stopColor="#15803d" />
+                    </linearGradient>
+                    <linearGradient id="realBar2" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#86efac" />
+                      <stop offset="100%" stopColor="#16a34a" />
+                    </linearGradient>
+                    <linearGradient id="realBar3" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#fde047" />
+                      <stop offset="100%" stopColor="#ca8a04" />
+                    </linearGradient>
+                    <linearGradient id="realArrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#22c55e" />
+                      <stop offset="50%" stopColor="#86efac" />
+                      <stop offset="100%" stopColor="#ffffff" />
+                    </linearGradient>
+                    <filter id="realGlow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#86efac" floodOpacity="0.8" />
+                    </filter>
+                  </defs>
 
-        {/* 6. BOTTOM RIGHT: Coverage Insight */}
-        <g transform="translate(634, 368)">
-          {/* Background Card */}
-          <rect
-            width="346"
-            height="114"
-            rx="20"
-            fill="url(#tcCardBg)"
-            stroke="url(#tcSubBorder)"
-            strokeWidth="1.2"
-          />
+                  {/* 3 Real Graphical Tier Pillars */}
+                  {/* Pillar 1: Fundamental (Real % Height) */}
+                  <g>
+                    <rect
+                      x="10"
+                      y={70 - hFund}
+                      width="15"
+                      height={hFund}
+                      rx="4"
+                      fill="url(#realBar1)"
+                      stroke="rgba(255, 255, 255, 0.2)"
+                      strokeWidth="0.8"
+                    />
+                    {/* Specular highlight line */}
+                    <rect x="12" y={72 - hFund} width="2" height={Math.max(2, hFund - 4)} rx="1" fill="#ffffff" opacity="0.35" />
+                  </g>
 
-          {/* Header with 3-Bar Chart Icon */}
-          <g transform="translate(18, 16)">
-            <rect x="0" y="8" width="3.5" height="8" rx="1" fill="#34d399" />
-            <rect x="5.5" y="4" width="3.5" height="12" rx="1" fill="#4ade80" />
-            <rect x="11" y="0" width="3.5" height="16" rx="1" fill="#86efac" />
-            <text x="22" y="12" fontSize="13.5" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
-              Coverage Insight
-            </text>
-          </g>
+                  {/* Pillar 2: Intermediate (Real % Height) */}
+                  <g>
+                    <rect
+                      x="34"
+                      y={70 - hInter}
+                      width="15"
+                      height={hInter}
+                      rx="4"
+                      fill="url(#realBar2)"
+                      stroke="rgba(255, 255, 255, 0.2)"
+                      strokeWidth="0.8"
+                    />
+                    {/* Specular highlight line */}
+                    <rect x="36" y={72 - hInter} width="2" height={Math.max(2, hInter - 4)} rx="1" fill="#ffffff" opacity="0.35" />
+                  </g>
 
-          {/* Dynamic Insight Prose based on actual percentages */}
-          <text x="18" y="48" fontSize="11" fontWeight="500" fill="#d1fae5" opacity="0.9">
-            <tspan x="18" dy="0">
-              Most problems are {dominant.name} ({dominant.pct.toFixed(1)}%),
-            </tspan>
-            <tspan x="18" dy="16">
-              with a good mix of {second.name} ({second.pct.toFixed(1)}%)
-            </tspan>
-            <tspan x="18" dy="16">
-              and {third.name} ({third.pct.toFixed(1)}%).
-            </tspan>
-          </text>
+                  {/* Pillar 3: Advanced (Real % Height) */}
+                  <g>
+                    <rect
+                      x="58"
+                      y={70 - hAdv}
+                      width="15"
+                      height={hAdv}
+                      rx="4"
+                      fill="url(#realBar3)"
+                      stroke="rgba(255, 255, 255, 0.2)"
+                      strokeWidth="0.8"
+                    />
+                    {/* Specular highlight line */}
+                    <rect x="60" y={72 - hAdv} width="2" height={Math.max(2, hAdv - 4)} rx="1" fill="#ffffff" opacity="0.35" />
+                  </g>
 
-          {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic */}
-          <g transform="translate(254, 26)">
-            {/* Pillar 1 (Short) */}
-            <rect x="8" y="46" width="14" height="20" rx="3.5" fill="url(#tcRise1)" />
-            <rect x="9.5" y="47.5" width="2" height="17" rx="1" fill="#ffffff" opacity="0.3" />
-
-            {/* Pillar 2 (Medium) */}
-            <rect x="28" y="30" width="14" height="36" rx="3.5" fill="url(#tcRise2)" />
-            <rect x="29.5" y="31.5" width="2" height="33" rx="1" fill="#ffffff" opacity="0.3" />
-
-            {/* Pillar 3 (Tall) */}
-            <rect x="48" y="14" width="14" height="52" rx="3.5" fill="url(#tcRise3)" />
-            <rect x="49.5" y="15.5" width="2" height="49" rx="1" fill="#ffffff" opacity="0.3" />
-
-            {/* Upward swooping glowing neon-lime arrow */}
-            <path
-              d="M8 42 C 24 34, 46 22, 68 8"
-              stroke="url(#tcArrowGrad)"
-              strokeWidth="4.5"
-              strokeLinecap="round"
-              fill="none"
-              filter="url(#tcGlowLime)"
-            />
-            <polygon points="68,4 75,11 63,13" fill="#ffffff" filter="url(#tcGlowLime)" />
-          </g>
-        </g>
-      </svg>
+                  {/* Glowing Real Trend Line & Arrowhead */}
+                  {/* Tracing a sleek upward trajectory */}
+                  <path
+                    d={`M 10 52 C 34 38, 58 24, 82 8`}
+                    stroke="url(#realArrowGrad)"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    fill="none"
+                    filter="url(#realGlow)"
+                  />
+                  {/* Arrowhead */}
+                  <polygon points="82,4 89,10 78,13" fill="#ffffff" filter="url(#realGlow)" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
