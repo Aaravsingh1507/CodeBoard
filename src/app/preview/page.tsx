@@ -395,11 +395,8 @@ export default function PreviewPage() {
             )}
 
             {liveLeetcode && (
-              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-                <Card className="p-5">
-                  <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Topic coverage</h3>
-                  <TopicBreakdown topics={liveLeetcode.topicBreakdown ?? []} />
-                </Card>
+              <div className="space-y-6">
+                <TopicBreakdown topics={liveLeetcode.topicBreakdown ?? []} />
 
                 <Card className="p-5">
                   <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Recent submissions</h3>

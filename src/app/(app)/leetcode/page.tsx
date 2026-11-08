@@ -57,14 +57,7 @@ export default function LeetcodePage() {
             loading={loading}
           />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Topic coverage</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TopicBreakdown topics={data.topicBreakdown ?? []} />
-            </CardContent>
-          </Card>
+          <TopicBreakdown topics={data.topicBreakdown ?? []} />
 
           <Card>
             <CardHeader>
