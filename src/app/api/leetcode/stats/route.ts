@@ -11,14 +11,26 @@ export async function GET(req: Request) {
   // Check auth optionally
   const { user } = await requireUser();
 
-  // Determine target username: query param -> authenticated user's setting -> default demo account
-  const username = queryUsername || user?.leetcodeUsername || "aarav_singh";
+  // Determine target username: query param -> authenticated user's setting (NO FAKE PRELOADED DEFAULT)
+  const username = queryUsername || user?.leetcodeUsername;
 
   if (!username) {
-    return NextResponse.json(
-      { error: "No LeetCode username provided or set in Settings." },
-      { status: 400 }
-    );
+    return NextResponse.json({
+      data: {
+        username: "",
+        ranking: null,
+        totalSolved: 0,
+        easySolved: 0,
+        mediumSolved: 0,
+        hardSolved: 0,
+        acceptanceRate: "0.0%",
+        recentSubmissions: [],
+        topicBreakdown: [],
+      },
+      configured: false,
+      warning: "No LeetCode account connected. Add your username in Settings to sync your real LeetCode data.",
+      message: "No LeetCode username provided or set in Settings.",
+    });
   }
 
   // Check user cache if authenticated and querying own username

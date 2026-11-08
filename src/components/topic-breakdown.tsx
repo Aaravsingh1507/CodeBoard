@@ -8,20 +8,20 @@ export interface TopicItem {
   level: "fundamental" | "intermediate" | "advanced" | string;
 }
 
-// User's verified live LeetCode data (Aarav_singh)
-const REAL_USER_TOPICS: TopicItem[] = [
-  { tag: "Array", solved: 14, level: "fundamental" },
-  { tag: "Tree", solved: 10, level: "intermediate" },
-  { tag: "Binary Tree", solved: 10, level: "intermediate" },
-  { tag: "Depth-First Search", solved: 9, level: "intermediate" },
-  { tag: "Dynamic Programming", solved: 7, level: "advanced" },
-  { tag: "Two Pointers", solved: 5, level: "fundamental" },
-  { tag: "Linked List", solved: 4, level: "fundamental" },
-  { tag: "Hash Table", solved: 4, level: "intermediate" },
-  { tag: "Binary Search", solved: 4, level: "intermediate" },
-  { tag: "Breadth-First Search", solved: 4, level: "intermediate" },
-  { tag: "Math", solved: 4, level: "intermediate" },
-  { tag: "Divide & Conquer", solved: 3, level: "advanced" },
+// Default standard DSA topics shown with 0 solved if user has not solved problems yet
+const DEFAULT_12_TOPIC_NAMES = [
+  "Array",
+  "String",
+  "Hash Table",
+  "Dynamic Programming",
+  "Math",
+  "Sorting",
+  "Greedy",
+  "Depth-First Search",
+  "Binary Search",
+  "Tree",
+  "Breadth-First Search",
+  "Two Pointers",
 ];
 
 // Helper: polar to cartesian coordinate conversion
@@ -45,13 +45,11 @@ function describeArc(centerX: number, centerY: number, radius: number, startAngl
 // Helper: creates a clean 3D glass arc path with capsule caps
 function getGlassArcPath(centerX: number, centerY: number, radius: number, startDeg: number, spanDeg: number) {
   if (spanDeg <= 0) return null;
-  // If span is large enough for insets, inset by 3 degrees for a crisp gap
   if (spanDeg > 8) {
     const s = (startDeg + 2.5) % 360;
     const e = (startDeg + spanDeg - 2.5) % 360;
     return describeArc(centerX, centerY, radius, s, e);
   } else {
-    // For small spans, a small pill arc
     const mid = (startDeg + spanDeg / 2) % 360;
     const s = (mid - 1.5 + 360) % 360;
     const e = (mid + 1.5) % 360;
@@ -179,9 +177,9 @@ function renderTopicIcon(tag: string, x: number, y: number) {
   if (norm.includes("dfs") || norm.includes("depth")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="4" r="2" fill="#34d399" />
-        <circle cx="10" cy="10.5" r="2" fill="#34d399" />
-        <circle cx="10" cy="16.5" r="2" fill="#34d399" />
+        <circle cx="10" cy="4" r="2.2" fill="#34d399" />
+        <circle cx="10" cy="10.5" r="2.2" fill="#34d399" />
+        <circle cx="10" cy="16.5" r="2.2" fill="#34d399" />
         <line x1="10" y1="6" x2="10" y2="8.5" stroke="#34d399" strokeWidth="1.5" />
         <line x1="10" y1="12.5" x2="10" y2="14.5" stroke="#34d399" strokeWidth="1.5" />
       </g>
@@ -239,19 +237,24 @@ interface TopicBreakdownProps {
 }
 
 export function TopicBreakdown({ topics }: TopicBreakdownProps) {
-  // Use real topics from LeetCode or the user's verified actual data
-  const sourceTopics = topics && topics.length > 0 ? topics : REAL_USER_TOPICS;
+  // Use ONLY real topics passed from the user's account. No fake preloaded data!
+  const userTopics = topics ?? [];
+  const hasRealData = userTopics.length > 0 && userTopics.some((t) => t.solved > 0);
 
   // Sort descending by solved count
-  const sorted = [...sourceTopics].sort((a, b) => b.solved - a.solved);
-  const top12 = sorted.slice(0, 12);
+  const sorted = hasRealData ? [...userTopics].sort((a, b) => b.solved - a.solved) : [];
+
+  // Top 12 columns for the bar chart
+  const top12: TopicItem[] = hasRealData
+    ? sorted.slice(0, 12)
+    : DEFAULT_12_TOPIC_NAMES.map((name) => ({ tag: name, solved: 0, level: "fundamental" }));
 
   // Calculate real metrics across all topics
   let fundSolved = 0;
   let interSolved = 0;
   let advSolved = 0;
 
-  sourceTopics.forEach((t) => {
+  userTopics.forEach((t) => {
     const lvl = (t.level || "").toLowerCase();
     if (lvl.includes("fund")) fundSolved += t.solved;
     else if (lvl.includes("inter")) interSolved += t.solved;
@@ -259,14 +262,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
     else fundSolved += t.solved;
   });
 
-  const totalProblems = fundSolved + interSolved + advSolved || 33;
-  const fundPct = (fundSolved / totalProblems) * 100;
-  const interPct = (interSolved / totalProblems) * 100;
-  const advPct = (advSolved / totalProblems) * 100;
+  const totalProblems = fundSolved + interSolved + advSolved;
+  const fundPct = totalProblems > 0 ? (fundSolved / totalProblems) * 100 : 0;
+  const interPct = totalProblems > 0 ? (interSolved / totalProblems) * 100 : 0;
+  const advPct = totalProblems > 0 ? (advSolved / totalProblems) * 100 : 0;
 
-  // Dynamic Y-axis scale based on the maximum solved topic
-  const maxSolved = Math.max(...top12.map((t) => t.solved), 1);
-  const yMax = Math.max(10, Math.ceil(maxSolved / 2) * 2);
+  // Dynamic Y-axis scale based on the maximum solved topic (default 10 if 0 solved)
+  const maxSolved = Math.max(...top12.map((t) => t.solved), 0);
+  const yMax = Math.max(10, Math.ceil((maxSolved || 1) / 2) * 2);
 
   // Y-axis ticks strictly mapped to card local coordinates (baseline at y=150, top at y=35)
   const yTicks = [
@@ -278,11 +281,11 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
     { val: 0, y: 150 },
   ];
 
-  // Top 3 for the badges
-  const top3 = sorted.slice(0, 3);
-  const first = top3[0] ?? { tag: "Array", solved: 14 };
-  const second = top3[1] ?? { tag: "Tree", solved: 10 };
-  const third = top3[2] ?? { tag: "DFS", solved: 9 };
+  // Top 3 for the badges (empty dashes if 0 solved)
+  const top3 = sorted.filter((t) => t.solved > 0).slice(0, 3);
+  const first = top3[0] ?? { tag: "—", solved: 0 };
+  const second = top3[1] ?? { tag: "—", solved: 0 };
+  const third = top3[2] ?? { tag: "—", solved: 0 };
 
   // =========================================================================
   // 3D GLASS PROGRESS RING CALCULATIONS
@@ -292,14 +295,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
   const cy = 104;
   const radius = 62;
 
-  const fundDeg = Math.round((fundSolved / totalProblems) * 360);
-  const interDeg = Math.round((interSolved / totalProblems) * 360);
-  const advDeg = 360 - fundDeg - interDeg;
+  const fundDeg = totalProblems > 0 ? Math.round((fundSolved / totalProblems) * 360) : 0;
+  const interDeg = totalProblems > 0 ? Math.round((interSolved / totalProblems) * 360) : 0;
+  const advDeg = totalProblems > 0 ? 360 - fundDeg - interDeg : 0;
 
-  // Clockwise starting from top (0 deg)
-  const arcPathFund = getGlassArcPath(cx, cy, radius, 0, fundDeg);
-  const arcPathInter = getGlassArcPath(cx, cy, radius, fundDeg, interDeg);
-  const arcPathAdv = getGlassArcPath(cx, cy, radius, fundDeg + interDeg, advDeg);
+  // Arcs are ONLY rendered when the user has actual solved problems!
+  const arcPathFund = totalProblems > 0 && fundSolved > 0 ? getGlassArcPath(cx, cy, radius, 0, fundDeg) : null;
+  const arcPathInter = totalProblems > 0 && interSolved > 0 ? getGlassArcPath(cx, cy, radius, fundDeg, interDeg) : null;
+  const arcPathAdv = totalProblems > 0 && advSolved > 0 ? getGlassArcPath(cx, cy, radius, fundDeg + interDeg, advDeg) : null;
 
   return (
     <div className="w-full overflow-hidden select-none">
@@ -321,9 +324,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             <stop offset="100%" stopColor="#15803d" stopOpacity="0.22" />
           </linearGradient>
 
-          {/* =====================================================
-              3D GLASS TUBE PROGRESS RING GRADIENTS
-             ===================================================== */}
+          {/* 3D Glass Tube Progress Ring Gradients */}
           <linearGradient id="tcRingFund3D" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#86efac" />
             <stop offset="25%" stopColor="#00f076" />
@@ -702,7 +703,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
             {/* Stat 1: Topics */}
             <text x="32" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
-              {top12.length}
+              {hasRealData ? sorted.length : 0}
             </text>
             <text x="32" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
               Topics
@@ -775,7 +776,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           {/* 12 Vertical Topic Columns (Comfortably spaced, NO scrollbar, NO clipping!) */}
           {top12.map((item, i) => {
             const colX = 76 + i * 52.5;
-            const barHeight = Math.max(10, (item.solved / yMax) * 115);
+            const barHeight = hasRealData && item.solved > 0 ? Math.max(10, (item.solved / yMax) * 115) : 0;
             const barY = 150 - barHeight;
 
             // Pick 3D glass gradient and glow based on tier
@@ -790,7 +791,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                 {/* Count Number on top of bar */}
                 <text
                   x={colX}
-                  y={barY - 6}
+                  y={barHeight > 0 ? barY - 6 : 144}
                   textAnchor="middle"
                   fontSize="13.5"
                   fontWeight="900"
@@ -801,63 +802,75 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                 </text>
 
                 {/* Base Pedestal Glow on Baseline */}
-                <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity="0.4" filter="blur(2px)" />
+                <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity={barHeight > 0 ? 0.4 : 0.15} filter="blur(2px)" />
 
-                {/* Ambient Backlight Glow behind the Glass Pillar */}
-                <rect
-                  x={colX - 14}
-                  y={barY}
-                  width="28"
-                  height={barHeight}
-                  rx="8"
-                  fill={glowColor}
-                  opacity="0.25"
-                  filter="blur(4px)"
-                />
+                {/* Ambient Backlight Glow behind the Glass Pillar (if solved > 0) */}
+                {barHeight > 0 && (
+                  <rect
+                    x={colX - 14}
+                    y={barY}
+                    width="28"
+                    height={barHeight}
+                    rx="8"
+                    fill={glowColor}
+                    opacity="0.25"
+                    filter="blur(4px)"
+                  />
+                )}
 
-                {/* Main 3D Frosted Glass Column Pillar */}
-                <rect
-                  x={colX - 16}
-                  y={barY}
-                  width="32"
-                  height={barHeight}
-                  rx="8"
-                  fill={barFill}
-                  stroke="rgba(255, 255, 255, 0.35)"
-                  strokeWidth="1"
-                />
-
-                {/* Specular Curved Reflection at Top Cap of Bar */}
-                <rect
-                  x={colX - 13}
-                  y={barY + 1.5}
-                  width="26"
-                  height="4"
-                  rx="2"
-                  fill="#ffffff"
-                  opacity="0.45"
-                />
-
-                {/* Specular Vertical Light Streak down Left Side */}
-                <rect
-                  x={colX - 13}
-                  y={barY + 5}
-                  width="2.8"
-                  height={Math.max(2, barHeight - 9)}
-                  rx="1.2"
-                  fill="url(#tcSpecularVertical)"
-                />
-
-                {/* Subtle Right Edge Depth Shadow */}
-                <rect
-                  x={colX + 11}
-                  y={barY + 5}
-                  width="1.8"
-                  height={Math.max(2, barHeight - 9)}
-                  rx="0.8"
-                  fill="#000000"
-                  opacity="0.35"
-                />
+                {/* Main 3D Frosted Glass Column Pillar (or sleek resting baseline marker if 0) */}
+                {barHeight > 0 ? (
+                  <>
+                    <rect
+                      x={colX - 16}
+                      y={barY}
+                      width="32"
+                      height={barHeight}
+                      rx="8"
+                      fill={barFill}
+                      stroke="rgba(255, 255, 255, 0.35)"
+                      strokeWidth="1"
+                    />
+                    {/* Specular Curved Reflection at Top Cap of Bar */}
+                    <rect
+                      x={colX - 13}
+                      y={barY + 1.5}
+                      width="26"
+                      height="4"
+                      rx="2"
+                      fill="#ffffff"
+                      opacity="0.45"
+                    />
+                    {/* Specular Vertical Light Streak down Left Side */}
+                    <rect
+                      x={colX - 13}
+                      y={barY + 5}
+                      width="2.8"
+                      height={Math.max(2, barHeight - 9)}
+                      rx="1.2"
+                      fill="url(#tcSpecularVertical)"
+                    />
+                    {/* Subtle Right Edge Depth Shadow */}
+                    <rect
+                      x={colX + 11}
+                      y={barY + 5}
+                      width="1.8"
+                      height={Math.max(2, barHeight - 9)}
+                      rx="0.8"
+                      fill="#000000"
+                      opacity="0.35"
+                    />
+                  </>
+                ) : (
+                  <rect
+                    x={colX - 14}
+                    y="148"
+                    width="28"
+                    height="3"
+                    rx="1.5"
+                    fill="rgba(74, 222, 128, 0.25)"
+                  />
+                )}
 
                 {/* Rounded Square Frosted Icon Box below baseline */}
                 <rect
@@ -966,7 +979,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               <rect x="5" y="20" width="8" height="2.5" rx="1" fill="#facc15" />
             </g>
 
-            {/* Text: Full name without truncation */}
+            {/* Text */}
             <text x="36" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
               {first.tag}
             </text>
@@ -999,7 +1012,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
             </g>
 
-            {/* Text: Full 2-line name without truncation */}
+            {/* Text */}
             <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
               {splitTopicLabel(second.tag)[0]}
             </text>
@@ -1037,7 +1050,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
             </g>
 
-            {/* Text: Full 2-line name without truncation */}
+            {/* Text */}
             <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
               {splitTopicLabel(third.tag)[0]}
             </text>
@@ -1080,35 +1093,51 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
           {/* Dynamic Insight Prose based on actual percentages */}
           <text x="18" y="46" fontSize="11.5" fontWeight="500" fill="#d1fae5" opacity="0.9">
-            <tspan x="18" dy="0">
-              Most problems are Fundamental ({fundPct.toFixed(1)}%),
-            </tspan>
-            <tspan x="18" dy="16">
-              with a good mix of Intermediate ({interPct.toFixed(1)}%)
-            </tspan>
-            <tspan x="18" dy="16">
-              and Advanced ({advPct.toFixed(1)}%).
-            </tspan>
+            {totalProblems > 0 ? (
+              <>
+                <tspan x="18" dy="0">
+                  Most problems are Fundamental ({fundPct.toFixed(1)}%),
+                </tspan>
+                <tspan x="18" dy="16">
+                  with a good mix of Intermediate ({interPct.toFixed(1)}%)
+                </tspan>
+                <tspan x="18" dy="16">
+                  and Advanced ({advPct.toFixed(1)}%).
+                </tspan>
+              </>
+            ) : (
+              <>
+                <tspan x="18" dy="0">
+                  No DSA problems solved yet.
+                </tspan>
+                <tspan x="18" dy="16">
+                  Connect your LeetCode account in Settings
+                </tspan>
+                <tspan x="18" dy="16">
+                  to track your real-time topic progress.
+                </tspan>
+              </>
+            )}
           </text>
 
           {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic */}
           <g transform="translate(250, 26)">
             {/* 4 Rising Isometric-Style Green Columns */}
             {/* Bar 1 */}
-            <rect x="10" y="46" width="11" height="18" rx="3" fill="#22c55e" />
-            <rect x="11" y="47" width="2" height="16" rx="1" fill="#ffffff" opacity="0.3" />
+            <rect x="10" y="46" width="11" height="18" rx="3" fill="#22c55e" opacity={hasRealData ? 1 : 0.4} />
+            <rect x="11" y="47" width="2" height="16" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
 
             {/* Bar 2 */}
-            <rect x="25" y="32" width="11" height="32" rx="3" fill="#4ade80" />
-            <rect x="26" y="33" width="2" height="30" rx="1" fill="#ffffff" opacity="0.3" />
+            <rect x="25" y="32" width="11" height="32" rx="3" fill="#4ade80" opacity={hasRealData ? 1 : 0.4} />
+            <rect x="26" y="33" width="2" height="30" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
 
             {/* Bar 3 */}
-            <rect x="40" y="18" width="11" height="46" rx="3" fill="#86efac" />
-            <rect x="41" y="19" width="2" height="44" rx="1" fill="#ffffff" opacity="0.3" />
+            <rect x="40" y="18" width="11" height="46" rx="3" fill="#86efac" opacity={hasRealData ? 1 : 0.4} />
+            <rect x="41" y="19" width="2" height="44" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
 
             {/* Bar 4 */}
-            <rect x="55" y="4" width="11" height="60" rx="3" fill="#bbf7d0" />
-            <rect x="56" y="5" width="2" height="58" rx="1" fill="#ffffff" opacity="0.3" />
+            <rect x="55" y="4" width="11" height="60" rx="3" fill="#bbf7d0" opacity={hasRealData ? 1 : 0.4} />
+            <rect x="56" y="5" width="2" height="58" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
 
             {/* Upward Curved Glowing Neon Arrow */}
             <path
@@ -1118,9 +1147,10 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               strokeLinecap="round"
               fill="none"
               filter="url(#tcGlowLime)"
+              opacity={hasRealData ? 1 : 0.5}
             />
             {/* Arrowhead */}
-            <polygon points="72,-6 78,2 67,4" fill="#ffffff" filter="url(#tcGlowLime)" />
+            <polygon points="72,-6 78,2 67,4" fill="#ffffff" filter="url(#tcGlowLime)" opacity={hasRealData ? 1 : 0.5} />
           </g>
         </g>
       </svg>

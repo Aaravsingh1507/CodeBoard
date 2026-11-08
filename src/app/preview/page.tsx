@@ -52,7 +52,7 @@ export default function PreviewPage() {
     }
   }, []);
 
-  const { data: liveLeetcode, loading: leetcodeLoading } = useFetch<LeetcodeStats>("/api/leetcode/stats?username=aarav_singh");
+  const { data: liveLeetcode, loading: leetcodeLoading } = useFetch<LeetcodeStats>("/api/leetcode/stats");
 
   const previewUser = {
     name: "Aarav Singh",
@@ -129,39 +129,15 @@ export default function PreviewPage() {
   };
 
   const previewLeetcode: LeetcodeStats = liveLeetcode ?? {
-    username: "aarav_singh",
-    ranking: 3547790,
-    totalSolved: 33,
-    easySolved: 18,
-    mediumSolved: 15,
+    username: "",
+    ranking: null,
+    totalSolved: 0,
+    easySolved: 0,
+    mediumSolved: 0,
     hardSolved: 0,
-    acceptanceRate: "75.0%",
-    recentSubmissions: [
-      { title: "Binary Tree Maximum Path Sum", difficulty: "Hard", status: "Accepted", timestamp: "1725500000" },
-      { title: "Lowest Common Ancestor of a Binary Search Tree", difficulty: "Medium", status: "Accepted", timestamp: "1725400000" },
-      { title: "Invert Binary Tree", difficulty: "Easy", status: "Accepted", timestamp: "1725300000" },
-    ],
-    topicBreakdown: [
-      { tag: "Array", solved: 14, level: "fundamental" },
-      { tag: "Tree", solved: 10, level: "intermediate" },
-      { tag: "Binary Tree", solved: 10, level: "intermediate" },
-      { tag: "Depth-First Search", solved: 9, level: "intermediate" },
-      { tag: "Dynamic Programming", solved: 7, level: "advanced" },
-      { tag: "Two Pointers", solved: 5, level: "fundamental" },
-      { tag: "Linked List", solved: 4, level: "fundamental" },
-      { tag: "Hash Table", solved: 4, level: "intermediate" },
-      { tag: "Binary Search", solved: 4, level: "intermediate" },
-      { tag: "Breadth-First Search", solved: 4, level: "intermediate" },
-      { tag: "Math", solved: 4, level: "intermediate" },
-      { tag: "Divide & Conquer", solved: 3, level: "advanced" },
-      { tag: "Stack", solved: 2, level: "fundamental" },
-      { tag: "Bit Manipulation", solved: 2, level: "intermediate" },
-      { tag: "Recursion", solved: 2, level: "intermediate" },
-      { tag: "String", solved: 1, level: "fundamental" },
-      { tag: "Sorting", solved: 1, level: "fundamental" },
-      { tag: "Sliding Window", solved: 1, level: "intermediate" },
-      { tag: "Greedy", solved: 1, level: "intermediate" },
-    ],
+    acceptanceRate: "0.0%",
+    recentSubmissions: [],
+    topicBreakdown: [],
   };
 
   const previewGoals = [
