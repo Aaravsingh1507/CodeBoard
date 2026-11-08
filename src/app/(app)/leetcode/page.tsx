@@ -8,7 +8,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ProgressRing } from "@/components/progress-ring";
+import { LeetcodeStatsBanner } from "@/components/leetcode/leetcode-stats-banner";
 import { TopicBreakdown } from "@/components/topic-breakdown";
 import type { LeetcodeStats } from "@/lib/leetcode";
 
@@ -48,37 +48,14 @@ export default function LeetcodePage() {
         <div className="space-y-5">
           {warning && <p className="rounded-lg bg-warn/10 px-3 py-2 text-xs text-warn">{warning}</p>}
 
-          <Card>
-            <CardContent className="flex flex-col items-center gap-6 py-6 sm:flex-row sm:justify-around">
-              <ProgressRing
-                value={data.totalSolved}
-                max={Math.max(data.totalSolved, 500)}
-                label="total solved"
-                color="var(--accent-2)"
-                size={140}
-              />
-              <div className="grid grid-cols-3 gap-6 text-center">
-                <div>
-                  <p className="font-data text-2xl font-semibold text-accent-2">{data.easySolved}</p>
-                  <p className="text-xs text-muted">Easy</p>
-                </div>
-                <div>
-                  <p className="font-data text-2xl font-semibold text-warn">{data.mediumSolved}</p>
-                  <p className="text-xs text-muted">Medium</p>
-                </div>
-                <div>
-                  <p className="font-data text-2xl font-semibold text-danger">{data.hardSolved}</p>
-                  <p className="text-xs text-muted">Hard</p>
-                </div>
-              </div>
-              {data.ranking && (
-                <div className="text-center">
-                  <p className="font-data text-2xl font-semibold">#{data.ranking.toLocaleString()}</p>
-                  <p className="text-xs text-muted">Global ranking</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <LeetcodeStatsBanner
+            totalSolved={data.totalSolved}
+            easySolved={data.easySolved}
+            mediumSolved={data.mediumSolved}
+            hardSolved={data.hardSolved}
+            ranking={data.ranking}
+            loading={loading}
+          />
 
           <Card>
             <CardHeader>

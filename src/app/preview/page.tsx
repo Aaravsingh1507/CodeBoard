@@ -6,6 +6,8 @@ import { ReadinessWidget } from "@/components/widgets/readiness-widget";
 import { StreakWidget } from "@/components/widgets/streak-widget";
 import { GithubSummaryWidget } from "@/components/widgets/github-summary-widget";
 import { LeetcodeSummaryWidget } from "@/components/widgets/leetcode-summary-widget";
+import { LeetcodeStatsBanner } from "@/components/leetcode/leetcode-stats-banner";
+import { TopicBreakdown } from "@/components/topic-breakdown";
 import { GoalsSummaryWidget } from "@/components/widgets/goals-summary-widget";
 import { LatestReviewWidget } from "@/components/widgets/latest-review-widget";
 import { CompanyPrepWidget } from "@/components/widgets/company-prep-widget";
@@ -36,14 +38,14 @@ import type { LeetcodeStats } from "@/lib/leetcode";
 
 export default function PreviewPage() {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "github" | "matchscope" | "settings" | "resume" | "goals" | "circles" | "reviews" | "applications"
+    "overview" | "github" | "leetcode" | "matchscope" | "settings" | "resume" | "goals" | "circles" | "reviews" | "applications"
   >("overview");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get("tab") as any;
-      if (tab && ["overview", "github", "matchscope", "settings", "resume", "goals", "circles", "reviews", "applications"].includes(tab)) {
+      if (tab && ["overview", "github", "leetcode", "matchscope", "settings", "resume", "goals", "circles", "reviews", "applications"].includes(tab)) {
         setActiveTab(tab);
       }
     }
@@ -123,7 +125,30 @@ export default function PreviewPage() {
     topReferrers: [],
   };
 
-  const previewLeetcode: LeetcodeStats | undefined = undefined;
+  const previewLeetcode: LeetcodeStats = {
+    username: "aaravsingh1507",
+    ranking: 5000001,
+    totalSolved: 16,
+    easySolved: 10,
+    mediumSolved: 6,
+    hardSolved: 0,
+    acceptanceRate: "64.2%",
+    recentSubmissions: [
+      { title: "Two Sum", difficulty: "Easy", status: "Accepted", timestamp: "2026-11-04" },
+      { title: "Add Two Numbers", difficulty: "Medium", status: "Accepted", timestamp: "2026-11-03" },
+      { title: "Longest Substring Without Repeating Characters", difficulty: "Medium", status: "Accepted", timestamp: "2026-11-01" },
+      { title: "Valid Parentheses", difficulty: "Easy", status: "Accepted", timestamp: "2026-10-28" },
+      { title: "Merge Two Sorted Lists", difficulty: "Easy", status: "Accepted", timestamp: "2026-10-26" },
+    ],
+    topicBreakdown: [
+      { tag: "Array", solved: 9, level: "fundamental" },
+      { tag: "Hash Table", solved: 7, level: "fundamental" },
+      { tag: "String", solved: 5, level: "fundamental" },
+      { tag: "Two Pointers", solved: 4, level: "intermediate" },
+      { tag: "Linked List", solved: 3, level: "intermediate" },
+      { tag: "Stack", solved: 2, level: "intermediate" },
+    ],
+  };
 
   const previewGoals = [
     {
@@ -226,6 +251,7 @@ export default function PreviewPage() {
   const tabs = [
     { id: "overview", label: "Overview" },
     { id: "github", label: "GitHub" },
+    { id: "leetcode", label: "LeetCode" },
     { id: "settings", label: "Settings" },
     { id: "resume", label: "Resume" },
     { id: "goals", label: "Goals" },
@@ -335,6 +361,48 @@ export default function PreviewPage() {
                   totalIssues: previewGithub.totalIssues,
                 }}
               />
+            </div>
+          </div>
+        )}
+
+        {/* LEETCODE TAB */}
+        {activeTab === "leetcode" && (
+          <div className="space-y-6 animate-fade-in">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-foreground dark:text-white sm:text-4xl">
+                Leet<span className="gradient-title-view">Code</span>
+              </h1>
+              <p className="mt-1.5 text-sm text-muted dark:text-slate-400">
+                Solved problems and recent submissions.
+              </p>
+            </div>
+
+            {/* 3D Glowing Stats Banner matching design */}
+            <LeetcodeStatsBanner
+              totalSolved={previewLeetcode.totalSolved}
+              easySolved={previewLeetcode.easySolved}
+              mediumSolved={previewLeetcode.mediumSolved}
+              hardSolved={previewLeetcode.hardSolved}
+              ranking={previewLeetcode.ranking}
+            />
+
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+              <Card className="p-5">
+                <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Topic coverage</h3>
+                <TopicBreakdown topics={previewLeetcode.topicBreakdown ?? []} />
+              </Card>
+
+              <Card className="p-5">
+                <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Recent submissions</h3>
+                <ul className="divide-y divide-border/60">
+                  {previewLeetcode.recentSubmissions.map((s, i) => (
+                    <li key={i} className="flex items-center justify-between py-2.5 text-sm">
+                      <span className="text-foreground dark:text-slate-200">{s.title}</span>
+                      <Badge tone="success">{s.status}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
             </div>
           </div>
         )}

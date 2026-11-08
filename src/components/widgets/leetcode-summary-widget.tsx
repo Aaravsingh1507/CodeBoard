@@ -7,6 +7,7 @@ import { useFetch } from "@/lib/use-fetch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LeetcodeIcon } from "@/components/icons";
+import { LeetcodeStatsBanner } from "@/components/leetcode/leetcode-stats-banner";
 import type { LeetcodeStats } from "@/lib/leetcode";
 
 type TimeRange = "4" | "8" | "12";
@@ -162,49 +163,17 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
 
         {!previewData && loading && <Skeleton className="my-3 h-12 w-full rounded-xl" />}
 
-        {/* 3 Stat Cards Row - Exact same size, padding, and proportions as GitHub section */}
-        <div className="relative z-10 mt-3 sm:mt-4 grid grid-cols-3 gap-2 sm:gap-3.5">
-          {/* Problems Card */}
-          <div className="h-[94px] sm:h-[116px] rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#f59e0b]/30 dark:bg-[#0c101d]/90 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-amber-500/50">
-            {/* Glowing Amber Icon Box - Exact same size as GitHub icon box */}
-            <div className="flex h-[34px] w-[34px] sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-amber-100 to-amber-50 border border-amber-300 text-amber-600 dark:from-[#35230f]/90 dark:to-[#1a1106]/95 dark:border-[#f59e0b]/45 dark:text-[#f59e0b] shrink-0 shadow-sm dark:shadow-[0_2px_12px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.15)]">
-              <Check className="h-4 w-4 sm:h-[18px] sm:w-[18px] stroke-[2.5]" />
-            </div>
-            <span className="mt-2 sm:mt-2.5 text-[11px] sm:text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300 tracking-wide whitespace-nowrap leading-tight">
-              Problems
-            </span>
-            <span className="mt-1 sm:mt-1.5 font-data text-xs sm:text-sm md:text-base font-bold text-foreground dark:text-white leading-none">
-              {loading && !data ? "—" : (hasData && data ? data.totalSolved : "—")}
-            </span>
-          </div>
-
-          {/* Acceptances Card */}
-          <div className="h-[94px] sm:h-[116px] rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#f59e0b]/30 dark:bg-[#0c101d]/90 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-amber-500/50">
-            {/* Glowing Amber Icon Box - Exact same size as GitHub icon box */}
-            <div className="flex h-[34px] w-[34px] sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-amber-100 to-amber-50 border border-amber-300 text-amber-600 dark:from-[#35230f]/90 dark:to-[#1a1106]/95 dark:border-[#f59e0b]/45 dark:text-[#f59e0b] shrink-0 shadow-sm dark:shadow-[0_2px_12px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.15)]">
-              <BarChart2 className="h-4 w-4 sm:h-[18px] sm:w-[18px] stroke-[2.2]" />
-            </div>
-            <span className="mt-2 sm:mt-2.5 text-[11px] sm:text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300 tracking-wide whitespace-nowrap leading-tight">
-              Acceptances
-            </span>
-            <span className="mt-1 sm:mt-1.5 font-data text-xs sm:text-sm md:text-base font-bold text-foreground dark:text-white leading-none">
-              {loading && !data ? "—" : (hasData && data?.acceptanceRate ? data.acceptanceRate : "—")}
-            </span>
-          </div>
-
-          {/* Ranking Card */}
-          <div className="h-[94px] sm:h-[116px] rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#f59e0b]/30 dark:bg-[#0c101d]/90 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-amber-500/50">
-            {/* Glowing Amber Icon Box - Exact same size as GitHub icon box */}
-            <div className="flex h-[34px] w-[34px] sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-amber-100 to-amber-50 border border-amber-300 text-amber-600 dark:from-[#35230f]/90 dark:to-[#1a1106]/95 dark:border-[#f59e0b]/45 dark:text-[#f59e0b] shrink-0 shadow-sm dark:shadow-[0_2px_12px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.15)]">
-              <Trophy className="h-4 w-4 sm:h-[18px] sm:w-[18px] stroke-[2]" />
-            </div>
-            <span className="mt-2 sm:mt-2.5 text-[11px] sm:text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300 tracking-wide whitespace-nowrap leading-tight">
-              Ranking
-            </span>
-            <span className="mt-1 sm:mt-1.5 font-data text-xs sm:text-sm md:text-base font-bold text-foreground dark:text-white leading-none">
-              {loading && !data ? "—" : (hasData && data?.ranking ? `#${data.ranking.toLocaleString()}` : "—")}
-            </span>
-          </div>
+        {/* 3D LeetCode Stats Banner matching uploaded design */}
+        <div className="relative z-10 mt-3 sm:mt-4">
+          <LeetcodeStatsBanner
+            totalSolved={data?.totalSolved ?? 0}
+            easySolved={data?.easySolved ?? 0}
+            mediumSolved={data?.mediumSolved ?? 0}
+            hardSolved={data?.hardSolved ?? 0}
+            ranking={data?.ranking ?? null}
+            loading={loading && !data}
+            compact={true}
+          />
         </div>
 
         {/* Chart Header with Interactive Working Dropdown */}
