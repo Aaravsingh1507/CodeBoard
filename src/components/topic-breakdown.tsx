@@ -37,9 +37,32 @@ function polarToCartesian(centerX: number, centerY: number, radius: number, angl
 function describeArc(centerX: number, centerY: number, radius: number, startAngle: number, endAngle: number) {
   const start = polarToCartesian(centerX, centerY, radius, startAngle);
   const end = polarToCartesian(centerX, centerY, radius, endAngle);
-  const diff = endAngle - startAngle;
+  const diff = (endAngle - startAngle + 360) % 360;
   const largeArcFlag = diff > 180 ? "1" : "0";
   return ["M", start.x, start.y, "A", radius, radius, 0, largeArcFlag, 1, end.x, end.y].join(" ");
+}
+
+// Helper: creates a 3D glass arc path with rounded caps and proper gap insets
+function getGlassArcPath(centerX: number, centerY: number, radius: number, startDeg: number, spanDeg: number) {
+  if (spanDeg <= 0) return null;
+  // With strokeWidth=15 and radius=62:
+  // circumference = 2 * PI * 62 = 389.56px.
+  // 1 deg = 1.082px.
+  // Half cap (7.5px) in degrees = 7.5 / 1.082 = 6.93 deg.
+  // To leave a clean ~3.2px gap between adjacent rounded caps:
+  // capOffset = 6.93 + 1.5 = 8.43 deg.
+  const capOffset = 8.4;
+
+  if (spanDeg >= capOffset * 2 + 1) {
+    const s = (startDeg + capOffset) % 360;
+    const e = (startDeg + spanDeg - capOffset) % 360;
+    return describeArc(centerX, centerY, radius, s, e);
+  } else {
+    // For small spans (e.g. 1 problem = 8 deg), draw a 1-degree micro-arc
+    // which blossoms into a perfect 15px glowing glass pearl thanks to strokeLinecap="round"
+    const mid = (startDeg + spanDeg / 2) % 360;
+    return describeArc(centerX, centerY, radius, (mid - 0.5 + 360) % 360, (mid + 0.5) % 360);
+  }
 }
 
 // Specialized vector icons for DSA topics
@@ -181,93 +204,90 @@ function renderTopicIcon(tag: string, x: number, y: number) {
       </g>
     );
   }
-  if (norm.includes("stack") || norm.includes("queue")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <path d="M4 6h12M4 10h12M4 14h12" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
-      </g>
-    );
-  }
-  if (norm.includes("bit")) {
-    return (
-      <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="10" fontWeight="900" fill="#34d399" fontFamily="monospace">
-        01
-      </text>
-    );
-  }
 
-  // Default fallback
+  // Default code icon
   return (
-    <g transform={`translate(${x}, ${y})`}>
-      <polyline points="13 14 17 10 13 6" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      <polyline points="7 6 3 10 7 14" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </g>
+    <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="11" fontWeight="800" fill="#34d399" fontFamily="monospace">
+      &lt;&gt;
+    </text>
   );
 }
 
-// Split topic label into 2 lines for clean centered display
-function splitTopicLabel(tag: string): [string, string] {
+// Format 2-line labels nicely so long names like "Binary Search" or "Divide & Conquer" fit
+function splitTopicLabel(tag: string): [string, string | null] {
   const norm = tag.trim();
-  if (norm === "Binary Search") return ["Binary", "Search"];
-  if (norm === "Two Pointers") return ["Two", "Pointers"];
-  if (norm === "Hash Table") return ["Hash", "Table"];
-  if (norm === "Dynamic Programming") return ["Dynamic", "Program."];
-  if (norm.toLowerCase().includes("divide")) return ["Divide &", "Conquer"];
-  if (norm === "Binary Tree") return ["Binary", "Tree"];
-  if (norm === "Depth-First Search") return ["Depth-First", "Search"];
-  if (norm === "Breadth-First Search") return ["Breadth", "First"];
-  if (norm === "Linked List") return ["Linked", "List"];
-  if (norm === "Bit Manipulation") return ["Bit", "Manip."];
-  if (norm === "Sliding Window") return ["Sliding", "Window"];
-  return [norm, ""];
+  if (norm.toLowerCase() === "binary search") return ["Binary", "Search"];
+  if (norm.toLowerCase() === "two pointers") return ["Two", "Pointers"];
+  if (norm.toLowerCase() === "hash table") return ["Hash", "Table"];
+  if (norm.toLowerCase() === "dynamic programming") return ["Dynamic", "Programming"];
+  if (norm.toLowerCase() === "divide & conquer" || norm.toLowerCase() === "divide and conquer") return ["Divide &", "Conquer"];
+  return [norm, null];
 }
 
-export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
-  // Real data computation
-  const displayTopics = topics && topics.length > 0 ? topics : FALLBACK_TOPICS;
+interface TopicBreakdownProps {
+  topics?: TopicItem[];
+}
 
-  const totalProblems = displayTopics.reduce((acc, t) => acc + t.solved, 0);
+export function TopicBreakdown({ topics }: TopicBreakdownProps) {
+  // Use real topics from LeetCode or fall back cleanly
+  const sourceTopics = topics && topics.length > 0 ? topics : FALLBACK_TOPICS;
 
-  const fundSolved = displayTopics
-    .filter((t) => t.level === "fundamental")
-    .reduce((acc, t) => acc + t.solved, 0);
-  const interSolved = displayTopics
-    .filter((t) => t.level === "intermediate")
-    .reduce((acc, t) => acc + t.solved, 0);
-  const advSolved = displayTopics
-    .filter((t) => t.level === "advanced")
-    .reduce((acc, t) => acc + t.solved, 0);
+  // Sort descending by solved count
+  const sorted = [...sourceTopics].sort((a, b) => b.solved - a.solved);
+  const top12 = sorted.slice(0, 12);
 
-  const fundPct = totalProblems > 0 ? (fundSolved / totalProblems) * 100 : 64.7;
-  const interPct = totalProblems > 0 ? (interSolved / totalProblems) * 100 : 26.5;
-  const advPct = totalProblems > 0 ? (advSolved / totalProblems) * 100 : 8.8;
+  // Calculate real metrics across all topics
+  let fundSolved = 0;
+  let interSolved = 0;
+  let advSolved = 0;
 
-  // Top 12 topics for vertical bar chart
-  const top12 = [...displayTopics].sort((a, b) => b.solved - a.solved).slice(0, 12);
-  const top3 = top12.slice(0, 3);
+  sourceTopics.forEach((t) => {
+    const lvl = (t.level || "").toLowerCase();
+    if (lvl.includes("fund")) fundSolved += t.solved;
+    else if (lvl.includes("inter")) interSolved += t.solved;
+    else if (lvl.includes("adv")) advSolved += t.solved;
+    else fundSolved += t.solved;
+  });
 
-  // Dynamic Y-axis scale calculation (neatly steps by 5s or 2s)
-  const maxSolved = top12.length > 0 ? Math.max(...top12.map((t) => t.solved)) : 10;
-  const yMax = Math.max(10, Math.ceil(maxSolved / 5) * 5);
+  const totalProblems = fundSolved + interSolved + advSolved || 35;
+  const fundPct = (fundSolved / totalProblems) * 100;
+  const interPct = (interSolved / totalProblems) * 100;
+  const advPct = (advSolved / totalProblems) * 100;
+
+  // Max solved count for Y-axis scaling (default 10)
+  const maxSolved = Math.max(...top12.map((t) => t.solved), 1);
+  const yMax = Math.max(10, Math.ceil(maxSolved / 2) * 2);
   const yTicks = [
-    { val: yMax, y: 126 },
-    { val: Math.round(yMax * 0.8), y: 150 },
-    { val: Math.round(yMax * 0.6), y: 174 },
-    { val: Math.round(yMax * 0.4), y: 198 },
-    { val: Math.round(yMax * 0.2), y: 222 },
-    { val: 0, y: 246 },
+    { val: yMax, y: 30 },
+    { val: Math.round(yMax * 0.8), y: 54 },
+    { val: Math.round(yMax * 0.6), y: 78 },
+    { val: Math.round(yMax * 0.4), y: 102 },
+    { val: Math.round(yMax * 0.2), y: 126 },
+    { val: 0, y: 150 },
   ];
 
-  // EXACT CIRCULAR PROGRESS BAR CALCULATION (Real distribution in degrees)
-  const radius = 64;
-  const deg1 = Math.max(14, (fundPct / 100) * 360);
-  const deg2 = Math.max(14, (interPct / 100) * 360);
-  const deg3 = Math.max(10, 360 - deg1 - deg2);
+  // Top 3 for the badges
+  const top3 = sorted.slice(0, 3);
+  const first = top3[0] ?? { tag: "Array", solved: 10 };
+  const second = top3[1] ?? { tag: "Binary Search", solved: 5 };
+  const third = top3[2] ?? { tag: "Two Pointers", solved: 4 };
 
-  // Exact clockwise arc paths with 2-degree clean gap
-  const arc1 = describeArc(156, 196, radius, 1, deg1 - 1);
-  const arc2 = describeArc(156, 196, radius, deg1 + 1, deg1 + deg2 - 1);
-  const arc3 = describeArc(156, 196, radius, deg1 + deg2 + 1, 359);
+  // =========================================================================
+  // 3D GLASS PROGRESS RING CALCULATIONS
+  // Center is at (112, 104) in left subcard, radius is 62px, track width is 15px
+  // =========================================================================
+  const cx = 112;
+  const cy = 104;
+  const radius = 62;
+
+  const fundDeg = Math.round((fundSolved / totalProblems) * 360);
+  const interDeg = Math.round((interSolved / totalProblems) * 360);
+  const advDeg = 360 - fundDeg - interDeg;
+
+  // Clockwise starting from top (0 deg)
+  const arcPathFund = getGlassArcPath(cx, cy, radius, 0, fundDeg);
+  const arcPathInter = getGlassArcPath(cx, cy, radius, fundDeg, interDeg);
+  const arcPathAdv = getGlassArcPath(cx, cy, radius, fundDeg + interDeg, advDeg);
 
   return (
     <div className="w-full overflow-hidden select-none">
@@ -277,6 +297,9 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
         style={{ fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
       >
         <defs>
+          {/* =====================================================
+              1. GLASSMORPHIC BACKGROUND & BORDER GRADIENTS
+             ===================================================== */}
           {/* Outer Black Obsidian Gradient (Pure Black Base, NOT Green!) */}
           <linearGradient id="tcOuterBlack" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#080e0a" stopOpacity="0.98" />
@@ -284,10 +307,10 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             <stop offset="100%" stopColor="#010302" stopOpacity="1" />
           </linearGradient>
 
-          {/* Subcard Glass Fill (Deep dark glass with slight green tint) */}
+          {/* Subcard Frosted Glass Fill */}
           <linearGradient id="tcSubGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0d1812" stopOpacity="0.82" />
-            <stop offset="100%" stopColor="#040906" stopOpacity="0.92" />
+            <stop offset="0%" stopColor="#0d1f15" stopOpacity="0.82" />
+            <stop offset="100%" stopColor="#030c07" stopOpacity="0.94" />
           </linearGradient>
 
           {/* Outer Border Glowing Gradient */}
@@ -300,39 +323,112 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
 
           {/* Subcard Border Gradient */}
           <linearGradient id="tcSubBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4ade80" stopOpacity="0.45" />
+            <stop offset="0%" stopColor="#4ade80" stopOpacity="0.5" />
             <stop offset="100%" stopColor="#15803d" stopOpacity="0.25" />
           </linearGradient>
 
-          {/* Circle Ring Gradients (Bright Neon Matching Image) */}
-          <linearGradient id="tcRingFund" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#00f076" />
-            <stop offset="100%" stopColor="#00a852" />
-          </linearGradient>
-          <linearGradient id="tcRingInter" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#88ff00" />
-            <stop offset="100%" stopColor="#55aa00" />
-          </linearGradient>
-          <linearGradient id="tcRingAdv" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#eaff00" />
-            <stop offset="100%" stopColor="#b3bb00" />
+          {/* Frosted Specular Sheen for Card Tops */}
+          <linearGradient id="tcCardShine" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.22" />
+            <stop offset="35%" stopColor="#ffffff" stopOpacity="0.05" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
 
-          {/* Bar Gradients */}
-          <linearGradient id="tcBarFund" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#00f076" />
-            <stop offset="60%" stopColor="#059669" />
-            <stop offset="100%" stopColor="#022c19" />
+          {/* =====================================================
+              2. 3D GLASS TUBE PROGRESS RING GRADIENTS
+             ===================================================== */}
+          {/* Fundamental Arc 3D Glass Tube Gradient */}
+          <linearGradient id="tcRingFund3D" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#86efac" />
+            <stop offset="25%" stopColor="#00f076" />
+            <stop offset="65%" stopColor="#10b981" />
+            <stop offset="100%" stopColor="#047857" />
           </linearGradient>
-          <linearGradient id="tcBarInter" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#88ff00" />
-            <stop offset="60%" stopColor="#65a30d" />
+
+          {/* Intermediate Arc 3D Glass Tube Gradient */}
+          <linearGradient id="tcRingInter3D" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#d9f99d" />
+            <stop offset="25%" stopColor="#88ff00" />
+            <stop offset="65%" stopColor="#65a30d" />
+            <stop offset="100%" stopColor="#365314" />
+          </linearGradient>
+
+          {/* Advanced Arc 3D Glass Tube Gradient */}
+          <linearGradient id="tcRingAdv3D" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#fef08a" />
+            <stop offset="25%" stopColor="#facc15" />
+            <stop offset="65%" stopColor="#ca8a04" />
+            <stop offset="100%" stopColor="#713f12" />
+          </linearGradient>
+
+          {/* Specular White Glass Crest Gradient */}
+          <linearGradient id="tcSpecularWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
+            <stop offset="60%" stopColor="#ffffff" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.05" />
+          </linearGradient>
+
+          {/* =====================================================
+              3. CENTER CONVEX FROSTED GLASS LENS GRADIENTS
+             ===================================================== */}
+          <radialGradient id="tcLensGrad" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#0a321e" stopOpacity="0.95" />
+            <stop offset="55%" stopColor="#04160e" stopOpacity="0.98" />
+            <stop offset="100%" stopColor="#010604" stopOpacity="1" />
+          </radialGradient>
+
+          <linearGradient id="tcLensShine" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.28" />
+            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+
+          <linearGradient id="tcBadgeGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0a3822" />
+            <stop offset="100%" stopColor="#03170e" />
+          </linearGradient>
+
+          {/* =====================================================
+              4. 3D GLASS COLUMN BAR GRADIENTS
+             ===================================================== */}
+          {/* Fundamental Bar: 3D Frosted Glass Cylinder */}
+          <linearGradient id="tcBarFund3D" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#bbf7d0" />
+            <stop offset="12%" stopColor="#4ade80" />
+            <stop offset="45%" stopColor="#16a34a" />
+            <stop offset="85%" stopColor="#15803d" />
+            <stop offset="100%" stopColor="#052e16" />
+          </linearGradient>
+
+          {/* Intermediate Bar: 3D Frosted Lime Glass Cylinder */}
+          <linearGradient id="tcBarInter3D" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ecfccb" />
+            <stop offset="12%" stopColor="#a3e635" />
+            <stop offset="45%" stopColor="#65a30d" />
+            <stop offset="85%" stopColor="#4d7c0f" />
             <stop offset="100%" stopColor="#1a2e05" />
           </linearGradient>
-          <linearGradient id="tcBarAdv" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#eaff00" />
-            <stop offset="60%" stopColor="#ca8a04" />
-            <stop offset="100%" stopColor="#422006" />
+
+          {/* Advanced Bar: 3D Frosted Chartreuse Glass Cylinder */}
+          <linearGradient id="tcBarAdv3D" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#fef9c3" />
+            <stop offset="12%" stopColor="#facc15" />
+            <stop offset="45%" stopColor="#ca8a04" />
+            <stop offset="85%" stopColor="#a16207" />
+            <stop offset="100%" stopColor="#451a03" />
+          </linearGradient>
+
+          {/* Specular Streak down left side of bar */}
+          <linearGradient id="tcSpecularVertical" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
+            <stop offset="40%" stopColor="#ffffff" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.1" />
+          </linearGradient>
+
+          {/* Topic Icon Frosted Glass Fill */}
+          <linearGradient id="tcIconGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0a2a1b" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#02120b" stopOpacity="0.95" />
           </linearGradient>
 
           {/* 3D Stacked Layers Icon Gradients */}
@@ -373,37 +469,30 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
           <filter id="tcGlowYellow" x="-30%" y="-30%" width="160%" height="160%">
             <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#eaff00" floodOpacity="0.8" />
           </filter>
-          <filter id="tcRingGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#00f076" floodOpacity="0.55" />
-          </filter>
         </defs>
 
-        {/* 1. OUTER MAIN CONTAINER (DEEP BLACK OBSIDIAN GLASS) */}
+        {/* =====================================================
+            1. OUTER CONTAINER CARD (Obsidian Black Glass)
+           ===================================================== */}
         <rect
           x="16"
           y="16"
           width="992"
           height="480"
-          rx="32"
+          rx="28"
           fill="url(#tcOuterBlack)"
           stroke="url(#tcOuterBorderGrad)"
-          strokeWidth="1.5"
+          strokeWidth="1.6"
           filter="url(#tcGlowOuter)"
-        />
-
-        {/* Specular Edge Highlight on Top Rim */}
-        <path
-          d="M 48 18 L 976 18"
-          stroke="rgba(255, 255, 255, 0.22)"
-          strokeWidth="1"
-          strokeLinecap="round"
         />
 
         {/* Soft Ambient Radial Lights (Subtle, keeping background deep black) */}
         <circle cx="120" cy="80" r="140" fill="#10b981" opacity="0.04" filter="blur(40px)" />
         <circle cx="860" cy="420" r="150" fill="#84cc16" opacity="0.03" filter="blur(50px)" />
 
-        {/* 2. HEADER BAR */}
+        {/* =====================================================
+            2. HEADER BAR
+           ===================================================== */}
         {/* 3D Stacked Layers Icon Badge */}
         <g transform="translate(44, 36)">
           <rect
@@ -445,6 +534,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             stroke="url(#tcSubBorderGrad)"
             strokeWidth="1.2"
           />
+          <line x1="596" y1="43.5" x2="696" y2="43.5" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
           <circle cx="18" cy="17" r="5" fill="#00f076" filter="url(#tcGlowGreen)" />
           <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
             Fundamental
@@ -461,6 +551,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             stroke="url(#tcSubBorderGrad)"
             strokeWidth="1.2"
           />
+          <line x1="736" y1="43.5" x2="846" y2="43.5" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
           <circle cx="18" cy="17" r="5" fill="#88ff00" filter="url(#tcGlowLime)" />
           <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
             Intermediate
@@ -477,13 +568,16 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             stroke="url(#tcSubBorderGrad)"
             strokeWidth="1.2"
           />
+          <line x1="886" y1="43.5" x2="976" y2="43.5" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
           <circle cx="18" cy="17" r="5" fill="#eaff00" filter="url(#tcGlowYellow)" />
           <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
             Advanced
           </text>
         </g>
 
-        {/* 3. LEFT SUBCARD: Donut Gauge & Summary */}
+        {/* =====================================================
+            3. LEFT SUBCARD: 3D Glassmorphic Donut Gauge & Summary
+           ===================================================== */}
         <g transform="translate(44, 96)">
           {/* Background Card */}
           <rect
@@ -494,67 +588,122 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             stroke="url(#tcSubBorderGrad)"
             strokeWidth="1.2"
           />
-          {/* Top Specular Shine */}
-          <path d="M 66 2 L 202 2" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" strokeLinecap="round" />
+          {/* Frosted Specular Sheen at Top of Subcard */}
+          <path d="M 66 2 L 202 2" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="1" strokeLinecap="round" />
 
-          {/* REAL PROGRESS CIRCLE / DONUT GAUGE (Center 112, 100) */}
-          <g transform="translate(112, 100)">
-            {/* Background Track Circle */}
-            <circle cx="0" cy="0" r={radius} fill="none" stroke="#061c12" strokeWidth="16" />
+          {/* ===================================================
+              3D GLASS TUBE PROGRESS DONUT GAUGE (Center cx, cy)
+             =================================================== */}
+          <g>
+            {/* Outer Concentric Frosted Glass Ring */}
+            <circle cx={cx} cy={cy} r="75" fill="none" stroke="rgba(74, 222, 128, 0.25)" strokeWidth="1.2" strokeDasharray="4 3" />
 
-            {/* Inner Dark Glass Disc */}
-            <circle cx="0" cy="0" r="54" fill="#040e08" stroke="rgba(74, 222, 128, 0.25)" strokeWidth="1" />
+            {/* Ambient Green Halo behind Track */}
+            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#00f076" strokeWidth="22" opacity="0.08" filter="blur(8px)" />
 
-            {/* Arc 1: Fundamental (Real Progress Arc) */}
+            {/* Recessed Dark Glass Track Groove */}
+            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#03150c" strokeWidth="17" />
+            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#010804" strokeWidth="13" />
+
+            {/* Inner Concentric Frosted Glass Rim */}
+            <circle cx={cx} cy={cy} r="50" fill="none" stroke="rgba(74, 222, 128, 0.3)" strokeWidth="1.2" />
+
+            {/* ARC 1: FUNDAMENTAL (Radiant 3D Emerald Glass Tube) */}
+            {arcPathFund && (
+              <g>
+                {/* Glow layer */}
+                <path d={arcPathFund} fill="none" stroke="#00f076" strokeWidth="18" strokeLinecap="round" opacity="0.4" filter="blur(4px)" />
+                {/* Main Glass Tube */}
+                <path d={arcPathFund} fill="none" stroke="url(#tcRingFund3D)" strokeWidth="15" strokeLinecap="round" />
+                {/* Specular White Ridge (Coaxial glass crest reflection) */}
+                <path d={arcPathFund} fill="none" stroke="url(#tcSpecularWhite)" strokeWidth="2.4" strokeLinecap="round" />
+                {/* Inner Glass Glow Accent */}
+                <path d={arcPathFund} fill="none" stroke="rgba(255, 255, 255, 0.22)" strokeWidth="1" strokeLinecap="round" />
+              </g>
+            )}
+
+            {/* ARC 2: INTERMEDIATE (Radiant 3D Lime Glass Tube) */}
+            {arcPathInter && (
+              <g>
+                {/* Glow layer */}
+                <path d={arcPathInter} fill="none" stroke="#88ff00" strokeWidth="18" strokeLinecap="round" opacity="0.4" filter="blur(4px)" />
+                {/* Main Glass Tube */}
+                <path d={arcPathInter} fill="none" stroke="url(#tcRingInter3D)" strokeWidth="15" strokeLinecap="round" />
+                {/* Specular White Ridge */}
+                <path d={arcPathInter} fill="none" stroke="url(#tcSpecularWhite)" strokeWidth="2.4" strokeLinecap="round" />
+                {/* Inner Glass Glow Accent */}
+                <path d={arcPathInter} fill="none" stroke="rgba(255, 255, 255, 0.22)" strokeWidth="1" strokeLinecap="round" />
+              </g>
+            )}
+
+            {/* ARC 3: ADVANCED (Radiant 3D Amber/Chartreuse Glass Tube) */}
+            {arcPathAdv && (
+              <g>
+                {/* Glow layer */}
+                <path d={arcPathAdv} fill="none" stroke="#facc15" strokeWidth="18" strokeLinecap="round" opacity="0.4" filter="blur(4px)" />
+                {/* Main Glass Tube */}
+                <path d={arcPathAdv} fill="none" stroke="url(#tcRingAdv3D)" strokeWidth="15" strokeLinecap="round" />
+                {/* Specular White Ridge */}
+                <path d={arcPathAdv} fill="none" stroke="url(#tcSpecularWhite)" strokeWidth="2.4" strokeLinecap="round" />
+                {/* Inner Glass Glow Accent */}
+                <path d={arcPathAdv} fill="none" stroke="rgba(255, 255, 255, 0.22)" strokeWidth="1" strokeLinecap="round" />
+              </g>
+            )}
+
+            {/* ===================================================
+                CENTER 3D CONVEX FROSTED GLASS LENS
+               =================================================== */}
+            {/* Convex Base Lens */}
+            <circle cx={cx} cy={cy} r="49" fill="url(#tcLensGrad)" stroke="rgba(74, 222, 128, 0.35)" strokeWidth="1.2" />
+
+            {/* Crescent Glass Specular Reflection */}
             <path
-              d={describeArc(0, 0, radius, 1, deg1 - 1)}
-              fill="none"
-              stroke="url(#tcRingFund)"
-              strokeWidth="16"
-              strokeLinecap="butt"
-              filter="url(#tcRingGlow)"
+              d={`M ${cx - 32} ${cy - 16} A 49 49 0 0 1 ${cx + 32} ${cy - 16} A 40 40 0 0 0 ${cx - 32} ${cy - 16} Z`}
+              fill="url(#tcLensShine)"
+              opacity="0.75"
             />
 
-            {/* Arc 2: Intermediate (Real Progress Arc) */}
-            <path
-              d={describeArc(0, 0, radius, deg1 + 1, deg1 + deg2 - 1)}
-              fill="none"
-              stroke="url(#tcRingInter)"
-              strokeWidth="16"
-              strokeLinecap="butt"
-              filter="url(#tcRingGlow)"
-            />
-
-            {/* Arc 3: Advanced (Real Progress Arc) */}
-            <path
-              d={describeArc(0, 0, radius, deg1 + deg2 + 1, 359)}
-              fill="none"
-              stroke="url(#tcRingAdv)"
-              strokeWidth="16"
-              strokeLinecap="butt"
-              filter="url(#tcRingGlow)"
-            />
-
-            {/* Center Content: </> Badge, Total Count, Label */}
+            {/* Frosted Badge for </> */}
             <rect
-              x="-15"
-              y="-38"
-              width="30"
-              height="18"
-              rx="5"
-              fill="#062215"
-              stroke="rgba(74, 222, 128, 0.5)"
-              strokeWidth="1"
+              x={cx - 16}
+              y={cy - 38}
+              width="32"
+              height="19"
+              rx="6"
+              fill="url(#tcBadgeGlass)"
+              stroke="rgba(74, 222, 128, 0.6)"
+              strokeWidth="1.2"
             />
-            <text x="0" y="-25" textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#6ee7b7" fontFamily="monospace">
+            {/* Top Shine on Badge */}
+            <line
+              x1={cx - 12}
+              y1={cy - 37}
+              x2={cx + 12}
+              y2={cy - 37}
+              stroke="rgba(255, 255, 255, 0.45)"
+              strokeWidth="0.8"
+              strokeLinecap="round"
+            />
+            <text x={cx} y={cy - 25} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#6ee7b7" fontFamily="monospace">
               &lt;/&gt;
             </text>
 
-            <text x="0" y="8" textAnchor="middle" fontSize="36" fontWeight="900" fill="#ffffff" letterSpacing="-1">
+            {/* Large Total Count */}
+            <text
+              x={cx}
+              y={cy + 8}
+              textAnchor="middle"
+              fontSize="36"
+              fontWeight="900"
+              fill="#ffffff"
+              letterSpacing="-1"
+              filter="drop-shadow(0 2px 5px rgba(0,0,0,0.95))"
+            >
               {totalProblems}
             </text>
 
-            <text x="0" y="27" textAnchor="middle" fontSize="11" fontWeight="600" fill="#86efac" opacity="0.85">
+            {/* Total Problems Subtitle */}
+            <text x={cx} y={cy + 26} textAnchor="middle" fontSize="11" fontWeight="700" fill="#a7f3d0" letterSpacing="-0.2">
               Total Problems
             </text>
           </g>
@@ -573,70 +722,75 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
           </text>
 
           {/* Row 2: Intermediate */}
-          <circle cx="24" cy="242" r="4.5" fill="#88ff00" filter="url(#tcGlowLime)" />
-          <text x="36" y="246" fontSize="12" fontWeight="600" fill="#e6fffa">
+          <circle cx="24" cy="238" r="4.5" fill="#88ff00" filter="url(#tcGlowLime)" />
+          <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e6fffa">
             Intermediate
           </text>
-          <text x="204" y="246" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+          <text x="204" y="242" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
             {interSolved}{" "}
-            <tspan fontWeight="500" fill="#bef264" opacity="0.85">
+            <tspan fontWeight="500" fill="#86efac" opacity="0.85">
               ({interPct.toFixed(1)}%)
             </tspan>
           </text>
 
           {/* Row 3: Advanced */}
-          <circle cx="24" cy="270" r="4.5" fill="#eaff00" filter="url(#tcGlowYellow)" />
-          <text x="36" y="274" fontSize="12" fontWeight="600" fill="#e6fffa">
+          <circle cx="24" cy="262" r="4.5" fill="#eaff00" filter="url(#tcGlowYellow)" />
+          <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e6fffa">
             Advanced
           </text>
-          <text x="204" y="274" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+          <text x="204" y="266" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
             {advSolved}{" "}
-            <tspan fontWeight="500" fill="#fde047" opacity="0.85">
+            <tspan fontWeight="500" fill="#86efac" opacity="0.85">
               ({advPct.toFixed(1)}%)
             </tspan>
           </text>
 
-          {/* Bottom 3-Stat Strip Box */}
-          <g transform="translate(10, 302)">
+          {/* Bottom 3-Stat Glass Box */}
+          <g transform="translate(14, 296)">
             <rect
-              width="204"
-              height="68"
-              rx="14"
-              fill="#040b07"
-              stroke="rgba(74, 222, 128, 0.22)"
+              width="196"
+              height="64"
+              rx="12"
+              fill="#06160d"
+              stroke="url(#tcSubBorderGrad)"
               strokeWidth="1"
             />
-            {/* Dividers */}
-            <line x1="68" y1="12" x2="68" y2="56" stroke="rgba(74, 222, 128, 0.2)" strokeWidth="1" />
-            <line x1="136" y1="12" x2="136" y2="56" stroke="rgba(74, 222, 128, 0.2)" strokeWidth="1" />
+            {/* Top Shine */}
+            <line x1="20" y1="1" x2="176" y2="1" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="0.8" strokeLinecap="round" />
+
+            {/* Vertical Dividers */}
+            <line x1="65" y1="12" x2="65" y2="52" stroke="rgba(74, 222, 128, 0.15)" strokeWidth="1" />
+            <line x1="130" y1="12" x2="130" y2="52" stroke="rgba(74, 222, 128, 0.15)" strokeWidth="1" />
 
             {/* Stat 1: Topics */}
-            <text x="34" y="33" textAnchor="middle" fontSize="16" fontWeight="900" fill="#ffffff">
-              {displayTopics.length}
+            <text x="32" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
+              {top12.length}
             </text>
-            <text x="34" y="50" textAnchor="middle" fontSize="10" fontWeight="700" fill="#6ee7b7" opacity="0.8">
+            <text x="32" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
               Topics
             </text>
 
             {/* Stat 2: Problems */}
-            <text x="102" y="33" textAnchor="middle" fontSize="16" fontWeight="900" fill="#ffffff">
+            <text x="98" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
               {totalProblems}
             </text>
-            <text x="102" y="50" textAnchor="middle" fontSize="10" fontWeight="700" fill="#6ee7b7" opacity="0.8">
+            <text x="98" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
               Problems
             </text>
 
             {/* Stat 3: Fundamental % */}
-            <text x="170" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
+            <text x="163" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
               {fundPct.toFixed(1)}%
             </text>
-            <text x="170" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
+            <text x="163" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
               Fundamental
             </text>
           </g>
         </g>
 
-        {/* 4. CENTER/RIGHT TOP: 12-Bar DSA Chart */}
+        {/* =====================================================
+            4. CENTER/RIGHT TOP: 12-Bar DSA 3D Glass Chart
+           ===================================================== */}
         <g transform="translate(284, 96)">
           {/* Background Card */}
           <rect
@@ -648,7 +802,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             strokeWidth="1.2"
           />
           {/* Top Specular Shine */}
-          <path d="M 30 2 L 674 2" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" strokeLinecap="round" />
+          <path d="M 30 2 L 674 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
 
           {/* Y-Axis Line (Placed at x=46, inside card bounds) */}
           <line x1="46" y1="30" x2="46" y2="150" stroke="rgba(74, 222, 128, 0.4)" strokeWidth="1.2" />
@@ -683,13 +837,14 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
           {/* 12 Vertical Topic Columns (Comfortably spaced, NO scrollbar, NO clipping!) */}
           {top12.map((item, i) => {
             const colX = 76 + i * 51.5;
-            const barHeight = Math.max(10, (item.solved / yMax) * 118);
+            const barHeight = Math.max(12, (item.solved / yMax) * 118);
             const barY = 150 - barHeight;
 
-            // Pick color gradient based on level
+            // Pick 3D glass gradient and glow based on tier
             const isFund = item.level === "fundamental";
             const isInter = item.level === "intermediate";
-            const barFill = isFund ? "url(#tcBarFund)" : isInter ? "url(#tcBarInter)" : "url(#tcBarAdv)";
+            const barFill = isFund ? "url(#tcBarFund3D)" : isInter ? "url(#tcBarInter3D)" : "url(#tcBarAdv3D)";
+            const glowColor = isFund ? "#00f076" : isInter ? "#88ff00" : "#facc15";
             const [labelLine1, labelLine2] = splitTopicLabel(item.tag);
 
             return (
@@ -697,57 +852,105 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                 {/* Count Number on top of bar */}
                 <text
                   x={colX}
-                  y={barY - 5}
+                  y={barY - 6}
                   textAnchor="middle"
-                  fontSize="13"
-                  fontWeight="800"
+                  fontSize="13.5"
+                  fontWeight="900"
                   fill="#ffffff"
+                  filter="drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
                 >
                   {item.solved}
                 </text>
 
-                {/* Vertical Bar */}
+                {/* Base Pedestal Glow on Baseline */}
+                <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity="0.4" filter="blur(2px)" />
+
+                {/* Ambient Backlight Glow behind the Glass Pillar */}
                 <rect
-                  x={colX - 15}
+                  x={colX - 14}
                   y={barY}
-                  width="30"
+                  width="28"
                   height={barHeight}
-                  rx="6"
-                  fill={barFill}
-                  stroke="rgba(255, 255, 255, 0.18)"
-                  strokeWidth="0.8"
+                  rx="8"
+                  fill={glowColor}
+                  opacity="0.25"
+                  filter="blur(4px)"
                 />
 
-                {/* 3D Specular Highlight down the left side */}
+                {/* Main 3D Frosted Glass Column Pillar */}
+                <rect
+                  x={colX - 16}
+                  y={barY}
+                  width="32"
+                  height={barHeight}
+                  rx="8"
+                  fill={barFill}
+                  stroke="rgba(255, 255, 255, 0.35)"
+                  strokeWidth="1"
+                />
+
+                {/* Specular Curved Reflection at Top Cap of Bar */}
                 <rect
                   x={colX - 13}
-                  y={barY + 2}
-                  width="2.5"
-                  height={Math.max(2, barHeight - 4)}
-                  rx="1"
+                  y={barY + 1.5}
+                  width="26"
+                  height="4"
+                  rx="2"
                   fill="#ffffff"
-                  opacity="0.32"
+                  opacity="0.5"
                 />
 
-                {/* Rounded Square Icon Box below baseline */}
+                {/* Specular Vertical Light Streak down Left Side */}
                 <rect
-                  x={colX - 15}
+                  x={colX - 13}
+                  y={barY + 5}
+                  width="2.8"
+                  height={Math.max(2, barHeight - 9)}
+                  rx="1.2"
+                  fill="url(#tcSpecularVertical)"
+                />
+
+                {/* Subtle Right Edge Depth Shadow */}
+                <rect
+                  x={colX + 11}
+                  y={barY + 5}
+                  width="1.8"
+                  height={Math.max(2, barHeight - 9)}
+                  rx="0.8"
+                  fill="#000000"
+                  opacity="0.35"
+                />
+
+                {/* Rounded Square Frosted Icon Box below baseline */}
+                <rect
+                  x={colX - 16}
                   y="162"
-                  width="30"
-                  height="30"
-                  rx="8"
-                  fill="#06180f"
+                  width="32"
+                  height="32"
+                  rx="9"
+                  fill="url(#tcIconGlass)"
                   stroke="rgba(74, 222, 128, 0.45)"
                   strokeWidth="1.2"
                 />
 
+                {/* Top Glass Shine Line on Icon Box */}
+                <line
+                  x1={colX - 11}
+                  y1="163.5"
+                  x2={colX + 11}
+                  y2="163.5"
+                  stroke="rgba(255, 255, 255, 0.4)"
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                />
+
                 {/* Topic Vector Icon */}
-                {renderTopicIcon(item.tag, colX - 10, 167)}
+                {renderTopicIcon(item.tag, colX - 10, 168)}
 
                 {/* Topic Name Label (Centered, 2 lines without clipping!) */}
                 <text
                   x={colX}
-                  y="206"
+                  y="208"
                   textAnchor="middle"
                   fontSize="9.5"
                   fontWeight="700"
@@ -758,11 +961,12 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                 {labelLine2 && (
                   <text
                     x={colX}
-                    y="217"
+                    y="220"
                     textAnchor="middle"
-                    fontSize="9.5"
-                    fontWeight="700"
-                    fill="#d1fae5"
+                    fontSize="8.5"
+                    fontWeight="600"
+                    fill="#a7f3d0"
+                    opacity="0.85"
                   >
                     {labelLine2}
                   </text>
@@ -772,11 +976,13 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
           })}
         </g>
 
-        {/* 5. BOTTOM LEFT/CENTER: Top Covered Topics */}
+        {/* =====================================================
+            5. BOTTOM LEFT: Top Covered Topics Badges
+           ===================================================== */}
         <g transform="translate(284, 366)">
           {/* Background Card */}
           <rect
-            width="344"
+            width="340"
             height="112"
             rx="20"
             fill="url(#tcSubGlass)"
@@ -784,160 +990,133 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             strokeWidth="1.2"
           />
           {/* Top Specular Shine */}
-          <path d="M 24 2 L 320 2" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" strokeLinecap="round" />
+          <path d="M 24 2 L 316 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
 
-          {/* Header with Target / Bullseye Icon */}
+          {/* Header with Target Icon */}
           <g transform="translate(18, 16)">
-            <circle cx="8" cy="8" r="8" stroke="#34d399" strokeWidth="1.8" fill="none" />
-            <circle cx="8" cy="8" r="4.8" stroke="#34d399" strokeWidth="1.5" fill="none" />
-            <circle cx="8" cy="8" r="2" fill="#34d399" />
-            <text x="24" y="12" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
+            <circle cx="10" cy="10" r="9" stroke="#34d399" strokeWidth="1.8" fill="none" />
+            <circle cx="10" cy="10" r="5" stroke="#4ade80" strokeWidth="1.6" fill="none" />
+            <circle cx="10" cy="10" r="2" fill="#86efac" />
+            <path d="M 17 3 L 13 7" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
+            <text x="26" y="14" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
               Top Covered Topics
             </text>
           </g>
 
-          {/* 3 Full-Word Badges (NO Arr..., NO Bi..., NO Tw...!) */}
-          {/* Badge 1 (1st place) */}
-          {top3[0] && (() => {
-            const [t1w1, t1w2] = splitTopicLabel(top3[0].tag);
-            return (
-              <g transform="translate(14, 44)">
-                <rect
-                  width="100"
-                  height="54"
-                  rx="14"
-                  fill="#082215"
-                  stroke="url(#tcSubBorderGrad)"
-                  strokeWidth="1.2"
-                />
-                {/* Golden Trophy Icon Badge */}
-                <circle cx="18" cy="27" r="11" fill="#047857" stroke="#34d399" strokeWidth="1.2" />
-                <path d="M14 22h8v3a4 4 0 0 1-8 0v-3z" fill="#facc15" stroke="#eab308" strokeWidth="0.8" />
-                <path d="M14 23h-2a2 2 0 0 0 2 2v-2zm8 0h2a2 2 0 0 1-2 2v-2z" fill="#fde047" />
-                <path d="M17 29h2v3h-2z" fill="#facc15" />
-                <path d="M15 32h6v1.5h-6z" fill="#ca8a04" />
+          {/* 3 Topic Badges with 3D Trophy and Medals */}
+          {/* Badge 1: Golden Trophy (#1) */}
+          <g transform="translate(14, 44)">
+            <rect
+              width="96"
+              height="52"
+              rx="12"
+              fill="#061e12"
+              stroke="rgba(74, 222, 128, 0.4)"
+              strokeWidth="1.2"
+            />
+            {/* Top Shine */}
+            <line x1="8" y1="1" x2="88" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
-                {/* Text */}
-                {t1w2 ? (
-                  <>
-                    <text x="34" y="20" fontSize="9.5" fontWeight="700" fill="#ffffff">
-                      {t1w1}
-                    </text>
-                    <text x="34" y="31" fontSize="9.5" fontWeight="700" fill="#ffffff">
-                      {t1w2}
-                    </text>
-                    <text x="34" y="46" fontSize="11" fontWeight="800" fill="#34d399">
-                      ({top3[0].solved})
-                    </text>
-                  </>
-                ) : (
-                  <>
-                    <text x="34" y="25" fontSize="11" fontWeight="700" fill="#ffffff">
-                      {t1w1}
-                    </text>
-                    <text x="34" y="41" fontSize="11.5" fontWeight="800" fill="#34d399">
-                      ({top3[0].solved})
-                    </text>
-                  </>
-                )}
-              </g>
-            );
-          })()}
+            {/* 3D Realistic Golden Trophy Icon */}
+            <g transform="translate(8, 10)">
+              {/* Handles */}
+              <path d="M 2 5 C -2 5, -2 13, 2 13 M 16 5 C 20 5, 20 13, 16 13" stroke="#facc15" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              {/* Cup Body */}
+              <path d="M 2 3 L 16 3 L 15 11 C 15 14, 11 16, 9 16 C 7 16, 3 14, 3 11 Z" fill="#eab308" stroke="#fef08a" strokeWidth="0.8" />
+              {/* Stem & Base */}
+              <rect x="7.5" y="16" width="3" height="4" fill="#ca8a04" />
+              <rect x="5" y="20" width="8" height="2.5" rx="1" fill="#facc15" />
+            </g>
 
-          {/* Badge 2 (2nd place) */}
-          {top3[1] && (() => {
-            const [t2w1, t2w2] = splitTopicLabel(top3[1].tag);
-            return (
-              <g transform="translate(122, 44)">
-                <rect
-                  width="102"
-                  height="54"
-                  rx="14"
-                  fill="#082215"
-                  stroke="url(#tcSubBorderGrad)"
-                  strokeWidth="1.2"
-                />
-                {/* Lime Medal Icon Badge */}
-                <circle cx="18" cy="27" r="11" fill="#065f46" stroke="#4ade80" strokeWidth="1.2" />
-                <path d="M15 19l3 4 3-4" stroke="#a7f3d0" strokeWidth="1.2" strokeLinecap="round" />
-                <circle cx="18" cy="27" r="4.5" fill="#22c55e" stroke="#86efac" strokeWidth="0.8" />
-                <path d="M18 25l0.6 1.3 1.4 0.2-1 1 0.2 1.4-1.2-0.6-1.2 0.6 0.2-1.4-1-1 1.4-0.2z" fill="#ffffff" />
+            {/* Text: Full name without truncation */}
+            <text x="36" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
+              {first.tag}
+            </text>
+            <text x="36" y="39" fontSize="10.5" fontWeight="700" fill="#86efac">
+              ({first.solved})
+            </text>
+          </g>
 
-                {/* Text */}
-                {t2w2 ? (
-                  <>
-                    <text x="34" y="20" fontSize="9.5" fontWeight="700" fill="#ffffff">
-                      {t2w1}
-                    </text>
-                    <text x="34" y="31" fontSize="9.5" fontWeight="700" fill="#ffffff">
-                      {t2w2}
-                    </text>
-                    <text x="34" y="46" fontSize="11" fontWeight="800" fill="#34d399">
-                      ({top3[1].solved})
-                    </text>
-                  </>
-                ) : (
-                  <>
-                    <text x="34" y="25" fontSize="11" fontWeight="700" fill="#ffffff">
-                      {t2w1}
-                    </text>
-                    <text x="34" y="41" fontSize="11.5" fontWeight="800" fill="#34d399">
-                      ({top3[1].solved})
-                    </text>
-                  </>
-                )}
-              </g>
-            );
-          })()}
+          {/* Badge 2: Star Medal (#2) */}
+          <g transform="translate(116, 44)">
+            <rect
+              width="100"
+              height="52"
+              rx="12"
+              fill="#061e12"
+              stroke="rgba(74, 222, 128, 0.4)"
+              strokeWidth="1.2"
+            />
+            {/* Top Shine */}
+            <line x1="8" y1="1" x2="92" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
-          {/* Badge 3 (3rd place) */}
-          {top3[2] && (() => {
-            const [t3w1, t3w2] = splitTopicLabel(top3[2].tag);
-            return (
-              <g transform="translate(232, 44)">
-                <rect
-                  width="100"
-                  height="54"
-                  rx="14"
-                  fill="#082215"
-                  stroke="url(#tcSubBorderGrad)"
-                  strokeWidth="1.2"
-                />
-                {/* Lime Medal Icon Badge */}
-                <circle cx="18" cy="27" r="11" fill="#065f46" stroke="#4ade80" strokeWidth="1.2" />
-                <path d="M15 19l3 4 3-4" stroke="#a7f3d0" strokeWidth="1.2" strokeLinecap="round" />
-                <circle cx="18" cy="27" r="4.5" fill="#22c55e" stroke="#86efac" strokeWidth="0.8" />
-                <path d="M18 25l0.6 1.3 1.4 0.2-1 1 0.2 1.4-1.2-0.6-1.2 0.6 0.2-1.4-1-1 1.4-0.2z" fill="#ffffff" />
+            {/* Lime-Green Star Medal Icon */}
+            <g transform="translate(8, 10)">
+              {/* Ribbons */}
+              <path d="M 5 2 L 7 10 L 9 2" fill="#22c55e" opacity="0.8" />
+              <path d="M 13 2 L 11 10 L 9 2" fill="#16a34a" opacity="0.8" />
+              {/* Medal Disc */}
+              <circle cx="9" cy="13" r="7" fill="#84cc16" stroke="#bef264" strokeWidth="0.8" />
+              {/* Star inside medal */}
+              <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
+            </g>
 
-                {/* Text */}
-                {t3w2 ? (
-                  <>
-                    <text x="34" y="20" fontSize="9.5" fontWeight="700" fill="#ffffff">
-                      {t3w1}
-                    </text>
-                    <text x="34" y="31" fontSize="9.5" fontWeight="700" fill="#ffffff">
-                      {t3w2}
-                    </text>
-                    <text x="34" y="46" fontSize="11" fontWeight="800" fill="#34d399">
-                      ({top3[2].solved})
-                    </text>
-                  </>
-                ) : (
-                  <>
-                    <text x="34" y="25" fontSize="11" fontWeight="700" fill="#ffffff">
-                      {t3w1}
-                    </text>
-                    <text x="34" y="41" fontSize="11.5" fontWeight="800" fill="#34d399">
-                      ({top3[2].solved})
-                    </text>
-                  </>
-                )}
-              </g>
-            );
-          })()}
+            {/* Text: Full 2-line name without truncation */}
+            <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
+              {splitTopicLabel(second.tag)[0]}
+            </text>
+            {splitTopicLabel(second.tag)[1] && (
+              <text x="35" y="32" fontSize="9" fontWeight="700" fill="#ffffff">
+                {splitTopicLabel(second.tag)[1]}
+              </text>
+            )}
+            <text x="35" y={splitTopicLabel(second.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#86efac">
+              ({second.solved})
+            </text>
+          </g>
+
+          {/* Badge 3: Star Medal (#3) */}
+          <g transform="translate(222, 44)">
+            <rect
+              width="104"
+              height="52"
+              rx="12"
+              fill="#061e12"
+              stroke="rgba(74, 222, 128, 0.4)"
+              strokeWidth="1.2"
+            />
+            {/* Top Shine */}
+            <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+
+            {/* Lime-Green Star Medal Icon */}
+            <g transform="translate(8, 10)">
+              {/* Ribbons */}
+              <path d="M 5 2 L 7 10 L 9 2" fill="#22c55e" opacity="0.8" />
+              <path d="M 13 2 L 11 10 L 9 2" fill="#16a34a" opacity="0.8" />
+              {/* Medal Disc */}
+              <circle cx="9" cy="13" r="7" fill="#84cc16" stroke="#bef264" strokeWidth="0.8" />
+              {/* Star inside medal */}
+              <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
+            </g>
+
+            {/* Text: Full 2-line name without truncation */}
+            <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
+              {splitTopicLabel(third.tag)[0]}
+            </text>
+            {splitTopicLabel(third.tag)[1] && (
+              <text x="35" y="32" fontSize="9" fontWeight="700" fill="#ffffff">
+                {splitTopicLabel(third.tag)[1]}
+              </text>
+            )}
+            <text x="35" y={splitTopicLabel(third.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#86efac">
+              ({third.solved})
+            </text>
+          </g>
         </g>
 
-        {/* 6. BOTTOM RIGHT: Coverage Insight (With 3D Rising Graphic Exactly Like Reference Image) */}
+        {/* =====================================================
+            6. BOTTOM RIGHT: Coverage Insight (With 3D Rising Graphic)
+           ===================================================== */}
         <g transform="translate(640, 366)">
           {/* Background Card */}
           <rect
@@ -949,7 +1128,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             strokeWidth="1.2"
           />
           {/* Top Specular Shine */}
-          <path d="M 24 2 L 324 2" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" strokeLinecap="round" />
+          <path d="M 24 2 L 324 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
 
           {/* Header with 3-Bar Chart Icon */}
           <g transform="translate(18, 16)">
@@ -974,7 +1153,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             </tspan>
           </text>
 
-          {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic (Exact Match to Image 2!) */}
+          {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic */}
           <g transform="translate(244, 26)">
             {/* 4 Rising Isometric-Style Green Columns */}
             {/* Bar 1 */}
