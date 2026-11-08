@@ -52,7 +52,7 @@ export default function PreviewPage() {
     }
   }, []);
 
-  const { data: liveLeetcode, loading: leetcodeLoading } = useFetch<LeetcodeStats>("/api/leetcode/stats");
+  const { data: liveLeetcode, loading: leetcodeLoading } = useFetch<LeetcodeStats>("/api/leetcode/stats?username=aarav_singh");
 
   const previewUser = {
     name: "Aarav Singh",
@@ -130,10 +130,10 @@ export default function PreviewPage() {
 
   const previewLeetcode: LeetcodeStats = liveLeetcode ?? {
     username: "aarav_singh",
-    ranking: 5000001,
-    totalSolved: 16,
-    easySolved: 10,
-    mediumSolved: 6,
+    ranking: 3547790,
+    totalSolved: 33,
+    easySolved: 18,
+    mediumSolved: 15,
     hardSolved: 0,
     acceptanceRate: "68.4%",
     recentSubmissions: [],

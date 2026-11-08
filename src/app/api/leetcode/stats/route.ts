@@ -4,44 +4,63 @@ import { prisma } from "@/lib/prisma";
 import { fetchLeetcodeStats, LEETCODE_CACHE_HOURS } from "@/lib/leetcode";
 
 export async function GET(req: Request) {
-  const { user, error } = await requireUser();
-  if (error) return error;
+  const url = new URL(req.url);
+  const queryUsername = url.searchParams.get("username");
+  const force = url.searchParams.get("force") === "1";
 
-  const force = new URL(req.url).searchParams.get("force") === "1";
+  // Check auth optionally
+  const { user } = await requireUser();
 
-  if (!user.leetcodeUsername) {
+  // Determine target username: query param -> authenticated user's setting -> default demo account
+  const username = queryUsername || user?.leetcodeUsername || "aarav_singh";
+
+  if (!username) {
     return NextResponse.json(
-      { error: "No LeetCode username set. Add one in Settings." },
+      { error: "No LeetCode username provided or set in Settings." },
       { status: 400 }
     );
   }
 
-  const isFresh =
-    !force &&
-    user.leetcodeStatsCache &&
-    user.leetcodeStatsSyncedAt &&
-    Date.now() - user.leetcodeStatsSyncedAt.getTime() < LEETCODE_CACHE_HOURS * 60 * 60 * 1000;
+  // Check user cache if authenticated and querying own username
+  const isUserOwnStats = user && user.leetcodeUsername?.toLowerCase() === username.toLowerCase();
 
-  if (isFresh) {
-    return NextResponse.json({
-      data: JSON.parse(user.leetcodeStatsCache!),
-      cached: true,
-      syncedAt: user.leetcodeStatsSyncedAt,
-    });
+  if (isUserOwnStats) {
+    const isFresh =
+      !force &&
+      user.leetcodeStatsCache &&
+      user.leetcodeStatsSyncedAt &&
+      Date.now() - user.leetcodeStatsSyncedAt.getTime() < LEETCODE_CACHE_HOURS * 60 * 60 * 1000;
+
+    if (isFresh) {
+      return NextResponse.json({
+        data: JSON.parse(user.leetcodeStatsCache!),
+        cached: true,
+        syncedAt: user.leetcodeStatsSyncedAt,
+      });
+    }
   }
 
   try {
-    const stats = await fetchLeetcodeStats(user.leetcodeUsername);
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        leetcodeStatsCache: JSON.stringify(stats),
-        leetcodeStatsSyncedAt: new Date(),
-      },
-    });
+    const stats = await fetchLeetcodeStats(username);
+
+    // Save to user cache if authenticated for this account
+    if (isUserOwnStats && user) {
+      try {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            leetcodeStatsCache: JSON.stringify(stats),
+            leetcodeStatsSyncedAt: new Date(),
+          },
+        });
+      } catch {
+        // Non-critical if DB cache update fails
+      }
+    }
+
     return NextResponse.json({ data: stats, cached: false, syncedAt: new Date() });
   } catch (err) {
-    if (user.leetcodeStatsCache) {
+    if (isUserOwnStats && user?.leetcodeStatsCache) {
       return NextResponse.json({
         data: JSON.parse(user.leetcodeStatsCache),
         cached: true,
@@ -56,3 +75,4 @@ export async function GET(req: Request) {
     );
   }
 }
+
