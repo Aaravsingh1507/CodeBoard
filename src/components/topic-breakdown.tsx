@@ -478,10 +478,12 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                 transform: translateY(0);
               }
               50% {
-                transform: translateY(-2.5px);
+                transform: translateY(-2px);
               }
             }
             .cb-header-float {
+              transform-box: fill-box;
+              transform-origin: center;
               animation: cbFloat 4s ease-in-out infinite;
             }
             @keyframes cbIconEntrance {
@@ -506,6 +508,8 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             }
             .cb-badge-card {
               cursor: pointer;
+              transform-box: fill-box;
+              transform-origin: center;
               transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
             }
             .cb-badge-card:hover {
@@ -530,6 +534,8 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             }
             .cb-legend-pill {
               cursor: pointer;
+              transform-box: fill-box;
+              transform-origin: center;
               transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
             }
             .cb-legend-pill:hover {
@@ -694,25 +700,27 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             1. HEADER BAR
            ===================================================== */}
         {/* 3D Stacked Layers Icon Badge */}
-        <g transform="translate(32, 20)" className="cb-header-float">
-          <rect
-            width="46"
-            height="46"
-            rx="14"
-            fill="url(#tcLayerBadge)"
-            stroke="rgba(139, 92, 246, 0.55)"
-            strokeWidth="1.4"
-            filter="url(#tcGlowViolet)"
-          />
-          {/* Bottom Layer */}
-          <path d="M23 29 L33 24 L23 19 L13 24 Z" fill="url(#tcLayerBot)" opacity="0.65" />
-          <path d="M13 24 L23 29 L33 24 L33 26 L23 31 L13 26 Z" fill="#312e81" opacity="0.9" />
-          {/* Middle Layer */}
-          <path d="M23 24.5 L33 19.5 L23 14.5 L13 19.5 Z" fill="url(#tcLayerMid)" opacity="0.85" />
-          <path d="M13 19.5 L23 24.5 L33 19.5 L33 21.5 L23 26.5 L13 21.5 Z" fill="#4c1d95" opacity="0.9" />
-          {/* Top Layer */}
-          <path d="M23 20 L33 15 L23 10 L13 15 Z" fill="url(#tcLayerTop)" />
-          <path d="M13 15 L23 20 L33 15 L33 17 L23 22 L13 17 Z" fill="#0f766e" />
+        <g transform="translate(32, 20)">
+          <g className="cb-header-float">
+            <rect
+              width="46"
+              height="46"
+              rx="14"
+              fill="url(#tcLayerBadge)"
+              stroke="rgba(139, 92, 246, 0.55)"
+              strokeWidth="1.4"
+              filter="url(#tcGlowViolet)"
+            />
+            {/* Bottom Layer */}
+            <path d="M23 29 L33 24 L23 19 L13 24 Z" fill="url(#tcLayerBot)" opacity="0.65" />
+            <path d="M13 24 L23 29 L33 24 L33 26 L23 31 L13 26 Z" fill="#312e81" opacity="0.9" />
+            {/* Middle Layer */}
+            <path d="M23 24.5 L33 19.5 L23 14.5 L13 19.5 Z" fill="url(#tcLayerMid)" opacity="0.85" />
+            <path d="M13 19.5 L23 24.5 L33 19.5 L33 21.5 L23 26.5 L13 21.5 Z" fill="#4c1d95" opacity="0.9" />
+            {/* Top Layer */}
+            <path d="M23 20 L33 15 L23 10 L13 15 Z" fill="url(#tcLayerTop)" />
+            <path d="M13 15 L23 20 L33 15 L33 17 L23 22 L13 17 Z" fill="#0f766e" />
+          </g>
         </g>
 
         {/* Title + Subtitle */}
@@ -727,73 +735,76 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* Fundamental - Cyan */}
         <g
           transform="translate(572, 26)"
-          className="cb-legend-pill"
           style={{
             opacity: isVisible ? 1 : 0,
             transition: "opacity 0.6s ease-out 0.15s",
           }}
         >
-          <rect
-            width="124"
-            height="34"
-            rx="17"
-            fill="#0b1226"
-            stroke="rgba(45, 212, 191, 0.45)"
-            strokeWidth="1.2"
-          />
-          <line x1="12" y1="1" x2="112" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-          <circle cx="18" cy="17" r="5" fill="#2dd4bf" filter="url(#tcGlowCyan)" className="cb-dot-pulse" />
-          <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
-            Fundamental
-          </text>
+          <g className="cb-legend-pill">
+            <rect
+              width="124"
+              height="34"
+              rx="17"
+              fill="#0b1226"
+              stroke="rgba(45, 212, 191, 0.45)"
+              strokeWidth="1.2"
+            />
+            <line x1="12" y1="1" x2="112" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+            <circle cx="18" cy="17" r="5" fill="#2dd4bf" filter="url(#tcGlowCyan)" className="cb-dot-pulse" />
+            <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
+              Fundamental
+            </text>
+          </g>
         </g>
 
         {/* Intermediate - Violet */}
         <g
           transform="translate(712, 26)"
-          className="cb-legend-pill"
           style={{
             opacity: isVisible ? 1 : 0,
             transition: "opacity 0.6s ease-out 0.25s",
           }}
         >
-          <rect
-            width="134"
-            height="34"
-            rx="17"
-            fill="#120f29"
-            stroke="rgba(168, 85, 247, 0.45)"
-            strokeWidth="1.2"
-          />
-          <line x1="12" y1="1" x2="122" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-          <circle cx="18" cy="17" r="5" fill="#a855f7" filter="url(#tcGlowViolet)" className="cb-dot-pulse" style={{ animationDelay: "0.75s" }} />
-          <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
-            Intermediate
-          </text>
+          <g className="cb-legend-pill">
+            <rect
+              width="134"
+              height="34"
+              rx="17"
+              fill="#120f29"
+              stroke="rgba(168, 85, 247, 0.45)"
+              strokeWidth="1.2"
+            />
+            <line x1="12" y1="1" x2="122" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+            <circle cx="18" cy="17" r="5" fill="#a855f7" filter="url(#tcGlowViolet)" className="cb-dot-pulse" style={{ animationDelay: "0.75s" }} />
+            <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
+              Intermediate
+            </text>
+          </g>
         </g>
 
         {/* Advanced - Amber */}
         <g
           transform="translate(862, 26)"
-          className="cb-legend-pill"
           style={{
             opacity: isVisible ? 1 : 0,
             transition: "opacity 0.6s ease-out 0.35s",
           }}
         >
-          <rect
-            width="114"
-            height="34"
-            rx="17"
-            fill="#1c160a"
-            stroke="rgba(251, 191, 36, 0.45)"
-            strokeWidth="1.2"
-          />
-          <line x1="12" y1="1" x2="102" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-          <circle cx="18" cy="17" r="5" fill="#fbbf24" filter="url(#tcGlowAmber)" className="cb-dot-pulse" style={{ animationDelay: "0.9s" }} />
-          <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
-            Advanced
-          </text>
+          <g className="cb-legend-pill">
+            <rect
+              width="114"
+              height="34"
+              rx="17"
+              fill="#1c160a"
+              stroke="rgba(251, 191, 36, 0.45)"
+              strokeWidth="1.2"
+            />
+            <line x1="12" y1="1" x2="102" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+            <circle cx="18" cy="17" r="5" fill="#fbbf24" filter="url(#tcGlowAmber)" className="cb-dot-pulse" style={{ animationDelay: "0.9s" }} />
+            <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
+              Advanced
+            </text>
+          </g>
         </g>
 
         {/* =====================================================
@@ -1340,153 +1351,156 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             {/* Badge 1: Golden Trophy (#1) */}
             <g
               transform="translate(14, 44)"
-              className="cb-badge-card"
               style={{
                 opacity: isVisible ? 1 : 0,
                 transition: "opacity 0.6s ease-out 0.35s",
               }}
             >
-              <rect
-                width="102"
-                height="56"
-                rx="12"
-                fill="#0d1428"
-                stroke="rgba(139, 92, 246, 0.45)"
-                strokeWidth="1.2"
-              />
-              {/* Top Shine */}
-              <line x1="8" y1="1" x2="94" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+              <g className="cb-badge-card">
+                <rect
+                  width="102"
+                  height="56"
+                  rx="12"
+                  fill="#0d1428"
+                  stroke="rgba(139, 92, 246, 0.45)"
+                  strokeWidth="1.2"
+                />
+                {/* Top Shine */}
+                <line x1="8" y1="1" x2="94" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
-              {/* 3D Realistic Golden Trophy Icon with Hover Rotation */}
-              <g transform="translate(8, 12)" className="cb-trophy-icon">
-                {/* Handles */}
-                <path d="M 2 5 C -2 5, -2 13, 2 13 M 16 5 C 20 5, 20 13, 16 13" stroke="#fbbf24" strokeWidth="1.6" fill="none" strokeLinecap="round" />
-                {/* Cup Body */}
-                <path d="M 2 3 L 16 3 L 15 11 C 15 14, 11 16, 9 16 C 7 16, 3 14, 3 11 Z" fill="#f59e0b" stroke="#fef08a" strokeWidth="0.8" />
-                {/* Stem & Base */}
-                <rect x="7.5" y="16" width="3" height="4" fill="#b45309" />
-                <rect x="5" y="20" width="8" height="2.5" rx="1" fill="#fbbf24" />
+                {/* 3D Realistic Golden Trophy Icon with Hover Rotation */}
+                <g transform="translate(8, 12)" className="cb-trophy-icon">
+                  {/* Handles */}
+                  <path d="M 2 5 C -2 5, -2 13, 2 13 M 16 5 C 20 5, 20 13, 16 13" stroke="#fbbf24" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+                  {/* Cup Body */}
+                  <path d="M 2 3 L 16 3 L 15 11 C 15 14, 11 16, 9 16 C 7 16, 3 14, 3 11 Z" fill="#f59e0b" stroke="#fef08a" strokeWidth="0.8" />
+                  {/* Stem & Base */}
+                  <rect x="7.5" y="16" width="3" height="4" fill="#b45309" />
+                  <rect x="5" y="20" width="8" height="2.5" rx="1" fill="#fbbf24" />
+                </g>
+
+                {/* Text */}
+                <text x="36" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
+                  {first.tag}
+                </text>
+                <text x="36" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                  ({first.solved})
+                </text>
               </g>
-
-              {/* Text */}
-              <text x="36" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
-                {first.tag}
-              </text>
-              <text x="36" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                ({first.solved})
-              </text>
             </g>
 
             {/* Badge 2: Star Medal (#2) */}
             <g
               transform="translate(122, 44)"
-              className="cb-badge-card"
               style={{
                 opacity: isVisible ? 1 : 0,
                 transition: "opacity 0.6s ease-out 0.45s",
               }}
             >
-              <rect
-                width="104"
-                height="56"
-                rx="12"
-                fill="#0d1428"
-                stroke="rgba(139, 92, 246, 0.45)"
-                strokeWidth="1.2"
-              />
-              {/* Top Shine */}
-              <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+              <g className="cb-badge-card">
+                <rect
+                  width="104"
+                  height="56"
+                  rx="12"
+                  fill="#0d1428"
+                  stroke="rgba(139, 92, 246, 0.45)"
+                  strokeWidth="1.2"
+                />
+                {/* Top Shine */}
+                <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
-              {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
-              <g transform="translate(8, 12)" className="cb-medal-icon">
-                {/* Ribbons */}
-                <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
-                <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
-                {/* Medal Disc */}
-                <circle cx="9" cy="13" r="7" fill="#2dd4bf" stroke="#5eead4" strokeWidth="0.8" />
-                {/* Star inside medal */}
-                <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#042f2e" />
+                {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
+                <g transform="translate(8, 12)" className="cb-medal-icon">
+                  {/* Ribbons */}
+                  <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
+                  <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
+                  {/* Medal Disc */}
+                  <circle cx="9" cy="13" r="7" fill="#2dd4bf" stroke="#5eead4" strokeWidth="0.8" />
+                  {/* Star inside medal */}
+                  <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#042f2e" />
+                </g>
+
+                {/* Text */}
+                {splitTopicLabel(second.tag)[1] ? (
+                  <>
+                    <text x="35" y="20" fontSize="10" fontWeight="800" fill="#ffffff">
+                      {splitTopicLabel(second.tag)[0]}
+                    </text>
+                    <text x="35" y="31" fontSize="9" fontWeight="700" fill="#ffffff">
+                      {splitTopicLabel(second.tag)[1]}
+                    </text>
+                    <text x="35" y="44" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                      ({second.solved})
+                    </text>
+                  </>
+                ) : (
+                  <>
+                    <text x="35" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
+                      {second.tag}
+                    </text>
+                    <text x="35" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                      ({second.solved})
+                    </text>
+                  </>
+                )}
               </g>
-
-              {/* Text */}
-              {splitTopicLabel(second.tag)[1] ? (
-                <>
-                  <text x="35" y="20" fontSize="10" fontWeight="800" fill="#ffffff">
-                    {splitTopicLabel(second.tag)[0]}
-                  </text>
-                  <text x="35" y="31" fontSize="9" fontWeight="700" fill="#ffffff">
-                    {splitTopicLabel(second.tag)[1]}
-                  </text>
-                  <text x="35" y="44" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                    ({second.solved})
-                  </text>
-                </>
-              ) : (
-                <>
-                  <text x="35" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
-                    {second.tag}
-                  </text>
-                  <text x="35" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                    ({second.solved})
-                  </text>
-                </>
-              )}
             </g>
 
             {/* Badge 3: Star Medal (#3) */}
             <g
               transform="translate(234, 44)"
-              className="cb-badge-card"
               style={{
                 opacity: isVisible ? 1 : 0,
                 transition: "opacity 0.6s ease-out 0.55s",
               }}
             >
-              <rect
-                width="104"
-                height="56"
-                rx="12"
-                fill="#0d1428"
-                stroke="rgba(139, 92, 246, 0.45)"
-                strokeWidth="1.2"
-              />
-              {/* Top Shine */}
-              <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+              <g className="cb-badge-card">
+                <rect
+                  width="104"
+                  height="56"
+                  rx="12"
+                  fill="#0d1428"
+                  stroke="rgba(139, 92, 246, 0.45)"
+                  strokeWidth="1.2"
+                />
+                {/* Top Shine */}
+                <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
-              {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
-              <g transform="translate(8, 12)" className="cb-medal-icon">
-                {/* Ribbons */}
-                <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
-                <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
-                {/* Medal Disc */}
-                <circle cx="9" cy="13" r="7" fill="#a855f7" stroke="#c084fc" strokeWidth="0.8" />
-                {/* Star inside medal */}
-                <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
+                {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
+                <g transform="translate(8, 12)" className="cb-medal-icon">
+                  {/* Ribbons */}
+                  <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
+                  <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
+                  {/* Medal Disc */}
+                  <circle cx="9" cy="13" r="7" fill="#a855f7" stroke="#c084fc" strokeWidth="0.8" />
+                  {/* Star inside medal */}
+                  <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
+                </g>
+
+                {/* Text */}
+                {splitTopicLabel(third.tag)[1] ? (
+                  <>
+                    <text x="35" y="20" fontSize="10" fontWeight="800" fill="#ffffff">
+                      {splitTopicLabel(third.tag)[0]}
+                    </text>
+                    <text x="35" y="31" fontSize="9" fontWeight="700" fill="#ffffff">
+                      {splitTopicLabel(third.tag)[1]}
+                    </text>
+                    <text x="35" y="44" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                      ({third.solved})
+                    </text>
+                  </>
+                ) : (
+                  <>
+                    <text x="35" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
+                      {third.tag}
+                    </text>
+                    <text x="35" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                      ({third.solved})
+                    </text>
+                  </>
+                )}
               </g>
-
-              {/* Text */}
-              {splitTopicLabel(third.tag)[1] ? (
-                <>
-                  <text x="35" y="20" fontSize="10" fontWeight="800" fill="#ffffff">
-                    {splitTopicLabel(third.tag)[0]}
-                  </text>
-                  <text x="35" y="31" fontSize="9" fontWeight="700" fill="#ffffff">
-                    {splitTopicLabel(third.tag)[1]}
-                  </text>
-                  <text x="35" y="44" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                    ({third.solved})
-                  </text>
-                </>
-              ) : (
-                <>
-                  <text x="35" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
-                    {third.tag}
-                  </text>
-                  <text x="35" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                    ({third.solved})
-                  </text>
-                </>
-              )}
             </g>
           </g>
         </g>
