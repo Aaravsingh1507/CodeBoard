@@ -710,7 +710,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* Legend Filter Pills (Top Right) */}
         {/* Fundamental - Cyan */}
         <g
-          transform="translate(616, 26)"
+          transform="translate(620, 25)"
           style={{
             opacity: isVisible ? 1 : 0,
             transition: "opacity 0.6s ease-out 0.15s",
@@ -718,16 +718,16 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         >
           <g className="cb-legend-pill">
             <rect
-              width="118"
-              height="32"
-              rx="16"
+              width="122"
+              height="34"
+              rx="17"
               fill="#0b1226"
               stroke="rgba(45, 212, 191, 0.45)"
               strokeWidth="1.2"
             />
-            <line x1="12" y1="1" x2="106" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-            <circle cx="16" cy="16" r="4.2" fill="#2dd4bf" filter="url(#tcGlowCyan)" className="cb-dot-pulse" />
-            <text x="28" y="16.5" dominantBaseline="central" fontSize="11" fontWeight="600" fill="#ffffff" letterSpacing="0.2">
+            <line x1="12" y1="1" x2="110" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+            <circle cx="17" cy="17" r="4.8" fill="#2dd4bf" filter="url(#tcGlowCyan)" className="cb-dot-pulse" />
+            <text x="30" y="17" dominantBaseline="central" fontSize="13" fontWeight="700" fill="#ffffff">
               Fundamental
             </text>
           </g>
@@ -735,7 +735,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
         {/* Intermediate - Violet */}
         <g
-          transform="translate(748, 26)"
+          transform="translate(756, 25)"
           style={{
             opacity: isVisible ? 1 : 0,
             transition: "opacity 0.6s ease-out 0.25s",
@@ -743,16 +743,16 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         >
           <g className="cb-legend-pill">
             <rect
-              width="126"
-              height="32"
-              rx="16"
+              width="118"
+              height="34"
+              rx="17"
               fill="#120f29"
               stroke="rgba(168, 85, 247, 0.45)"
               strokeWidth="1.2"
             />
-            <line x1="12" y1="1" x2="114" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-            <circle cx="16" cy="16" r="4.2" fill="#a855f7" filter="url(#tcGlowViolet)" className="cb-dot-pulse" style={{ animationDelay: "0.75s" }} />
-            <text x="28" y="16.5" dominantBaseline="central" fontSize="11" fontWeight="600" fill="#ffffff" letterSpacing="0.2">
+            <line x1="12" y1="1" x2="106" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+            <circle cx="17" cy="17" r="4.8" fill="#a855f7" filter="url(#tcGlowViolet)" className="cb-dot-pulse" style={{ animationDelay: "0.75s" }} />
+            <text x="30" y="17" dominantBaseline="central" fontSize="13" fontWeight="700" fill="#ffffff">
               Intermediate
             </text>
           </g>
@@ -760,7 +760,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
         {/* Advanced - Amber */}
         <g
-          transform="translate(888, 26)"
+          transform="translate(888, 25)"
           style={{
             opacity: isVisible ? 1 : 0,
             transition: "opacity 0.6s ease-out 0.35s",
@@ -769,15 +769,15 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           <g className="cb-legend-pill">
             <rect
               width="104"
-              height="32"
-              rx="16"
+              height="34"
+              rx="17"
               fill="#1c160a"
               stroke="rgba(251, 191, 36, 0.45)"
               strokeWidth="1.2"
             />
             <line x1="12" y1="1" x2="92" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-            <circle cx="16" cy="16" r="4.2" fill="#fbbf24" filter="url(#tcGlowAmber)" className="cb-dot-pulse" style={{ animationDelay: "0.9s" }} />
-            <text x="28" y="16.5" dominantBaseline="central" fontSize="11" fontWeight="600" fill="#ffffff" letterSpacing="0.2">
+            <circle cx="17" cy="17" r="4.8" fill="#fbbf24" filter="url(#tcGlowAmber)" className="cb-dot-pulse" style={{ animationDelay: "0.9s" }} />
+            <text x="30" y="17" dominantBaseline="central" fontSize="13" fontWeight="700" fill="#ffffff">
               Advanced
             </text>
           </g>
