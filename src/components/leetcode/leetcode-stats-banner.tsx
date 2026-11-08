@@ -413,330 +413,447 @@ export function TrophyLaurel3D({ className = "w-18 h-16" }: { className?: string
 }
 
 // =========================================================================
-// TOTAL SOLVED SPEEDOMETER ARCH & 3D LAPTOP ON PODIUM CARD
-// Matching media_1794122991334_1e1e6bb2.jpg with full glassmorphism
+// 1. TOTAL SOLVED CYBER DIAL (With Branching Circuit Connector Nodes)
+// Matching media_1794123896316_7f3aaa20.jpg with glassmorphism
 // =========================================================================
 
-export interface TotalSolvedSpeedometerCardProps {
+export interface TotalSolvedCyberDialProps {
   totalSolved?: number;
-  maxDisplay?: number;
   loading?: boolean;
   className?: string;
 }
 
-export function TotalSolvedSpeedometerCard({
+export function TotalSolvedCyberDial({
   totalSolved = 0,
-  maxDisplay = 32,
   loading = false,
   className = "",
-}: TotalSolvedSpeedometerCardProps) {
+}: TotalSolvedCyberDialProps) {
   const safeTotal = totalSolved || 0;
-  // Calculate lit segments dynamically: for 16/32 -> exactly 10 segments lit
-  const litCount = Math.max(1, Math.min(20, Math.round((safeTotal / maxDisplay) * 20)));
-
-  // 20 discrete radial curved pill segments spanning from 200° to 340°
-  const totalSegs = 20;
-  const cx = 282;
-  const cy = 162;
-  const rIn = 68;
-  const rOut = 88;
-
-  const segments = Array.from({ length: totalSegs }, (_, i) => {
-    const deg = 200 + i * (140.0 / (totalSegs - 1));
-    const rad = (deg * Math.PI) / 180;
-    const x1 = Number((cx + rIn * Math.cos(rad)).toFixed(1));
-    const y1 = Number((cy + rIn * Math.sin(rad)).toFixed(1));
-    const x2 = Number((cx + rOut * Math.cos(rad)).toFixed(1));
-    const y2 = Number((cy + rOut * Math.sin(rad)).toFixed(1));
-
-    const isLit = i < litCount;
-    const isPeak = i === litCount - 1;
-
-    let stroke = "#0c321e";
-    let filter: string | undefined = undefined;
-    let opacity = 0.42;
-
-    if (isPeak) {
-      stroke = "#bef264";
-      filter = "url(#peakGlow)";
-      opacity = 1;
-    } else if (isLit && i >= litCount - 3) {
-      stroke = "#4ade80";
-      filter = "url(#limeGlow)";
-      opacity = 1;
-    } else if (isLit) {
-      stroke = "#22c55e";
-      filter = "url(#emeraldGlow)";
-      opacity = 1;
-    }
-
-    return { x1, y1, x2, y2, stroke, filter, opacity, isLit };
-  });
 
   return (
-    <div
-      className={`group relative w-full h-full rounded-[30px] sm:rounded-[34px] overflow-hidden transition-all duration-300 hover:scale-[1.01] ${className}`}
-      style={{
-        background:
-          "linear-gradient(135deg, rgba(6, 45, 32, 0.62) 0%, rgba(2, 22, 15, 0.85) 100%)",
-        border: "1.5px solid rgba(74, 222, 128, 0.65)",
-        boxShadow:
-          "inset 0 1.5px 3px rgba(255, 255, 255, 0.4), inset 0 0 18px rgba(34, 197, 94, 0.22), 0 0 24px rgba(34, 197, 94, 0.3)",
-        backdropFilter: "blur(25px)",
-        WebkitBackdropFilter: "blur(25px)",
-      }}
-    >
-      {/* Specular Top-Left Glass Bubble Sheen */}
-      <div className="absolute inset-x-3 top-1 h-[42%] rounded-t-[26px] bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
-      <div className="absolute top-2 left-4 w-7 h-3 rounded-full bg-white/45 blur-[1px] pointer-events-none transform -rotate-12" />
-
+    <div className={`relative flex items-center justify-center w-full max-w-[370px] aspect-square mx-auto ${className}`}>
       <svg
-        viewBox="0 0 402 245"
-        className="w-full h-full block select-none"
+        viewBox="0 0 370 380"
+        className="w-full h-full overflow-visible select-none"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
-          <linearGradient id="cardBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#083827" stopOpacity="0.4" />
-            <stop offset="50%" stopColor="#031b12" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#052418" stopOpacity="0.8" />
+          {/* Neon Arc Gradient (Lime to Emerald to Mint Cyan) */}
+          <linearGradient id="dialNeonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#bef264" />
+            <stop offset="40%" stopColor="#22c55e" />
+            <stop offset="100%" stopColor="#00f5c4" />
           </linearGradient>
 
-          <linearGradient id="numGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#dcfce7" />
-            <stop offset="35%" stopColor="#86efac" />
-            <stop offset="70%" stopColor="#4ade80" />
-            <stop offset="100%" stopColor="#22c55e" />
-          </linearGradient>
-
-          <linearGradient id="pedestalRimGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="50%" stopColor="#4ade80" />
-            <stop offset="100%" stopColor="#bef264" />
-          </linearGradient>
-
-          <radialGradient id="pedestalTopGrad" cx="50%" cy="40%" r="60%">
-            <stop offset="0%" stopColor="#0d3d27" />
-            <stop offset="70%" stopColor="#051e13" />
-            <stop offset="100%" stopColor="#020c07" />
+          {/* Core Dark Glass Gradient */}
+          <radialGradient id="dialCoreGrad" cx="45%" cy="40%" r="65%">
+            <stop offset="0%" stopColor="#0a2a1d" />
+            <stop offset="70%" stopColor="#03150d" />
+            <stop offset="100%" stopColor="#010a06" />
           </radialGradient>
 
-          <linearGradient id="pedestalCylinderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#041a10" />
-            <stop offset="100%" stopColor="#010805" />
+          {/* Outer Ring Groove Gradient */}
+          <linearGradient id="dialGrooveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0d3324" />
+            <stop offset="50%" stopColor="#041810" />
+            <stop offset="100%" stopColor="#062216" />
           </linearGradient>
 
-          <linearGradient id="waveCrestGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
-            <stop offset="40%" stopColor="#4ade80" stopOpacity="0.85" />
-            <stop offset="70%" stopColor="#86efac" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.4" />
-          </linearGradient>
-
-          <filter id="peakGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#bef264" floodOpacity="0.95" />
+          {/* Glow Filters */}
+          <filter id="dialArcGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="0" stdDeviation="5.5" floodColor="#4ade80" floodOpacity="0.85" />
           </filter>
 
-          <filter id="limeGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#4ade80" floodOpacity="0.85" />
+          <filter id="dialPeakGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#bef264" floodOpacity="0.95" />
           </filter>
 
-          <filter id="emeraldGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#22c55e" floodOpacity="0.75" />
+          <filter id="wireGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#22c55e" floodOpacity="0.8" />
           </filter>
 
-          <filter id="pedestalBloom" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4.5" floodColor="#4ade80" floodOpacity="0.9" />
-          </filter>
-
-          <filter id="codeBloom" x="-40%" y="-40%" width="180%" height="180%">
-            <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#4ade80" floodOpacity="0.95" />
-          </filter>
-
-          <filter id="waveBloom" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#4ade80" floodOpacity="0.7" />
-          </filter>
-
-          <filter id="numShadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#22c55e" floodOpacity="0.4" />
+          <filter id="nodeHalo" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#4ade80" floodOpacity="0.9" />
           </filter>
         </defs>
 
-        {/* 1. LAYERED ORGANIC WAVES AT BOTTOM */}
-        <path
-          d="M 0 190 Q 95 160, 200 180 T 402 170 L 402 245 L 0 245 Z"
-          fill="rgba(6, 45, 30, 0.45)"
-        />
-        <path
-          d="M 0 205 Q 120 175, 240 200 T 402 190 L 402 245 L 0 245 Z"
-          fill="rgba(3, 22, 14, 0.75)"
-        />
-        <path
-          d="M 0 205 Q 120 175, 240 200 T 402 190"
-          stroke="url(#waveCrestGrad)"
-          strokeWidth="2.4"
+        {/* Ambient Outer Halo */}
+        <circle cx="160" cy="190" r="132" fill="#22c55e" opacity="0.08" filter="blur(16px)" />
+
+        {/* 1. OUTER GROOVE BEVEL RING */}
+        <circle
+          cx="160"
+          cy="190"
+          r="130"
+          stroke="url(#dialGrooveGrad)"
+          strokeWidth="14"
           fill="none"
-          opacity="0.85"
-          filter="url(#waveBloom)"
+        />
+        <circle
+          cx="160"
+          cy="190"
+          r="137"
+          stroke="rgba(74, 222, 128, 0.3)"
+          strokeWidth="1.5"
+          fill="none"
         />
 
-        {/* 2. TOP-LEFT HEADER: SQUIRCLE + TITLE (NO DIVIDER) */}
-        <rect
-          x="22"
-          y="20"
-          width="44"
-          height="44"
-          rx="13"
-          ry="13"
-          fill="rgba(10, 46, 32, 0.85)"
-          stroke="#22c55e"
+        {/* 2. MAIN ACTIVE NEON ARC (Left side from ~5:20 to ~12:20, span 210°) */}
+        <path
+          d="M 203.8 310.3 A 128 128 0 1 1 182.2 63.9"
+          stroke="url(#dialNeonGrad)"
+          strokeWidth="13"
+          strokeLinecap="round"
+          fill="none"
+          filter="url(#dialArcGlow)"
+        />
+
+        {/* Specular Ridge Line on Main Arc */}
+        <path
+          d="M 203.8 310.3 A 128 128 0 1 1 182.2 63.9"
+          stroke="#ffffff"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.6"
+        />
+
+        {/* 3. TOP SECONDARY NEON ARC (~11:00 to ~1:00) */}
+        <path
+          d="M 105.9 74.0 A 128 128 0 0 1 214.1 74.0"
+          stroke="#bef264"
+          strokeWidth="12"
+          strokeLinecap="round"
+          fill="none"
+          filter="url(#dialPeakGlow)"
+        />
+
+        {/* 4. INNER GLASS CORE DISK */}
+        <circle
+          cx="160"
+          cy="190"
+          r="104"
+          fill="url(#dialCoreGrad)"
+          stroke="rgba(74, 222, 128, 0.45)"
+          strokeWidth="2.2"
+        />
+
+        {/* Specular Top-Left Glass Reflection on Core */}
+        <path
+          d="M 96 116 A 104 104 0 0 1 216 112"
+          stroke="#ffffff"
           strokeWidth="1.8"
-          strokeOpacity="0.7"
-          filter="url(#emeraldGlow)"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.45"
         />
-        <path d="M 28 23 L 60 23" stroke="#ffffff" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+        <ellipse cx="120" cy="120" rx="18" ry="5" fill="#ffffff" opacity="0.3" transform="rotate(-25 120 120)" filter="blur(1px)" />
 
-        {/* </> in Header Squircle */}
-        <g filter="url(#codeBloom)">
-          <path
-            d="M 39 36 L 33 42 L 39 48"
-            stroke="#4ade80"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-          <path
-            d="M 49 36 L 55 42 L 49 48"
-            stroke="#4ade80"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-          <line x1="47" y1="34" x2="41" y2="50" stroke="#4ade80" strokeWidth="2.6" strokeLinecap="round" />
+        {/* 5. 3D OPEN LAPTOP INSIDE CORE */}
+        <g transform="translate(133, 116)">
+          {/* Lid Bezel */}
+          <rect x="5" y="4" width="44" height="29" rx="3.5" fill="#1e293b" stroke="#475569" strokeWidth="1" />
+          <line x1="8" y1="5.5" x2="46" y2="5.5" stroke="#94a3b8" strokeWidth="0.8" opacity="0.7" />
+          {/* OLED Screen */}
+          <rect x="7.5" y="6.5" width="39" height="24" rx="2" fill="#020408" />
+          {/* Glowing Code on Screen */}
+          <path d="M 22 15 L 17 18.5 L 22 22" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <path d="M 32 15 L 37 18.5 L 32 22" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <line x1="29" y1="13" x2="25" y2="24" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" />
+          {/* Deck */}
+          <path d="M 1 33 L 53 33 L 49 40 L 5 40 Z" fill="#94a3b8" stroke="#64748b" strokeWidth="0.8" />
+          <line x1="5" y1="40" x2="49" y2="40" stroke="#f8fafc" strokeWidth="1" opacity="0.7" />
+          <rect x="22" y="34.5" width="10" height="1.8" rx="0.8" fill="#1e293b" />
         </g>
 
-        {/* "Total Solved" Title (directly next to squircle, matching image) */}
+        {/* 6. BIG NUMBER & LABEL */}
         <text
-          x="78"
-          y="48"
+          x="160"
+          y="204"
+          textAnchor="middle"
           fill="#ffffff"
           fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
-          fontSize="20"
-          fontWeight="700"
-          letterSpacing="0.3"
-        >
-          Total Solved
-        </text>
-
-        {/* 3. BIG METRIC (Number ONLY, NO underline, matching image) */}
-        <text
-          x="24"
-          y="160"
-          fill="url(#numGrad)"
-          fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
-          fontSize="82"
+          fontSize="64"
           fontWeight="900"
-          letterSpacing="-2"
-          filter="url(#numShadow)"
+          letterSpacing="-1.5"
+          filter="drop-shadow(0 2px 6px rgba(0,0,0,0.85))"
         >
           {loading ? "—" : safeTotal}
         </text>
 
-        {/* 4. SPEEDOMETER ARCH SEGMENTS */}
-        {segments.map((s, idx) => (
-          <line
-            key={idx}
-            x1={s.x1}
-            y1={s.y1}
-            x2={s.x2}
-            y2={s.y2}
-            stroke={s.stroke}
-            strokeWidth="6.5"
-            strokeLinecap="round"
-            filter={s.filter}
-            opacity={s.opacity}
-          />
-        ))}
+        <text
+          x="160"
+          y="232"
+          textAnchor="middle"
+          fill="#d1fae5"
+          fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+          fontSize="17"
+          fontWeight="700"
+          letterSpacing="0.4"
+        >
+          Total Solved
+        </text>
 
-        {/* 5. 3D GLOWING PEDESTAL */}
-        <ellipse cx="282" cy="186" rx="60" ry="10" fill="#000000" opacity="0.75" />
+        {/* 7. 3-WAY BRANCHING CIRCUIT WIRES WITH GLOWING JUNCTION NODES */}
+        {/* Branch 1 to Easy */}
         <path
-          d="M 224 168 A 58 12 0 0 0 340 168 V 184 A 58 12 0 0 1 224 184 Z"
-          fill="url(#pedestalCylinderGrad)"
-        />
-        <path d="M 226 172 A 58 12 0 0 0 338 172" stroke="#22c55e" strokeWidth="1" opacity="0.3" fill="none" />
-        <ellipse cx="282" cy="168" rx="58" ry="12" fill="url(#pedestalTopGrad)" />
-        <ellipse
-          cx="282"
-          cy="168"
-          rx="58"
-          ry="12"
-          fill="none"
-          stroke="url(#pedestalRimGrad)"
-          strokeWidth="3.2"
-          filter="url(#pedestalBloom)"
-        />
-        <path
-          d="M 238 175 A 58 12 0 0 0 326 175"
-          stroke="#ffffff"
-          strokeWidth="1.2"
+          d="M 284 150 Q 306 150, 327 160 Q 348 170, 370 120"
+          stroke="#4ade80"
+          strokeWidth="2.8"
           strokeLinecap="round"
           fill="none"
-          opacity="0.85"
+          filter="url(#wireGlow)"
+        />
+        <circle cx="327" cy="160" r="7.5" fill="#22c55e" filter="url(#nodeHalo)" />
+        <circle cx="327" cy="160" r="3.2" fill="#ffffff" />
+
+        {/* Branch 2 to Medium (Horizontal) */}
+        <line
+          x1="290"
+          y1="252"
+          x2="370"
+          y2="252"
+          stroke="#4ade80"
+          strokeWidth="2.8"
+          strokeLinecap="round"
+          filter="url(#wireGlow)"
+        />
+        <circle cx="357" cy="252" r="7.5" fill="#22c55e" filter="url(#nodeHalo)" />
+        <circle cx="357" cy="252" r="3.2" fill="#ffffff" />
+
+        {/* Branch 3 to Hard */}
+        <path
+          d="M 284 230 Q 306 230, 327 220 Q 348 210, 370 270"
+          stroke="#4ade80"
+          strokeWidth="2.8"
+          strokeLinecap="round"
+          fill="none"
+          filter="url(#wireGlow)"
+        />
+        <circle cx="326" cy="220" r="7.5" fill="#22c55e" filter="url(#nodeHalo)" />
+        <circle cx="326" cy="220" r="3.2" fill="#ffffff" />
+      </svg>
+    </div>
+  );
+}
+
+// =========================================================================
+// 2. DIFFICULTY PILL CARD (With 10-Block Segmented Progress Bar)
+// Matching media_1794123896316_7f3aaa20.jpg with glassmorphism
+// =========================================================================
+
+export interface DifficultyPillCardProps {
+  label: "Easy" | "Medium" | "Hard";
+  count: number;
+  totalForMax?: number;
+  icon: React.ReactNode;
+  loading?: boolean;
+}
+
+export function DifficultyPillCard({
+  label,
+  count = 0,
+  totalForMax = 10,
+  icon,
+  loading = false,
+}: DifficultyPillCardProps) {
+  // 10 discrete blocks in the progress bar
+  const totalBlocks = 10;
+  // Calculate lit blocks dynamically:
+  const litBlocks = Math.max(0, Math.min(totalBlocks, Math.round((count / totalForMax) * totalBlocks)));
+
+  return (
+    <div
+      className="group relative flex items-center justify-between px-4 sm:px-5 py-3 h-[112px] sm:h-[116px] w-full rounded-[38px] sm:rounded-[42px] transition-all duration-300 hover:scale-[1.02] cursor-default overflow-hidden select-none"
+      style={{
+        background:
+          "linear-gradient(135deg, rgba(6, 42, 28, 0.65) 0%, rgba(2, 20, 14, 0.88) 100%)",
+        border: "1.6px solid rgba(74, 222, 128, 0.65)",
+        boxShadow:
+          "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 18px rgba(34, 197, 94, 0.22), 0 0 22px rgba(34, 197, 94, 0.3)",
+        backdropFilter: "blur(25px)",
+        WebkitBackdropFilter: "blur(25px)",
+      }}
+    >
+      {/* Specular Curved Glass Bubble Sheen along Top Rim */}
+      <div className="absolute inset-x-4 top-1 h-[45%] rounded-t-[30px] bg-gradient-to-b from-white/35 via-white/5 to-transparent pointer-events-none" />
+      <div className="absolute top-1.5 left-5 w-6 h-2.5 rounded-full bg-white/50 blur-[1px] pointer-events-none transform -rotate-12" />
+
+      {/* Left: Circular Glass Icon Badge */}
+      <div className="flex items-center gap-3.5 min-w-0">
+        <div
+          className="relative shrink-0 flex items-center justify-center w-[54px] h-[54px] sm:w-[58px] sm:h-[58px] rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle at 40% 35%, rgba(12, 54, 38, 0.95), rgba(3, 20, 13, 0.98))",
+            border: "1.5px solid rgba(74, 222, 128, 0.7)",
+            boxShadow:
+              "inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 0 14px rgba(34, 197, 94, 0.35)",
+          }}
+        >
+          {icon}
+        </div>
+
+        {/* Center: Title + 10-Block Segmented Progress Bar */}
+        <div className="flex flex-col text-left">
+          <span className="font-bold text-lg sm:text-[20px] text-white tracking-wide leading-tight">
+            {label}
+          </span>
+
+          {/* 10 Segmented Rounded Blocks */}
+          <div className="flex items-center gap-1 sm:gap-1.5 mt-2">
+            {Array.from({ length: totalBlocks }).map((_, idx) => {
+              const isLit = idx < litBlocks;
+              return (
+                <div
+                  key={idx}
+                  className={`h-3 w-2 sm:w-2.5 rounded-[2.5px] transition-all duration-300 ${
+                    isLit
+                      ? "bg-gradient-to-b from-[#bef264] via-[#4ade80] to-[#22c55e] shadow-[0_0_6px_#4ade80]"
+                      : "bg-[#0d2e20]/60 border border-white/5"
+                  }`}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Right: Big Bold Metric Number */}
+      <div className="shrink-0 pl-2">
+        <span className="font-black text-3xl sm:text-[38px] text-white tracking-tight leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
+          {loading ? "—" : count}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
+// 3. GLOBAL RANKING HEXAGONAL SHIELD (With 3D Bottom Chevron Bevel)
+// Matching media_1794123896316_7f3aaa20.jpg with glassmorphism
+// =========================================================================
+
+export interface GlobalRankingShieldProps {
+  ranking?: number | null;
+  loading?: boolean;
+  className?: string;
+}
+
+export function GlobalRankingShield({
+  ranking,
+  loading = false,
+  className = "",
+}: GlobalRankingShieldProps) {
+  const formattedRanking =
+    ranking !== undefined && ranking !== null
+      ? `#${ranking.toLocaleString()}`
+      : "#—";
+
+  return (
+    <div
+      className={`group relative flex flex-col items-center justify-between w-full max-w-[290px] h-[360px] sm:h-[375px] mx-auto transition-all duration-300 hover:scale-[1.01] select-none ${className}`}
+    >
+      <svg
+        viewBox="0 0 280 375"
+        className="w-full h-full overflow-visible"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          {/* Shield Dark Glass Gradient */}
+          <linearGradient id="shieldGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#083827" stopOpacity="0.75" />
+            <stop offset="50%" stopColor="#031c12" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#02120b" stopOpacity="0.95" />
+          </linearGradient>
+
+          {/* Bottom Chevron 3D Neon Bevel Gradient */}
+          <linearGradient id="chevronBevelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22c55e" />
+            <stop offset="50%" stopColor="#bef264" />
+            <stop offset="100%" stopColor="#22c55e" />
+          </linearGradient>
+
+          {/* Glow Filters */}
+          <filter id="shieldGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="#22c55e" floodOpacity="0.35" />
+          </filter>
+
+          <filter id="bevelGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#bef264" floodOpacity="0.9" />
+          </filter>
+        </defs>
+
+        {/* 1. MAIN SHIELD BODY PATH */}
+        {/* Top: rounded corners rx=24, Sides: vertical down to y=305, Bottom: chevron to (140, 365) */}
+        <path
+          d="M 38 15 L 242 15 Q 265 15, 265 38 L 265 305 L 140 365 L 15 305 L 15 38 Q 15 15, 38 15 Z"
+          fill="url(#shieldGlassGrad)"
+          stroke="rgba(74, 222, 128, 0.7)"
+          strokeWidth="2.2"
+          filter="url(#shieldGlow)"
         />
 
-        {/* 6. 3D METALLIC OPEN LAPTOP */}
-        <ellipse cx="282" cy="160" rx="38" ry="4" fill="#000000" opacity="0.7" />
-        {/* Lid Bezel */}
-        <rect
-          x="252"
-          y="110"
-          width="60"
-          height="40"
-          rx="5"
-          ry="5"
-          fill="#1e293b"
-          stroke="#475569"
-          strokeWidth="1.2"
-        />
-        <path d="M 257 111.5 L 307 111.5" stroke="#94a3b8" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
-        {/* OLED Screen */}
-        <rect x="255.5" y="113.5" width="53" height="33" rx="3" ry="3" fill="#020408" />
-        <path d="M 257 115 L 274 115 L 263 145 L 257 145 Z" fill="#ffffff" opacity="0.08" />
-        {/* Glowing Code on Screen */}
-        <g filter="url(#codeBloom)">
-          <path
-            d="M 275 125 L 268 130 L 275 135"
-            stroke="#4ade80"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-          <path
-            d="M 289 125 L 296 130 L 289 135"
-            stroke="#4ade80"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-          <line x1="285" y1="122" x2="279" y2="138" stroke="#4ade80" strokeWidth="2.6" strokeLinecap="round" />
-        </g>
-        {/* Keyboard Deck */}
+        {/* Specular Curved Highlight on Top-Left Shoulder */}
         <path
-          d="M 241 150 L 323 150 L 332 163 L 232 163 Z"
-          fill="#94a3b8"
-          stroke="#64748b"
-          strokeWidth="1"
+          d="M 38 18 L 242 18"
+          stroke="#ffffff"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          opacity="0.45"
         />
-        <line x1="232" y1="163" x2="332" y2="163" stroke="#f8fafc" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
-        {/* Keyboard Well */}
-        <path d="M 248 152 L 316 152 L 322 158 L 242 158 Z" fill="#0f172a" />
-        {/* Trackpad */}
-        <rect x="274" y="159" width="16" height="2.5" rx="1" fill="#1e293b" stroke="#475569" strokeWidth="0.6" />
+        <path
+          d="M 18 42 Q 18 18, 42 18"
+          stroke="#ffffff"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.65"
+        />
+        <ellipse cx="40" cy="28" rx="14" ry="4" fill="#ffffff" opacity="0.4" transform="rotate(-30 40 28)" filter="blur(1px)" />
+
+        {/* 2. RAISED 3D NEON CHEVRON BEVEL ALONG BOTTOM V-EDGE */}
+        <path
+          d="M 18 305 L 140 363 L 262 305 L 252 293 L 140 348 L 28 293 Z"
+          fill="url(#chevronBevelGrad)"
+          filter="url(#bevelGlow)"
+        />
+        {/* Center Ridge Highlight on Chevron */}
+        <line x1="140" y1="348" x2="140" y2="363" stroke="#ffffff" strokeWidth="1.8" opacity="0.8" />
+
+        {/* 3. TROPHY WITH LAUREL WREATH */}
+        <g transform="translate(104, 52) scale(1.02)">
+          <TrophyLaurel3D className="w-[72px] h-[62px]" />
+        </g>
+
+        {/* 4. RANKING NUMBER */}
+        <text
+          x="140"
+          y="235"
+          textAnchor="middle"
+          fill="#ffffff"
+          fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+          fontSize="31"
+          fontWeight="900"
+          letterSpacing="-1"
+          filter="drop-shadow(0 2px 6px rgba(0,0,0,0.85))"
+        >
+          {loading ? "—" : formattedRanking}
+        </text>
+
+        {/* 5. SUBTITLE */}
+        <text
+          x="140"
+          y="272"
+          textAnchor="middle"
+          fill="#d1fae5"
+          fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+          fontSize="18"
+          fontWeight="600"
+          letterSpacing="0.4"
+        >
+          Global Ranking
+        </text>
       </svg>
     </div>
   );
@@ -767,181 +884,74 @@ export function LeetcodeStatsBanner({
 }: LeetcodeStatsBannerProps) {
   const safeTotal = totalSolved || 0;
 
-  const formattedRanking =
-    ranking !== undefined && ranking !== null
-      ? `#${ranking.toLocaleString()}`
-      : "#—";
-
   return (
     <div
-      className={`relative w-full max-w-[1040px] mx-auto rounded-[46px] sm:rounded-[54px] p-3 sm:p-4 md:p-5 overflow-hidden transition-all duration-300 ${className}`}
+      className={`relative w-full max-w-[1080px] mx-auto rounded-[48px] p-4 sm:p-6 md:p-7 overflow-visible transition-all duration-300 ${className}`}
       style={{
         background:
-          "linear-gradient(135deg, rgba(25, 34, 48, 0.45) 0%, rgba(10, 14, 22, 0.72) 50%, rgba(22, 18, 34, 0.45) 100%)",
-        border: "2px solid rgba(255, 255, 255, 0.32)",
+          "linear-gradient(135deg, rgba(8, 24, 18, 0.45) 0%, rgba(3, 12, 8, 0.72) 50%, rgba(6, 18, 14, 0.45) 100%)",
+        border: "1.5px solid rgba(74, 222, 128, 0.25)",
         boxShadow:
-          "0 25px 60px rgba(0, 0, 0, 0.85), inset 0 2px 6px rgba(255, 255, 255, 0.45), inset 0 -4px 12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 255, 255, 0.06)",
-        backdropFilter: "blur(35px)",
-        WebkitBackdropFilter: "blur(35px)",
+          "0 25px 60px rgba(0, 0, 0, 0.85), inset 0 2px 6px rgba(255, 255, 255, 0.15), inset 0 -4px 12px rgba(0, 0, 0, 0.7)",
+        backdropFilter: "blur(30px)",
+        WebkitBackdropFilter: "blur(30px)",
       }}
     >
-      {/* Specular Outer Glass Capsule Highlights */}
-      {/* Top-Left Specular Lens Glint */}
-      <div className="absolute top-2 left-6 w-14 h-3.5 rounded-full bg-white/60 blur-[2px] pointer-events-none transform -rotate-6" />
-      <div className="absolute top-2.5 left-7 w-3 h-3 rounded-full bg-cyan-200 blur-[1px] pointer-events-none" />
-
-      {/* Bottom-Right Specular Lens Glint */}
-      <div className="absolute bottom-2 right-6 w-14 h-3.5 rounded-full bg-white/45 blur-[2px] pointer-events-none transform -rotate-6" />
-      <div className="absolute bottom-2.5 right-7 w-3 h-3 rounded-full bg-purple-300 blur-[1px] pointer-events-none" />
-
-      {/* Top Outer Rim Light Refraction */}
-      <div className="absolute inset-x-12 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none" />
-
-      {/* Atmospheric neon back-glow */}
+      {/* Ambient Neon Glow in Background */}
       <div className="absolute -top-16 left-1/4 w-72 h-32 bg-emerald-500/15 blur-3xl rounded-full pointer-events-none" />
-      <div className="absolute -bottom-16 right-1/4 w-72 h-32 bg-purple-600/15 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute -bottom-16 right-1/4 w-72 h-32 bg-lime-500/15 blur-3xl rounded-full pointer-events-none" />
 
-      {/* Proportional 2-Column Layout matching media_1794122991334_1e1e6bb2.jpg exactly:
-          Left Column (44%): Speedometer Arch Card
-          Right Column (56%): 2 Rows:
-            - Top Row: 3 Glass Squircles (Easy, Medium, Hard)
-            - Bottom Row: Global Ranking Pill
+      {/* Proportional 3-Column Cyber Layout matching media_1794123896316_7f3aaa20.jpg:
+          Col 1: Cyber Dial with 3 Branching Connectors
+          Col 2: 3 Stacked Difficulty Glass Pills (Easy, Medium, Hard)
+          Col 3: Global Ranking Hexagonal Shield Badge
       */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1fr_1.28fr] items-stretch gap-3.5 sm:gap-4 md:gap-4.5">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.1fr_1.1fr_0.9fr] items-center gap-5 lg:gap-4 xl:gap-5">
         
-        {/* ========================================================
-            1. LEFT COLUMN: Total Solved Speedometer Arch Card
-           ======================================================== */}
-        <div className="flex w-full">
-          <TotalSolvedSpeedometerCard
+        {/* 1. LEFT: Cyber Dial (Total Solved) */}
+        <div className="flex items-center justify-center w-full">
+          <TotalSolvedCyberDial
             totalSolved={safeTotal}
             loading={loading}
           />
         </div>
 
-        {/* ========================================================
-            2. RIGHT COLUMN: 2 Rows (3 Squircles + Global Ranking)
-           ======================================================== */}
-        <div className="flex flex-col justify-between gap-3 sm:gap-3.5">
-          
-          {/* TOP ROW: 3 Glassmorphic Squircles (Easy, Medium, Hard) */}
-          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
-            
-            {/* EASY SQUIRCLE (Cyan / Mint Glass) */}
-            <div
-              className="group relative flex flex-col items-center justify-center h-[112px] sm:h-[118px] rounded-[26px] sm:rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default overflow-hidden"
-              style={{
-                background:
-                  "linear-gradient(145deg, rgba(0, 150, 135, 0.52), rgba(0, 60, 55, 0.78))",
-                border: "1.5px solid rgba(58, 255, 220, 0.75)",
-                boxShadow:
-                  "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 16px rgba(0, 245, 196, 0.25), 0 0 22px rgba(0, 255, 210, 0.35)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-              }}
-            >
-              {/* Glassmorphic Specular Bubble Sheen */}
-              <div className="absolute inset-x-2 top-1 h-[48%] rounded-t-[22px] bg-gradient-to-b from-white/35 via-white/5 to-transparent pointer-events-none" />
-              <div className="absolute top-1.5 left-2.5 w-5 h-2.5 rounded-full bg-white/50 blur-[1px] pointer-events-none transform -rotate-12" />
+        {/* 2. MIDDLE: 3 Stacked Difficulty Glass Pills */}
+        <div className="flex flex-col gap-3.5 sm:gap-4 justify-center w-full">
+          {/* Easy Pill */}
+          <DifficultyPillCard
+            label="Easy"
+            count={easySolved}
+            totalForMax={14}
+            icon={<LightningBolt3D className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(0,245,210,0.7)]" />}
+            loading={loading}
+          />
 
-              <LightningBolt3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(0,245,210,0.7)]" />
-              <span className="font-extrabold text-2xl sm:text-[29px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
-                {loading ? "—" : easySolved}
-              </span>
-              <span className="text-xs sm:text-[13px] font-semibold text-cyan-100 mt-1 leading-none">
-                Easy
-              </span>
-            </div>
+          {/* Medium Pill */}
+          <DifficultyPillCard
+            label="Medium"
+            count={mediumSolved}
+            totalForMax={10}
+            icon={<Layers3D className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(255,174,34,0.7)]" />}
+            loading={loading}
+          />
 
-            {/* MEDIUM SQUIRCLE (Warm Amber / Gold Glass) */}
-            <div
-              className="group relative flex flex-col items-center justify-center h-[112px] sm:h-[118px] rounded-[26px] sm:rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default overflow-hidden"
-              style={{
-                background:
-                  "linear-gradient(145deg, rgba(200, 115, 15, 0.52), rgba(95, 45, 5, 0.78))",
-                border: "1.5px solid rgba(255, 190, 60, 0.8)",
-                boxShadow:
-                  "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 16px rgba(245, 158, 11, 0.25), 0 0 22px rgba(255, 163, 30, 0.35)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-              }}
-            >
-              {/* Glassmorphic Specular Bubble Sheen */}
-              <div className="absolute inset-x-2 top-1 h-[48%] rounded-t-[22px] bg-gradient-to-b from-white/35 via-white/5 to-transparent pointer-events-none" />
-              <div className="absolute top-1.5 left-2.5 w-5 h-2.5 rounded-full bg-white/50 blur-[1px] pointer-events-none transform -rotate-12" />
+          {/* Hard Pill */}
+          <DifficultyPillCard
+            label="Hard"
+            count={hardSolved}
+            totalForMax={5}
+            icon={<Flag3D className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(255,68,78,0.7)]" />}
+            loading={loading}
+          />
+        </div>
 
-              <Layers3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,174,34,0.7)]" />
-              <span className="font-extrabold text-2xl sm:text-[29px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
-                {loading ? "—" : mediumSolved}
-              </span>
-              <span className="text-xs sm:text-[13px] font-semibold text-amber-100 mt-1 leading-none">
-                Medium
-              </span>
-            </div>
-
-            {/* HARD SQUIRCLE (Crimson / Ruby Glass) */}
-            <div
-              className="group relative flex flex-col items-center justify-center h-[112px] sm:h-[118px] rounded-[26px] sm:rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default overflow-hidden"
-              style={{
-                background:
-                  "linear-gradient(145deg, rgba(180, 45, 65, 0.52), rgba(85, 18, 28, 0.78))",
-                border: "1.5px solid rgba(255, 110, 120, 0.8)",
-                boxShadow:
-                  "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 16px rgba(244, 63, 94, 0.25), 0 0 22px rgba(255, 65, 80, 0.35)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-              }}
-            >
-              {/* Glassmorphic Specular Bubble Sheen */}
-              <div className="absolute inset-x-2 top-1 h-[48%] rounded-t-[22px] bg-gradient-to-b from-white/35 via-white/5 to-transparent pointer-events-none" />
-              <div className="absolute top-1.5 left-2.5 w-5 h-2.5 rounded-full bg-white/50 blur-[1px] pointer-events-none transform -rotate-12" />
-
-              <Flag3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,68,78,0.7)]" />
-              <span className="font-extrabold text-2xl sm:text-[29px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
-                {loading ? "—" : hardSolved}
-              </span>
-              <span className="text-xs sm:text-[13px] font-semibold text-rose-100 mt-1 leading-none">
-                Hard
-              </span>
-            </div>
-          </div>
-
-          {/* BOTTOM ROW: Global Ranking Pill (Spans width of 3 cards above) */}
-          <div
-            className="group relative flex items-center justify-evenly gap-3 sm:gap-4 px-4 sm:px-6 py-2.5 h-[110px] sm:h-[116px] w-full rounded-[30px] sm:rounded-[34px] transition-all duration-200 hover:scale-[1.02] cursor-default overflow-hidden"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(85, 25, 145, 0.58), rgba(40, 10, 75, 0.82))",
-              border: "1.5px solid rgba(175, 95, 255, 0.8)",
-              boxShadow:
-                "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 18px rgba(168, 85, 247, 0.3), 0 0 26px rgba(168, 85, 247, 0.4)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-            }}
-          >
-            {/* Glassmorphic Specular Bubble Sheen */}
-            <div className="absolute inset-x-3 top-1 h-[48%] rounded-t-[26px] bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
-            <div className="absolute top-1.5 left-4 w-7 h-3 rounded-full bg-white/50 blur-[1px] pointer-events-none transform -rotate-12" />
-
-            {/* 3D Realistic Golden Trophy with Laurel Wreaths */}
-            <div className="shrink-0 flex items-center justify-center">
-              <TrophyLaurel3D className="w-[66px] h-[56px] sm:w-[72px] sm:h-[62px] transition-transform duration-200 group-hover:scale-105" />
-            </div>
-
-            {/* Crisp Vertical Divider */}
-            <div className="w-[1.5px] h-12 bg-white/35 shrink-0 mx-2 sm:mx-3 rounded-full" />
-
-            {/* Ranking Number & Subtitle */}
-            <div className="flex flex-col text-left pr-1 min-w-0">
-              <span className="font-extrabold text-2xl sm:text-[28px] lg:text-[34px] text-white tracking-tight leading-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
-                {loading ? "—" : formattedRanking}
-              </span>
-              <span className="text-xs sm:text-[13px] font-medium text-[#d8b4fe] mt-1.5 leading-none tracking-wide">
-                Global Ranking
-              </span>
-            </div>
-          </div>
-
+        {/* 3. RIGHT: Global Ranking Hexagonal Shield */}
+        <div className="flex items-center justify-center w-full">
+          <GlobalRankingShield
+            ranking={ranking}
+            loading={loading}
+          />
         </div>
 
       </div>
