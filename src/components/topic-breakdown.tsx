@@ -699,35 +699,11 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* =====================================================
             1. HEADER BAR
            ===================================================== */}
-        {/* 3D Stacked Layers Icon Badge */}
-        <g transform="translate(32, 20)">
-          <g className="cb-header-float">
-            <rect
-              width="46"
-              height="46"
-              rx="14"
-              fill="url(#tcLayerBadge)"
-              stroke="rgba(139, 92, 246, 0.55)"
-              strokeWidth="1.4"
-              filter="url(#tcGlowViolet)"
-            />
-            {/* Bottom Layer */}
-            <path d="M23 29 L33 24 L23 19 L13 24 Z" fill="url(#tcLayerBot)" opacity="0.65" />
-            <path d="M13 24 L23 29 L33 24 L33 26 L23 31 L13 26 Z" fill="#312e81" opacity="0.9" />
-            {/* Middle Layer */}
-            <path d="M23 24.5 L33 19.5 L23 14.5 L13 19.5 Z" fill="url(#tcLayerMid)" opacity="0.85" />
-            <path d="M13 19.5 L23 24.5 L33 19.5 L33 21.5 L23 26.5 L13 21.5 Z" fill="#4c1d95" opacity="0.9" />
-            {/* Top Layer */}
-            <path d="M23 20 L33 15 L23 10 L13 15 Z" fill="url(#tcLayerTop)" />
-            <path d="M13 15 L23 20 L33 15 L33 17 L23 22 L13 17 Z" fill="#0f766e" />
-          </g>
-        </g>
-
-        {/* Title + Subtitle */}
-        <text x="92" y="42" fontSize="24" fontWeight="800" fill="#ffffff" letterSpacing="-0.5">
+        {/* Title + Subtitle (Shifted to corner) */}
+        <text x="32" y="42" fontSize="24" fontWeight="800" fill="#ffffff" letterSpacing="-0.5">
           Topic Coverage
         </text>
-        <text x="92" y="60" fontSize="12.5" fontWeight="500" fill="#94a3b8" opacity="0.9">
+        <text x="32" y="60" fontSize="12.5" fontWeight="500" fill="#94a3b8" opacity="0.9">
           Problem distribution across DSA topics
         </text>
 
