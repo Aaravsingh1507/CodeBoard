@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 export interface TopicItem {
   tag: string;
@@ -57,58 +57,58 @@ function getGlassArcPath(centerX: number, centerY: number, radius: number, start
   }
 }
 
-// Specialized vector icons for DSA topics
+// Specialized vector icons for DSA topics (Using the app's Teal/Cyan & Violet palette)
 function renderTopicIcon(tag: string, x: number, y: number) {
   const norm = tag.toLowerCase().trim();
 
   if (norm.includes("array")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <polyline points="13 14 17 10 13 6" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <polyline points="7 6 3 10 7 14" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <polyline points="13 14 17 10 13 6" stroke="#2dd4bf" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <polyline points="7 6 3 10 7 14" stroke="#2dd4bf" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
       </g>
     );
   }
   if (norm.includes("search") || norm.includes("binary search")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <circle cx="9.5" cy="9.5" r="5" stroke="#34d399" strokeWidth="2" fill="none" />
-        <line x1="13.5" y1="13.5" x2="17.5" y2="17.5" stroke="#34d399" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="9.5" cy="9.5" r="5" stroke="#38bdf8" strokeWidth="2" fill="none" />
+        <line x1="13.5" y1="13.5" x2="17.5" y2="17.5" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" />
       </g>
     );
   }
   if (norm.includes("pointer")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <path d="M6 14l-3-3 3-3" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <path d="M3 11h9" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
-        <path d="M14 6l3 3-3 3" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <path d="M17 9H8" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
+        <path d="M6 14l-3-3 3-3" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M3 11h9" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" />
+        <path d="M14 6l3 3-3 3" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M17 9H8" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" />
       </g>
     );
   }
   if (norm.includes("tree")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="4" r="2.2" fill="#34d399" />
-        <circle cx="4.5" cy="15" r="2.2" fill="#34d399" />
-        <circle cx="15.5" cy="15" r="2.2" fill="#34d399" />
-        <path d="M10 6v3m0 0l-5.5 4m5.5-4l5.5 4" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <circle cx="10" cy="4" r="2.2" fill="#a855f7" />
+        <circle cx="4.5" cy="15" r="2.2" fill="#a855f7" />
+        <circle cx="15.5" cy="15" r="2.2" fill="#a855f7" />
+        <path d="M10 6v3m0 0l-5.5 4m5.5-4l5.5 4" stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round" fill="none" />
       </g>
     );
   }
   if (norm.includes("stack")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <ellipse cx="10" cy="5" rx="7" ry="2.2" stroke="#34d399" strokeWidth="1.4" fill="none" />
-        <path d="M3 5v4c0 1.2 3.1 2.2 7 2.2s7-1 7-2.2V5" stroke="#34d399" strokeWidth="1.4" fill="none" />
-        <path d="M3 9v4c0 1.2 3.1 2.2 7 2.2s7-1 7-2.2V9" stroke="#34d399" strokeWidth="1.4" fill="none" />
+        <ellipse cx="10" cy="5" rx="7" ry="2.2" stroke="#2dd4bf" strokeWidth="1.4" fill="none" />
+        <path d="M3 5v4c0 1.2 3.1 2.2 7 2.2s7-1 7-2.2V5" stroke="#2dd4bf" strokeWidth="1.4" fill="none" />
+        <path d="M3 9v4c0 1.2 3.1 2.2 7 2.2s7-1 7-2.2V9" stroke="#2dd4bf" strokeWidth="1.4" fill="none" />
       </g>
     );
   }
   if (norm.includes("math")) {
     return (
-      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="14" fontWeight="900" fill="#34d399" fontFamily="serif">
+      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="14" fontWeight="900" fill="#a855f7" fontFamily="serif">
         Σ
       </text>
     );
@@ -116,17 +116,17 @@ function renderTopicIcon(tag: string, x: number, y: number) {
   if (norm.includes("matrix")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <rect x="4" y="4" width="12" height="12" rx="1.5" stroke="#34d399" strokeWidth="1.5" fill="none" />
-        <line x1="8" y1="4" x2="8" y2="16" stroke="#34d399" strokeWidth="1.2" />
-        <line x1="12" y1="4" x2="12" y2="16" stroke="#34d399" strokeWidth="1.2" />
-        <line x1="4" y1="8" x2="16" y2="8" stroke="#34d399" strokeWidth="1.2" />
-        <line x1="4" y1="12" x2="16" y2="12" stroke="#34d399" strokeWidth="1.2" />
+        <rect x="4" y="4" width="12" height="12" rx="1.5" stroke="#2dd4bf" strokeWidth="1.5" fill="none" />
+        <line x1="8" y1="4" x2="8" y2="16" stroke="#2dd4bf" strokeWidth="1.2" />
+        <line x1="12" y1="4" x2="12" y2="16" stroke="#2dd4bf" strokeWidth="1.2" />
+        <line x1="4" y1="8" x2="16" y2="8" stroke="#2dd4bf" strokeWidth="1.2" />
+        <line x1="4" y1="12" x2="16" y2="12" stroke="#2dd4bf" strokeWidth="1.2" />
       </g>
     );
   }
   if (norm.includes("string")) {
     return (
-      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="13" fontWeight="900" fill="#34d399" fontFamily="monospace">
+      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="13" fontWeight="900" fill="#2dd4bf" fontFamily="monospace">
         “ ”
       </text>
     );
@@ -134,16 +134,16 @@ function renderTopicIcon(tag: string, x: number, y: number) {
   if (norm.includes("sort")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <line x1="6" y1="4" x2="6" y2="16" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
-        <polyline points="3 7 6 4 9 7" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <line x1="14" y1="16" x2="14" y2="4" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
-        <polyline points="11 13 14 16 17 13" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <line x1="6" y1="4" x2="6" y2="16" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" />
+        <polyline points="3 7 6 4 9 7" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <line x1="14" y1="16" x2="14" y2="4" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" />
+        <polyline points="11 13 14 16 17 13" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
       </g>
     );
   }
   if (norm.includes("hash")) {
     return (
-      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="14" fontWeight="900" fill="#34d399">
+      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="14" fontWeight="900" fill="#a855f7">
         #
       </text>
     );
@@ -151,15 +151,15 @@ function renderTopicIcon(tag: string, x: number, y: number) {
   if (norm.includes("recursi")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="10" r="6" stroke="#34d399" strokeWidth="1.8" fill="none" strokeDasharray="28 8" />
-        <polyline points="8 4 10 2 12 4" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <circle cx="10" cy="10" r="2.2" fill="#34d399" />
+        <circle cx="10" cy="10" r="6" stroke="#a855f7" strokeWidth="1.8" fill="none" strokeDasharray="28 8" />
+        <polyline points="8 4 10 2 12 4" stroke="#a855f7" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <circle cx="10" cy="10" r="2.2" fill="#a855f7" />
       </g>
     );
   }
   if (norm.includes("dynamic") || norm.includes("dp")) {
     return (
-      <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#34d399" fontFamily="monospace">
+      <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#fbbf24" fontFamily="monospace">
         &lt;/&gt;
       </text>
     );
@@ -167,48 +167,48 @@ function renderTopicIcon(tag: string, x: number, y: number) {
   if (norm.includes("divide") || norm.includes("conquer")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="4" r="2.2" fill="#34d399" />
-        <circle cx="4.5" cy="15" r="2.2" fill="#34d399" />
-        <circle cx="15.5" cy="15" r="2.2" fill="#34d399" />
-        <path d="M10 6v3m0 0l-5.5 4m5.5-4l5.5 4" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <circle cx="10" cy="4" r="2.2" fill="#fbbf24" />
+        <circle cx="4.5" cy="15" r="2.2" fill="#fbbf24" />
+        <circle cx="15.5" cy="15" r="2.2" fill="#fbbf24" />
+        <path d="M10 6v3m0 0l-5.5 4m5.5-4l5.5 4" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" fill="none" />
       </g>
     );
   }
   if (norm.includes("dfs") || norm.includes("depth")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="4" r="2.2" fill="#34d399" />
-        <circle cx="10" cy="10.5" r="2.2" fill="#34d399" />
-        <circle cx="10" cy="16.5" r="2.2" fill="#34d399" />
-        <line x1="10" y1="6" x2="10" y2="8.5" stroke="#34d399" strokeWidth="1.5" />
-        <line x1="10" y1="12.5" x2="10" y2="14.5" stroke="#34d399" strokeWidth="1.5" />
+        <circle cx="10" cy="4" r="2.2" fill="#a855f7" />
+        <circle cx="10" cy="10.5" r="2.2" fill="#a855f7" />
+        <circle cx="10" cy="16.5" r="2.2" fill="#a855f7" />
+        <line x1="10" y1="6" x2="10" y2="8.5" stroke="#a855f7" strokeWidth="1.5" />
+        <line x1="10" y1="12.5" x2="10" y2="14.5" stroke="#a855f7" strokeWidth="1.5" />
       </g>
     );
   }
   if (norm.includes("bfs") || norm.includes("breadth")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <circle cx="4" cy="10" r="2" fill="#34d399" />
-        <circle cx="10" cy="10" r="2" fill="#34d399" />
-        <circle cx="16" cy="10" r="2" fill="#34d399" />
-        <line x1="6" y1="10" x2="8" y2="10" stroke="#34d399" strokeWidth="1.5" />
-        <line x1="12" y1="10" x2="14" y2="10" stroke="#34d399" strokeWidth="1.5" />
+        <circle cx="4" cy="10" r="2" fill="#a855f7" />
+        <circle cx="10" cy="10" r="2" fill="#a855f7" />
+        <circle cx="16" cy="10" r="2" fill="#a855f7" />
+        <line x1="6" y1="10" x2="8" y2="10" stroke="#a855f7" strokeWidth="1.5" />
+        <line x1="12" y1="10" x2="14" y2="10" stroke="#a855f7" strokeWidth="1.5" />
       </g>
     );
   }
   if (norm.includes("list")) {
     return (
       <g transform={`translate(${x}, ${y})`}>
-        <circle cx="5" cy="10" r="2" fill="#34d399" />
-        <circle cx="15" cy="10" r="2" fill="#34d399" />
-        <line x1="7" y1="10" x2="13" y2="10" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="5" cy="10" r="2" fill="#2dd4bf" />
+        <circle cx="15" cy="10" r="2" fill="#2dd4bf" />
+        <line x1="7" y1="10" x2="13" y2="10" stroke="#2dd4bf" strokeWidth="1.5" strokeLinecap="round" />
       </g>
     );
   }
 
   // Default code icon
   return (
-    <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="11" fontWeight="800" fill="#34d399" fontFamily="monospace">
+    <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="11" fontWeight="800" fill="#2dd4bf" fontFamily="monospace">
       &lt;&gt;
     </text>
   );
@@ -237,6 +237,11 @@ interface TopicBreakdownProps {
 }
 
 export function TopicBreakdown({ topics }: TopicBreakdownProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Use ONLY real topics passed from the user's account. No fake preloaded data!
   const userTopics = topics ?? [];
   const hasRealData = userTopics.length > 0 && userTopics.some((t) => t.solved > 0);
@@ -305,45 +310,52 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
   const arcPathAdv = totalProblems > 0 && advSolved > 0 ? getGlassArcPath(cx, cy, radius, fundDeg + interDeg, advDeg) : null;
 
   return (
-    <div className="w-full overflow-hidden select-none">
+    <div
+      className={`w-full overflow-hidden select-none transition-all duration-700 ease-out ${
+        mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+      }`}
+    >
       <svg
         viewBox="0 0 1024 490"
-        className="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
+        className="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
         style={{ fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
       >
         <defs>
-          {/* Subcard Frosted Glass Fill */}
+          {/* Subcard Frosted Glass Fill matching CodeBoard Dark Navy Theme */}
           <linearGradient id="tcSubGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0d1f15" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#030c07" stopOpacity="0.95" />
+            <stop offset="0%" stopColor="#0f1730" stopOpacity="0.88" />
+            <stop offset="100%" stopColor="#070c1b" stopOpacity="0.96" />
           </linearGradient>
 
-          {/* Subcard Border Gradient */}
+          {/* Subcard Border Gradient: Violet to Cyan specular accent */}
           <linearGradient id="tcSubBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4ade80" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#15803d" stopOpacity="0.22" />
+            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.45" />
+            <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0.25" />
           </linearGradient>
 
-          {/* 3D Glass Tube Progress Ring Gradients */}
+          {/* 3D Glass Tube Progress Ring Gradients (Cyan, Violet, Amber) */}
+          {/* Fundamental: Electric Teal / Cyan */}
           <linearGradient id="tcRingFund3D" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#86efac" />
-            <stop offset="25%" stopColor="#00f076" />
-            <stop offset="65%" stopColor="#10b981" />
-            <stop offset="100%" stopColor="#047857" />
+            <stop offset="0%" stopColor="#5eead4" />
+            <stop offset="25%" stopColor="#2dd4bf" />
+            <stop offset="65%" stopColor="#0d9488" />
+            <stop offset="100%" stopColor="#115e59" />
           </linearGradient>
 
+          {/* Intermediate: Vibrant Violet / Purple */}
           <linearGradient id="tcRingInter3D" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#d9f99d" />
-            <stop offset="25%" stopColor="#88ff00" />
-            <stop offset="65%" stopColor="#65a30d" />
-            <stop offset="100%" stopColor="#365314" />
+            <stop offset="0%" stopColor="#e9d5ff" />
+            <stop offset="25%" stopColor="#c084fc" />
+            <stop offset="65%" stopColor="#8b5cf6" />
+            <stop offset="100%" stopColor="#581c87" />
           </linearGradient>
 
+          {/* Advanced: Warm Amber / Gold */}
           <linearGradient id="tcRingAdv3D" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#fef08a" />
-            <stop offset="25%" stopColor="#facc15" />
-            <stop offset="65%" stopColor="#ca8a04" />
-            <stop offset="100%" stopColor="#713f12" />
+            <stop offset="25%" stopColor="#fbbf24" />
+            <stop offset="65%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#78350f" />
           </linearGradient>
 
           {/* Specular White Glass Crest Gradient */}
@@ -353,11 +365,11 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0.05" />
           </linearGradient>
 
-          {/* Center Convex Glass Lens */}
+          {/* Center Convex Glass Lens: Deep Obsidian Navy */}
           <radialGradient id="tcLensGrad" cx="50%" cy="30%" r="70%">
-            <stop offset="0%" stopColor="#0a321e" stopOpacity="0.95" />
-            <stop offset="55%" stopColor="#04160e" stopOpacity="0.98" />
-            <stop offset="100%" stopColor="#010604" stopOpacity="1" />
+            <stop offset="0%" stopColor="#131d3d" stopOpacity="0.95" />
+            <stop offset="55%" stopColor="#0a0f24" stopOpacity="0.98" />
+            <stop offset="100%" stopColor="#050814" stopOpacity="1" />
           </radialGradient>
 
           <linearGradient id="tcLensShine" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -367,32 +379,35 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           </linearGradient>
 
           <linearGradient id="tcBadgeGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0a3822" />
-            <stop offset="100%" stopColor="#03170e" />
+            <stop offset="0%" stopColor="#1e1b4b" />
+            <stop offset="100%" stopColor="#0a0e22" />
           </linearGradient>
 
           {/* 3D Glass Column Bar Gradients */}
+          {/* Fundamental: Cyan / Teal */}
           <linearGradient id="tcBarFund3D" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#bbf7d0" />
-            <stop offset="12%" stopColor="#4ade80" />
-            <stop offset="45%" stopColor="#16a34a" />
-            <stop offset="85%" stopColor="#15803d" />
-            <stop offset="100%" stopColor="#052e16" />
+            <stop offset="0%" stopColor="#5eead4" />
+            <stop offset="12%" stopColor="#2dd4bf" />
+            <stop offset="45%" stopColor="#0d9488" />
+            <stop offset="85%" stopColor="#115e59" />
+            <stop offset="100%" stopColor="#042f2e" />
           </linearGradient>
 
+          {/* Intermediate: Vibrant Violet */}
           <linearGradient id="tcBarInter3D" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ecfccb" />
-            <stop offset="12%" stopColor="#a3e635" />
-            <stop offset="45%" stopColor="#65a30d" />
-            <stop offset="85%" stopColor="#4d7c0f" />
-            <stop offset="100%" stopColor="#1a2e05" />
+            <stop offset="0%" stopColor="#e9d5ff" />
+            <stop offset="12%" stopColor="#c084fc" />
+            <stop offset="45%" stopColor="#8b5cf6" />
+            <stop offset="85%" stopColor="#6d28d9" />
+            <stop offset="100%" stopColor="#2e1065" />
           </linearGradient>
 
+          {/* Advanced: Warm Amber / Gold */}
           <linearGradient id="tcBarAdv3D" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#fef9c3" />
-            <stop offset="12%" stopColor="#facc15" />
-            <stop offset="45%" stopColor="#ca8a04" />
-            <stop offset="85%" stopColor="#a16207" />
+            <stop offset="12%" stopColor="#fbbf24" />
+            <stop offset="45%" stopColor="#f59e0b" />
+            <stop offset="85%" stopColor="#b45309" />
             <stop offset="100%" stopColor="#451a03" />
           </linearGradient>
 
@@ -405,50 +420,50 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
           {/* Topic Icon Frosted Glass Fill */}
           <linearGradient id="tcIconGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0a2a1b" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#02120b" stopOpacity="0.95" />
+            <stop offset="0%" stopColor="#141c38" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#070c1b" stopOpacity="0.95" />
           </linearGradient>
 
-          {/* 3D Stacked Layers Icon Gradients */}
+          {/* 3D Stacked Layers Icon Gradients (Violet & Cyan) */}
           <linearGradient id="tcLayerBadge" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#166534" />
-            <stop offset="100%" stopColor="#052e16" />
+            <stop offset="0%" stopColor="#4338ca" />
+            <stop offset="100%" stopColor="#1e1b4b" />
           </linearGradient>
           <linearGradient id="tcLayerTop" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#86efac" />
-            <stop offset="100%" stopColor="#22c55e" />
+            <stop offset="0%" stopColor="#5eead4" />
+            <stop offset="100%" stopColor="#2dd4bf" />
           </linearGradient>
           <linearGradient id="tcLayerMid" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4ade80" />
-            <stop offset="100%" stopColor="#16a34a" />
+            <stop offset="0%" stopColor="#c084fc" />
+            <stop offset="100%" stopColor="#8b5cf6" />
           </linearGradient>
           <linearGradient id="tcLayerBot" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="100%" stopColor="#15803d" />
+            <stop offset="0%" stopColor="#818cf8" />
+            <stop offset="100%" stopColor="#4f46e5" />
           </linearGradient>
 
           {/* Coverage Insight Upward Arrow Gradient */}
           <linearGradient id="tcArrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00f076" />
-            <stop offset="60%" stopColor="#88ff00" />
+            <stop offset="0%" stopColor="#2dd4bf" />
+            <stop offset="60%" stopColor="#8b5cf6" />
             <stop offset="100%" stopColor="#ffffff" />
           </linearGradient>
 
           {/* Glow Filters */}
-          <filter id="tcGlowGreen" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#00f076" floodOpacity="0.8" />
+          <filter id="tcGlowCyan" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#2dd4bf" floodOpacity="0.75" />
           </filter>
-          <filter id="tcGlowLime" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#88ff00" floodOpacity="0.8" />
+          <filter id="tcGlowViolet" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#8b5cf6" floodOpacity="0.75" />
           </filter>
-          <filter id="tcGlowYellow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#eaff00" floodOpacity="0.8" />
+          <filter id="tcGlowAmber" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#fbbf24" floodOpacity="0.75" />
           </filter>
         </defs>
 
-        {/* Ambient Radial Lighting (Subtle, pure obsidian black page) */}
-        <circle cx="120" cy="80" r="140" fill="#10b981" opacity="0.04" filter="blur(40px)" />
-        <circle cx="860" cy="420" r="150" fill="#84cc16" opacity="0.03" filter="blur(50px)" />
+        {/* Ambient Radial Lighting matching CodeBoard App Theme */}
+        <circle cx="120" cy="80" r="140" fill="#8b5cf6" opacity="0.04" filter="blur(40px)" />
+        <circle cx="860" cy="420" r="150" fill="#2dd4bf" opacity="0.04" filter="blur(50px)" />
 
         {/* =====================================================
             1. HEADER BAR
@@ -460,76 +475,76 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             height="46"
             rx="14"
             fill="url(#tcLayerBadge)"
-            stroke="rgba(74, 222, 128, 0.5)"
+            stroke="rgba(139, 92, 246, 0.55)"
             strokeWidth="1.4"
-            filter="url(#tcGlowGreen)"
+            filter="url(#tcGlowViolet)"
           />
           {/* Bottom Layer */}
-          <path d="M23 29 L33 24 L23 19 L13 24 Z" fill="url(#tcLayerBot)" opacity="0.6" />
-          <path d="M13 24 L23 29 L33 24 L33 26 L23 31 L13 26 Z" fill="#047857" opacity="0.9" />
+          <path d="M23 29 L33 24 L23 19 L13 24 Z" fill="url(#tcLayerBot)" opacity="0.65" />
+          <path d="M13 24 L23 29 L33 24 L33 26 L23 31 L13 26 Z" fill="#312e81" opacity="0.9" />
           {/* Middle Layer */}
           <path d="M23 24.5 L33 19.5 L23 14.5 L13 19.5 Z" fill="url(#tcLayerMid)" opacity="0.85" />
-          <path d="M13 19.5 L23 24.5 L33 19.5 L33 21.5 L23 26.5 L13 21.5 Z" fill="#059669" opacity="0.9" />
+          <path d="M13 19.5 L23 24.5 L33 19.5 L33 21.5 L23 26.5 L13 21.5 Z" fill="#4c1d95" opacity="0.9" />
           {/* Top Layer */}
           <path d="M23 20 L33 15 L23 10 L13 15 Z" fill="url(#tcLayerTop)" />
-          <path d="M13 15 L23 20 L33 15 L33 17 L23 22 L13 17 Z" fill="#10b981" />
+          <path d="M13 15 L23 20 L33 15 L33 17 L23 22 L13 17 Z" fill="#0f766e" />
         </g>
 
         {/* Title + Subtitle */}
         <text x="92" y="42" fontSize="24" fontWeight="800" fill="#ffffff" letterSpacing="-0.5">
           Topic Coverage
         </text>
-        <text x="92" y="60" fontSize="12.5" fontWeight="500" fill="#86efac" opacity="0.85">
+        <text x="92" y="60" fontSize="12.5" fontWeight="500" fill="#94a3b8" opacity="0.9">
           Problem distribution across DSA topics
         </text>
 
         {/* Legend Filter Pills (Top Right) */}
-        {/* Fundamental */}
+        {/* Fundamental - Cyan */}
         <g transform="translate(572, 26)">
           <rect
             width="124"
             height="34"
             rx="17"
-            fill="#06160d"
-            stroke="url(#tcSubBorderGrad)"
+            fill="#0b1226"
+            stroke="rgba(45, 212, 191, 0.45)"
             strokeWidth="1.2"
           />
           <line x1="12" y1="1" x2="112" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-          <circle cx="18" cy="17" r="5" fill="#00f076" filter="url(#tcGlowGreen)" />
+          <circle cx="18" cy="17" r="5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
           <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
             Fundamental
           </text>
         </g>
 
-        {/* Intermediate */}
+        {/* Intermediate - Violet */}
         <g transform="translate(712, 26)">
           <rect
             width="134"
             height="34"
             rx="17"
-            fill="#0a180d"
-            stroke="url(#tcSubBorderGrad)"
+            fill="#120f29"
+            stroke="rgba(168, 85, 247, 0.45)"
             strokeWidth="1.2"
           />
           <line x1="12" y1="1" x2="122" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-          <circle cx="18" cy="17" r="5" fill="#88ff00" filter="url(#tcGlowLime)" />
+          <circle cx="18" cy="17" r="5" fill="#a855f7" filter="url(#tcGlowViolet)" />
           <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
             Intermediate
           </text>
         </g>
 
-        {/* Advanced */}
+        {/* Advanced - Amber */}
         <g transform="translate(862, 26)">
           <rect
             width="114"
             height="34"
             rx="17"
-            fill="#161c07"
-            stroke="url(#tcSubBorderGrad)"
+            fill="#1c160a"
+            stroke="rgba(251, 191, 36, 0.45)"
             strokeWidth="1.2"
           />
           <line x1="12" y1="1" x2="102" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-          <circle cx="18" cy="17" r="5" fill="#eaff00" filter="url(#tcGlowYellow)" />
+          <circle cx="18" cy="17" r="5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
           <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
             Advanced
           </text>
@@ -556,44 +571,101 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
              =================================================== */}
           <g>
             {/* Ambient Halo behind Track */}
-            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#00f076" strokeWidth="20" opacity="0.08" filter="blur(8px)" />
+            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#8b5cf6" strokeWidth="20" opacity="0.08" filter="blur(8px)" />
 
             {/* Recessed Dark Glass Track Groove */}
-            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#03150c" strokeWidth="16" />
-            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#010804" strokeWidth="12" />
+            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#090f22" strokeWidth="16" />
+            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#040713" strokeWidth="12" />
 
             {/* Concentric Frosted Glass Rims */}
-            <circle cx={cx} cy={cy} r="70" fill="none" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" />
-            <circle cx={cx} cy={cy} r="54" fill="none" stroke="rgba(255, 255, 255, 0.18)" strokeWidth="1" />
+            <circle cx={cx} cy={cy} r="70" fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" />
+            <circle cx={cx} cy={cy} r="54" fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" />
 
-            {/* ARC 1: FUNDAMENTAL (Emerald Glass Tube) */}
+            {/* ARC 1: FUNDAMENTAL (Cyan Glass Tube with Draw-In Animation) */}
             {arcPathFund && (
               <g>
-                <path d={arcPathFund} fill="none" stroke="url(#tcRingFund3D)" strokeWidth="13" strokeLinecap="round" />
-                <path d={arcPathFund} fill="none" stroke="url(#tcSpecularWhite)" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
+                <path
+                  d={arcPathFund}
+                  fill="none"
+                  stroke="url(#tcRingFund3D)"
+                  strokeWidth="13"
+                  strokeLinecap="round"
+                  strokeDasharray="400"
+                  strokeDashoffset={mounted ? 0 : 400}
+                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1)" }}
+                />
+                <path
+                  d={arcPathFund}
+                  fill="none"
+                  stroke="url(#tcSpecularWhite)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.8"
+                  strokeDasharray="400"
+                  strokeDashoffset={mounted ? 0 : 400}
+                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1)" }}
+                />
               </g>
             )}
 
-            {/* ARC 2: INTERMEDIATE (Lime Glass Tube) */}
+            {/* ARC 2: INTERMEDIATE (Violet Glass Tube with Draw-In Animation) */}
             {arcPathInter && (
               <g>
-                <path d={arcPathInter} fill="none" stroke="url(#tcRingInter3D)" strokeWidth="13" strokeLinecap="round" />
-                <path d={arcPathInter} fill="none" stroke="url(#tcSpecularWhite)" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
+                <path
+                  d={arcPathInter}
+                  fill="none"
+                  stroke="url(#tcRingInter3D)"
+                  strokeWidth="13"
+                  strokeLinecap="round"
+                  strokeDasharray="400"
+                  strokeDashoffset={mounted ? 0 : 400}
+                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.15s" }}
+                />
+                <path
+                  d={arcPathInter}
+                  fill="none"
+                  stroke="url(#tcSpecularWhite)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.8"
+                  strokeDasharray="400"
+                  strokeDashoffset={mounted ? 0 : 400}
+                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.15s" }}
+                />
               </g>
             )}
 
-            {/* ARC 3: ADVANCED (Amber/Yellow Glass Tube) */}
+            {/* ARC 3: ADVANCED (Amber Glass Tube with Draw-In Animation) */}
             {arcPathAdv && (
               <g>
-                <path d={arcPathAdv} fill="none" stroke="url(#tcRingAdv3D)" strokeWidth="13" strokeLinecap="round" />
-                <path d={arcPathAdv} fill="none" stroke="url(#tcSpecularWhite)" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
+                <path
+                  d={arcPathAdv}
+                  fill="none"
+                  stroke="url(#tcRingAdv3D)"
+                  strokeWidth="13"
+                  strokeLinecap="round"
+                  strokeDasharray="400"
+                  strokeDashoffset={mounted ? 0 : 400}
+                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.3s" }}
+                />
+                <path
+                  d={arcPathAdv}
+                  fill="none"
+                  stroke="url(#tcSpecularWhite)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.8"
+                  strokeDasharray="400"
+                  strokeDashoffset={mounted ? 0 : 400}
+                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.3s" }}
+                />
               </g>
             )}
 
             {/* ===================================================
                 CENTER 3D CONVEX FROSTED GLASS LENS
                =================================================== */}
-            <circle cx={cx} cy={cy} r="48" fill="url(#tcLensGrad)" stroke="rgba(74, 222, 128, 0.35)" strokeWidth="1.2" />
+            <circle cx={cx} cy={cy} r="48" fill="url(#tcLensGrad)" stroke="rgba(139, 92, 246, 0.45)" strokeWidth="1.2" />
 
             {/* Crescent Glass Specular Reflection */}
             <path
@@ -610,7 +682,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               height="19"
               rx="6"
               fill="url(#tcBadgeGlass)"
-              stroke="rgba(74, 222, 128, 0.6)"
+              stroke="rgba(139, 92, 246, 0.6)"
               strokeWidth="1.2"
             />
             {/* Top Shine on Badge */}
@@ -623,7 +695,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               strokeWidth="0.8"
               strokeLinecap="round"
             />
-            <text x={cx} y={cy - 25} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#6ee7b7" fontFamily="monospace">
+            <text x={cx} y={cy - 25} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#2dd4bf" fontFamily="monospace">
               &lt;/&gt;
             </text>
 
@@ -637,49 +709,55 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               fill="#ffffff"
               letterSpacing="-1"
               filter="drop-shadow(0 2px 5px rgba(0,0,0,0.95))"
+              style={{
+                opacity: mounted ? 1 : 0,
+                transform: mounted ? "scale(1)" : "scale(0.85)",
+                transformOrigin: `${cx}px ${cy}px`,
+                transition: "opacity 0.8s ease-out 0.2s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s",
+              }}
             >
               {totalProblems}
             </text>
 
             {/* Total Problems Subtitle */}
-            <text x={cx} y={cy + 26} textAnchor="middle" fontSize="11" fontWeight="700" fill="#a7f3d0" letterSpacing="-0.2">
+            <text x={cx} y={cy + 26} textAnchor="middle" fontSize="11" fontWeight="700" fill="#94a3b8" letterSpacing="-0.2">
               Total Problems
             </text>
           </g>
 
           {/* Breakdown Percentage Rows */}
-          {/* Row 1: Fundamental */}
-          <circle cx="24" cy="214" r="4.5" fill="#00f076" filter="url(#tcGlowGreen)" />
-          <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e6fffa">
+          {/* Row 1: Fundamental - Cyan */}
+          <circle cx="24" cy="214" r="4.5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
+          <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e2e8f0">
             Fundamental
           </text>
           <text x="204" y="218" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
             {fundSolved}{" "}
-            <tspan fontWeight="500" fill="#86efac" opacity="0.85">
+            <tspan fontWeight="500" fill="#2dd4bf" opacity="0.9">
               ({fundPct.toFixed(1)}%)
             </tspan>
           </text>
 
-          {/* Row 2: Intermediate */}
-          <circle cx="24" cy="238" r="4.5" fill="#88ff00" filter="url(#tcGlowLime)" />
-          <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e6fffa">
+          {/* Row 2: Intermediate - Violet */}
+          <circle cx="24" cy="238" r="4.5" fill="#a855f7" filter="url(#tcGlowViolet)" />
+          <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e2e8f0">
             Intermediate
           </text>
           <text x="204" y="242" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
             {interSolved}{" "}
-            <tspan fontWeight="500" fill="#86efac" opacity="0.85">
+            <tspan fontWeight="500" fill="#c084fc" opacity="0.9">
               ({interPct.toFixed(1)}%)
             </tspan>
           </text>
 
-          {/* Row 3: Advanced */}
-          <circle cx="24" cy="262" r="4.5" fill="#eaff00" filter="url(#tcGlowYellow)" />
-          <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e6fffa">
+          {/* Row 3: Advanced - Amber */}
+          <circle cx="24" cy="262" r="4.5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
+          <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e2e8f0">
             Advanced
           </text>
           <text x="204" y="266" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
             {advSolved}{" "}
-            <tspan fontWeight="500" fill="#86efac" opacity="0.85">
+            <tspan fontWeight="500" fill="#fbbf24" opacity="0.9">
               ({advPct.toFixed(1)}%)
             </tspan>
           </text>
@@ -690,7 +768,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               width="196"
               height="64"
               rx="12"
-              fill="#06160d"
+              fill="#0a1024"
               stroke="url(#tcSubBorderGrad)"
               strokeWidth="1"
             />
@@ -698,14 +776,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             <line x1="20" y1="1" x2="176" y2="1" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="0.8" strokeLinecap="round" />
 
             {/* Vertical Dividers */}
-            <line x1="65" y1="12" x2="65" y2="52" stroke="rgba(74, 222, 128, 0.15)" strokeWidth="1" />
-            <line x1="130" y1="12" x2="130" y2="52" stroke="rgba(74, 222, 128, 0.15)" strokeWidth="1" />
+            <line x1="65" y1="12" x2="65" y2="52" stroke="rgba(139, 92, 246, 0.2)" strokeWidth="1" />
+            <line x1="130" y1="12" x2="130" y2="52" stroke="rgba(139, 92, 246, 0.2)" strokeWidth="1" />
 
             {/* Stat 1: Topics */}
             <text x="32" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
               {hasRealData ? sorted.length : 0}
             </text>
-            <text x="32" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
+            <text x="32" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
               Topics
             </text>
 
@@ -713,7 +791,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             <text x="98" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
               {totalProblems}
             </text>
-            <text x="98" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
+            <text x="98" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
               Problems
             </text>
 
@@ -721,7 +799,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             <text x="163" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
               {fundPct.toFixed(1)}%
             </text>
-            <text x="163" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#6ee7b7" opacity="0.8">
+            <text x="163" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
               Fundamental
             </text>
           </g>
@@ -744,7 +822,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           <path d="M 30 2 L 690 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
 
           {/* Y-Axis Line (Placed at x=46, inside card bounds) */}
-          <line x1="46" y1="35" x2="46" y2="150" stroke="rgba(74, 222, 128, 0.4)" strokeWidth="1.2" />
+          <line x1="46" y1="35" x2="46" y2="150" stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1.2" />
 
           {/* Horizontal Reference Lines & Y-Axis Ticks (Mathematically mapped directly inside the card!) */}
           {yTicks.map((t, idx) => (
@@ -754,18 +832,18 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                 y1={t.y}
                 x2="698"
                 y2={t.y}
-                stroke="rgba(74, 222, 128, 0.12)"
+                stroke="rgba(148, 163, 184, 0.12)"
                 strokeDasharray={t.val === 0 ? "none" : "3 3"}
                 strokeWidth={t.val === 0 ? "1.4" : "1"}
               />
-              <line x1="42" y1={t.y} x2="46" y2={t.y} stroke="rgba(74, 222, 128, 0.4)" strokeWidth="1.2" />
+              <line x1="42" y1={t.y} x2="46" y2={t.y} stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1.2" />
               <text
                 x="38"
                 y={t.y + 4}
                 textAnchor="end"
                 fontSize="11"
                 fontWeight="700"
-                fill="#a7f3d0"
+                fill="#94a3b8"
                 opacity="0.9"
               >
                 {t.val}
@@ -773,93 +851,119 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             </g>
           ))}
 
-          {/* 12 Vertical Topic Columns (Comfortably spaced, NO scrollbar, NO clipping!) */}
+          {/* 12 Vertical Topic Columns (Animated Equalizer-Style Cascade!) */}
           {top12.map((item, i) => {
             const colX = 76 + i * 52.5;
-            const barHeight = hasRealData && item.solved > 0 ? Math.max(10, (item.solved / yMax) * 115) : 0;
-            const barY = 150 - barHeight;
+            const targetBarHeight = hasRealData && item.solved > 0 ? Math.max(10, (item.solved / yMax) * 115) : 0;
+            const currentBarHeight = mounted ? targetBarHeight : 0;
+            const currentBarY = 150 - currentBarHeight;
 
             // Pick 3D glass gradient and glow based on tier
             const isFund = item.level === "fundamental";
             const isInter = item.level === "intermediate";
             const barFill = isFund ? "url(#tcBarFund3D)" : isInter ? "url(#tcBarInter3D)" : "url(#tcBarAdv3D)";
-            const glowColor = isFund ? "#00f076" : isInter ? "#88ff00" : "#facc15";
+            const glowColor = isFund ? "#2dd4bf" : isInter ? "#a855f7" : "#fbbf24";
             const [labelLine1, labelLine2] = splitTopicLabel(item.tag);
 
             return (
               <g key={item.tag + i}>
-                {/* Count Number on top of bar */}
+                {/* Count Number on top of bar with Smooth Fade */}
                 <text
                   x={colX}
-                  y={barHeight > 0 ? barY - 6 : 144}
+                  y={currentBarHeight > 0 ? currentBarY - 6 : 144}
                   textAnchor="middle"
                   fontSize="13.5"
                   fontWeight="900"
                   fill="#ffffff"
                   filter="drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
+                  style={{
+                    opacity: mounted ? 1 : 0,
+                    transition: `opacity 0.6s ease-out ${i * 45 + 150}ms`,
+                  }}
                 >
                   {item.solved}
                 </text>
 
                 {/* Base Pedestal Glow on Baseline */}
-                <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity={barHeight > 0 ? 0.4 : 0.15} filter="blur(2px)" />
+                <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity={currentBarHeight > 0 ? 0.4 : 0.15} filter="blur(2px)" />
 
                 {/* Ambient Backlight Glow behind the Glass Pillar (if solved > 0) */}
-                {barHeight > 0 && (
+                {targetBarHeight > 0 && (
                   <rect
                     x={colX - 14}
-                    y={barY}
+                    y={currentBarY}
                     width="28"
-                    height={barHeight}
+                    height={currentBarHeight}
                     rx="8"
                     fill={glowColor}
                     opacity="0.25"
                     filter="blur(4px)"
+                    style={{
+                      transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                    }}
                   />
                 )}
 
-                {/* Main 3D Frosted Glass Column Pillar (or sleek resting baseline marker if 0) */}
-                {barHeight > 0 ? (
+                {/* Main 3D Frosted Glass Column Pillar (Animated Rise from Baseline) */}
+                {targetBarHeight > 0 ? (
                   <>
                     <rect
                       x={colX - 16}
-                      y={barY}
+                      y={currentBarY}
                       width="32"
-                      height={barHeight}
+                      height={currentBarHeight}
                       rx="8"
                       fill={barFill}
                       stroke="rgba(255, 255, 255, 0.35)"
                       strokeWidth="1"
+                      style={{
+                        transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                      }}
                     />
                     {/* Specular Curved Reflection at Top Cap of Bar */}
-                    <rect
-                      x={colX - 13}
-                      y={barY + 1.5}
-                      width="26"
-                      height="4"
-                      rx="2"
-                      fill="#ffffff"
-                      opacity="0.45"
-                    />
+                    {currentBarHeight > 4 && (
+                      <rect
+                        x={colX - 13}
+                        y={currentBarY + 1.5}
+                        width="26"
+                        height="4"
+                        rx="2"
+                        fill="#ffffff"
+                        opacity="0.45"
+                        style={{
+                          transition: `y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                        }}
+                      />
+                    )}
                     {/* Specular Vertical Light Streak down Left Side */}
-                    <rect
-                      x={colX - 13}
-                      y={barY + 5}
-                      width="2.8"
-                      height={Math.max(2, barHeight - 9)}
-                      rx="1.2"
-                      fill="url(#tcSpecularVertical)"
-                    />
+                    {currentBarHeight > 9 && (
+                      <rect
+                        x={colX - 13}
+                        y={currentBarY + 5}
+                        width="2.8"
+                        height={Math.max(2, currentBarHeight - 9)}
+                        rx="1.2"
+                        fill="url(#tcSpecularVertical)"
+                        style={{
+                          transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                        }}
+                      />
+                    )}
                     {/* Subtle Right Edge Depth Shadow */}
-                    <rect
-                      x={colX + 11}
-                      y={barY + 5}
-                      width="1.8"
-                      height={Math.max(2, barHeight - 9)}
-                      rx="0.8"
-                      fill="#000000"
-                      opacity="0.35"
-                    />
+                    {currentBarHeight > 9 && (
+                      <rect
+                        x={colX + 11}
+                        y={currentBarY + 5}
+                        width="1.8"
+                        height={Math.max(2, currentBarHeight - 9)}
+                        rx="0.8"
+                        fill="#000000"
+                        opacity="0.35"
+                        style={{
+                          transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                        }}
+                      />
+                    )}
                   </>
                 ) : (
                   <rect
@@ -868,7 +972,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                     width="28"
                     height="3"
                     rx="1.5"
-                    fill="rgba(74, 222, 128, 0.25)"
+                    fill="rgba(139, 92, 246, 0.25)"
                   />
                 )}
 
@@ -880,7 +984,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   height="32"
                   rx="9"
                   fill="url(#tcIconGlass)"
-                  stroke="rgba(74, 222, 128, 0.45)"
+                  stroke="rgba(139, 92, 246, 0.45)"
                   strokeWidth="1.2"
                 />
 
@@ -905,7 +1009,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   textAnchor="middle"
                   fontSize="9.5"
                   fontWeight="700"
-                  fill="#d1fae5"
+                  fill="#e2e8f0"
                 >
                   {labelLine1}
                 </text>
@@ -916,8 +1020,8 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                     textAnchor="middle"
                     fontSize="8.5"
                     fontWeight="600"
-                    fill="#a7f3d0"
-                    opacity="0.85"
+                    fill="#94a3b8"
+                    opacity="0.9"
                   >
                     {labelLine2}
                   </text>
@@ -945,10 +1049,10 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
           {/* Header with Target Icon */}
           <g transform="translate(18, 16)">
-            <circle cx="10" cy="10" r="9" stroke="#34d399" strokeWidth="1.8" fill="none" />
-            <circle cx="10" cy="10" r="5" stroke="#4ade80" strokeWidth="1.6" fill="none" />
-            <circle cx="10" cy="10" r="2" fill="#86efac" />
-            <path d="M 17 3 L 13 7" stroke="#34d399" strokeWidth="1.8" strokeLinecap="round" />
+            <circle cx="10" cy="10" r="9" stroke="#8b5cf6" strokeWidth="1.8" fill="none" />
+            <circle cx="10" cy="10" r="5" stroke="#2dd4bf" strokeWidth="1.6" fill="none" />
+            <circle cx="10" cy="10" r="2" fill="#38bdf8" />
+            <path d="M 17 3 L 13 7" stroke="#8b5cf6" strokeWidth="1.8" strokeLinecap="round" />
             <text x="26" y="14" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
               Top Covered Topics
             </text>
@@ -961,8 +1065,8 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               width="100"
               height="52"
               rx="12"
-              fill="#061e12"
-              stroke="rgba(74, 222, 128, 0.4)"
+              fill="#0d1428"
+              stroke="rgba(139, 92, 246, 0.45)"
               strokeWidth="1.2"
             />
             {/* Top Shine */}
@@ -971,19 +1075,19 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             {/* 3D Realistic Golden Trophy Icon */}
             <g transform="translate(8, 10)">
               {/* Handles */}
-              <path d="M 2 5 C -2 5, -2 13, 2 13 M 16 5 C 20 5, 20 13, 16 13" stroke="#facc15" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              <path d="M 2 5 C -2 5, -2 13, 2 13 M 16 5 C 20 5, 20 13, 16 13" stroke="#fbbf24" strokeWidth="1.6" fill="none" strokeLinecap="round" />
               {/* Cup Body */}
-              <path d="M 2 3 L 16 3 L 15 11 C 15 14, 11 16, 9 16 C 7 16, 3 14, 3 11 Z" fill="#eab308" stroke="#fef08a" strokeWidth="0.8" />
+              <path d="M 2 3 L 16 3 L 15 11 C 15 14, 11 16, 9 16 C 7 16, 3 14, 3 11 Z" fill="#f59e0b" stroke="#fef08a" strokeWidth="0.8" />
               {/* Stem & Base */}
-              <rect x="7.5" y="16" width="3" height="4" fill="#ca8a04" />
-              <rect x="5" y="20" width="8" height="2.5" rx="1" fill="#facc15" />
+              <rect x="7.5" y="16" width="3" height="4" fill="#b45309" />
+              <rect x="5" y="20" width="8" height="2.5" rx="1" fill="#fbbf24" />
             </g>
 
             {/* Text */}
             <text x="36" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
               {first.tag}
             </text>
-            <text x="36" y="39" fontSize="10.5" fontWeight="700" fill="#86efac">
+            <text x="36" y="39" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
               ({first.solved})
             </text>
           </g>
@@ -994,22 +1098,22 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               width="104"
               height="52"
               rx="12"
-              fill="#061e12"
-              stroke="rgba(74, 222, 128, 0.4)"
+              fill="#0d1428"
+              stroke="rgba(139, 92, 246, 0.45)"
               strokeWidth="1.2"
             />
             {/* Top Shine */}
             <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
-            {/* Lime-Green Star Medal Icon */}
+            {/* Violet-Cyan Star Medal Icon */}
             <g transform="translate(8, 10)">
               {/* Ribbons */}
-              <path d="M 5 2 L 7 10 L 9 2" fill="#22c55e" opacity="0.8" />
-              <path d="M 13 2 L 11 10 L 9 2" fill="#16a34a" opacity="0.8" />
+              <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
+              <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
               {/* Medal Disc */}
-              <circle cx="9" cy="13" r="7" fill="#84cc16" stroke="#bef264" strokeWidth="0.8" />
+              <circle cx="9" cy="13" r="7" fill="#2dd4bf" stroke="#5eead4" strokeWidth="0.8" />
               {/* Star inside medal */}
-              <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
+              <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#042f2e" />
             </g>
 
             {/* Text */}
@@ -1021,7 +1125,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                 {splitTopicLabel(second.tag)[1]}
               </text>
             )}
-            <text x="35" y={splitTopicLabel(second.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#86efac">
+            <text x="35" y={splitTopicLabel(second.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#2dd4bf">
               ({second.solved})
             </text>
           </g>
@@ -1032,20 +1136,20 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               width="104"
               height="52"
               rx="12"
-              fill="#061e12"
-              stroke="rgba(74, 222, 128, 0.4)"
+              fill="#0d1428"
+              stroke="rgba(139, 92, 246, 0.45)"
               strokeWidth="1.2"
             />
             {/* Top Shine */}
             <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
-            {/* Lime-Green Star Medal Icon */}
+            {/* Violet-Cyan Star Medal Icon */}
             <g transform="translate(8, 10)">
               {/* Ribbons */}
-              <path d="M 5 2 L 7 10 L 9 2" fill="#22c55e" opacity="0.8" />
-              <path d="M 13 2 L 11 10 L 9 2" fill="#16a34a" opacity="0.8" />
+              <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
+              <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
               {/* Medal Disc */}
-              <circle cx="9" cy="13" r="7" fill="#84cc16" stroke="#bef264" strokeWidth="0.8" />
+              <circle cx="9" cy="13" r="7" fill="#a855f7" stroke="#c084fc" strokeWidth="0.8" />
               {/* Star inside medal */}
               <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
             </g>
@@ -1059,14 +1163,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                 {splitTopicLabel(third.tag)[1]}
               </text>
             )}
-            <text x="35" y={splitTopicLabel(third.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#86efac">
+            <text x="35" y={splitTopicLabel(third.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#2dd4bf">
               ({third.solved})
             </text>
           </g>
         </g>
 
         {/* =====================================================
-            5. BOTTOM RIGHT: Coverage Insight (With 3D Rising Graphic)
+            5. BOTTOM RIGHT: Coverage Insight (With Animated Rising Graphic)
            ===================================================== */}
         <g transform="translate(636, 350)">
           {/* Background Card */}
@@ -1083,16 +1187,16 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
           {/* Header with 3-Bar Chart Icon */}
           <g transform="translate(18, 16)">
-            <rect x="0" y="8" width="3.5" height="8" rx="1" fill="#34d399" />
-            <rect x="5.5" y="4" width="3.5" height="12" rx="1" fill="#4ade80" />
-            <rect x="11" y="0" width="3.5" height="16" rx="1" fill="#86efac" />
+            <rect x="0" y="8" width="3.5" height="8" rx="1" fill="#2dd4bf" />
+            <rect x="5.5" y="4" width="3.5" height="12" rx="1" fill="#818cf8" />
+            <rect x="11" y="0" width="3.5" height="16" rx="1" fill="#c084fc" />
             <text x="22" y="12" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
               Coverage Insight
             </text>
           </g>
 
           {/* Dynamic Insight Prose based on actual percentages */}
-          <text x="18" y="46" fontSize="11.5" fontWeight="500" fill="#d1fae5" opacity="0.9">
+          <text x="18" y="46" fontSize="11.5" fontWeight="500" fill="#e2e8f0" opacity="0.95">
             {totalProblems > 0 ? (
               <>
                 <tspan x="18" dy="0">
@@ -1120,37 +1224,82 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             )}
           </text>
 
-          {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic */}
+          {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic (Animated Cascade) */}
           <g transform="translate(250, 26)">
-            {/* 4 Rising Isometric-Style Green Columns */}
+            {/* 4 Rising Isometric-Style Columns */}
             {/* Bar 1 */}
-            <rect x="10" y="46" width="11" height="18" rx="3" fill="#22c55e" opacity={hasRealData ? 1 : 0.4} />
-            <rect x="11" y="47" width="2" height="16" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+            <rect
+              x="10"
+              y={mounted ? 46 : 64}
+              width="11"
+              height={mounted ? 18 : 0}
+              rx="3"
+              fill="#2dd4bf"
+              opacity={hasRealData ? 1 : 0.4}
+              style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1), y 0.7s cubic-bezier(0.16, 1, 0.3, 1)" }}
+            />
+            <rect x="11" y={mounted ? 47 : 64} width="2" height={mounted ? 16 : 0} rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1), y 0.7s cubic-bezier(0.16, 1, 0.3, 1)" }} />
 
             {/* Bar 2 */}
-            <rect x="25" y="32" width="11" height="32" rx="3" fill="#4ade80" opacity={hasRealData ? 1 : 0.4} />
-            <rect x="26" y="33" width="2" height="30" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+            <rect
+              x="25"
+              y={mounted ? 32 : 64}
+              width="11"
+              height={mounted ? 32 : 0}
+              rx="3"
+              fill="#38bdf8"
+              opacity={hasRealData ? 1 : 0.4}
+              style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s" }}
+            />
+            <rect x="26" y={mounted ? 33 : 64} width="2" height={mounted ? 30 : 0} rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s" }} />
 
             {/* Bar 3 */}
-            <rect x="40" y="18" width="11" height="46" rx="3" fill="#86efac" opacity={hasRealData ? 1 : 0.4} />
-            <rect x="41" y="19" width="2" height="44" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+            <rect
+              x="40"
+              y={mounted ? 18 : 64}
+              width="11"
+              height={mounted ? 46 : 0}
+              rx="3"
+              fill="#818cf8"
+              opacity={hasRealData ? 1 : 0.4}
+              style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s" }}
+            />
+            <rect x="41" y={mounted ? 19 : 64} width="2" height={mounted ? 44 : 0} rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s" }} />
 
             {/* Bar 4 */}
-            <rect x="55" y="4" width="11" height="60" rx="3" fill="#bbf7d0" opacity={hasRealData ? 1 : 0.4} />
-            <rect x="56" y="5" width="2" height="58" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+            <rect
+              x="55"
+              y={mounted ? 4 : 64}
+              width="11"
+              height={mounted ? 60 : 0}
+              rx="3"
+              fill="#c084fc"
+              opacity={hasRealData ? 1 : 0.4}
+              style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s" }}
+            />
+            <rect x="56" y={mounted ? 5 : 64} width="2" height={mounted ? 58 : 0} rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s" }} />
 
-            {/* Upward Curved Glowing Neon Arrow */}
+            {/* Upward Curved Glowing Neon Arrow with Draw-In Animation */}
             <path
               d="M 6 44 C 24 34, 48 20, 72 -2"
               stroke="url(#tcArrowGrad)"
               strokeWidth="4"
               strokeLinecap="round"
               fill="none"
-              filter="url(#tcGlowLime)"
-              opacity={hasRealData ? 1 : 0.5}
+              filter="url(#tcGlowCyan)"
+              strokeDasharray="160"
+              strokeDashoffset={mounted ? 0 : 160}
+              style={{ transition: "stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s" }}
+              opacity={hasRealData ? 1 : 0.6}
             />
             {/* Arrowhead */}
-            <polygon points="72,-6 78,2 67,4" fill="#ffffff" filter="url(#tcGlowLime)" opacity={hasRealData ? 1 : 0.5} />
+            <polygon
+              points="72,-6 78,2 67,4"
+              fill="#ffffff"
+              filter="url(#tcGlowCyan)"
+              opacity={mounted ? (hasRealData ? 1 : 0.6) : 0}
+              style={{ transition: "opacity 0.6s ease-out 1.2s" }}
+            />
           </g>
         </g>
       </svg>
