@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export interface TopicItem {
   tag: string;
@@ -237,6 +237,9 @@ interface TopicBreakdownProps {
 }
 
 export function TopicBreakdown({ topics }: TopicBreakdownProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
   // Use ONLY real topics passed from the user's account. No fake preloaded data!
   const userTopics = topics ?? [];
   const hasRealData = userTopics.length > 0 && userTopics.some((t) => t.solved > 0);
@@ -266,6 +269,80 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
   const fundPct = totalProblems > 0 ? (fundSolved / totalProblems) * 100 : 0;
   const interPct = totalProblems > 0 ? (interSolved / totalProblems) * 100 : 0;
   const advPct = totalProblems > 0 ? (advSolved / totalProblems) * 100 : 0;
+
+  // Number counting states for central dial and 12 bar columns
+  const [displayTotal, setDisplayTotal] = useState(0);
+  const [displayCounts, setDisplayCounts] = useState<number[]>(() => top12.map(() => 0));
+
+  // IntersectionObserver: Triggers animations once when entering viewport
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIsVisible(true);
+      setDisplayTotal(totalProblems);
+      setDisplayCounts(top12.map((t) => t.solved));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [totalProblems, top12]);
+
+  // Counting animation: requestAnimationFrame with cubic ease-out
+  useEffect(() => {
+    if (!isVisible) return;
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplayTotal(totalProblems);
+      setDisplayCounts(top12.map((t) => t.solved));
+      return;
+    }
+
+    const duration = 1000;
+    let startTime: number | null = null;
+    let animId: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+
+      setDisplayTotal(Math.round(ease * totalProblems));
+
+      const counts = top12.map((item, i) => {
+        const barDelay = i * 45 + 150;
+        if (elapsed < barDelay) return 0;
+        const barProgress = Math.min((elapsed - barDelay) / 600, 1);
+        const barEase = 1 - Math.pow(1 - barProgress, 3);
+        return Math.round(barEase * item.solved);
+      });
+      setDisplayCounts(counts);
+
+      if (progress < 1) {
+        animId = requestAnimationFrame(animate);
+      } else {
+        setDisplayTotal(totalProblems);
+        setDisplayCounts(top12.map((t) => t.solved));
+      }
+    };
+
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, [isVisible, totalProblems, top12]);
 
   // Dynamic Y-axis scale based on the maximum solved topic (default 10 if 0 solved)
   const maxSolved = Math.max(...top12.map((t) => t.solved), 0);
@@ -305,7 +382,12 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
   const arcPathAdv = totalProblems > 0 && advSolved > 0 ? getGlassArcPath(cx, cy, radius, fundDeg + interDeg, advDeg) : null;
 
   return (
-    <div className="w-full overflow-hidden select-none">
+    <div
+      ref={containerRef}
+      className={`w-full overflow-hidden select-none transition-all duration-700 ease-out ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+      }`}
+    >
       <svg
         viewBox="0 0 1024 490"
         className="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
@@ -346,6 +428,107 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               }
               to {
                 stroke-dashoffset: 0;
+              }
+            }
+            @keyframes cbArrowheadPop {
+              0% {
+                opacity: 0;
+                transform: scale(0.3);
+              }
+              100% {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+            @keyframes cbDotPulse {
+              0% {
+                transform: scale(1);
+                opacity: 0.9;
+              }
+              50% {
+                transform: scale(1.45);
+                opacity: 1;
+                filter: drop-shadow(0 0 6px currentColor);
+              }
+              100% {
+                transform: scale(1);
+                opacity: 0.9;
+              }
+            }
+            .cb-dot-pulse {
+              transform-box: fill-box;
+              transform-origin: center;
+              animation: cbDotPulse 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s 1;
+            }
+            @keyframes cbFloat {
+              0%, 100% {
+                transform: translateY(0);
+              }
+              50% {
+                transform: translateY(-2.5px);
+              }
+            }
+            .cb-header-float {
+              animation: cbFloat 4s ease-in-out infinite;
+            }
+            @keyframes cbIconEntrance {
+              0% {
+                opacity: 0;
+                transform: scale(0.75);
+              }
+              100% {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+            .cb-topic-icon-btn {
+              cursor: pointer;
+              transform-box: fill-box;
+              transform-origin: center;
+              transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+            }
+            .cb-topic-icon-btn:hover {
+              transform: scale(1.06);
+              filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.55)) drop-shadow(0 0 12px rgba(139, 92, 246, 0.35));
+            }
+            .cb-badge-card {
+              cursor: pointer;
+              transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+            }
+            .cb-badge-card:hover {
+              transform: translateY(-3px);
+              filter: drop-shadow(0 6px 14px rgba(139, 92, 246, 0.35));
+            }
+            .cb-badge-card .cb-trophy-icon {
+              transform-box: fill-box;
+              transform-origin: center;
+              transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+            .cb-badge-card:hover .cb-trophy-icon {
+              transform: scale(1.15) rotate(4deg);
+            }
+            .cb-badge-card .cb-medal-icon {
+              transform-box: fill-box;
+              transform-origin: center;
+              transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+            .cb-badge-card:hover .cb-medal-icon {
+              transform: scale(1.15) rotate(-4deg);
+            }
+            .cb-legend-pill {
+              cursor: pointer;
+              transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+            }
+            .cb-legend-pill:hover {
+              transform: translateY(-2px);
+              filter: drop-shadow(0 2px 8px rgba(139, 92, 246, 0.35));
+            }
+            @media (prefers-reduced-motion: reduce) {
+              * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                stroke-dashoffset: 0 !important;
               }
             }
           `}</style>
@@ -498,7 +681,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             1. HEADER BAR
            ===================================================== */}
         {/* 3D Stacked Layers Icon Badge */}
-        <g transform="translate(32, 20)">
+        <g transform="translate(32, 20)" className="cb-header-float">
           <rect
             width="46"
             height="46"
@@ -529,7 +712,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
         {/* Legend Filter Pills (Top Right) */}
         {/* Fundamental - Cyan */}
-        <g transform="translate(572, 26)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.1s" }}>
+        <g
+          transform="translate(572, 26)"
+          className="cb-legend-pill"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transition: "opacity 0.6s ease-out 0.15s",
+          }}
+        >
           <rect
             width="124"
             height="34"
@@ -539,14 +729,21 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             strokeWidth="1.2"
           />
           <line x1="12" y1="1" x2="112" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-          <circle cx="18" cy="17" r="5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
+          <circle cx="18" cy="17" r="5" fill="#2dd4bf" filter="url(#tcGlowCyan)" className="cb-dot-pulse" />
           <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
             Fundamental
           </text>
         </g>
 
         {/* Intermediate - Violet */}
-        <g transform="translate(712, 26)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.2s" }}>
+        <g
+          transform="translate(712, 26)"
+          className="cb-legend-pill"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transition: "opacity 0.6s ease-out 0.25s",
+          }}
+        >
           <rect
             width="134"
             height="34"
@@ -556,14 +753,21 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             strokeWidth="1.2"
           />
           <line x1="12" y1="1" x2="122" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-          <circle cx="18" cy="17" r="5" fill="#a855f7" filter="url(#tcGlowViolet)" />
+          <circle cx="18" cy="17" r="5" fill="#a855f7" filter="url(#tcGlowViolet)" className="cb-dot-pulse" style={{ animationDelay: "0.75s" }} />
           <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
             Intermediate
           </text>
         </g>
 
         {/* Advanced - Amber */}
-        <g transform="translate(862, 26)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.3s" }}>
+        <g
+          transform="translate(862, 26)"
+          className="cb-legend-pill"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transition: "opacity 0.6s ease-out 0.35s",
+          }}
+        >
           <rect
             width="114"
             height="34"
@@ -573,7 +777,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             strokeWidth="1.2"
           />
           <line x1="12" y1="1" x2="102" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-          <circle cx="18" cy="17" r="5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
+          <circle cx="18" cy="17" r="5" fill="#fbbf24" filter="url(#tcGlowAmber)" className="cb-dot-pulse" style={{ animationDelay: "0.9s" }} />
           <text x="32" y="21.5" fontSize="12" fontWeight="700" fill="#ffffff">
             Advanced
           </text>
@@ -583,243 +787,262 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             2. LEFT SUBCARD: 3D Glassmorphic Donut Gauge & Summary
            ===================================================== */}
         <g transform="translate(32, 80)">
-          {/* Background Card */}
-          <rect
-            width="224"
-            height="382"
-            rx="22"
-            fill="url(#tcSubGlass)"
-            stroke="url(#tcSubBorderGrad)"
-            strokeWidth="1.2"
-          />
-          {/* Frosted Specular Sheen at Top of Subcard */}
-          <path d="M 66 2 L 202 2" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="1" strokeLinecap="round" />
-
-          {/* ===================================================
-              3D GLASS TUBE PROGRESS DONUT GAUGE (Center cx, cy)
-             =================================================== */}
-          <g>
-            {/* Ambient Halo behind Track */}
-            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#8b5cf6" strokeWidth="20" opacity="0.08" filter="blur(8px)" />
-
-            {/* Recessed Dark Glass Track Groove */}
-            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#090f22" strokeWidth="16" />
-            <circle cx={cx} cy={cy} r="62" fill="none" stroke="#040713" strokeWidth="12" />
-
-            {/* Concentric Frosted Glass Rims */}
-            <circle cx={cx} cy={cy} r="70" fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" />
-            <circle cx={cx} cy={cy} r="54" fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" />
-
-            {/* ARC 1: FUNDAMENTAL (Cyan Glass Tube with Draw-In Animation) */}
-            {arcPathFund && (
-              <g>
-                <path
-                  d={arcPathFund}
-                  fill="none"
-                  stroke="url(#tcRingFund3D)"
-                  strokeWidth="13"
-                  strokeLinecap="round"
-                  strokeDasharray="400"
-                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.1s" }}
-                />
-                <path
-                  d={arcPathFund}
-                  fill="none"
-                  stroke="url(#tcSpecularWhite)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  opacity="0.8"
-                  strokeDasharray="400"
-                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.1s" }}
-                />
-              </g>
-            )}
-
-            {/* ARC 2: INTERMEDIATE (Violet Glass Tube with Draw-In Animation) */}
-            {arcPathInter && (
-              <g>
-                <path
-                  d={arcPathInter}
-                  fill="none"
-                  stroke="url(#tcRingInter3D)"
-                  strokeWidth="13"
-                  strokeLinecap="round"
-                  strokeDasharray="400"
-                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.25s" }}
-                />
-                <path
-                  d={arcPathInter}
-                  fill="none"
-                  stroke="url(#tcSpecularWhite)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  opacity="0.8"
-                  strokeDasharray="400"
-                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.25s" }}
-                />
-              </g>
-            )}
-
-            {/* ARC 3: ADVANCED (Amber Glass Tube with Draw-In Animation) */}
-            {arcPathAdv && (
-              <g>
-                <path
-                  d={arcPathAdv}
-                  fill="none"
-                  stroke="url(#tcRingAdv3D)"
-                  strokeWidth="13"
-                  strokeLinecap="round"
-                  strokeDasharray="400"
-                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.4s" }}
-                />
-                <path
-                  d={arcPathAdv}
-                  fill="none"
-                  stroke="url(#tcSpecularWhite)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  opacity="0.8"
-                  strokeDasharray="400"
-                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.4s" }}
-                />
-              </g>
-            )}
-
-            {/* ===================================================
-                CENTER 3D CONVEX FROSTED GLASS LENS
-               =================================================== */}
-            <circle cx={cx} cy={cy} r="48" fill="url(#tcLensGrad)" stroke="rgba(139, 92, 246, 0.45)" strokeWidth="1.2" />
-
-            {/* Crescent Glass Specular Reflection */}
-            <path
-              d={`M ${cx - 32} ${cy - 16} A 48 48 0 0 1 ${cx + 32} ${cy - 16} A 39 39 0 0 0 ${cx - 32} ${cy - 16} Z`}
-              fill="url(#tcLensShine)"
-              opacity="0.65"
-            />
-
-            {/* Frosted Badge for </> */}
+          <g
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? "translateY(0)" : "translateY(10px)",
+              transition: "opacity 0.7s ease-out 0.08s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s",
+            }}
+          >
+            {/* Background Card */}
             <rect
-              x={cx - 16}
-              y={cy - 38}
-              width="32"
-              height="19"
-              rx="6"
-              fill="url(#tcBadgeGlass)"
-              stroke="rgba(139, 92, 246, 0.6)"
+              width="224"
+              height="382"
+              rx="22"
+              fill="url(#tcSubGlass)"
+              stroke="url(#tcSubBorderGrad)"
               strokeWidth="1.2"
             />
-            {/* Top Shine on Badge */}
-            <line
-              x1={cx - 12}
-              y1={cy - 37}
-              x2={cx + 12}
-              y2={cy - 37}
-              stroke="rgba(255, 255, 255, 0.45)"
-              strokeWidth="0.8"
-              strokeLinecap="round"
-            />
-            <text x={cx} y={cy - 25} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#2dd4bf" fontFamily="monospace">
-              &lt;/&gt;
-            </text>
+            {/* Frosted Specular Sheen at Top of Subcard */}
+            <path d="M 66 2 L 202 2" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="1" strokeLinecap="round" />
 
-            {/* Large Total Count with Smooth Fade */}
-            <text
-              x={cx}
-              y={cy + 8}
-              textAnchor="middle"
-              fontSize="36"
-              fontWeight="900"
-              fill="#ffffff"
-              letterSpacing="-1"
-              filter="drop-shadow(0 2px 5px rgba(0,0,0,0.95))"
-              style={{ animation: "cbFadeIn 0.8s ease-out both" }}
+            {/* ===================================================
+                3D GLASS TUBE PROGRESS DONUT GAUGE (Center cx, cy)
+               =================================================== */}
+            <g>
+              {/* Ambient Halo behind Track */}
+              <circle cx={cx} cy={cy} r="62" fill="none" stroke="#8b5cf6" strokeWidth="20" opacity="0.08" filter="blur(8px)" />
+
+              {/* Recessed Dark Glass Track Groove */}
+              <circle cx={cx} cy={cy} r="62" fill="none" stroke="#090f22" strokeWidth="16" />
+              <circle cx={cx} cy={cy} r="62" fill="none" stroke="#040713" strokeWidth="12" />
+
+              {/* Concentric Frosted Glass Rims */}
+              <circle cx={cx} cy={cy} r="70" fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" />
+              <circle cx={cx} cy={cy} r="54" fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" />
+
+              {/* ARC 1: FUNDAMENTAL (Cyan Glass Tube with Draw-In Animation) */}
+              {arcPathFund && (
+                <g>
+                  <path
+                    d={arcPathFund}
+                    fill="none"
+                    stroke="url(#tcRingFund3D)"
+                    strokeWidth="13"
+                    strokeLinecap="round"
+                    strokeDasharray="400"
+                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.2s" }}
+                  />
+                  <path
+                    d={arcPathFund}
+                    fill="none"
+                    stroke="url(#tcSpecularWhite)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    opacity="0.8"
+                    strokeDasharray="400"
+                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.2s" }}
+                  />
+                </g>
+              )}
+
+              {/* ARC 2: INTERMEDIATE (Violet Glass Tube with Draw-In Animation) */}
+              {arcPathInter && (
+                <g>
+                  <path
+                    d={arcPathInter}
+                    fill="none"
+                    stroke="url(#tcRingInter3D)"
+                    strokeWidth="13"
+                    strokeLinecap="round"
+                    strokeDasharray="400"
+                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.35s" }}
+                  />
+                  <path
+                    d={arcPathInter}
+                    fill="none"
+                    stroke="url(#tcSpecularWhite)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    opacity="0.8"
+                    strokeDasharray="400"
+                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.35s" }}
+                  />
+                </g>
+              )}
+
+              {/* ARC 3: ADVANCED (Amber Glass Tube with Draw-In Animation) */}
+              {arcPathAdv && (
+                <g>
+                  <path
+                    d={arcPathAdv}
+                    fill="none"
+                    stroke="url(#tcRingAdv3D)"
+                    strokeWidth="13"
+                    strokeLinecap="round"
+                    strokeDasharray="400"
+                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.5s" }}
+                  />
+                  <path
+                    d={arcPathAdv}
+                    fill="none"
+                    stroke="url(#tcSpecularWhite)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    opacity="0.8"
+                    strokeDasharray="400"
+                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.5s" }}
+                  />
+                </g>
+              )}
+
+              {/* ===================================================
+                  CENTER 3D CONVEX FROSTED GLASS LENS
+                 =================================================== */}
+              <circle cx={cx} cy={cy} r="48" fill="url(#tcLensGrad)" stroke="rgba(139, 92, 246, 0.45)" strokeWidth="1.2" />
+
+              {/* Crescent Glass Specular Reflection */}
+              <path
+                d={`M ${cx - 32} ${cy - 16} A 48 48 0 0 1 ${cx + 32} ${cy - 16} A 39 39 0 0 0 ${cx - 32} ${cy - 16} Z`}
+                fill="url(#tcLensShine)"
+                opacity="0.65"
+              />
+
+              {/* Frosted Badge for </> */}
+              <rect
+                x={cx - 16}
+                y={cy - 38}
+                width="32"
+                height="19"
+                rx="6"
+                fill="url(#tcBadgeGlass)"
+                stroke="rgba(139, 92, 246, 0.6)"
+                strokeWidth="1.2"
+              />
+              {/* Top Shine on Badge */}
+              <line
+                x1={cx - 12}
+                y1={cy - 37}
+                x2={cx + 12}
+                y2={cy - 37}
+                stroke="rgba(255, 255, 255, 0.45)"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <text x={cx} y={cy - 25} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#2dd4bf" fontFamily="monospace">
+                &lt;/&gt;
+              </text>
+
+              {/* Large Total Count with Counting Animation */}
+              <text
+                x={cx}
+                y={cy + 8}
+                textAnchor="middle"
+                fontSize="36"
+                fontWeight="900"
+                fill="#ffffff"
+                letterSpacing="-1"
+                filter="drop-shadow(0 2px 5px rgba(0,0,0,0.95))"
+              >
+                {displayTotal}
+              </text>
+
+              {/* Total Problems Subtitle */}
+              <text x={cx} y={cy + 26} textAnchor="middle" fontSize="11" fontWeight="700" fill="#94a3b8" letterSpacing="-0.2">
+                Total Problems
+              </text>
+            </g>
+
+            {/* Breakdown Percentage Rows */}
+            {/* Row 1: Fundamental - Cyan */}
+            <g style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.6s ease-out 0.4s" }}>
+              <circle cx="24" cy="214" r="4.5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
+              <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e2e8f0">
+                Fundamental
+              </text>
+              <text x="204" y="218" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+                {fundSolved}{" "}
+                <tspan fontWeight="500" fill="#2dd4bf" opacity="0.9">
+                  ({fundPct.toFixed(1)}%)
+                </tspan>
+              </text>
+            </g>
+
+            {/* Row 2: Intermediate - Violet */}
+            <g style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.6s ease-out 0.5s" }}>
+              <circle cx="24" cy="238" r="4.5" fill="#a855f7" filter="url(#tcGlowViolet)" />
+              <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e2e8f0">
+                Intermediate
+              </text>
+              <text x="204" y="242" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+                {interSolved}{" "}
+                <tspan fontWeight="500" fill="#c084fc" opacity="0.9">
+                  ({interPct.toFixed(1)}%)
+                </tspan>
+              </text>
+            </g>
+
+            {/* Row 3: Advanced - Amber */}
+            <g style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.6s ease-out 0.6s" }}>
+              <circle cx="24" cy="262" r="4.5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
+              <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e2e8f0">
+                Advanced
+              </text>
+              <text x="204" y="266" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+                {advSolved}{" "}
+                <tspan fontWeight="500" fill="#fbbf24" opacity="0.9">
+                  ({advPct.toFixed(1)}%)
+                </tspan>
+              </text>
+            </g>
+
+            {/* Bottom 3-Stat Glass Box */}
+            <g
+              transform="translate(14, 296)"
+              style={{
+                opacity: isVisible ? 1 : 0,
+                transition: "opacity 0.6s ease-out 0.7s",
+              }}
             >
-              {totalProblems}
-            </text>
+              <rect
+                width="196"
+                height="64"
+                rx="12"
+                fill="#0a1024"
+                stroke="url(#tcSubBorderGrad)"
+                strokeWidth="1"
+              />
+              {/* Top Shine */}
+              <line x1="20" y1="1" x2="176" y2="1" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="0.8" strokeLinecap="round" />
 
-            {/* Total Problems Subtitle */}
-            <text x={cx} y={cy + 26} textAnchor="middle" fontSize="11" fontWeight="700" fill="#94a3b8" letterSpacing="-0.2">
-              Total Problems
-            </text>
-          </g>
+              {/* Vertical Dividers */}
+              <line x1="65" y1="12" x2="65" y2="52" stroke="rgba(139, 92, 246, 0.2)" strokeWidth="1" />
+              <line x1="130" y1="12" x2="130" y2="52" stroke="rgba(139, 92, 246, 0.2)" strokeWidth="1" />
 
-          {/* Breakdown Percentage Rows */}
-          {/* Row 1: Fundamental - Cyan */}
-          <circle cx="24" cy="214" r="4.5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
-          <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e2e8f0">
-            Fundamental
-          </text>
-          <text x="204" y="218" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-            {fundSolved}{" "}
-            <tspan fontWeight="500" fill="#2dd4bf" opacity="0.9">
-              ({fundPct.toFixed(1)}%)
-            </tspan>
-          </text>
+              {/* Stat 1: Topics */}
+              <text x="32" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
+                {hasRealData ? sorted.length : 0}
+              </text>
+              <text x="32" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
+                Topics
+              </text>
 
-          {/* Row 2: Intermediate - Violet */}
-          <circle cx="24" cy="238" r="4.5" fill="#a855f7" filter="url(#tcGlowViolet)" />
-          <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e2e8f0">
-            Intermediate
-          </text>
-          <text x="204" y="242" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-            {interSolved}{" "}
-            <tspan fontWeight="500" fill="#c084fc" opacity="0.9">
-              ({interPct.toFixed(1)}%)
-            </tspan>
-          </text>
+              {/* Stat 2: Problems */}
+              <text x="98" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
+                {displayTotal}
+              </text>
+              <text x="98" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
+                Problems
+              </text>
 
-          {/* Row 3: Advanced - Amber */}
-          <circle cx="24" cy="262" r="4.5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
-          <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e2e8f0">
-            Advanced
-          </text>
-          <text x="204" y="266" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-            {advSolved}{" "}
-            <tspan fontWeight="500" fill="#fbbf24" opacity="0.9">
-              ({advPct.toFixed(1)}%)
-            </tspan>
-          </text>
-
-          {/* Bottom 3-Stat Glass Box */}
-          <g transform="translate(14, 296)">
-            <rect
-              width="196"
-              height="64"
-              rx="12"
-              fill="#0a1024"
-              stroke="url(#tcSubBorderGrad)"
-              strokeWidth="1"
-            />
-            {/* Top Shine */}
-            <line x1="20" y1="1" x2="176" y2="1" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="0.8" strokeLinecap="round" />
-
-            {/* Vertical Dividers */}
-            <line x1="65" y1="12" x2="65" y2="52" stroke="rgba(139, 92, 246, 0.2)" strokeWidth="1" />
-            <line x1="130" y1="12" x2="130" y2="52" stroke="rgba(139, 92, 246, 0.2)" strokeWidth="1" />
-
-            {/* Stat 1: Topics */}
-            <text x="32" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
-              {hasRealData ? sorted.length : 0}
-            </text>
-            <text x="32" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
-              Topics
-            </text>
-
-            {/* Stat 2: Problems */}
-            <text x="98" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
-              {totalProblems}
-            </text>
-            <text x="98" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
-              Problems
-            </text>
-
-            {/* Stat 3: Fundamental % */}
-            <text x="163" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
-              {fundPct.toFixed(1)}%
-            </text>
-            <text x="163" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
-              Fundamental
-            </text>
+              {/* Stat 3: Fundamental % */}
+              <text x="163" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
+                {fundPct.toFixed(1)}%
+              </text>
+              <text x="163" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
+                Fundamental
+              </text>
+            </g>
           </g>
         </g>
 
@@ -827,351 +1050,395 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             3. CENTER/RIGHT TOP: 12-Bar DSA 3D Glass Chart
            ===================================================== */}
         <g transform="translate(272, 80)">
-          {/* Background Card */}
-          <rect
-            width="720"
-            height="254"
-            rx="22"
-            fill="url(#tcSubGlass)"
-            stroke="url(#tcSubBorderGrad)"
-            strokeWidth="1.2"
-          />
-          {/* Top Specular Shine */}
-          <path d="M 30 2 L 690 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
+          <g
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? "translateY(0)" : "translateY(10px)",
+              transition: "opacity 0.7s ease-out 0.16s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s",
+            }}
+          >
+            {/* Background Card */}
+            <rect
+              width="720"
+              height="254"
+              rx="22"
+              fill="url(#tcSubGlass)"
+              stroke="url(#tcSubBorderGrad)"
+              strokeWidth="1.2"
+            />
+            {/* Top Specular Shine */}
+            <path d="M 30 2 L 690 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
 
-          {/* Y-Axis Line (Placed at x=46, inside card bounds) */}
-          <line x1="46" y1="35" x2="46" y2="150" stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1.2" />
+            {/* Y-Axis Line (Placed at x=46, inside card bounds) */}
+            <line x1="46" y1="35" x2="46" y2="150" stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1.2" />
 
-          {/* Horizontal Reference Lines & Y-Axis Ticks (Mathematically mapped directly inside the card!) */}
-          {yTicks.map((t, idx) => (
-            <g key={idx}>
-              <line
-                x1="46"
-                y1={t.y}
-                x2="698"
-                y2={t.y}
-                stroke="rgba(148, 163, 184, 0.12)"
-                strokeDasharray={t.val === 0 ? "none" : "3 3"}
-                strokeWidth={t.val === 0 ? "1.4" : "1"}
-              />
-              <line x1="42" y1={t.y} x2="46" y2={t.y} stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1.2" />
-              <text
-                x="38"
-                y={t.y + 4}
-                textAnchor="end"
-                fontSize="11"
-                fontWeight="700"
-                fill="#94a3b8"
-                opacity="0.9"
-              >
-                {t.val}
-              </text>
-            </g>
-          ))}
-
-          {/* 12 Vertical Topic Columns (Animated Equalizer-Style Cascade!) */}
-          {top12.map((item, i) => {
-            const colX = 76 + i * 52.5;
-            const barHeight = hasRealData && item.solved > 0 ? Math.max(10, (item.solved / yMax) * 115) : 0;
-            const barY = 150 - barHeight;
-
-            // Pick 3D glass gradient and glow based on tier
-            const isFund = item.level === "fundamental";
-            const isInter = item.level === "intermediate";
-            const barFill = isFund ? "url(#tcBarFund3D)" : isInter ? "url(#tcBarInter3D)" : "url(#tcBarAdv3D)";
-            const glowColor = isFund ? "#2dd4bf" : isInter ? "#a855f7" : "#fbbf24";
-            const [labelLine1, labelLine2] = splitTopicLabel(item.tag);
-
-            return (
-              <g key={item.tag + i}>
-                {/* Count Number on top of bar with Smooth Fade */}
-                <text
-                  x={colX}
-                  y={barHeight > 0 ? barY - 6 : 144}
-                  textAnchor="middle"
-                  fontSize="13.5"
-                  fontWeight="900"
-                  fill="#ffffff"
-                  filter="drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
-                  style={{
-                    animation: `cbFadeIn 0.5s ease-out both`,
-                    animationDelay: `${i * 45 + 180}ms`,
-                  }}
-                >
-                  {item.solved}
-                </text>
-
-                {/* Base Pedestal Glow on Baseline */}
-                <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity={barHeight > 0 ? 0.4 : 0.15} filter="blur(2px)" />
-
-                {/* Main 3D Frosted Glass Column Pillar (Animated Rise from Baseline) */}
-                {barHeight > 0 ? (
-                  <g
-                    style={{
-                      transformOrigin: `${colX}px 150px`,
-                      animation: `cbBarGrow 0.85s cubic-bezier(0.16, 1, 0.3, 1) both`,
-                      animationDelay: `${i * 45}ms`,
-                    }}
-                  >
-                    {/* Ambient Backlight Glow behind the Glass Pillar */}
-                    <rect
-                      x={colX - 14}
-                      y={barY}
-                      width="28"
-                      height={barHeight}
-                      rx="8"
-                      fill={glowColor}
-                      opacity="0.25"
-                      filter="blur(4px)"
-                    />
-                    {/* Main Frosted Pillar Body */}
-                    <rect
-                      x={colX - 16}
-                      y={barY}
-                      width="32"
-                      height={barHeight}
-                      rx="8"
-                      fill={barFill}
-                      stroke="rgba(255, 255, 255, 0.35)"
-                      strokeWidth="1"
-                    />
-                    {/* Specular Curved Reflection at Top Cap of Bar */}
-                    {barHeight > 4 && (
-                      <rect
-                        x={colX - 13}
-                        y={barY + 1.5}
-                        width="26"
-                        height="4"
-                        rx="2"
-                        fill="#ffffff"
-                        opacity="0.45"
-                      />
-                    )}
-                    {/* Specular Vertical Light Streak down Left Side */}
-                    {barHeight > 9 && (
-                      <rect
-                        x={colX - 13}
-                        y={barY + 5}
-                        width="2.8"
-                        height={Math.max(2, barHeight - 9)}
-                        rx="1.2"
-                        fill="url(#tcSpecularVertical)"
-                      />
-                    )}
-                    {/* Subtle Right Edge Depth Shadow */}
-                    {barHeight > 9 && (
-                      <rect
-                        x={colX + 11}
-                        y={barY + 5}
-                        width="1.8"
-                        height={Math.max(2, barHeight - 9)}
-                        rx="0.8"
-                        fill="#000000"
-                        opacity="0.35"
-                      />
-                    )}
-                  </g>
-                ) : (
-                  <rect
-                    x={colX - 14}
-                    y="148"
-                    width="28"
-                    height="3"
-                    rx="1.5"
-                    fill="rgba(139, 92, 246, 0.25)"
-                  />
-                )}
-
-                {/* Rounded Square Frosted Icon Box below baseline */}
-                <rect
-                  x={colX - 16}
-                  y="162"
-                  width="32"
-                  height="32"
-                  rx="9"
-                  fill="url(#tcIconGlass)"
-                  stroke="rgba(139, 92, 246, 0.45)"
-                  strokeWidth="1.2"
-                />
-
-                {/* Top Glass Shine Line on Icon Box */}
+            {/* Horizontal Reference Lines & Y-Axis Ticks (Mathematically mapped directly inside the card!) */}
+            {yTicks.map((t, idx) => (
+              <g key={idx}>
                 <line
-                  x1={colX - 11}
-                  y1="163.5"
-                  x2={colX + 11}
-                  y2="163.5"
-                  stroke="rgba(255, 255, 255, 0.4)"
-                  strokeWidth="1"
-                  strokeLinecap="round"
+                  x1="46"
+                  y1={t.y}
+                  x2="698"
+                  y2={t.y}
+                  stroke="rgba(148, 163, 184, 0.12)"
+                  strokeDasharray={t.val === 0 ? "none" : "3 3"}
+                  strokeWidth={t.val === 0 ? "1.4" : "1"}
                 />
-
-                {/* Topic Vector Icon */}
-                {renderTopicIcon(item.tag, colX - 10, 168)}
-
-                {/* Topic Name Label (Centered, 2 lines without clipping!) */}
+                <line x1="42" y1={t.y} x2="46" y2={t.y} stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1.2" />
                 <text
-                  x={colX}
-                  y="208"
-                  textAnchor="middle"
-                  fontSize="9.5"
+                  x="38"
+                  y={t.y + 4}
+                  textAnchor="end"
+                  fontSize="11"
                   fontWeight="700"
-                  fill="#e2e8f0"
+                  fill="#94a3b8"
+                  opacity="0.9"
                 >
-                  {labelLine1}
+                  {t.val}
                 </text>
-                {labelLine2 && (
+              </g>
+            ))}
+
+            {/* 12 Vertical Topic Columns (Animated Equalizer-Style Cascade!) */}
+            {top12.map((item, i) => {
+              const colX = 76 + i * 52.5;
+              const barHeight = hasRealData && item.solved > 0 ? Math.max(10, (item.solved / yMax) * 115) : 0;
+              const barY = 150 - barHeight;
+
+              // Pick 3D glass gradient and glow based on tier
+              const isFund = item.level === "fundamental";
+              const isInter = item.level === "intermediate";
+              const barFill = isFund ? "url(#tcBarFund3D)" : isInter ? "url(#tcBarInter3D)" : "url(#tcBarAdv3D)";
+              const glowColor = isFund ? "#2dd4bf" : isInter ? "#a855f7" : "#fbbf24";
+              const [labelLine1, labelLine2] = splitTopicLabel(item.tag);
+
+              return (
+                <g key={item.tag + i}>
+                  {/* Count Number on top of bar with Counting Animation */}
                   <text
                     x={colX}
-                    y="220"
+                    y={barHeight > 0 ? barY - 6 : 144}
                     textAnchor="middle"
-                    fontSize="8.5"
-                    fontWeight="600"
-                    fill="#94a3b8"
-                    opacity="0.9"
+                    fontSize="13.5"
+                    fontWeight="900"
+                    fill="#ffffff"
+                    filter="drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
+                    style={{
+                      animation: isVisible ? `cbFadeIn 0.5s ease-out both` : "none",
+                      animationDelay: `${i * 45 + 180}ms`,
+                    }}
                   >
-                    {labelLine2}
+                    {displayCounts[i] ?? item.solved}
                   </text>
-                )}
-              </g>
-            );
-          })}
+
+                  {/* Base Pedestal Glow on Baseline */}
+                  <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity={barHeight > 0 ? 0.4 : 0.15} filter="blur(2px)" />
+
+                  {/* Main 3D Frosted Glass Column Pillar (Animated Rise from Baseline) */}
+                  {barHeight > 0 ? (
+                    <g
+                      style={{
+                        transformOrigin: `${colX}px 150px`,
+                        animation: isVisible ? `cbBarGrow 0.85s cubic-bezier(0.16, 1, 0.3, 1) both` : "none",
+                        animationDelay: `${i * 45}ms`,
+                      }}
+                    >
+                      {/* Ambient Backlight Glow behind the Glass Pillar */}
+                      <rect
+                        x={colX - 14}
+                        y={barY}
+                        width="28"
+                        height={barHeight}
+                        rx="8"
+                        fill={glowColor}
+                        opacity="0.25"
+                        filter="blur(4px)"
+                      />
+                      {/* Main Frosted Pillar Body */}
+                      <rect
+                        x={colX - 16}
+                        y={barY}
+                        width="32"
+                        height={barHeight}
+                        rx="8"
+                        fill={barFill}
+                        stroke="rgba(255, 255, 255, 0.35)"
+                        strokeWidth="1"
+                      />
+                      {/* Specular Curved Reflection at Top Cap of Bar */}
+                      {barHeight > 4 && (
+                        <rect
+                          x={colX - 13}
+                          y={barY + 1.5}
+                          width="26"
+                          height="4"
+                          rx="2"
+                          fill="#ffffff"
+                          opacity="0.45"
+                        />
+                      )}
+                      {/* Specular Vertical Light Streak down Left Side */}
+                      {barHeight > 9 && (
+                        <rect
+                          x={colX - 13}
+                          y={barY + 5}
+                          width="2.8"
+                          height={Math.max(2, barHeight - 9)}
+                          rx="1.2"
+                          fill="url(#tcSpecularVertical)"
+                        />
+                      )}
+                      {/* Subtle Right Edge Depth Shadow */}
+                      {barHeight > 9 && (
+                        <rect
+                          x={colX + 11}
+                          y={barY + 5}
+                          width="1.8"
+                          height={Math.max(2, barHeight - 9)}
+                          rx="0.8"
+                          fill="#000000"
+                          opacity="0.35"
+                        />
+                      )}
+                    </g>
+                  ) : (
+                    <rect
+                      x={colX - 14}
+                      y="148"
+                      width="28"
+                      height="3"
+                      rx="1.5"
+                      fill="rgba(139, 92, 246, 0.25)"
+                    />
+                  )}
+
+                  {/* Rounded Square Frosted Icon Box with Hover Scale & Soft Glow */}
+                  <g
+                    className="cb-topic-icon-btn"
+                    style={{
+                      transformOrigin: `${colX}px 178px`,
+                      animation: isVisible ? `cbIconEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) both` : "none",
+                      animationDelay: `${i * 35 + 220}ms`,
+                    }}
+                  >
+                    <rect
+                      x={colX - 16}
+                      y="162"
+                      width="32"
+                      height="32"
+                      rx="9"
+                      fill="url(#tcIconGlass)"
+                      stroke="rgba(139, 92, 246, 0.45)"
+                      strokeWidth="1.2"
+                    />
+                    {/* Top Glass Shine Line on Icon Box */}
+                    <line
+                      x1={colX - 11}
+                      y1="163.5"
+                      x2={colX + 11}
+                      y2="163.5"
+                      stroke="rgba(255, 255, 255, 0.4)"
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                    />
+                    {/* Topic Vector Icon */}
+                    {renderTopicIcon(item.tag, colX - 10, 168)}
+                  </g>
+
+                  {/* Topic Name Label (Centered, 2 lines without clipping!) */}
+                  <text
+                    x={colX}
+                    y="208"
+                    textAnchor="middle"
+                    fontSize="9.5"
+                    fontWeight="700"
+                    fill="#e2e8f0"
+                  >
+                    {labelLine1}
+                  </text>
+                  {labelLine2 && (
+                    <text
+                      x={colX}
+                      y="220"
+                      textAnchor="middle"
+                      fontSize="8.5"
+                      fontWeight="600"
+                      fill="#94a3b8"
+                      opacity="0.9"
+                    >
+                      {labelLine2}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+          </g>
         </g>
 
         {/* =====================================================
             4. BOTTOM LEFT: Top Covered Topics Badges
            ===================================================== */}
         <g transform="translate(272, 350)">
-          {/* Background Card */}
-          <rect
-            width="348"
-            height="112"
-            rx="20"
-            fill="url(#tcSubGlass)"
-            stroke="url(#tcSubBorderGrad)"
-            strokeWidth="1.2"
-          />
-          {/* Top Specular Shine */}
-          <path d="M 24 2 L 324 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
-
-          {/* Header with Target Icon */}
-          <g transform="translate(18, 16)">
-            <circle cx="10" cy="10" r="9" stroke="#8b5cf6" strokeWidth="1.8" fill="none" />
-            <circle cx="10" cy="10" r="5" stroke="#2dd4bf" strokeWidth="1.6" fill="none" />
-            <circle cx="10" cy="10" r="2" fill="#38bdf8" />
-            <path d="M 17 3 L 13 7" stroke="#8b5cf6" strokeWidth="1.8" strokeLinecap="round" />
-            <text x="26" y="14" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
-              Top Covered Topics
-            </text>
-          </g>
-
-          {/* 3 Topic Badges with 3D Trophy and Medals */}
-          {/* Badge 1: Golden Trophy (#1) */}
-          <g transform="translate(14, 44)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.2s" }}>
+          <g
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? "translateY(0)" : "translateY(10px)",
+              transition: "opacity 0.7s ease-out 0.24s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s",
+            }}
+          >
+            {/* Background Card */}
             <rect
-              width="100"
-              height="52"
-              rx="12"
-              fill="#0d1428"
-              stroke="rgba(139, 92, 246, 0.45)"
+              width="348"
+              height="112"
+              rx="20"
+              fill="url(#tcSubGlass)"
+              stroke="url(#tcSubBorderGrad)"
               strokeWidth="1.2"
             />
-            {/* Top Shine */}
-            <line x1="8" y1="1" x2="92" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+            {/* Top Specular Shine */}
+            <path d="M 24 2 L 324 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
 
-            {/* 3D Realistic Golden Trophy Icon */}
-            <g transform="translate(8, 10)">
-              {/* Handles */}
-              <path d="M 2 5 C -2 5, -2 13, 2 13 M 16 5 C 20 5, 20 13, 16 13" stroke="#fbbf24" strokeWidth="1.6" fill="none" strokeLinecap="round" />
-              {/* Cup Body */}
-              <path d="M 2 3 L 16 3 L 15 11 C 15 14, 11 16, 9 16 C 7 16, 3 14, 3 11 Z" fill="#f59e0b" stroke="#fef08a" strokeWidth="0.8" />
-              {/* Stem & Base */}
-              <rect x="7.5" y="16" width="3" height="4" fill="#b45309" />
-              <rect x="5" y="20" width="8" height="2.5" rx="1" fill="#fbbf24" />
-            </g>
-
-            {/* Text */}
-            <text x="36" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
-              {first.tag}
-            </text>
-            <text x="36" y="39" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-              ({first.solved})
-            </text>
-          </g>
-
-          {/* Badge 2: Star Medal (#2) */}
-          <g transform="translate(122, 44)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.3s" }}>
-            <rect
-              width="104"
-              height="52"
-              rx="12"
-              fill="#0d1428"
-              stroke="rgba(139, 92, 246, 0.45)"
-              strokeWidth="1.2"
-            />
-            {/* Top Shine */}
-            <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-
-            {/* Violet-Cyan Star Medal Icon */}
-            <g transform="translate(8, 10)">
-              {/* Ribbons */}
-              <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
-              <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
-              {/* Medal Disc */}
-              <circle cx="9" cy="13" r="7" fill="#2dd4bf" stroke="#5eead4" strokeWidth="0.8" />
-              {/* Star inside medal */}
-              <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#042f2e" />
-            </g>
-
-            {/* Text */}
-            <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
-              {splitTopicLabel(second.tag)[0]}
-            </text>
-            {splitTopicLabel(second.tag)[1] && (
-              <text x="35" y="32" fontSize="9" fontWeight="700" fill="#ffffff">
-                {splitTopicLabel(second.tag)[1]}
+            {/* Header with Target Icon */}
+            <g transform="translate(18, 16)">
+              <circle cx="10" cy="10" r="9" stroke="#8b5cf6" strokeWidth="1.8" fill="none" />
+              <circle cx="10" cy="10" r="5" stroke="#2dd4bf" strokeWidth="1.6" fill="none" />
+              <circle cx="10" cy="10" r="2" fill="#38bdf8" />
+              <path d="M 17 3 L 13 7" stroke="#8b5cf6" strokeWidth="1.8" strokeLinecap="round" />
+              <text x="26" y="14" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
+                Top Covered Topics
               </text>
-            )}
-            <text x="35" y={splitTopicLabel(second.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-              ({second.solved})
-            </text>
-          </g>
-
-          {/* Badge 3: Star Medal (#3) */}
-          <g transform="translate(234, 44)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.4s" }}>
-            <rect
-              width="104"
-              height="52"
-              rx="12"
-              fill="#0d1428"
-              stroke="rgba(139, 92, 246, 0.45)"
-              strokeWidth="1.2"
-            />
-            {/* Top Shine */}
-            <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-
-            {/* Violet-Cyan Star Medal Icon */}
-            <g transform="translate(8, 10)">
-              {/* Ribbons */}
-              <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
-              <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
-              {/* Medal Disc */}
-              <circle cx="9" cy="13" r="7" fill="#a855f7" stroke="#c084fc" strokeWidth="0.8" />
-              {/* Star inside medal */}
-              <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
             </g>
 
-            {/* Text */}
-            <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
-              {splitTopicLabel(third.tag)[0]}
-            </text>
-            {splitTopicLabel(third.tag)[1] && (
-              <text x="35" y="32" fontSize="9" fontWeight="700" fill="#ffffff">
-                {splitTopicLabel(third.tag)[1]}
+            {/* 3 Topic Badges with 3D Trophy and Medals */}
+            {/* Badge 1: Golden Trophy (#1) */}
+            <g
+              transform="translate(14, 44)"
+              className="cb-badge-card"
+              style={{
+                opacity: isVisible ? 1 : 0,
+                transition: "opacity 0.6s ease-out 0.35s",
+              }}
+            >
+              <rect
+                width="100"
+                height="52"
+                rx="12"
+                fill="#0d1428"
+                stroke="rgba(139, 92, 246, 0.45)"
+                strokeWidth="1.2"
+              />
+              {/* Top Shine */}
+              <line x1="8" y1="1" x2="92" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+
+              {/* 3D Realistic Golden Trophy Icon with Hover Rotation */}
+              <g transform="translate(8, 10)" className="cb-trophy-icon">
+                {/* Handles */}
+                <path d="M 2 5 C -2 5, -2 13, 2 13 M 16 5 C 20 5, 20 13, 16 13" stroke="#fbbf24" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+                {/* Cup Body */}
+                <path d="M 2 3 L 16 3 L 15 11 C 15 14, 11 16, 9 16 C 7 16, 3 14, 3 11 Z" fill="#f59e0b" stroke="#fef08a" strokeWidth="0.8" />
+                {/* Stem & Base */}
+                <rect x="7.5" y="16" width="3" height="4" fill="#b45309" />
+                <rect x="5" y="20" width="8" height="2.5" rx="1" fill="#fbbf24" />
+              </g>
+
+              {/* Text */}
+              <text x="36" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
+                {first.tag}
               </text>
-            )}
-            <text x="35" y={splitTopicLabel(third.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-              ({third.solved})
-            </text>
+              <text x="36" y="39" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                ({first.solved})
+              </text>
+            </g>
+
+            {/* Badge 2: Star Medal (#2) */}
+            <g
+              transform="translate(122, 44)"
+              className="cb-badge-card"
+              style={{
+                opacity: isVisible ? 1 : 0,
+                transition: "opacity 0.6s ease-out 0.45s",
+              }}
+            >
+              <rect
+                width="104"
+                height="52"
+                rx="12"
+                fill="#0d1428"
+                stroke="rgba(139, 92, 246, 0.45)"
+                strokeWidth="1.2"
+              />
+              {/* Top Shine */}
+              <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+
+              {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
+              <g transform="translate(8, 10)" className="cb-medal-icon">
+                {/* Ribbons */}
+                <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
+                <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
+                {/* Medal Disc */}
+                <circle cx="9" cy="13" r="7" fill="#2dd4bf" stroke="#5eead4" strokeWidth="0.8" />
+                {/* Star inside medal */}
+                <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#042f2e" />
+              </g>
+
+              {/* Text */}
+              <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
+                {splitTopicLabel(second.tag)[0]}
+              </text>
+              {splitTopicLabel(second.tag)[1] && (
+                <text x="35" y="32" fontSize="9" fontWeight="700" fill="#ffffff">
+                  {splitTopicLabel(second.tag)[1]}
+                </text>
+              )}
+              <text x="35" y={splitTopicLabel(second.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                ({second.solved})
+              </text>
+            </g>
+
+            {/* Badge 3: Star Medal (#3) */}
+            <g
+              transform="translate(234, 44)"
+              className="cb-badge-card"
+              style={{
+                opacity: isVisible ? 1 : 0,
+                transition: "opacity 0.6s ease-out 0.55s",
+              }}
+            >
+              <rect
+                width="104"
+                height="52"
+                rx="12"
+                fill="#0d1428"
+                stroke="rgba(139, 92, 246, 0.45)"
+                strokeWidth="1.2"
+              />
+              {/* Top Shine */}
+              <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+
+              {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
+              <g transform="translate(8, 10)" className="cb-medal-icon">
+                {/* Ribbons */}
+                <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
+                <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
+                {/* Medal Disc */}
+                <circle cx="9" cy="13" r="7" fill="#a855f7" stroke="#c084fc" strokeWidth="0.8" />
+                {/* Star inside medal */}
+                <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
+              </g>
+
+              {/* Text */}
+              <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
+                {splitTopicLabel(third.tag)[0]}
+              </text>
+              {splitTopicLabel(third.tag)[1] && (
+                <text x="35" y="32" fontSize="9" fontWeight="700" fill="#ffffff">
+                  {splitTopicLabel(third.tag)[1]}
+                </text>
+              )}
+              <text x="35" y={splitTopicLabel(third.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                ({third.solved})
+              </text>
+            </g>
           </g>
         </g>
 
@@ -1179,168 +1446,183 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             5. BOTTOM RIGHT: Coverage Insight (Clean Proportional Spacing & Animated Graphic)
            ===================================================== */}
         <g transform="translate(636, 350)">
-          {/* Background Card */}
-          <rect
-            width="356"
-            height="112"
-            rx="20"
-            fill="url(#tcSubGlass)"
-            stroke="url(#tcSubBorderGrad)"
-            strokeWidth="1.2"
-          />
-          {/* Top Specular Shine */}
-          <path d="M 24 2 L 332 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
-
-          {/* Header with 3-Bar Chart Icon */}
-          <g transform="translate(18, 16)">
-            <rect x="0" y="8" width="3.5" height="8" rx="1" fill="#2dd4bf" />
-            <rect x="5.5" y="4" width="3.5" height="12" rx="1" fill="#818cf8" />
-            <rect x="11" y="0" width="3.5" height="16" rx="1" fill="#c084fc" />
-            <text x="22" y="12" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
-              Coverage Insight
-            </text>
-          </g>
-
-          {/* Dynamic Insight Prose - Clean professional spacing below heading (y=53 instead of cramped y=46) */}
-          <text
-            x="18"
-            y="53"
-            fontSize="11.5"
-            fontWeight="500"
-            fill="#e2e8f0"
-            opacity="0.95"
-            style={{ animation: "cbFadeIn 0.8s ease-out both", animationDelay: "0.2s" }}
+          <g
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? "translateY(0)" : "translateY(10px)",
+              transition: "opacity 0.7s ease-out 0.32s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.32s",
+            }}
           >
-            {totalProblems > 0 ? (
-              <>
-                <tspan x="18" dy="0">
-                  Most problems are Fundamental ({fundPct.toFixed(1)}%),
-                </tspan>
-                <tspan x="18" dy="16.5">
-                  with a good mix of Intermediate ({interPct.toFixed(1)}%)
-                </tspan>
-                <tspan x="18" dy="16.5">
-                  and Advanced ({advPct.toFixed(1)}%).
-                </tspan>
-              </>
-            ) : (
-              <>
-                <tspan x="18" dy="0">
-                  No DSA problems solved yet.
-                </tspan>
-                <tspan x="18" dy="16.5">
-                  Connect your LeetCode account in Settings
-                </tspan>
-                <tspan x="18" dy="16.5">
-                  to track your real-time topic progress.
-                </tspan>
-              </>
-            )}
-          </text>
-
-          {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic (Animated Cascade) */}
-          <g transform="translate(250, 26)">
-            {/* 4 Rising Columns */}
-            {/* Bar 1 */}
-            <g
-              style={{
-                transformOrigin: "15.5px 64px",
-                animation: "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
-                animationDelay: "0.1s",
-              }}
-            >
-              <rect
-                x="10"
-                y="46"
-                width="11"
-                height="18"
-                rx="3"
-                fill="#2dd4bf"
-                opacity={hasRealData ? 1 : 0.4}
-              />
-              <rect x="11" y="47" width="2" height="16" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
-            </g>
-
-            {/* Bar 2 */}
-            <g
-              style={{
-                transformOrigin: "30.5px 64px",
-                animation: "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
-                animationDelay: "0.18s",
-              }}
-            >
-              <rect
-                x="25"
-                y="32"
-                width="11"
-                height="32"
-                rx="3"
-                fill="#38bdf8"
-                opacity={hasRealData ? 1 : 0.4}
-              />
-              <rect x="26" y="33" width="2" height="30" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
-            </g>
-
-            {/* Bar 3 */}
-            <g
-              style={{
-                transformOrigin: "45.5px 64px",
-                animation: "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
-                animationDelay: "0.26s",
-              }}
-            >
-              <rect
-                x="40"
-                y="18"
-                width="11"
-                height="46"
-                rx="3"
-                fill="#818cf8"
-                opacity={hasRealData ? 1 : 0.4}
-              />
-              <rect x="41" y="19" width="2" height="44" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
-            </g>
-
-            {/* Bar 4 */}
-            <g
-              style={{
-                transformOrigin: "60.5px 64px",
-                animation: "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
-                animationDelay: "0.34s",
-              }}
-            >
-              <rect
-                x="55"
-                y="4"
-                width="11"
-                height="60"
-                rx="3"
-                fill="#c084fc"
-                opacity={hasRealData ? 1 : 0.4}
-              />
-              <rect x="56" y="5" width="2" height="58" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
-            </g>
-
-            {/* Upward Curved Glowing Neon Arrow with Draw-In Animation */}
-            <path
-              d="M 6 44 C 24 34, 48 20, 72 -2"
-              stroke="url(#tcArrowGrad)"
-              strokeWidth="4"
-              strokeLinecap="round"
-              fill="none"
-              filter="url(#tcGlowCyan)"
-              strokeDasharray="160"
-              style={{ animation: "cbArrowSweep 1.1s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.45s" }}
-              opacity={hasRealData ? 1 : 0.6}
+            {/* Background Card */}
+            <rect
+              width="356"
+              height="112"
+              rx="20"
+              fill="url(#tcSubGlass)"
+              stroke="url(#tcSubBorderGrad)"
+              strokeWidth="1.2"
             />
-            {/* Arrowhead */}
-            <polygon
-              points="72,-6 78,2 67,4"
-              fill="#ffffff"
-              filter="url(#tcGlowCyan)"
-              opacity={hasRealData ? 1 : 0.6}
-              style={{ animation: "cbFadeIn 0.5s ease-out both", animationDelay: "1.2s" }}
-            />
+            {/* Top Specular Shine */}
+            <path d="M 24 2 L 332 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
+
+            {/* Header with 3-Bar Chart Icon */}
+            <g transform="translate(18, 16)">
+              <rect x="0" y="8" width="3.5" height="8" rx="1" fill="#2dd4bf" />
+              <rect x="5.5" y="4" width="3.5" height="12" rx="1" fill="#818cf8" />
+              <rect x="11" y="0" width="3.5" height="16" rx="1" fill="#c084fc" />
+              <text x="22" y="12" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
+                Coverage Insight
+              </text>
+            </g>
+
+            {/* Dynamic Insight Prose - Clean professional spacing below heading (y=53 instead of cramped y=46) */}
+            <text
+              x="18"
+              y="53"
+              fontSize="11.5"
+              fontWeight="500"
+              fill="#e2e8f0"
+              opacity="0.95"
+              style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.8s ease-out 0.35s" }}
+            >
+              {totalProblems > 0 ? (
+                <>
+                  <tspan x="18" dy="0">
+                    Most problems are Fundamental ({fundPct.toFixed(1)}%),
+                  </tspan>
+                  <tspan x="18" dy="16.5">
+                    with a good mix of Intermediate ({interPct.toFixed(1)}%)
+                  </tspan>
+                  <tspan x="18" dy="16.5">
+                    and Advanced ({advPct.toFixed(1)}%).
+                  </tspan>
+                </>
+              ) : (
+                <>
+                  <tspan x="18" dy="0">
+                    No DSA problems solved yet.
+                  </tspan>
+                  <tspan x="18" dy="16.5">
+                    Connect your LeetCode account in Settings
+                  </tspan>
+                  <tspan x="18" dy="16.5">
+                    to track your real-time topic progress.
+                  </tspan>
+                </>
+              )}
+            </text>
+
+            {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic (Animated Cascade) */}
+            <g transform="translate(250, 26)">
+              {/* 4 Rising Columns */}
+              {/* Bar 1 */}
+              <g
+                style={{
+                  transformOrigin: "15.5px 64px",
+                  animation: isVisible ? "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
+                  animationDelay: "0.2s",
+                }}
+              >
+                <rect
+                  x="10"
+                  y="46"
+                  width="11"
+                  height="18"
+                  rx="3"
+                  fill="#2dd4bf"
+                  opacity={hasRealData ? 1 : 0.4}
+                />
+                <rect x="11" y="47" width="2" height="16" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+              </g>
+
+              {/* Bar 2 */}
+              <g
+                style={{
+                  transformOrigin: "30.5px 64px",
+                  animation: isVisible ? "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
+                  animationDelay: "0.28s",
+                }}
+              >
+                <rect
+                  x="25"
+                  y="32"
+                  width="11"
+                  height="32"
+                  rx="3"
+                  fill="#38bdf8"
+                  opacity={hasRealData ? 1 : 0.4}
+                />
+                <rect x="26" y="33" width="2" height="30" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+              </g>
+
+              {/* Bar 3 */}
+              <g
+                style={{
+                  transformOrigin: "45.5px 64px",
+                  animation: isVisible ? "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
+                  animationDelay: "0.36s",
+                }}
+              >
+                <rect
+                  x="40"
+                  y="18"
+                  width="11"
+                  height="46"
+                  rx="3"
+                  fill="#818cf8"
+                  opacity={hasRealData ? 1 : 0.4}
+                />
+                <rect x="41" y="19" width="2" height="44" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+              </g>
+
+              {/* Bar 4 */}
+              <g
+                style={{
+                  transformOrigin: "60.5px 64px",
+                  animation: isVisible ? "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
+                  animationDelay: "0.44s",
+                }}
+              >
+                <rect
+                  x="55"
+                  y="4"
+                  width="11"
+                  height="60"
+                  rx="3"
+                  fill="#c084fc"
+                  opacity={hasRealData ? 1 : 0.4}
+                />
+                <rect x="56" y="5" width="2" height="58" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+              </g>
+
+              {/* Upward Curved Glowing Neon Arrow with Draw-In Animation */}
+              <path
+                d="M 6 44 C 24 34, 48 20, 72 -2"
+                stroke="url(#tcArrowGrad)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                fill="none"
+                filter="url(#tcGlowCyan)"
+                strokeDasharray="160"
+                style={{
+                  animation: isVisible ? "cbArrowSweep 1.1s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
+                  animationDelay: "0.45s",
+                }}
+                opacity={hasRealData ? 1 : 0.6}
+              />
+              {/* Arrowhead with Scale & Fade Entrance */}
+              <polygon
+                points="72,-6 78,2 67,4"
+                fill="#ffffff"
+                filter="url(#tcGlowCyan)"
+                opacity={hasRealData ? 1 : 0.6}
+                style={{
+                  transformOrigin: "73px 0px",
+                  animation: isVisible ? "cbArrowheadPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both" : "none",
+                  animationDelay: "1.15s",
+                }}
+              />
+            </g>
           </g>
         </g>
       </svg>
