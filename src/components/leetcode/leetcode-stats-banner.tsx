@@ -413,24 +413,354 @@ export function TrophyLaurel3D({ className = "w-18 h-16" }: { className?: string
 }
 
 // =========================================================================
-// HELPER FOR PRECISION SVG ARCS
+// TOTAL SOLVED SPEEDOMETER ARCH & 3D LAPTOP ON PODIUM CARD
+// Matching media_1794121472841_b90579f5.png pixel-for-pixel
 // =========================================================================
 
-function polarToCartesian(cx: number, cy: number, r: number, angleInDegrees: number) {
-  // 0 degrees is 12 o'clock, progressing clockwise
-  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-  return {
-    x: Number((cx + r * Math.cos(angleInRadians)).toFixed(2)),
-    y: Number((cy + r * Math.sin(angleInRadians)).toFixed(2)),
-  };
+export interface TotalSolvedSpeedometerCardProps {
+  totalSolved?: number;
+  maxDisplay?: number;
+  loading?: boolean;
+  className?: string;
 }
 
-function describeSvgArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number) {
-  const start = polarToCartesian(cx, cy, r, startAngle);
-  const end = polarToCartesian(cx, cy, r, endAngle);
-  const diff = endAngle - startAngle;
-  const largeArcFlag = diff <= 180 ? "0" : "1";
-  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+export function TotalSolvedSpeedometerCard({
+  totalSolved = 0,
+  maxDisplay = 32,
+  loading = false,
+  className = "",
+}: TotalSolvedSpeedometerCardProps) {
+  const safeTotal = totalSolved || 0;
+  // Calculate lit segments dynamically: for 16/32 -> exactly 10 segments lit
+  const litCount = Math.max(1, Math.min(20, Math.round((safeTotal / maxDisplay) * 20)));
+
+  // 20 discrete radial curved pill segments spanning from 200° to 340°
+  const totalSegs = 20;
+  const cx = 585;
+  const cy = 345;
+  const rIn = 160;
+  const rOut = 205;
+
+  const segments = Array.from({ length: totalSegs }, (_, i) => {
+    const deg = 200 + i * (140.0 / (totalSegs - 1));
+    const rad = (deg * Math.PI) / 180;
+    const x1 = Number((cx + rIn * Math.cos(rad)).toFixed(1));
+    const y1 = Number((cy + rIn * Math.sin(rad)).toFixed(1));
+    const x2 = Number((cx + rOut * Math.cos(rad)).toFixed(1));
+    const y2 = Number((cy + rOut * Math.sin(rad)).toFixed(1));
+
+    const isLit = i < litCount;
+    const isPeak = i === litCount - 1;
+
+    let stroke = "#0c321e";
+    let filter: string | undefined = undefined;
+    let opacity = 0.42;
+
+    if (isPeak) {
+      stroke = "#bef264";
+      filter = "url(#peakGlow)";
+      opacity = 1;
+    } else if (isLit && i >= litCount - 3) {
+      stroke = "#4ade80";
+      filter = "url(#limeGlow)";
+      opacity = 1;
+    } else if (isLit) {
+      stroke = "#22c55e";
+      filter = "url(#emeraldGlow)";
+      opacity = 1;
+    }
+
+    return { x1, y1, x2, y2, stroke, filter, opacity, isLit };
+  });
+
+  return (
+    <div
+      className={`group relative w-full rounded-[38px] sm:rounded-[44px] overflow-hidden transition-all duration-300 hover:scale-[1.01] ${className}`}
+      style={{
+        background:
+          "linear-gradient(135deg, rgba(7, 34, 22, 0.96), rgba(2, 16, 10, 0.98) 50%, rgba(5, 24, 16, 0.96))",
+        border: "2px solid rgba(74, 222, 128, 0.82)",
+        boxShadow:
+          "0 0 32px rgba(34, 197, 94, 0.38), inset 0 2px 4px rgba(255, 255, 255, 0.22), inset 0 -6px 14px rgba(0, 0, 0, 0.85)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+      }}
+    >
+      <svg
+        viewBox="0 0 900 567"
+        className="w-full h-auto block select-none"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          <linearGradient id="cardBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#072216" />
+            <stop offset="45%" stopColor="#02120b" />
+            <stop offset="100%" stopColor="#051910" />
+          </linearGradient>
+
+          <linearGradient id="numGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#dcfce7" />
+            <stop offset="35%" stopColor="#86efac" />
+            <stop offset="70%" stopColor="#4ade80" />
+            <stop offset="100%" stopColor="#22c55e" />
+          </linearGradient>
+
+          <linearGradient id="underlineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22c55e" />
+            <stop offset="50%" stopColor="#4ade80" />
+            <stop offset="100%" stopColor="#bef264" />
+          </linearGradient>
+
+          <linearGradient id="pedestalRimGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22c55e" />
+            <stop offset="50%" stopColor="#4ade80" />
+            <stop offset="100%" stopColor="#bef264" />
+          </linearGradient>
+
+          <radialGradient id="pedestalTopGrad" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#0d3d27" />
+            <stop offset="70%" stopColor="#051e13" />
+            <stop offset="100%" stopColor="#020c07" />
+          </radialGradient>
+
+          <linearGradient id="pedestalCylinderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#041a10" />
+            <stop offset="100%" stopColor="#010805" />
+          </linearGradient>
+
+          <linearGradient id="waveCrestGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
+            <stop offset="40%" stopColor="#4ade80" stopOpacity="0.85" />
+            <stop offset="70%" stopColor="#86efac" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.4" />
+          </linearGradient>
+
+          <filter id="peakGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#bef264" floodOpacity="0.95" />
+          </filter>
+
+          <filter id="limeGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#4ade80" floodOpacity="0.85" />
+          </filter>
+
+          <filter id="emeraldGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#22c55e" floodOpacity="0.75" />
+          </filter>
+
+          <filter id="pedestalBloom" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#4ade80" floodOpacity="0.9" />
+          </filter>
+
+          <filter id="codeBloom" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="0" stdDeviation="4.5" floodColor="#4ade80" floodOpacity="0.95" />
+          </filter>
+
+          <filter id="waveBloom" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#4ade80" floodOpacity="0.7" />
+          </filter>
+
+          <filter id="numShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#22c55e" floodOpacity="0.4" />
+          </filter>
+        </defs>
+
+        {/* Ambient Top Light Reflection */}
+        <path d="M 55 18 L 845 18" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" opacity="0.3" />
+
+        {/* 1. LAYERED ORGANIC WAVES AT BOTTOM */}
+        <path
+          d="M 0 440 Q 220 380, 460 420 T 900 400 L 900 567 L 0 567 Z"
+          fill="rgba(6, 42, 27, 0.55)"
+        />
+        <path
+          d="M 0 470 Q 280 410, 560 460 T 900 440 L 900 567 L 0 567 Z"
+          fill="rgba(3, 20, 13, 0.88)"
+        />
+        <path
+          d="M 0 470 Q 280 410, 560 460 T 900 440"
+          stroke="url(#waveCrestGrad)"
+          strokeWidth="5"
+          fill="none"
+          opacity="0.9"
+          filter="url(#waveBloom)"
+        />
+
+        {/* 2. TOP-LEFT HEADER: SQUIRCLE + DIVIDER + TITLE */}
+        <rect
+          x="75"
+          y="60"
+          width="105"
+          height="105"
+          rx="28"
+          ry="28"
+          fill="rgba(10, 46, 32, 0.85)"
+          stroke="#22c55e"
+          strokeWidth="3"
+          strokeOpacity="0.65"
+          filter="url(#emeraldGlow)"
+        />
+        <path d="M 92 65 L 163 65" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" opacity="0.35" />
+
+        {/* </> in Header Squircle */}
+        <g filter="url(#codeBloom)">
+          <path
+            d="M 115 97 L 98 112.5 L 115 128"
+            stroke="#4ade80"
+            strokeWidth="5.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          <path
+            d="M 140 97 L 157 112.5 L 140 128"
+            stroke="#4ade80"
+            strokeWidth="5.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          <line x1="133" y1="92" x2="122" y2="133" stroke="#4ade80" strokeWidth="5.5" strokeLinecap="round" />
+        </g>
+
+        {/* Hairline Divider */}
+        <line x1="215" y1="78" x2="215" y2="148" stroke="rgba(255, 255, 255, 0.35)" strokeWidth="3" strokeLinecap="round" />
+
+        {/* Title */}
+        <text
+          x="245"
+          y="126"
+          fill="#ffffff"
+          fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+          fontSize="44"
+          fontWeight="700"
+          letterSpacing="0.5"
+        >
+          Total Solved
+        </text>
+
+        {/* 3. BIG METRIC (Number + Underline) */}
+        <text
+          x="75"
+          y="340"
+          fill="url(#numGrad)"
+          fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+          fontSize="160"
+          fontWeight="900"
+          letterSpacing="-3"
+          filter="url(#numShadow)"
+        >
+          {loading ? "—" : safeTotal}
+        </text>
+
+        <line
+          x1="78"
+          y1="375"
+          x2="245"
+          y2="375"
+          stroke="url(#underlineGrad)"
+          strokeWidth="11"
+          strokeLinecap="round"
+          filter="url(#limeGlow)"
+        />
+
+        {/* 4. SPEEDOMETER ARCH SEGMENTS */}
+        {segments.map((s, idx) => (
+          <line
+            key={idx}
+            x1={s.x1}
+            y1={s.y1}
+            x2={s.x2}
+            y2={s.y2}
+            stroke={s.stroke}
+            strokeWidth="14"
+            strokeLinecap="round"
+            filter={s.filter}
+            opacity={s.opacity}
+          />
+        ))}
+
+        {/* 5. 3D GLOWING PEDESTAL */}
+        <ellipse cx="585" cy="420" rx="145" ry="22" fill="#000000" opacity="0.75" />
+        <path
+          d="M 450 375 A 135 28 0 0 0 720 375 V 415 A 135 28 0 0 1 450 415 Z"
+          fill="url(#pedestalCylinderGrad)"
+        />
+        <path d="M 455 385 A 135 28 0 0 0 715 385" stroke="#22c55e" strokeWidth="1.8" opacity="0.3" fill="none" />
+        <ellipse cx="585" cy="375" rx="135" ry="28" fill="url(#pedestalTopGrad)" />
+        <ellipse
+          cx="585"
+          cy="375"
+          rx="135"
+          ry="28"
+          fill="none"
+          stroke="url(#pedestalRimGrad)"
+          strokeWidth="7"
+          filter="url(#pedestalBloom)"
+        />
+        <path
+          d="M 485 392 A 135 28 0 0 0 685 392"
+          stroke="#ffffff"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.85"
+        />
+
+        {/* 6. 3D METALLIC OPEN LAPTOP */}
+        <ellipse cx="585" cy="358" rx="80" ry="8" fill="#000000" opacity="0.7" />
+        {/* Lid Bezel */}
+        <rect
+          x="515"
+          y="222"
+          width="140"
+          height="96"
+          rx="11"
+          ry="11"
+          fill="#1e293b"
+          stroke="#475569"
+          strokeWidth="2"
+        />
+        <path d="M 527 225 L 643 225" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+        {/* OLED Screen */}
+        <rect x="523" y="230" width="124" height="80" rx="6" ry="6" fill="#020408" />
+        <path d="M 528 234 L 565 234 L 540 306 L 528 306 Z" fill="#ffffff" opacity="0.08" />
+        {/* Glowing Code on Screen */}
+        <g filter="url(#codeBloom)">
+          <path
+            d="M 568 262 L 550 274 L 568 286"
+            stroke="#4ade80"
+            strokeWidth="6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          <path
+            d="M 602 262 L 620 274 L 602 286"
+            stroke="#4ade80"
+            strokeWidth="6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          <line x1="592" y1="254" x2="578" y2="294" stroke="#4ade80" strokeWidth="6" strokeLinecap="round" />
+        </g>
+        {/* Keyboard Deck */}
+        <path
+          d="M 490 318 L 680 318 L 702 348 L 468 348 Z"
+          fill="#94a3b8"
+          stroke="#64748b"
+          strokeWidth="1.8"
+        />
+        <line x1="468" y1="348" x2="702" y2="348" stroke="#f8fafc" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
+        {/* Keyboard Well */}
+        <path d="M 506 322 L 664 322 L 678 337 L 492 337 Z" fill="#0f172a" />
+        <line x1="512" y1="327" x2="658" y2="327" stroke="#334155" strokeWidth="2" strokeDasharray="10 4" />
+        <line x1="504" y1="333" x2="666" y2="333" stroke="#334155" strokeWidth="2" strokeDasharray="10 4" />
+        {/* Trackpad */}
+        <rect x="565" y="339" width="40" height="6" rx="2" fill="#1e293b" stroke="#475569" strokeWidth="1" />
+      </svg>
+    </div>
+  );
 }
 
 // =========================================================================
@@ -458,30 +788,6 @@ export function LeetcodeStatsBanner({
 }: LeetcodeStatsBannerProps) {
   const safeTotal = totalSolved || 0;
 
-  // Center & Radius for the enlarged 3D Torus
-  const cx = 95;
-  const cy = 95;
-  const radius = 74;
-  const strokeWidth = 14;
-
-  // In Reference Image 2:
-  // - The active neon cyan arc is a crisp top segment: ~11:20 (-20°) to ~1:30 (+45°) for 16 solved problems
-  const startAngle = -20;
-  const endAngle = Math.min(270, Math.max(15, 45 + (safeTotal - 16) * 1.2));
-
-  // Precision coordinates for active cyan arc
-  const startPoint = polarToCartesian(cx, cy, radius, startAngle);
-  const endPoint = polarToCartesian(cx, cy, radius, endAngle);
-  const activeArcPath = describeSvgArc(cx, cy, radius, startAngle, endAngle);
-
-  // Specular top-left metallic highlight (from ~9:30 to 11:15: -70° to -18°)
-  const specularArcPath = describeSvgArc(cx, cy, radius, -70, -18);
-
-  // 3D Metallic Purple Sheen on right & bottom curve (from ~1:30 to 7:00: 38° to 215°)
-  const purpleTorusPath = describeSvgArc(cx, cy, radius, 38, 215);
-  const purpleStart = polarToCartesian(cx, cy, radius, 38);
-  const purpleEnd = polarToCartesian(cx, cy, radius, 215);
-
   const formattedRanking =
     ranking !== undefined && ranking !== null
       ? `#${ranking.toLocaleString()}`
@@ -489,7 +795,7 @@ export function LeetcodeStatsBanner({
 
   return (
     <div
-      className={`relative w-full max-w-[1100px] mx-auto rounded-[46px] p-4 sm:p-5 md:p-6 overflow-visible transition-all duration-300 ${className}`}
+      className={`relative w-full max-w-[1240px] mx-auto rounded-[46px] p-4 sm:p-5 md:p-6 overflow-visible transition-all duration-300 ${className}`}
       style={{
         background:
           "linear-gradient(135deg, rgba(28, 34, 46, 0.95), rgba(12, 14, 20, 0.98) 45%, rgba(24, 18, 34, 0.95))",
@@ -504,232 +810,96 @@ export function LeetcodeStatsBanner({
       <div className="absolute inset-x-12 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
 
       {/* Atmospheric neon back-glow */}
-      <div className="absolute -top-16 left-1/4 w-72 h-32 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute -top-16 left-1/4 w-72 h-32 bg-emerald-500/15 blur-3xl rounded-full pointer-events-none" />
       <div className="absolute -bottom-16 right-1/4 w-72 h-32 bg-purple-600/15 blur-3xl rounded-full pointer-events-none" />
 
-      {/* 3-Column Proportional Layout matching reference */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.15fr_1.85fr_1.65fr] items-center gap-5 lg:gap-6">
+      {/* Proportional Layout:
+          Left: Speedometer Arch Card (Replacing the circle!)
+          Right: 3 Difficulty Cards (Easy, Medium, Hard) + Global Ranking Card
+      */}
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.35fr_1.65fr] items-center gap-5 lg:gap-6">
         
         {/* ========================================================
-            1. LEFT: Enlarged 3D Toroidal Donut Ring matching Image 2
+            1. LEFT: Speedometer Arch Card replacing the donut circle
            ======================================================== */}
         <div className="flex items-center justify-center lg:border-r lg:border-white/15 lg:pr-6 py-1">
-          <div className="relative flex items-center justify-center w-[180px] h-[180px] sm:w-[194px] sm:h-[194px] md:w-[204px] md:h-[204px] shrink-0 -my-3 sm:-my-4 md:-my-5">
-            {/* SVG 3D Donut Ring */}
-            <svg
-              className="w-full h-full overflow-visible"
-              viewBox="0 0 190 190"
+          <TotalSolvedSpeedometerCard
+            totalSolved={safeTotal}
+            loading={loading}
+          />
+        </div>
+
+        {/* ========================================================
+            2. RIGHT: Difficulty Cards + Global Ranking Pill
+           ======================================================== */}
+        <div className="flex flex-col gap-4 sm:gap-4.5 justify-center py-1">
+          
+          {/* 3 Glowing Squircles (Easy, Medium, Hard) */}
+          <div className="grid grid-cols-3 gap-3 sm:gap-3.5">
+            {/* EASY SQUIRCLE (Green / Mint) */}
+            <div
+              className="group relative flex flex-col items-center justify-center h-[116px] sm:h-[124px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
+              style={{
+                background:
+                  "linear-gradient(145deg, rgba(0, 115, 95, 0.95), rgba(0, 48, 42, 0.98))",
+                border: "2px solid rgba(58, 255, 220, 0.8)",
+                boxShadow:
+                  "inset 0 0 14px rgba(0, 245, 196, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 22px rgba(0, 255, 210, 0.42)",
+              }}
             >
-              <defs>
-                {/* Active Cyan Gradient */}
-                <linearGradient
-                  id="activeCyanGrad"
-                  gradientUnits="userSpaceOnUse"
-                  x1={startPoint.x}
-                  y1={startPoint.y}
-                  x2={endPoint.x}
-                  y2={endPoint.y}
-                >
-                  <stop offset="0%" stopColor="#5eead4" />
-                  <stop offset="40%" stopColor="#00f5c4" />
-                  <stop offset="100%" stopColor="#00e5b8" />
-                </linearGradient>
-
-                {/* 3D Metallic Torus Base Gradient */}
-                <linearGradient id="torusBaseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#2c364c" />
-                  <stop offset="50%" stopColor="#182030" />
-                  <stop offset="100%" stopColor="#0e131e" />
-                </linearGradient>
-
-                {/* 3D Metallic Purple Sheen Gradient on right/bottom curve */}
-                <linearGradient
-                  id="purpleTubeGrad"
-                  x1={purpleStart.x}
-                  y1={purpleStart.y}
-                  x2={purpleEnd.x}
-                  y2={purpleEnd.y}
-                  gradientUnits="userSpaceOnUse"
-                >
-                  <stop offset="0%" stopColor="#a855f7" />
-                  <stop offset="50%" stopColor="#8b5cf6" />
-                  <stop offset="85%" stopColor="#6d28d9" />
-                  <stop offset="100%" stopColor="#4c1d95" />
-                </linearGradient>
-
-                {/* Top-Left Specular Highlight Gradient */}
-                <linearGradient id="specularGlintGrad" x1="28" y1="62" x2="72" y2="28" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.1" />
-                  <stop offset="45%" stopColor="#ffffff" stopOpacity="0.9" />
-                  <stop offset="100%" stopColor="#e2e8f0" stopOpacity="0.95" />
-                </linearGradient>
-
-                {/* Blur Filters */}
-                <filter id="blurSoft" x="-40%" y="-40%" width="180%" height="180%">
-                  <feGaussianBlur stdDeviation="1.5" />
-                </filter>
-                <filter id="blurPurple" x="-40%" y="-40%" width="180%" height="180%">
-                  <feGaussianBlur stdDeviation="5" />
-                </filter>
-                <filter id="blurCyan" x="-40%" y="-40%" width="180%" height="180%">
-                  <feGaussianBlur stdDeviation="5" />
-                </filter>
-              </defs>
-
-              {/* 1. Base Inactive 3D Toroidal Tube (Full 360°) */}
-              <circle
-                cx={cx}
-                cy={cy}
-                r={radius}
-                stroke="url(#torusBaseGrad)"
-                strokeWidth={strokeWidth}
-                fill="none"
-              />
-
-              {/* 2. Metallic Purple Sheen on right and bottom curve (~1:30 - 7:00) */}
-              <path
-                d={purpleTorusPath}
-                stroke="#8b5cf6"
-                strokeWidth={strokeWidth + 6}
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.3"
-                filter="url(#blurPurple)"
-              />
-              <path
-                d={purpleTorusPath}
-                stroke="url(#purpleTubeGrad)"
-                strokeWidth={strokeWidth}
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.9"
-              />
-
-              {/* 3. Top-Left Metallic Specular Highlight on Inactive Tube */}
-              <path
-                d={specularArcPath}
-                stroke="#ffffff"
-                strokeWidth={strokeWidth - 6}
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.2"
-                filter="url(#blurSoft)"
-              />
-              <path
-                d={specularArcPath}
-                stroke="url(#specularGlintGrad)"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.95"
-              />
-
-              {/* 4. Active Glowing Neon Cyan Segment at top (~11:20 - 1:30) */}
-              <path
-                d={activeArcPath}
-                stroke="#00f5c4"
-                strokeWidth={strokeWidth + 8}
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.4"
-                filter="url(#blurCyan)"
-                className="transition-all duration-700 ease-out"
-              />
-              <path
-                d={activeArcPath}
-                stroke="url(#activeCyanGrad)"
-                strokeWidth={strokeWidth}
-                strokeLinecap="round"
-                fill="none"
-                className="transition-all duration-700 ease-out"
-              />
-            </svg>
-
-            {/* Center Content: 3D Laptop + Bold Number + "Total Solved" */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pt-0.5">
-              <LaptopCode3D className="w-11 h-8 sm:w-12 sm:h-9 shrink-0 transition-transform duration-200 hover:scale-105" />
-              <span className="font-bold text-4xl sm:text-[44px] text-white tracking-tight leading-none mt-1.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
-                {loading ? "—" : safeTotal}
+              <LightningBolt3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(0,245,210,0.7)]" />
+              <span className="font-bold text-2xl sm:text-[30px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+                {loading ? "—" : easySolved}
               </span>
-              <span className="text-xs sm:text-[14px] font-medium text-slate-300 mt-1 leading-none tracking-wide">
-                Total Solved
+              <span className="text-xs sm:text-[13px] font-semibold text-slate-100 mt-1 leading-none">
+                Easy
+              </span>
+            </div>
+
+            {/* MEDIUM SQUIRCLE (Warm Amber / Gold) */}
+            <div
+              className="group relative flex flex-col items-center justify-center h-[116px] sm:h-[124px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
+              style={{
+                background:
+                  "linear-gradient(145deg, rgba(165, 95, 12, 0.95), rgba(85, 42, 4, 0.98))",
+                border: "2px solid rgba(255, 190, 60, 0.85)",
+                boxShadow:
+                  "inset 0 0 14px rgba(245, 158, 11, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 24px rgba(255, 163, 30, 0.45)",
+              }}
+            >
+              <Layers3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,174,34,0.7)]" />
+              <span className="font-bold text-2xl sm:text-[30px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+                {loading ? "—" : mediumSolved}
+              </span>
+              <span className="text-xs sm:text-[13px] font-semibold text-slate-100 mt-1 leading-none">
+                Medium
+              </span>
+            </div>
+
+            {/* HARD SQUIRCLE (Crimson / Ruby) */}
+            <div
+              className="group relative flex flex-col items-center justify-center h-[116px] sm:h-[124px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
+              style={{
+                background:
+                  "linear-gradient(145deg, rgba(150, 48, 58, 0.95), rgba(75, 20, 28, 0.98))",
+                border: "2px solid rgba(255, 110, 120, 0.85)",
+                boxShadow:
+                  "inset 0 0 14px rgba(244, 63, 94, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 24px rgba(255, 65, 80, 0.45)",
+              }}
+            >
+              <Flag3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,68,78,0.7)]" />
+              <span className="font-bold text-2xl sm:text-[30px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+                {loading ? "—" : hardSolved}
+              </span>
+              <span className="text-xs sm:text-[13px] font-semibold text-slate-100 mt-1 leading-none">
+                Hard
               </span>
             </div>
           </div>
-        </div>
 
-        {/* ========================================================
-            2. MIDDLE: 3 Glowing Squircle Cards (Easy, Medium, Hard)
-           ======================================================== */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-3.5 lg:border-r lg:border-white/15 lg:pr-6 py-1">
-          
-          {/* EASY SQUIRCLE (Green / Mint) */}
+          {/* Global Ranking Pill with Realistic 3D Golden Trophy */}
           <div
-            className="group relative flex flex-col items-center justify-center h-[114px] sm:h-[120px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
-            style={{
-              background:
-                "linear-gradient(145deg, rgba(0, 115, 95, 0.95), rgba(0, 48, 42, 0.98))",
-              border: "2px solid rgba(58, 255, 220, 0.8)",
-              boxShadow:
-                "inset 0 0 14px rgba(0, 245, 196, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 22px rgba(0, 255, 210, 0.42)",
-            }}
-          >
-            <LightningBolt3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(0,245,210,0.7)]" />
-            <span className="font-bold text-2xl sm:text-[30px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
-              {loading ? "—" : easySolved}
-            </span>
-            <span className="text-xs sm:text-[13px] font-semibold text-slate-100 mt-1 leading-none">
-              Easy
-            </span>
-          </div>
-
-          {/* MEDIUM SQUIRCLE (Warm Amber / Gold) */}
-          <div
-            className="group relative flex flex-col items-center justify-center h-[114px] sm:h-[120px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
-            style={{
-              background:
-                "linear-gradient(145deg, rgba(165, 95, 12, 0.95), rgba(85, 42, 4, 0.98))",
-              border: "2px solid rgba(255, 190, 60, 0.85)",
-              boxShadow:
-                "inset 0 0 14px rgba(245, 158, 11, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 24px rgba(255, 163, 30, 0.45)",
-            }}
-          >
-            <Layers3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,174,34,0.7)]" />
-            <span className="font-bold text-2xl sm:text-[30px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
-              {loading ? "—" : mediumSolved}
-            </span>
-            <span className="text-xs sm:text-[13px] font-semibold text-slate-100 mt-1 leading-none">
-              Medium
-            </span>
-          </div>
-
-          {/* HARD SQUIRCLE (Crimson / Ruby) */}
-          <div
-            className="group relative flex flex-col items-center justify-center h-[114px] sm:h-[120px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
-            style={{
-              background:
-                "linear-gradient(145deg, rgba(150, 48, 58, 0.95), rgba(75, 20, 28, 0.98))",
-              border: "2px solid rgba(255, 110, 120, 0.85)",
-              boxShadow:
-                "inset 0 0 14px rgba(244, 63, 94, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 24px rgba(255, 65, 80, 0.45)",
-            }}
-          >
-            <Flag3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,68,78,0.7)]" />
-            <span className="font-bold text-2xl sm:text-[30px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
-              {loading ? "—" : hardSolved}
-            </span>
-            <span className="text-xs sm:text-[13px] font-semibold text-slate-100 mt-1 leading-none">
-              Hard
-            </span>
-          </div>
-        </div>
-
-        {/* ========================================================
-            3. RIGHT: Global Ranking Pill matching Image 3 exactly
-           ======================================================== */}
-        <div className="flex items-center justify-center py-1">
-          <div
-            className="group relative flex items-center justify-evenly gap-3 sm:gap-4 px-4 sm:px-5 py-2.5 h-[114px] sm:h-[120px] w-full rounded-[32px] sm:rounded-[34px] transition-all duration-200 hover:scale-[1.02] cursor-default"
+            className="group relative flex items-center justify-evenly gap-3 sm:gap-4 px-4 sm:px-6 py-3 h-[116px] sm:h-[124px] w-full rounded-[32px] sm:rounded-[36px] transition-all duration-200 hover:scale-[1.02] cursor-default"
             style={{
               background:
                 "linear-gradient(135deg, rgba(65, 22, 112, 0.96), rgba(35, 11, 62, 0.98))",
@@ -740,15 +910,15 @@ export function LeetcodeStatsBanner({
           >
             {/* 3D Realistic Golden Trophy with Laurel Wreaths */}
             <div className="shrink-0 flex items-center justify-center">
-              <TrophyLaurel3D className="w-[66px] h-[56px] sm:w-[72px] sm:h-[62px] transition-transform duration-200 group-hover:scale-105" />
+              <TrophyLaurel3D className="w-[68px] h-[58px] sm:w-[74px] sm:h-[64px] transition-transform duration-200 group-hover:scale-105" />
             </div>
 
             {/* Crisp Vertical Divider */}
-            <div className="w-[1.5px] h-14 bg-white/35 shrink-0 mx-2 sm:mx-2.5 rounded-full" />
+            <div className="w-[1.5px] h-14 bg-white/35 shrink-0 mx-2 sm:mx-3 rounded-full" />
 
             {/* Ranking Number & Subtitle */}
             <div className="flex flex-col text-left pr-1 min-w-0">
-              <span className="font-bold text-2xl sm:text-[28px] lg:text-[32px] text-white tracking-tight leading-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
+              <span className="font-bold text-2xl sm:text-[28px] lg:text-[34px] text-white tracking-tight leading-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
                 {loading ? "—" : formattedRanking}
               </span>
               <span className="text-xs sm:text-[13px] font-medium text-[#d8b4fe] mt-1.5 leading-none tracking-wide">
@@ -756,6 +926,7 @@ export function LeetcodeStatsBanner({
               </span>
             </div>
           </div>
+
         </div>
 
       </div>
