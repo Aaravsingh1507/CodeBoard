@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 export interface TopicItem {
   tag: string;
@@ -237,11 +237,6 @@ interface TopicBreakdownProps {
 }
 
 export function TopicBreakdown({ topics }: TopicBreakdownProps) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // Use ONLY real topics passed from the user's account. No fake preloaded data!
   const userTopics = topics ?? [];
   const hasRealData = userTopics.length > 0 && userTopics.some((t) => t.solved > 0);
@@ -310,17 +305,51 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
   const arcPathAdv = totalProblems > 0 && advSolved > 0 ? getGlassArcPath(cx, cy, radius, fundDeg + interDeg, advDeg) : null;
 
   return (
-    <div
-      className={`w-full overflow-hidden select-none transition-all duration-700 ease-out ${
-        mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-      }`}
-    >
+    <div className="w-full overflow-hidden select-none">
       <svg
         viewBox="0 0 1024 490"
         className="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
         style={{ fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
       >
         <defs>
+          {/* Robust Native CSS Keyframe Animations - NEVER clobbers SVG coordinate transforms */}
+          <style>{`
+            @keyframes cbBarGrow {
+              0% {
+                transform: scaleY(0);
+                opacity: 0.15;
+              }
+              100% {
+                transform: scaleY(1);
+                opacity: 1;
+              }
+            }
+            @keyframes cbArcSweep {
+              from {
+                stroke-dashoffset: 400;
+              }
+              to {
+                stroke-dashoffset: 0;
+              }
+            }
+            @keyframes cbFadeIn {
+              from {
+                opacity: 0;
+              }
+              to {
+                opacity: 1;
+              }
+            }
+            @keyframes cbArrowSweep {
+              from {
+                stroke-dashoffset: 160;
+              }
+              to {
+                stroke-dashoffset: 0;
+              }
+            }
+          `}</style>
+
           {/* Subcard Frosted Glass Fill matching CodeBoard Dark Navy Theme */}
           <linearGradient id="tcSubGlass" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#0f1730" stopOpacity="0.88" />
@@ -498,16 +527,9 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           Problem distribution across DSA topics
         </text>
 
-        {/* Legend Filter Pills (Top Right with Staggered Entrance Animation) */}
+        {/* Legend Filter Pills (Top Right) */}
         {/* Fundamental - Cyan */}
-        <g
-          transform="translate(572, 26)"
-          style={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? "translateX(0)" : "translateX(12px)",
-            transition: "all 0.6s ease-out 0.1s",
-          }}
-        >
+        <g transform="translate(572, 26)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.1s" }}>
           <rect
             width="124"
             height="34"
@@ -524,14 +546,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         </g>
 
         {/* Intermediate - Violet */}
-        <g
-          transform="translate(712, 26)"
-          style={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? "translateX(0)" : "translateX(12px)",
-            transition: "all 0.6s ease-out 0.2s",
-          }}
-        >
+        <g transform="translate(712, 26)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.2s" }}>
           <rect
             width="134"
             height="34"
@@ -548,14 +563,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         </g>
 
         {/* Advanced - Amber */}
-        <g
-          transform="translate(862, 26)"
-          style={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? "translateX(0)" : "translateX(12px)",
-            transition: "all 0.6s ease-out 0.3s",
-          }}
-        >
+        <g transform="translate(862, 26)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.3s" }}>
           <rect
             width="114"
             height="34"
@@ -574,14 +582,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* =====================================================
             2. LEFT SUBCARD: 3D Glassmorphic Donut Gauge & Summary
            ===================================================== */}
-        <g
-          transform="translate(32, 80)"
-          style={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? "translateY(0)" : "translateY(12px)",
-            transition: "opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
-          }}
-        >
+        <g transform="translate(32, 80)">
           {/* Background Card */}
           <rect
             width="224"
@@ -619,8 +620,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   strokeWidth="13"
                   strokeLinecap="round"
                   strokeDasharray="400"
-                  strokeDashoffset={mounted ? 0 : 400}
-                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1)" }}
+                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.1s" }}
                 />
                 <path
                   d={arcPathFund}
@@ -630,8 +630,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   strokeLinecap="round"
                   opacity="0.8"
                   strokeDasharray="400"
-                  strokeDashoffset={mounted ? 0 : 400}
-                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1)" }}
+                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.1s" }}
                 />
               </g>
             )}
@@ -646,8 +645,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   strokeWidth="13"
                   strokeLinecap="round"
                   strokeDasharray="400"
-                  strokeDashoffset={mounted ? 0 : 400}
-                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.15s" }}
+                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.25s" }}
                 />
                 <path
                   d={arcPathInter}
@@ -657,8 +655,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   strokeLinecap="round"
                   opacity="0.8"
                   strokeDasharray="400"
-                  strokeDashoffset={mounted ? 0 : 400}
-                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.15s" }}
+                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.25s" }}
                 />
               </g>
             )}
@@ -673,8 +670,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   strokeWidth="13"
                   strokeLinecap="round"
                   strokeDasharray="400"
-                  strokeDashoffset={mounted ? 0 : 400}
-                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.3s" }}
+                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.4s" }}
                 />
                 <path
                   d={arcPathAdv}
@@ -684,8 +680,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   strokeLinecap="round"
                   opacity="0.8"
                   strokeDasharray="400"
-                  strokeDashoffset={mounted ? 0 : 400}
-                  style={{ transition: "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.3s" }}
+                  style={{ animation: "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.4s" }}
                 />
               </g>
             )}
@@ -727,7 +722,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               &lt;/&gt;
             </text>
 
-            {/* Large Total Count */}
+            {/* Large Total Count with Smooth Fade */}
             <text
               x={cx}
               y={cy + 8}
@@ -737,12 +732,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               fill="#ffffff"
               letterSpacing="-1"
               filter="drop-shadow(0 2px 5px rgba(0,0,0,0.95))"
-              style={{
-                opacity: mounted ? 1 : 0,
-                transform: mounted ? "scale(1)" : "scale(0.85)",
-                transformOrigin: `${cx}px ${cy}px`,
-                transition: "opacity 0.8s ease-out 0.2s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s",
-              }}
+              style={{ animation: "cbFadeIn 0.8s ease-out both" }}
             >
               {totalProblems}
             </text>
@@ -753,76 +743,45 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             </text>
           </g>
 
-          {/* Breakdown Percentage Rows (Staggered Fade-In) */}
+          {/* Breakdown Percentage Rows */}
           {/* Row 1: Fundamental - Cyan */}
-          <g
-            style={{
-              opacity: mounted ? 1 : 0,
-              transform: mounted ? "translateX(0)" : "translateX(-6px)",
-              transition: "all 0.5s ease-out 0.25s",
-            }}
-          >
-            <circle cx="24" cy="214" r="4.5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
-            <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e2e8f0">
-              Fundamental
-            </text>
-            <text x="204" y="218" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-              {fundSolved}{" "}
-              <tspan fontWeight="500" fill="#2dd4bf" opacity="0.9">
-                ({fundPct.toFixed(1)}%)
-              </tspan>
-            </text>
-          </g>
+          <circle cx="24" cy="214" r="4.5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
+          <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e2e8f0">
+            Fundamental
+          </text>
+          <text x="204" y="218" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+            {fundSolved}{" "}
+            <tspan fontWeight="500" fill="#2dd4bf" opacity="0.9">
+              ({fundPct.toFixed(1)}%)
+            </tspan>
+          </text>
 
           {/* Row 2: Intermediate - Violet */}
-          <g
-            style={{
-              opacity: mounted ? 1 : 0,
-              transform: mounted ? "translateX(0)" : "translateX(-6px)",
-              transition: "all 0.5s ease-out 0.35s",
-            }}
-          >
-            <circle cx="24" cy="238" r="4.5" fill="#a855f7" filter="url(#tcGlowViolet)" />
-            <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e2e8f0">
-              Intermediate
-            </text>
-            <text x="204" y="242" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-              {interSolved}{" "}
-              <tspan fontWeight="500" fill="#c084fc" opacity="0.9">
-                ({interPct.toFixed(1)}%)
-              </tspan>
-            </text>
-          </g>
+          <circle cx="24" cy="238" r="4.5" fill="#a855f7" filter="url(#tcGlowViolet)" />
+          <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e2e8f0">
+            Intermediate
+          </text>
+          <text x="204" y="242" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+            {interSolved}{" "}
+            <tspan fontWeight="500" fill="#c084fc" opacity="0.9">
+              ({interPct.toFixed(1)}%)
+            </tspan>
+          </text>
 
           {/* Row 3: Advanced - Amber */}
-          <g
-            style={{
-              opacity: mounted ? 1 : 0,
-              transform: mounted ? "translateX(0)" : "translateX(-6px)",
-              transition: "all 0.5s ease-out 0.45s",
-            }}
-          >
-            <circle cx="24" cy="262" r="4.5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
-            <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e2e8f0">
-              Advanced
-            </text>
-            <text x="204" y="266" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-              {advSolved}{" "}
-              <tspan fontWeight="500" fill="#fbbf24" opacity="0.9">
-                ({advPct.toFixed(1)}%)
-              </tspan>
-            </text>
-          </g>
+          <circle cx="24" cy="262" r="4.5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
+          <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e2e8f0">
+            Advanced
+          </text>
+          <text x="204" y="266" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+            {advSolved}{" "}
+            <tspan fontWeight="500" fill="#fbbf24" opacity="0.9">
+              ({advPct.toFixed(1)}%)
+            </tspan>
+          </text>
 
           {/* Bottom 3-Stat Glass Box */}
-          <g
-            transform="translate(14, 296)"
-            style={{
-              opacity: mounted ? 1 : 0,
-              transform: mounted ? "translateY(0)" : "translateY(6px)",
-              transition: "all 0.6s ease-out 0.4s",
-            }}
-          >
+          <g transform="translate(14, 296)">
             <rect
               width="196"
               height="64"
@@ -867,14 +826,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* =====================================================
             3. CENTER/RIGHT TOP: 12-Bar DSA 3D Glass Chart
            ===================================================== */}
-        <g
-          transform="translate(272, 80)"
-          style={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? "translateY(0)" : "translateY(12px)",
-            transition: "opacity 0.7s ease-out 0.1s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s",
-          }}
-        >
+        <g transform="translate(272, 80)">
           {/* Background Card */}
           <rect
             width="720"
@@ -920,9 +872,8 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           {/* 12 Vertical Topic Columns (Animated Equalizer-Style Cascade!) */}
           {top12.map((item, i) => {
             const colX = 76 + i * 52.5;
-            const targetBarHeight = hasRealData && item.solved > 0 ? Math.max(10, (item.solved / yMax) * 115) : 0;
-            const currentBarHeight = mounted ? targetBarHeight : 0;
-            const currentBarY = 150 - currentBarHeight;
+            const barHeight = hasRealData && item.solved > 0 ? Math.max(10, (item.solved / yMax) * 115) : 0;
+            const barY = 150 - barHeight;
 
             // Pick 3D glass gradient and glow based on tier
             const isFund = item.level === "fundamental";
@@ -936,102 +887,90 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                 {/* Count Number on top of bar with Smooth Fade */}
                 <text
                   x={colX}
-                  y={currentBarHeight > 0 ? currentBarY - 6 : 144}
+                  y={barHeight > 0 ? barY - 6 : 144}
                   textAnchor="middle"
                   fontSize="13.5"
                   fontWeight="900"
                   fill="#ffffff"
                   filter="drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
                   style={{
-                    opacity: mounted ? 1 : 0,
-                    transform: mounted ? "translateY(0)" : "translateY(6px)",
-                    transition: `opacity 0.6s ease-out ${i * 45 + 200}ms, transform 0.6s ease-out ${i * 45 + 200}ms`,
+                    animation: `cbFadeIn 0.5s ease-out both`,
+                    animationDelay: `${i * 45 + 180}ms`,
                   }}
                 >
                   {item.solved}
                 </text>
 
                 {/* Base Pedestal Glow on Baseline */}
-                <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity={currentBarHeight > 0 ? 0.4 : 0.15} filter="blur(2px)" />
-
-                {/* Ambient Backlight Glow behind the Glass Pillar (if solved > 0) */}
-                {targetBarHeight > 0 && (
-                  <rect
-                    x={colX - 14}
-                    y={currentBarY}
-                    width="28"
-                    height={currentBarHeight}
-                    rx="8"
-                    fill={glowColor}
-                    opacity="0.25"
-                    filter="blur(4px)"
-                    style={{
-                      transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
-                    }}
-                  />
-                )}
+                <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity={barHeight > 0 ? 0.4 : 0.15} filter="blur(2px)" />
 
                 {/* Main 3D Frosted Glass Column Pillar (Animated Rise from Baseline) */}
-                {targetBarHeight > 0 ? (
-                  <>
+                {barHeight > 0 ? (
+                  <g
+                    style={{
+                      transformOrigin: `${colX}px 150px`,
+                      animation: `cbBarGrow 0.85s cubic-bezier(0.16, 1, 0.3, 1) both`,
+                      animationDelay: `${i * 45}ms`,
+                    }}
+                  >
+                    {/* Ambient Backlight Glow behind the Glass Pillar */}
+                    <rect
+                      x={colX - 14}
+                      y={barY}
+                      width="28"
+                      height={barHeight}
+                      rx="8"
+                      fill={glowColor}
+                      opacity="0.25"
+                      filter="blur(4px)"
+                    />
+                    {/* Main Frosted Pillar Body */}
                     <rect
                       x={colX - 16}
-                      y={currentBarY}
+                      y={barY}
                       width="32"
-                      height={currentBarHeight}
+                      height={barHeight}
                       rx="8"
                       fill={barFill}
                       stroke="rgba(255, 255, 255, 0.35)"
                       strokeWidth="1"
-                      style={{
-                        transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
-                      }}
                     />
                     {/* Specular Curved Reflection at Top Cap of Bar */}
-                    {currentBarHeight > 4 && (
+                    {barHeight > 4 && (
                       <rect
                         x={colX - 13}
-                        y={currentBarY + 1.5}
+                        y={barY + 1.5}
                         width="26"
                         height="4"
                         rx="2"
                         fill="#ffffff"
                         opacity="0.45"
-                        style={{
-                          transition: `y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
-                        }}
                       />
                     )}
                     {/* Specular Vertical Light Streak down Left Side */}
-                    {currentBarHeight > 9 && (
+                    {barHeight > 9 && (
                       <rect
                         x={colX - 13}
-                        y={currentBarY + 5}
+                        y={barY + 5}
                         width="2.8"
-                        height={Math.max(2, currentBarHeight - 9)}
+                        height={Math.max(2, barHeight - 9)}
                         rx="1.2"
                         fill="url(#tcSpecularVertical)"
-                        style={{
-                          transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
-                        }}
                       />
                     )}
                     {/* Subtle Right Edge Depth Shadow */}
-                    {currentBarHeight > 9 && (
+                    {barHeight > 9 && (
                       <rect
                         x={colX + 11}
-                        y={currentBarY + 5}
+                        y={barY + 5}
                         width="1.8"
-                        height={Math.max(2, currentBarHeight - 9)}
+                        height={Math.max(2, barHeight - 9)}
                         rx="0.8"
                         fill="#000000"
                         opacity="0.35"
-                        style={{
-                          transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
-                        }}
                       />
                     )}
-                  </>
+                  </g>
                 ) : (
                   <rect
                     x={colX - 14}
@@ -1053,12 +992,6 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   fill="url(#tcIconGlass)"
                   stroke="rgba(139, 92, 246, 0.45)"
                   strokeWidth="1.2"
-                  style={{
-                    opacity: mounted ? 1 : 0,
-                    transform: mounted ? "scale(1)" : "scale(0.85)",
-                    transformOrigin: `${colX}px 178px`,
-                    transition: `all 0.5s ease-out ${i * 45 + 120}ms`,
-                  }}
                 />
 
                 {/* Top Glass Shine Line on Icon Box */}
@@ -1107,14 +1040,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* =====================================================
             4. BOTTOM LEFT: Top Covered Topics Badges
            ===================================================== */}
-        <g
-          transform="translate(272, 350)"
-          style={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? "translateY(0)" : "translateY(12px)",
-            transition: "opacity 0.7s ease-out 0.2s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s",
-          }}
-        >
+        <g transform="translate(272, 350)">
           {/* Background Card */}
           <rect
             width="348"
@@ -1138,17 +1064,9 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             </text>
           </g>
 
-          {/* 3 Topic Badges with 3D Trophy and Medals (Staggered Pop-In Animation) */}
+          {/* 3 Topic Badges with 3D Trophy and Medals */}
           {/* Badge 1: Golden Trophy (#1) */}
-          <g
-            transform="translate(14, 44)"
-            style={{
-              opacity: mounted ? 1 : 0,
-              transform: mounted ? "scale(1)" : "scale(0.9)",
-              transformOrigin: "64px 70px",
-              transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s",
-            }}
-          >
+          <g transform="translate(14, 44)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.2s" }}>
             <rect
               width="100"
               height="52"
@@ -1181,15 +1099,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           </g>
 
           {/* Badge 2: Star Medal (#2) */}
-          <g
-            transform="translate(122, 44)"
-            style={{
-              opacity: mounted ? 1 : 0,
-              transform: mounted ? "scale(1)" : "scale(0.9)",
-              transformOrigin: "174px 70px",
-              transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s",
-            }}
-          >
+          <g transform="translate(122, 44)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.3s" }}>
             <rect
               width="104"
               height="52"
@@ -1227,15 +1137,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           </g>
 
           {/* Badge 3: Star Medal (#3) */}
-          <g
-            transform="translate(234, 44)"
-            style={{
-              opacity: mounted ? 1 : 0,
-              transform: mounted ? "scale(1)" : "scale(0.9)",
-              transformOrigin: "286px 70px",
-              transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s",
-            }}
-          >
+          <g transform="translate(234, 44)" style={{ animation: "cbFadeIn 0.6s ease-out both", animationDelay: "0.4s" }}>
             <rect
               width="104"
               height="52"
@@ -1276,14 +1178,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* =====================================================
             5. BOTTOM RIGHT: Coverage Insight (Clean Proportional Spacing & Animated Graphic)
            ===================================================== */}
-        <g
-          transform="translate(636, 350)"
-          style={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? "translateY(0)" : "translateY(12px)",
-            transition: "opacity 0.7s ease-out 0.25s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.25s",
-          }}
-        >
+        <g transform="translate(636, 350)">
           {/* Background Card */}
           <rect
             width="356"
@@ -1306,18 +1201,15 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             </text>
           </g>
 
-          {/* Dynamic Insight Prose - Clean professional spacing below heading (y=52 instead of y=46) */}
+          {/* Dynamic Insight Prose - Clean professional spacing below heading (y=53 instead of cramped y=46) */}
           <text
             x="18"
-            y="52"
+            y="53"
             fontSize="11.5"
             fontWeight="500"
             fill="#e2e8f0"
             opacity="0.95"
-            style={{
-              opacity: mounted ? 0.95 : 0,
-              transition: "opacity 0.8s ease-out 0.35s",
-            }}
+            style={{ animation: "cbFadeIn 0.8s ease-out both", animationDelay: "0.2s" }}
           >
             {totalProblems > 0 ? (
               <>
@@ -1348,58 +1240,86 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
           {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic (Animated Cascade) */}
           <g transform="translate(250, 26)">
-            {/* 4 Rising Isometric-Style Columns */}
+            {/* 4 Rising Columns */}
             {/* Bar 1 */}
-            <rect
-              x="10"
-              y={mounted ? 46 : 64}
-              width="11"
-              height={mounted ? 18 : 0}
-              rx="3"
-              fill="#2dd4bf"
-              opacity={hasRealData ? 1 : 0.4}
-              style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1), y 0.7s cubic-bezier(0.16, 1, 0.3, 1)" }}
-            />
-            <rect x="11" y={mounted ? 47 : 64} width="2" height={mounted ? 16 : 0} rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1), y 0.7s cubic-bezier(0.16, 1, 0.3, 1)" }} />
+            <g
+              style={{
+                transformOrigin: "15.5px 64px",
+                animation: "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
+                animationDelay: "0.1s",
+              }}
+            >
+              <rect
+                x="10"
+                y="46"
+                width="11"
+                height="18"
+                rx="3"
+                fill="#2dd4bf"
+                opacity={hasRealData ? 1 : 0.4}
+              />
+              <rect x="11" y="47" width="2" height="16" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+            </g>
 
             {/* Bar 2 */}
-            <rect
-              x="25"
-              y={mounted ? 32 : 64}
-              width="11"
-              height={mounted ? 32 : 0}
-              rx="3"
-              fill="#38bdf8"
-              opacity={hasRealData ? 1 : 0.4}
-              style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s" }}
-            />
-            <rect x="26" y={mounted ? 33 : 64} width="2" height={mounted ? 30 : 0} rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s" }} />
+            <g
+              style={{
+                transformOrigin: "30.5px 64px",
+                animation: "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
+                animationDelay: "0.18s",
+              }}
+            >
+              <rect
+                x="25"
+                y="32"
+                width="11"
+                height="32"
+                rx="3"
+                fill="#38bdf8"
+                opacity={hasRealData ? 1 : 0.4}
+              />
+              <rect x="26" y="33" width="2" height="30" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+            </g>
 
             {/* Bar 3 */}
-            <rect
-              x="40"
-              y={mounted ? 18 : 64}
-              width="11"
-              height={mounted ? 46 : 0}
-              rx="3"
-              fill="#818cf8"
-              opacity={hasRealData ? 1 : 0.4}
-              style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s" }}
-            />
-            <rect x="41" y={mounted ? 19 : 64} width="2" height={mounted ? 44 : 0} rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s" }} />
+            <g
+              style={{
+                transformOrigin: "45.5px 64px",
+                animation: "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
+                animationDelay: "0.26s",
+              }}
+            >
+              <rect
+                x="40"
+                y="18"
+                width="11"
+                height="46"
+                rx="3"
+                fill="#818cf8"
+                opacity={hasRealData ? 1 : 0.4}
+              />
+              <rect x="41" y="19" width="2" height="44" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+            </g>
 
             {/* Bar 4 */}
-            <rect
-              x="55"
-              y={mounted ? 4 : 64}
-              width="11"
-              height={mounted ? 60 : 0}
-              rx="3"
-              fill="#c084fc"
-              opacity={hasRealData ? 1 : 0.4}
-              style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s" }}
-            />
-            <rect x="56" y={mounted ? 5 : 64} width="2" height={mounted ? 58 : 0} rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} style={{ transition: "height 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s" }} />
+            <g
+              style={{
+                transformOrigin: "60.5px 64px",
+                animation: "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
+                animationDelay: "0.34s",
+              }}
+            >
+              <rect
+                x="55"
+                y="4"
+                width="11"
+                height="60"
+                rx="3"
+                fill="#c084fc"
+                opacity={hasRealData ? 1 : 0.4}
+              />
+              <rect x="56" y="5" width="2" height="58" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
+            </g>
 
             {/* Upward Curved Glowing Neon Arrow with Draw-In Animation */}
             <path
@@ -1410,8 +1330,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               fill="none"
               filter="url(#tcGlowCyan)"
               strokeDasharray="160"
-              strokeDashoffset={mounted ? 0 : 160}
-              style={{ transition: "stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s" }}
+              style={{ animation: "cbArrowSweep 1.1s cubic-bezier(0.16, 1, 0.3, 1) both", animationDelay: "0.45s" }}
               opacity={hasRealData ? 1 : 0.6}
             />
             {/* Arrowhead */}
@@ -1419,8 +1338,8 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               points="72,-6 78,2 67,4"
               fill="#ffffff"
               filter="url(#tcGlowCyan)"
-              opacity={mounted ? (hasRealData ? 1 : 0.6) : 0}
-              style={{ transition: "opacity 0.6s ease-out 1.2s" }}
+              opacity={hasRealData ? 1 : 0.6}
+              style={{ animation: "cbFadeIn 0.5s ease-out both", animationDelay: "1.2s" }}
             />
           </g>
         </g>
