@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 
 export interface TopicItem {
   tag: string;
@@ -42,19 +42,12 @@ function describeArc(centerX: number, centerY: number, radius: number, startAngl
   return ["M", start.x, start.y, "A", radius, radius, 0, largeArcFlag, 1, end.x, end.y].join(" ");
 }
 
-// Helper: creates a clean 3D glass arc path with capsule caps
-function getGlassArcPath(centerX: number, centerY: number, radius: number, startDeg: number, spanDeg: number) {
-  if (spanDeg <= 0) return null;
-  if (spanDeg > 8) {
-    const s = (startDeg + 2.5) % 360;
-    const e = (startDeg + spanDeg - 2.5) % 360;
-    return describeArc(centerX, centerY, radius, s, e);
-  } else {
-    const mid = (startDeg + spanDeg / 2) % 360;
-    const s = (mid - 1.5 + 360) % 360;
-    const e = (mid + 1.5) % 360;
-    return describeArc(centerX, centerY, radius, s, e);
-  }
+// Helper: creates a continuous annular donut arc with clean radial cut gaps
+function getDonutArcPath(centerX: number, centerY: number, radius: number, startDeg: number, spanDeg: number, gapDeg: number = 2.4) {
+  if (spanDeg <= gapDeg) return null;
+  const s = (startDeg + gapDeg / 2) % 360;
+  const e = (startDeg + spanDeg - gapDeg / 2) % 360;
+  return describeArc(centerX, centerY, radius, s, e);
 }
 
 // Specialized vector icons for DSA topics (Using the app's Teal/Cyan & Violet palette)
@@ -240,39 +233,55 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Use ONLY real topics passed from the user's account. No fake preloaded data!
-  const userTopics = topics ?? [];
-  const hasRealData = userTopics.length > 0 && userTopics.some((t) => t.solved > 0);
+  // Memoize real topics passed from the user's account. No fake preloaded data!
+  const userTopics = useMemo(() => topics ?? [], [topics]);
+  const hasRealData = useMemo(() => userTopics.length > 0 && userTopics.some((t) => t.solved > 0), [userTopics]);
 
   // Sort descending by solved count
-  const sorted = hasRealData ? [...userTopics].sort((a, b) => b.solved - a.solved) : [];
+  const sorted = useMemo(() => {
+    return hasRealData ? [...userTopics].sort((a, b) => b.solved - a.solved) : [];
+  }, [hasRealData, userTopics]);
 
   // Top 12 columns for the bar chart
-  const top12: TopicItem[] = hasRealData
-    ? sorted.slice(0, 12)
-    : DEFAULT_12_TOPIC_NAMES.map((name) => ({ tag: name, solved: 0, level: "fundamental" }));
+  const top12: TopicItem[] = useMemo(() => {
+    return hasRealData
+      ? sorted.slice(0, 12)
+      : DEFAULT_12_TOPIC_NAMES.map((name) => ({ tag: name, solved: 0, level: "fundamental" }));
+  }, [hasRealData, sorted]);
 
   // Calculate real metrics across all topics
-  let fundSolved = 0;
-  let interSolved = 0;
-  let advSolved = 0;
+  const { fundSolved, interSolved, advSolved, totalProblems, fundPct, interPct, advPct } = useMemo(() => {
+    let f = 0;
+    let i = 0;
+    let a = 0;
+    userTopics.forEach((t) => {
+      const lvl = (t.level || "").toLowerCase();
+      if (lvl.includes("fund")) f += t.solved;
+      else if (lvl.includes("inter")) i += t.solved;
+      else if (lvl.includes("adv")) a += t.solved;
+      else f += t.solved;
+    });
+    const total = f + i + a;
+    return {
+      fundSolved: f,
+      interSolved: i,
+      advSolved: a,
+      totalProblems: total,
+      fundPct: total > 0 ? (f / total) * 100 : 0,
+      interPct: total > 0 ? (i / total) * 100 : 0,
+      advPct: total > 0 ? (a / total) * 100 : 0,
+    };
+  }, [userTopics]);
 
-  userTopics.forEach((t) => {
-    const lvl = (t.level || "").toLowerCase();
-    if (lvl.includes("fund")) fundSolved += t.solved;
-    else if (lvl.includes("inter")) interSolved += t.solved;
-    else if (lvl.includes("adv")) advSolved += t.solved;
-    else fundSolved += t.solved;
-  });
+  // Number counting states for central dial and 12 bar columns - defaults to REAL VALUES so never stuck at 0!
+  const [displayTotal, setDisplayTotal] = useState(totalProblems);
+  const [displayCounts, setDisplayCounts] = useState<number[]>(() => top12.map((t) => t.solved));
 
-  const totalProblems = fundSolved + interSolved + advSolved;
-  const fundPct = totalProblems > 0 ? (fundSolved / totalProblems) * 100 : 0;
-  const interPct = totalProblems > 0 ? (interSolved / totalProblems) * 100 : 0;
-  const advPct = totalProblems > 0 ? (advSolved / totalProblems) * 100 : 0;
-
-  // Number counting states for central dial and 12 bar columns
-  const [displayTotal, setDisplayTotal] = useState(0);
-  const [displayCounts, setDisplayCounts] = useState<number[]>(() => top12.map(() => 0));
+  // Sync state immediately if totalProblems or topics change
+  useEffect(() => {
+    setDisplayTotal(totalProblems);
+    setDisplayCounts(top12.map((t) => t.solved));
+  }, [totalProblems, top12]);
 
   // IntersectionObserver: Triggers animations once when entering viewport
   useEffect(() => {
@@ -302,7 +311,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
     return () => observer.disconnect();
   }, [totalProblems, top12]);
 
-  // Counting animation: requestAnimationFrame with cubic ease-out
+  // Smooth counting animation on entrance: starts from 0 up to real values
   useEffect(() => {
     if (!isVisible) return;
     if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -311,7 +320,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
       return;
     }
 
-    const duration = 1000;
+    const duration = 850;
     let startTime: number | null = null;
     let animId: number;
 
@@ -324,9 +333,9 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
       setDisplayTotal(Math.round(ease * totalProblems));
 
       const counts = top12.map((item, i) => {
-        const barDelay = i * 45 + 150;
+        const barDelay = i * 35 + 80;
         if (elapsed < barDelay) return 0;
-        const barProgress = Math.min((elapsed - barDelay) / 600, 1);
+        const barProgress = Math.min((elapsed - barDelay) / 450, 1);
         const barEase = 1 - Math.pow(1 - barProgress, 3);
         return Math.round(barEase * item.solved);
       });
@@ -341,7 +350,11 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
     };
 
     animId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      setDisplayTotal(totalProblems);
+      setDisplayCounts(top12.map((t) => t.solved));
+    };
   }, [isVisible, totalProblems, top12]);
 
   // Dynamic Y-axis scale based on the maximum solved topic (default 10 if 0 solved)
@@ -377,9 +390,9 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
   const advDeg = totalProblems > 0 ? 360 - fundDeg - interDeg : 0;
 
   // Arcs are ONLY rendered when the user has actual solved problems!
-  const arcPathFund = totalProblems > 0 && fundSolved > 0 ? getGlassArcPath(cx, cy, radius, 0, fundDeg) : null;
-  const arcPathInter = totalProblems > 0 && interSolved > 0 ? getGlassArcPath(cx, cy, radius, fundDeg, interDeg) : null;
-  const arcPathAdv = totalProblems > 0 && advSolved > 0 ? getGlassArcPath(cx, cy, radius, fundDeg + interDeg, advDeg) : null;
+  const arcPathFund = totalProblems > 0 && fundSolved > 0 ? getDonutArcPath(cx, cy, radius, 0, fundDeg) : null;
+  const arcPathInter = totalProblems > 0 && interSolved > 0 ? getDonutArcPath(cx, cy, radius, fundDeg, interDeg) : null;
+  const arcPathAdv = totalProblems > 0 && advSolved > 0 ? getDonutArcPath(cx, cy, radius, fundDeg + interDeg, advDeg) : null;
 
   return (
     <div
@@ -821,15 +834,15 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               <circle cx={cx} cy={cy} r="70" fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" />
               <circle cx={cx} cy={cy} r="54" fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" />
 
-              {/* ARC 1: FUNDAMENTAL (Cyan Glass Tube with Draw-In Animation) */}
+              {/* ARC 1: FUNDAMENTAL (Cyan Glass Ring with Draw-In Animation) */}
               {arcPathFund && (
                 <g>
                   <path
                     d={arcPathFund}
                     fill="none"
                     stroke="url(#tcRingFund3D)"
-                    strokeWidth="13"
-                    strokeLinecap="round"
+                    strokeWidth="14"
+                    strokeLinecap="butt"
                     strokeDasharray="400"
                     style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.2s" }}
                   />
@@ -837,24 +850,24 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                     d={arcPathFund}
                     fill="none"
                     stroke="url(#tcSpecularWhite)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    opacity="0.8"
+                    strokeWidth="2.5"
+                    strokeLinecap="butt"
+                    opacity="0.65"
                     strokeDasharray="400"
                     style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.2s" }}
                   />
                 </g>
               )}
 
-              {/* ARC 2: INTERMEDIATE (Violet Glass Tube with Draw-In Animation) */}
+              {/* ARC 2: INTERMEDIATE (Violet Glass Ring with Draw-In Animation) */}
               {arcPathInter && (
                 <g>
                   <path
                     d={arcPathInter}
                     fill="none"
                     stroke="url(#tcRingInter3D)"
-                    strokeWidth="13"
-                    strokeLinecap="round"
+                    strokeWidth="14"
+                    strokeLinecap="butt"
                     strokeDasharray="400"
                     style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.35s" }}
                   />
@@ -862,24 +875,24 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                     d={arcPathInter}
                     fill="none"
                     stroke="url(#tcSpecularWhite)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    opacity="0.8"
+                    strokeWidth="2.5"
+                    strokeLinecap="butt"
+                    opacity="0.65"
                     strokeDasharray="400"
                     style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.35s" }}
                   />
                 </g>
               )}
 
-              {/* ARC 3: ADVANCED (Amber Glass Tube with Draw-In Animation) */}
+              {/* ARC 3: ADVANCED (Amber Glass Ring with Draw-In Animation) */}
               {arcPathAdv && (
                 <g>
                   <path
                     d={arcPathAdv}
                     fill="none"
                     stroke="url(#tcRingAdv3D)"
-                    strokeWidth="13"
-                    strokeLinecap="round"
+                    strokeWidth="14"
+                    strokeLinecap="butt"
                     strokeDasharray="400"
                     style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.5s" }}
                   />
@@ -887,9 +900,9 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                     d={arcPathAdv}
                     fill="none"
                     stroke="url(#tcSpecularWhite)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    opacity="0.8"
+                    strokeWidth="2.5"
+                    strokeLinecap="butt"
+                    opacity="0.65"
                     strokeDasharray="400"
                     style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.5s" }}
                   />
@@ -1087,7 +1100,8 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                 <line x1="42" y1={t.y} x2="46" y2={t.y} stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1.2" />
                 <text
                   x="38"
-                  y={t.y + 4}
+                  y={t.y}
+                  dominantBaseline="middle"
                   textAnchor="end"
                   fontSize="11"
                   fontWeight="700"
@@ -1117,7 +1131,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   {/* Count Number on top of bar with Counting Animation */}
                   <text
                     x={colX}
-                    y={barHeight > 0 ? barY - 6 : 144}
+                    y={barHeight > 0 ? barY - 6 : 142}
                     textAnchor="middle"
                     fontSize="13.5"
                     fontWeight="900"
@@ -1125,10 +1139,10 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                     filter="drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
                     style={{
                       animation: isVisible ? `cbFadeIn 0.5s ease-out both` : "none",
-                      animationDelay: `${i * 45 + 180}ms`,
+                      animationDelay: `${i * 35 + 140}ms`,
                     }}
                   >
-                    {displayCounts[i] ?? item.solved}
+                    {displayCounts[i] !== undefined ? displayCounts[i] : item.solved}
                   </text>
 
                   {/* Base Pedestal Glow on Baseline */}
@@ -1245,28 +1259,41 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                     {renderTopicIcon(item.tag, colX - 10, 168)}
                   </g>
 
-                  {/* Topic Name Label (Centered, 2 lines without clipping!) */}
-                  <text
-                    x={colX}
-                    y="208"
-                    textAnchor="middle"
-                    fontSize="9.5"
-                    fontWeight="700"
-                    fill="#e2e8f0"
-                  >
-                    {labelLine1}
-                  </text>
-                  {labelLine2 && (
+                  {/* Topic Name Label (Harmonized vertical centering) */}
+                  {labelLine2 ? (
+                    <>
+                      <text
+                        x={colX}
+                        y="207"
+                        textAnchor="middle"
+                        fontSize="9.5"
+                        fontWeight="700"
+                        fill="#e2e8f0"
+                      >
+                        {labelLine1}
+                      </text>
+                      <text
+                        x={colX}
+                        y="219"
+                        textAnchor="middle"
+                        fontSize="8.5"
+                        fontWeight="600"
+                        fill="#94a3b8"
+                        opacity="0.9"
+                      >
+                        {labelLine2}
+                      </text>
+                    </>
+                  ) : (
                     <text
                       x={colX}
-                      y="220"
+                      y="213"
                       textAnchor="middle"
-                      fontSize="8.5"
-                      fontWeight="600"
-                      fill="#94a3b8"
-                      opacity="0.9"
+                      fontSize="9.5"
+                      fontWeight="700"
+                      fill="#e2e8f0"
                     >
-                      {labelLine2}
+                      {labelLine1}
                     </text>
                   )}
                 </g>
@@ -1320,18 +1347,18 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               }}
             >
               <rect
-                width="100"
-                height="52"
+                width="102"
+                height="56"
                 rx="12"
                 fill="#0d1428"
                 stroke="rgba(139, 92, 246, 0.45)"
                 strokeWidth="1.2"
               />
               {/* Top Shine */}
-              <line x1="8" y1="1" x2="92" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
+              <line x1="8" y1="1" x2="94" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
               {/* 3D Realistic Golden Trophy Icon with Hover Rotation */}
-              <g transform="translate(8, 10)" className="cb-trophy-icon">
+              <g transform="translate(8, 12)" className="cb-trophy-icon">
                 {/* Handles */}
                 <path d="M 2 5 C -2 5, -2 13, 2 13 M 16 5 C 20 5, 20 13, 16 13" stroke="#fbbf24" strokeWidth="1.6" fill="none" strokeLinecap="round" />
                 {/* Cup Body */}
@@ -1345,7 +1372,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               <text x="36" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
                 {first.tag}
               </text>
-              <text x="36" y="39" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+              <text x="36" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
                 ({first.solved})
               </text>
             </g>
@@ -1361,7 +1388,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             >
               <rect
                 width="104"
-                height="52"
+                height="56"
                 rx="12"
                 fill="#0d1428"
                 stroke="rgba(139, 92, 246, 0.45)"
@@ -1371,7 +1398,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
               {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
-              <g transform="translate(8, 10)" className="cb-medal-icon">
+              <g transform="translate(8, 12)" className="cb-medal-icon">
                 {/* Ribbons */}
                 <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
                 <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
@@ -1382,17 +1409,28 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               </g>
 
               {/* Text */}
-              <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
-                {splitTopicLabel(second.tag)[0]}
-              </text>
-              {splitTopicLabel(second.tag)[1] && (
-                <text x="35" y="32" fontSize="9" fontWeight="700" fill="#ffffff">
-                  {splitTopicLabel(second.tag)[1]}
-                </text>
+              {splitTopicLabel(second.tag)[1] ? (
+                <>
+                  <text x="35" y="20" fontSize="10" fontWeight="800" fill="#ffffff">
+                    {splitTopicLabel(second.tag)[0]}
+                  </text>
+                  <text x="35" y="31" fontSize="9" fontWeight="700" fill="#ffffff">
+                    {splitTopicLabel(second.tag)[1]}
+                  </text>
+                  <text x="35" y="44" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                    ({second.solved})
+                  </text>
+                </>
+              ) : (
+                <>
+                  <text x="35" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
+                    {second.tag}
+                  </text>
+                  <text x="35" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                    ({second.solved})
+                  </text>
+                </>
               )}
-              <text x="35" y={splitTopicLabel(second.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                ({second.solved})
-              </text>
             </g>
 
             {/* Badge 3: Star Medal (#3) */}
@@ -1406,7 +1444,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             >
               <rect
                 width="104"
-                height="52"
+                height="56"
                 rx="12"
                 fill="#0d1428"
                 stroke="rgba(139, 92, 246, 0.45)"
@@ -1416,7 +1454,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
 
               {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
-              <g transform="translate(8, 10)" className="cb-medal-icon">
+              <g transform="translate(8, 12)" className="cb-medal-icon">
                 {/* Ribbons */}
                 <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
                 <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
@@ -1427,17 +1465,28 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               </g>
 
               {/* Text */}
-              <text x="35" y="21" fontSize="10" fontWeight="800" fill="#ffffff">
-                {splitTopicLabel(third.tag)[0]}
-              </text>
-              {splitTopicLabel(third.tag)[1] && (
-                <text x="35" y="32" fontSize="9" fontWeight="700" fill="#ffffff">
-                  {splitTopicLabel(third.tag)[1]}
-                </text>
+              {splitTopicLabel(third.tag)[1] ? (
+                <>
+                  <text x="35" y="20" fontSize="10" fontWeight="800" fill="#ffffff">
+                    {splitTopicLabel(third.tag)[0]}
+                  </text>
+                  <text x="35" y="31" fontSize="9" fontWeight="700" fill="#ffffff">
+                    {splitTopicLabel(third.tag)[1]}
+                  </text>
+                  <text x="35" y="44" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                    ({third.solved})
+                  </text>
+                </>
+              ) : (
+                <>
+                  <text x="35" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
+                    {third.tag}
+                  </text>
+                  <text x="35" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
+                    ({third.solved})
+                  </text>
+                </>
               )}
-              <text x="35" y={splitTopicLabel(third.tag)[1] ? "44" : "37"} fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                ({third.solved})
-              </text>
             </g>
           </g>
         </g>
@@ -1597,7 +1646,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
               {/* Upward Curved Glowing Neon Arrow with Draw-In Animation */}
               <path
-                d="M 6 44 C 24 34, 48 20, 72 -2"
+                d="M 6 44 C 22 34, 46 18, 68 2"
                 stroke="url(#tcArrowGrad)"
                 strokeWidth="4"
                 strokeLinecap="round"
@@ -1612,12 +1661,12 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
               />
               {/* Arrowhead with Scale & Fade Entrance */}
               <polygon
-                points="72,-6 78,2 67,4"
+                points="74,-3 64,1 69,9"
                 fill="#ffffff"
                 filter="url(#tcGlowCyan)"
                 opacity={hasRealData ? 1 : 0.6}
                 style={{
-                  transformOrigin: "73px 0px",
+                  transformOrigin: "69px 3px",
                   animation: isVisible ? "cbArrowheadPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both" : "none",
                   animationDelay: "1.15s",
                 }}
