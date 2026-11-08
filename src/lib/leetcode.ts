@@ -56,8 +56,11 @@ export async function fetchLeetcodeStats(username: string): Promise<LeetcodeStat
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // LeetCode's endpoint expects a browser-like referer or it may 403.
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        Accept: "application/json, text/plain, */*",
         Referer: `https://leetcode.com/${username}/`,
+        Origin: "https://leetcode.com",
       },
       body: JSON.stringify({ query: PROFILE_QUERY, variables: { username } }),
       cache: "no-store",

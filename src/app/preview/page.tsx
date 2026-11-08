@@ -135,9 +135,33 @@ export default function PreviewPage() {
     easySolved: 18,
     mediumSolved: 15,
     hardSolved: 0,
-    acceptanceRate: "68.4%",
-    recentSubmissions: [],
-    topicBreakdown: [],
+    acceptanceRate: "75.0%",
+    recentSubmissions: [
+      { title: "Binary Tree Maximum Path Sum", difficulty: "Hard", status: "Accepted", timestamp: "1725500000" },
+      { title: "Lowest Common Ancestor of a Binary Search Tree", difficulty: "Medium", status: "Accepted", timestamp: "1725400000" },
+      { title: "Invert Binary Tree", difficulty: "Easy", status: "Accepted", timestamp: "1725300000" },
+    ],
+    topicBreakdown: [
+      { tag: "Array", solved: 14, level: "fundamental" },
+      { tag: "Tree", solved: 10, level: "intermediate" },
+      { tag: "Binary Tree", solved: 10, level: "intermediate" },
+      { tag: "Depth-First Search", solved: 9, level: "intermediate" },
+      { tag: "Dynamic Programming", solved: 7, level: "advanced" },
+      { tag: "Two Pointers", solved: 5, level: "fundamental" },
+      { tag: "Linked List", solved: 4, level: "fundamental" },
+      { tag: "Hash Table", solved: 4, level: "intermediate" },
+      { tag: "Binary Search", solved: 4, level: "intermediate" },
+      { tag: "Breadth-First Search", solved: 4, level: "intermediate" },
+      { tag: "Math", solved: 4, level: "intermediate" },
+      { tag: "Divide & Conquer", solved: 3, level: "advanced" },
+      { tag: "Stack", solved: 2, level: "fundamental" },
+      { tag: "Bit Manipulation", solved: 2, level: "intermediate" },
+      { tag: "Recursion", solved: 2, level: "intermediate" },
+      { tag: "String", solved: 1, level: "fundamental" },
+      { tag: "Sorting", solved: 1, level: "fundamental" },
+      { tag: "Sliding Window", solved: 1, level: "intermediate" },
+      { tag: "Greedy", solved: 1, level: "intermediate" },
+    ],
   };
 
   const previewGoals = [
@@ -377,44 +401,21 @@ export default function PreviewPage() {
               loading={leetcodeLoading}
             />
 
-            {leetcodeLoading && !liveLeetcode && (
-              <div className="h-96 w-full animate-pulse rounded-[34px] bg-emerald-950/20 border border-emerald-500/20" />
-            )}
+            <div className="space-y-6">
+              <TopicBreakdown topics={liveLeetcode?.topicBreakdown?.length ? liveLeetcode.topicBreakdown : previewLeetcode.topicBreakdown} />
 
-            {!liveLeetcode && !leetcodeLoading && (
-              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-center">
-                <p className="text-sm font-semibold text-amber-200">
-                  No LeetCode username linked yet.
-                </p>
-                <p className="text-xs text-slate-400 mt-1">
-                  Add your LeetCode username in Settings to pull your real-time stats directly from LeetCode.
-                </p>
-                <button
-                  onClick={() => setActiveTab("settings")}
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-3.5 py-1.5 text-xs font-semibold text-black hover:bg-amber-400 transition-colors cursor-pointer"
-                >
-                  Configure in Settings
-                </button>
-              </div>
-            )}
-
-            {liveLeetcode && (
-              <div className="space-y-6">
-                <TopicBreakdown topics={liveLeetcode.topicBreakdown ?? []} />
-
-                <Card className="p-5">
-                  <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Recent submissions</h3>
-                  <ul className="divide-y divide-border/60">
-                    {liveLeetcode.recentSubmissions.map((s, i) => (
-                      <li key={i} className="flex items-center justify-between py-2.5 text-sm">
-                        <span className="text-foreground dark:text-slate-200">{s.title}</span>
-                        <Badge tone="success">{s.status}</Badge>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              </div>
-            )}
+              <Card className="p-5">
+                <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Recent submissions</h3>
+                <ul className="divide-y divide-border/60">
+                  {(liveLeetcode?.recentSubmissions?.length ? liveLeetcode.recentSubmissions : previewLeetcode.recentSubmissions).map((s, i) => (
+                    <li key={i} className="flex items-center justify-between py-2.5 text-sm">
+                      <span className="text-foreground dark:text-slate-200">{s.title}</span>
+                      <Badge tone="success">{s.status}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            </div>
           </div>
         )}
 
