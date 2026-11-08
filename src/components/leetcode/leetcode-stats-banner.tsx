@@ -234,81 +234,179 @@ export function Flag3D({ className = "w-7 h-7" }: { className?: string }) {
 }
 
 /**
- * 3D Golden Trophy with Laurel Wreath (Global Ranking) matching reference design exactly
+ * Realistic 3D Golden Trophy with Laurel Wreath (Global Ranking) matching reference design exactly
  */
-export function TrophyLaurel3D({ className = "w-16 h-14" }: { className?: string }) {
+export function TrophyLaurel3D({ className = "w-18 h-16" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 64 54" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <svg viewBox="0 0 72 62" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <defs>
-        <linearGradient id="goldCup" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#fff3a1" />
-          <stop offset="25%" stopColor="#fbbf24" />
+        {/* Realistic Metallic Gold Gradients */}
+        <linearGradient id="goldCupBody" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#fff8b8" />
+          <stop offset="20%" stopColor="#fde047" />
+          <stop offset="50%" stopColor="#f59e0b" />
+          <stop offset="85%" stopColor="#d97706" />
+          <stop offset="100%" stopColor="#92400e" />
+        </linearGradient>
+
+        <linearGradient id="goldRimGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="50%" stopColor="#fde047" />
+          <stop offset="100%" stopColor="#d97706" />
+        </linearGradient>
+
+        <linearGradient id="goldHandleGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#fef08a" />
+          <stop offset="35%" stopColor="#f59e0b" />
+          <stop offset="70%" stopColor="#b45309" />
+          <stop offset="100%" stopColor="#78350f" />
+        </linearGradient>
+
+        <linearGradient id="goldLeafGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#fffbeb" />
+          <stop offset="30%" stopColor="#fde047" />
           <stop offset="70%" stopColor="#f59e0b" />
           <stop offset="100%" stopColor="#b45309" />
         </linearGradient>
-        <linearGradient id="goldHandle" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#fef08a" />
+
+        <linearGradient id="goldStemGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#fde047" />
           <stop offset="50%" stopColor="#f59e0b" />
           <stop offset="100%" stopColor="#92400e" />
         </linearGradient>
-        <linearGradient id="goldLeaf" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#fffbeb" />
-          <stop offset="40%" stopColor="#fbbf24" />
-          <stop offset="100%" stopColor="#b45309" />
-        </linearGradient>
-        <filter id="trophyGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#f59e0b" floodOpacity="0.65" />
+
+        <filter id="realisticTrophyGlow" x="-25%" y="-25%" width="150%" height="150%">
+          <feDropShadow dx="0" dy="2.5" stdDeviation="3.5" floodColor="#f59e0b" floodOpacity="0.75" />
         </filter>
       </defs>
 
-      <g filter="url(#trophyGlow)">
-        {/* LEFT LAUREL LEAVES (4 smooth curved leaves matching reference) */}
-        <path d="M11 21C8.5 20 7 22.5 9 24.5C11 26 13 23.5 11 21Z" fill="url(#goldLeaf)" />
-        <path d="M8 27C5.5 26.5 4.5 29.5 7 31C9.5 32 10.5 29.5 8 27Z" fill="url(#goldLeaf)" />
-        <path d="M8.5 34C6.2 34 6 37 8.5 38.5C11 39.5 11.5 36.5 8.5 34Z" fill="url(#goldLeaf)" />
-        <path d="M12 40C10 40.5 10.5 43.5 13 44.5C15.5 45 15.5 42 12 40Z" fill="url(#goldLeaf)" />
-
-        {/* RIGHT LAUREL LEAVES (4 smooth curved leaves matching reference) */}
-        <path d="M53 21C55.5 20 57 22.5 55 24.5C53 26 51 23.5 53 21Z" fill="url(#goldLeaf)" />
-        <path d="M56 27C58.5 26.5 59.5 29.5 57 31C54.5 32 53.5 29.5 56 27Z" fill="url(#goldLeaf)" />
-        <path d="M55.5 34C57.8 34 58 37 55.5 38.5C53 39.5 52.5 36.5 55.5 34Z" fill="url(#goldLeaf)" />
-        <path d="M52 40C54 40.5 53.5 43.5 51 44.5C48.5 45 48.5 42 52 40Z" fill="url(#goldLeaf)" />
-
-        {/* LEFT & RIGHT CUP HANDLES */}
+      <g filter="url(#realisticTrophyGlow)">
+        {/* ========================================================
+            1. LAUREL WREATH STEMS & LEAVES
+           ======================================================== */}
+        {/* Left Laurel Branch Stem */}
         <path
-          d="M21 18C13.5 18 13.5 30 21 30"
-          stroke="url(#goldHandle)"
-          strokeWidth="3"
+          d="M17 22C10.5 32 10.5 44 20 52"
+          stroke="url(#goldLeafGrad)"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          fill="none"
+        />
+        {/* Left Laurel Leaves (4 discrete 3D sculpted leaves) */}
+        <g fill="url(#goldLeafGrad)">
+          <path d="M12.5 22C9.5 20.8 7.5 23.5 10 26C12.5 27.8 15 25 12.5 22Z" />
+          <path d="M9 29C6 28.2 5 31.8 7.8 33.8C10.8 35 12 32 9 29Z" />
+          <path d="M9.5 37C6.8 37 6.5 40.8 9.5 42.5C12.5 43.8 13.5 40 9.5 37Z" />
+          <path d="M13.5 44C11 44.8 11.5 48.5 14.5 49.8C17.5 50.5 18 46.8 13.5 44Z" />
+        </g>
+        {/* Left Leaf Center Ribs (Metallic Specular Highlights) */}
+        <path d="M10 24.5C11.5 25.5 13 24.5 13 24.5" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+        <path d="M7.8 32C9.5 33 10.8 32 10.8 32" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+        <path d="M8.5 40C10.2 41 11.8 40 11.8 40" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+        <path d="M13 47C14.8 48 16 47 16 47" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+
+        {/* Right Laurel Branch Stem */}
+        <path
+          d="M55 22C61.5 32 61.5 44 52 52"
+          stroke="url(#goldLeafGrad)"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          fill="none"
+        />
+        {/* Right Laurel Leaves (4 discrete 3D sculpted leaves) */}
+        <g fill="url(#goldLeafGrad)">
+          <path d="M59.5 22C62.5 20.8 64.5 23.5 62 26C59.5 27.8 57 25 59.5 22Z" />
+          <path d="M63 29C66 28.2 67 31.8 64.2 33.8C61.2 35 60 32 63 29Z" />
+          <path d="M62.5 37C65.2 37 65.5 40.8 62.5 42.5C59.5 43.8 58.5 40 62.5 37Z" />
+          <path d="M58.5 44C61 44.8 60.5 48.5 57.5 49.8C54.5 50.5 54 46.8 58.5 44Z" />
+        </g>
+        {/* Right Leaf Center Ribs (Metallic Specular Highlights) */}
+        <path d="M62 24.5C60.5 25.5 59 24.5 59 24.5" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+        <path d="M64.2 32C62.5 33 61.2 32 61.2 32" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+        <path d="M63.5 40C61.8 41 60.2 40 60.2 40" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+        <path d="M59 47C57.2 48 56 47 56 47" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+
+        {/* ========================================================
+            2. 3D CUP HANDLES
+           ======================================================== */}
+        {/* Left Curved Handle */}
+        <path
+          d="M24 19C15 19 15 33 24 33"
+          stroke="url(#goldHandleGrad)"
+          strokeWidth="3.6"
           strokeLinecap="round"
           fill="none"
         />
         <path
-          d="M43 18C50.5 18 50.5 30 43 30"
-          stroke="url(#goldHandle)"
-          strokeWidth="3"
+          d="M23.5 19.5C16.5 19.5 16.5 32 23.5 32"
+          stroke="#ffffff"
+          strokeWidth="1"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.65"
+        />
+
+        {/* Right Curved Handle */}
+        <path
+          d="M48 19C57 19 57 33 48 33"
+          stroke="url(#goldHandleGrad)"
+          strokeWidth="3.6"
           strokeLinecap="round"
           fill="none"
         />
-
-        {/* TROPHY CUP BODY */}
         <path
-          d="M20 14H44V25C44 31.5 38.5 36 32 36C25.5 36 20 31.5 20 25V14Z"
-          fill="url(#goldCup)"
+          d="M48.5 19.5C55.5 19.5 55.5 32 48.5 32"
+          stroke="#ffffff"
+          strokeWidth="1"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.65"
         />
-        {/* Top rim ellipse */}
-        <ellipse cx="32" cy="14" rx="12" ry="2.2" fill="#fff3a1" />
 
-        {/* EMBOSSED 5-POINT STAR ON CUP */}
+        {/* ========================================================
+            3. 3D TROPHY CUP BODY & SPECULAR SHINE
+           ======================================================== */}
+        {/* Main Cup Body */}
         <path
-          d="M32 20.2L33.3 23.3L36.6 23.5L34.1 25.5L34.9 28.8L32 26.9L29.1 28.8L29.9 25.5L27.4 23.5L30.7 23.3L32 20.2Z"
+          d="M23 15H49V27C49 35 43 40 36 40C29 40 23 35 23 27V15Z"
+          fill="url(#goldCupBody)"
+        />
+
+        {/* 3D Curved Specular Highlight on Left Face of Cup */}
+        <path
+          d="M26 18C26 27 29.5 34.5 34 37"
+          stroke="#ffffff"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.6"
+        />
+
+        {/* Top Rim Oval Bevel */}
+        <ellipse cx="36" cy="15" rx="13" ry="2.6" fill="url(#goldRimGrad)" />
+        <ellipse cx="36" cy="15" rx="11" ry="1.8" fill="#d97706" opacity="0.6" />
+
+        {/* 3D Embossed Golden/White 5-Point Star */}
+        <path
+          d="M36 21.2L37.4 24.6L41 24.9L38.3 27.2L39.1 30.8L36 28.7L32.9 30.8L33.7 27.2L31 24.9L34.6 24.6Z"
           fill="#ffffff"
           opacity="0.95"
+          filter="drop-shadow(0 1px 2px rgba(0,0,0,0.4))"
         />
 
-        {/* STEM & PEDESTAL */}
-        <path d="M29.5 36H34.5V41.5H29.5V36Z" fill="url(#goldCup)" />
-        <path d="M25 41.5H39L41 47H23L25 41.5Z" fill="url(#goldCup)" />
-        <rect x="21" y="47" width="22" height="3.5" rx="1.7" fill="#b45309" stroke="#f59e0b" strokeWidth="0.8" />
+        {/* ========================================================
+            4. 3D STEM & STEPPED PEDESTAL BASE
+           ======================================================== */}
+        {/* Cylindrical Stem */}
+        <rect x="33.5" y="40" width="5" height="5.5" rx="1" fill="url(#goldStemGrad)" />
+
+        {/* Flared Pedestal Tier */}
+        <path d="M28 45.5H44L46 51H26L28 45.5Z" fill="url(#goldCupBody)" />
+        <path d="M28.5 46H43.5" stroke="#ffffff" strokeWidth="0.8" opacity="0.7" />
+
+        {/* Bottom Base Plinth */}
+        <rect x="23" y="51" width="26" height="4" rx="2" fill="#78350f" stroke="#f59e0b" strokeWidth="0.8" />
+        <rect x="24" y="51.5" width="24" height="1.2" rx="0.6" fill="#fef08a" opacity="0.8" />
       </g>
     </svg>
   );
@@ -360,11 +458,11 @@ export function LeetcodeStatsBanner({
 }: LeetcodeStatsBannerProps) {
   const safeTotal = totalSolved || 0;
 
-  // Center & Radius for the 3D Torus matching Image 2 exactly
-  const cx = 80;
-  const cy = 80;
-  const radius = 60;
-  const strokeWidth = 12;
+  // Center & Radius for the enlarged 3D Torus
+  const cx = 95;
+  const cy = 95;
+  const radius = 74;
+  const strokeWidth = 14;
 
   // In Reference Image 2:
   // - The active neon cyan arc is a crisp top segment: ~11:20 (-20°) to ~1:30 (+45°) for 16 solved problems
@@ -391,7 +489,7 @@ export function LeetcodeStatsBanner({
 
   return (
     <div
-      className={`relative w-full max-w-[1080px] mx-auto rounded-[46px] p-4 sm:p-5 md:p-6 overflow-visible transition-all duration-300 ${className}`}
+      className={`relative w-full max-w-[1100px] mx-auto rounded-[46px] p-4 sm:p-5 md:p-6 overflow-visible transition-all duration-300 ${className}`}
       style={{
         background:
           "linear-gradient(135deg, rgba(28, 34, 46, 0.95), rgba(12, 14, 20, 0.98) 45%, rgba(24, 18, 34, 0.95))",
@@ -410,17 +508,17 @@ export function LeetcodeStatsBanner({
       <div className="absolute -bottom-16 right-1/4 w-72 h-32 bg-purple-600/15 blur-3xl rounded-full pointer-events-none" />
 
       {/* 3-Column Proportional Layout matching reference */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.1fr_1.85fr_1.65fr] items-center gap-5 lg:gap-6">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.15fr_1.85fr_1.65fr] items-center gap-5 lg:gap-6">
         
         {/* ========================================================
-            1. LEFT: 3D Toroidal Donut Ring matching Image 2 exactly
+            1. LEFT: Enlarged 3D Toroidal Donut Ring matching Image 2
            ======================================================== */}
         <div className="flex items-center justify-center lg:border-r lg:border-white/15 lg:pr-6 py-1">
-          <div className="relative flex items-center justify-center w-[156px] h-[156px] sm:w-[164px] sm:h-[164px] shrink-0 -my-2.5 sm:-my-3">
+          <div className="relative flex items-center justify-center w-[180px] h-[180px] sm:w-[194px] sm:h-[194px] md:w-[204px] md:h-[204px] shrink-0 -my-3 sm:-my-4 md:-my-5">
             {/* SVG 3D Donut Ring */}
             <svg
               className="w-full h-full overflow-visible"
-              viewBox="0 0 160 160"
+              viewBox="0 0 190 190"
             >
               <defs>
                 {/* Active Cyan Gradient */}
@@ -460,7 +558,7 @@ export function LeetcodeStatsBanner({
                 </linearGradient>
 
                 {/* Top-Left Specular Highlight Gradient */}
-                <linearGradient id="specularGlintGrad" x1="24" y1="52" x2="60" y2="23" gradientUnits="userSpaceOnUse">
+                <linearGradient id="specularGlintGrad" x1="28" y1="62" x2="72" y2="28" gradientUnits="userSpaceOnUse">
                   <stop offset="0%" stopColor="#ffffff" stopOpacity="0.1" />
                   <stop offset="45%" stopColor="#ffffff" stopOpacity="0.9" />
                   <stop offset="100%" stopColor="#e2e8f0" stopOpacity="0.95" />
@@ -520,7 +618,7 @@ export function LeetcodeStatsBanner({
               <path
                 d={specularArcPath}
                 stroke="url(#specularGlintGrad)"
-                strokeWidth="2.5"
+                strokeWidth="2.8"
                 strokeLinecap="round"
                 fill="none"
                 opacity="0.95"
@@ -549,11 +647,11 @@ export function LeetcodeStatsBanner({
 
             {/* Center Content: 3D Laptop + Bold Number + "Total Solved" */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pt-0.5">
-              <LaptopCode3D className="w-9 h-7 shrink-0 transition-transform duration-200 hover:scale-105" />
-              <span className="font-bold text-3xl sm:text-[36px] text-white tracking-tight leading-none mt-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
+              <LaptopCode3D className="w-11 h-8 sm:w-12 sm:h-9 shrink-0 transition-transform duration-200 hover:scale-105" />
+              <span className="font-bold text-4xl sm:text-[44px] text-white tracking-tight leading-none mt-1.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
                 {loading ? "—" : safeTotal}
               </span>
-              <span className="text-xs sm:text-[13px] font-medium text-slate-300 mt-1 leading-none tracking-wide">
+              <span className="text-xs sm:text-[14px] font-medium text-slate-300 mt-1 leading-none tracking-wide">
                 Total Solved
               </span>
             </div>
@@ -567,7 +665,7 @@ export function LeetcodeStatsBanner({
           
           {/* EASY SQUIRCLE (Green / Mint) */}
           <div
-            className="group relative flex flex-col items-center justify-center h-[110px] sm:h-[116px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
+            className="group relative flex flex-col items-center justify-center h-[114px] sm:h-[120px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
             style={{
               background:
                 "linear-gradient(145deg, rgba(0, 115, 95, 0.95), rgba(0, 48, 42, 0.98))",
@@ -587,7 +685,7 @@ export function LeetcodeStatsBanner({
 
           {/* MEDIUM SQUIRCLE (Warm Amber / Gold) */}
           <div
-            className="group relative flex flex-col items-center justify-center h-[110px] sm:h-[116px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
+            className="group relative flex flex-col items-center justify-center h-[114px] sm:h-[120px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
             style={{
               background:
                 "linear-gradient(145deg, rgba(165, 95, 12, 0.95), rgba(85, 42, 4, 0.98))",
@@ -607,7 +705,7 @@ export function LeetcodeStatsBanner({
 
           {/* HARD SQUIRCLE (Crimson / Ruby) */}
           <div
-            className="group relative flex flex-col items-center justify-center h-[110px] sm:h-[116px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
+            className="group relative flex flex-col items-center justify-center h-[114px] sm:h-[120px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
             style={{
               background:
                 "linear-gradient(145deg, rgba(150, 48, 58, 0.95), rgba(75, 20, 28, 0.98))",
@@ -631,7 +729,7 @@ export function LeetcodeStatsBanner({
            ======================================================== */}
         <div className="flex items-center justify-center py-1">
           <div
-            className="group relative flex items-center justify-evenly gap-3 sm:gap-4 px-4 sm:px-5 py-2.5 h-[110px] sm:h-[116px] w-full rounded-[32px] sm:rounded-[34px] transition-all duration-200 hover:scale-[1.02] cursor-default"
+            className="group relative flex items-center justify-evenly gap-3 sm:gap-4 px-4 sm:px-5 py-2.5 h-[114px] sm:h-[120px] w-full rounded-[32px] sm:rounded-[34px] transition-all duration-200 hover:scale-[1.02] cursor-default"
             style={{
               background:
                 "linear-gradient(135deg, rgba(65, 22, 112, 0.96), rgba(35, 11, 62, 0.98))",
@@ -640,17 +738,17 @@ export function LeetcodeStatsBanner({
                 "inset 0 0 16px rgba(168, 85, 247, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 24px rgba(168, 85, 247, 0.5)",
             }}
           >
-            {/* 3D Golden Trophy with Laurel Wreaths */}
+            {/* 3D Realistic Golden Trophy with Laurel Wreaths */}
             <div className="shrink-0 flex items-center justify-center">
-              <TrophyLaurel3D className="w-[58px] h-[50px] transition-transform duration-200 group-hover:scale-105" />
+              <TrophyLaurel3D className="w-[66px] h-[56px] sm:w-[72px] sm:h-[62px] transition-transform duration-200 group-hover:scale-105" />
             </div>
 
             {/* Crisp Vertical Divider */}
-            <div className="w-[1.5px] h-12 bg-white/35 shrink-0 mx-2 sm:mx-2.5 rounded-full" />
+            <div className="w-[1.5px] h-14 bg-white/35 shrink-0 mx-2 sm:mx-2.5 rounded-full" />
 
             {/* Ranking Number & Subtitle */}
             <div className="flex flex-col text-left pr-1 min-w-0">
-              <span className="font-bold text-2xl sm:text-[28px] lg:text-[30px] text-white tracking-tight leading-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
+              <span className="font-bold text-2xl sm:text-[28px] lg:text-[32px] text-white tracking-tight leading-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
                 {loading ? "—" : formattedRanking}
               </span>
               <span className="text-xs sm:text-[13px] font-medium text-[#d8b4fe] mt-1.5 leading-none tracking-wide">
