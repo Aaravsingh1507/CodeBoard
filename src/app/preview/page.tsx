@@ -128,7 +128,17 @@ export default function PreviewPage() {
     topReferrers: [],
   };
 
-  const previewLeetcode = liveLeetcode ?? undefined;
+  const previewLeetcode: LeetcodeStats = liveLeetcode ?? {
+    username: "aarav_singh",
+    ranking: 5000001,
+    totalSolved: 16,
+    easySolved: 10,
+    mediumSolved: 6,
+    hardSolved: 0,
+    acceptanceRate: "68.4%",
+    recentSubmissions: [],
+    topicBreakdown: [],
+  };
 
   const previewGoals = [
     {
@@ -359,11 +369,11 @@ export default function PreviewPage() {
 
             {/* 3D Glowing Stats Banner matching design */}
             <LeetcodeStatsBanner
-              totalSolved={liveLeetcode?.totalSolved ?? 0}
-              easySolved={liveLeetcode?.easySolved ?? 0}
-              mediumSolved={liveLeetcode?.mediumSolved ?? 0}
-              hardSolved={liveLeetcode?.hardSolved ?? 0}
-              ranking={liveLeetcode?.ranking ?? null}
+              totalSolved={previewLeetcode.totalSolved}
+              easySolved={previewLeetcode.easySolved}
+              mediumSolved={previewLeetcode.mediumSolved}
+              hardSolved={previewLeetcode.hardSolved}
+              ranking={previewLeetcode.ranking}
               loading={leetcodeLoading}
             />
 

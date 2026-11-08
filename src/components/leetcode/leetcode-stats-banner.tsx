@@ -343,6 +343,27 @@ export function TrophyLaurel3D({ className = "w-14 h-13" }: { className?: string
 }
 
 // =========================================================================
+// HELPER FOR PRECISION SVG ARCS
+// =========================================================================
+
+function polarToCartesian(cx: number, cy: number, r: number, angleInDegrees: number) {
+  // 0 degrees is 12 o'clock, progressing clockwise
+  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+  return {
+    x: Number((cx + r * Math.cos(angleInRadians)).toFixed(2)),
+    y: Number((cy + r * Math.sin(angleInRadians)).toFixed(2)),
+  };
+}
+
+function describeSvgArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number) {
+  const start = polarToCartesian(cx, cy, r, startAngle);
+  const end = polarToCartesian(cx, cy, r, endAngle);
+  const diff = endAngle - startAngle;
+  const largeArcFlag = diff <= 180 ? "0" : "1";
+  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+}
+
+// =========================================================================
 // MAIN BANNER COMPONENT
 // =========================================================================
 
@@ -365,15 +386,30 @@ export function LeetcodeStatsBanner({
   loading = false,
   className = "",
 }: LeetcodeStatsBannerProps) {
-  // Radius and circumference for 3D toroidal ring
-  const radius = 50;
-  const circumference = 2 * Math.PI * radius; // ~314.16
-
-  // In Image 2, the glowing cyan-purple arc spans ~38% of the circle from 11:30 to 4:30
   const safeTotal = totalSolved || 0;
-  // Calculate dynamic arc: smoothly advances as user solves problems, with minimum visible neon arc
-  const arcRatio = Math.max(0.22, Math.min(0.9, safeTotal > 0 ? 0.22 + (safeTotal / 100) * 0.45 : 0.22));
-  const strokeDashoffset = circumference - circumference * arcRatio;
+
+  // Center & Radius for the 3D Torus
+  const cx = 70;
+  const cy = 70;
+  const radius = 54;
+
+  // In the reference image:
+  // - Start angle: ~11:30 (approx -15° or 345° from 12 o'clock)
+  // - Reference end angle: ~4:30 (approx +135° from 12 o'clock for 16 solved problems)
+  const startAngle = -15;
+  // Dynamic arc smoothly expands with totalSolved, perfectly hitting 135° for reference 16 problems
+  const endAngle = Math.min(270, Math.max(65, 135 + (safeTotal - 16) * 1.5));
+
+  // Precision coordinates for active arc and its gradient
+  const startPoint = polarToCartesian(cx, cy, radius, startAngle);
+  const endPoint = polarToCartesian(cx, cy, radius, endAngle);
+  const activeArcPath = describeSvgArc(cx, cy, radius, startAngle, endAngle);
+
+  // Specular top-left metallic highlight (from 10:00 to 11:20: -65° to -20°)
+  const specularArcPath = describeSvgArc(cx, cy, radius, -65, -20);
+
+  // Purple ambient reflection on bottom curve (from 5:00 to 7:00: 145° to 215°)
+  const purpleReflectPath = describeSvgArc(cx, cy, radius, 145, 215);
 
   const formattedRanking =
     ranking !== undefined && ranking !== null
@@ -382,119 +418,174 @@ export function LeetcodeStatsBanner({
 
   return (
     <div
-      className={`relative w-full rounded-[38px] sm:rounded-[44px] border-[1.5px] border-[#22293b] bg-gradient-to-b from-[#111624] via-[#0b0e18] to-[#070912] p-4 sm:p-6 md:p-7 shadow-[0_24px_65px_-12px_rgba(0,0,0,0.85),inset_0_1.5px_1.5px_rgba(255,255,255,0.12)] overflow-hidden transition-all duration-300 ${className}`}
+      className={`relative w-full max-w-[940px] mx-auto rounded-[38px] sm:rounded-[42px] border-[1.5px] border-[#1e2538] bg-gradient-to-b from-[#111624] via-[#0c0f18] to-[#070912] px-4 sm:px-6 md:px-7 py-3 sm:py-3.5 shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_1.5px_rgba(255,255,255,0.12)] overflow-visible transition-all duration-300 ${className}`}
     >
       {/* Specular Top Edge Light Highlight */}
-      <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
 
       {/* Atmospheric neon back-glow */}
-      <div className="absolute -top-24 left-1/4 w-80 h-40 bg-cyan-500/15 blur-3xl rounded-full pointer-events-none" />
-      <div className="absolute -bottom-24 right-1/4 w-80 h-40 bg-purple-600/20 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute -top-16 left-1/4 w-72 h-32 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute -bottom-16 right-1/4 w-72 h-32 bg-purple-600/15 blur-3xl rounded-full pointer-events-none" />
 
-      {/* Main Horizontal Flex Layout matching Image 2 */}
-      <div className="relative z-10 flex flex-col xl:flex-row items-center justify-between gap-5 sm:gap-6 md:gap-7">
+      {/* Main Horizontal Flex Layout matching Reference Image Exactly */}
+      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-5">
         
         {/* ========================================================
             1. LEFT: 3D Toroidal Donut Ring (Total Solved)
+               Protrudes slightly above and below the bar like reference
            ======================================================== */}
-        <div className="flex items-center justify-center shrink-0">
-          <div className="relative flex items-center justify-center w-[136px] h-[136px] sm:w-[146px] sm:h-[146px]">
+        <div className="flex items-center justify-center shrink-0 -my-2.5 sm:-my-3 md:-my-3.5">
+          <div className="relative flex items-center justify-center w-[138px] h-[138px] sm:w-[144px] sm:h-[144px]">
             {/* SVG 3D Donut Ring */}
             <svg
-              className="w-full h-full -rotate-90 overflow-visible"
-              viewBox="0 0 120 120"
+              className="w-full h-full overflow-visible"
+              viewBox="0 0 140 140"
             >
               <defs>
-                {/* Active Arc Gradient: Bright Cyan -> Electric Teal -> Vivid Purple */}
-                <linearGradient id="neonArcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                {/* Active Arc Gradient: Pure Cyan (#00f5c4) -> Electric Teal (#06b6d4) -> Vivid Purple (#a855f7) */}
+                <linearGradient
+                  id="activeNeonArcGrad"
+                  gradientUnits="userSpaceOnUse"
+                  x1={startPoint.x}
+                  y1={startPoint.y}
+                  x2={endPoint.x}
+                  y2={endPoint.y}
+                >
                   <stop offset="0%" stopColor="#00f5c4" />
-                  <stop offset="40%" stopColor="#06b6d4" />
+                  <stop offset="25%" stopColor="#00f5c4" />
+                  <stop offset="50%" stopColor="#06b6d4" />
                   <stop offset="75%" stopColor="#8b5cf6" />
-                  <stop offset="100%" stopColor="#c084fc" />
+                  <stop offset="100%" stopColor="#a855f7" />
                 </linearGradient>
 
-                {/* 3D Inactive Ring Gradient (gunmetal tube with top sheen) */}
+                {/* 3D Inactive Ring Gradient (gunmetal metallic tube with light falloff) */}
                 <linearGradient id="torusBaseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#2e384d" />
-                  <stop offset="50%" stopColor="#1a2030" />
-                  <stop offset="100%" stopColor="#0f131d" />
+                  <stop offset="0%" stopColor="#2c364c" />
+                  <stop offset="45%" stopColor="#192030" />
+                  <stop offset="100%" stopColor="#0f141f" />
                 </linearGradient>
 
+                {/* Top-Left Specular Glint Gradient */}
+                <linearGradient id="specularGlintGrad" x1="21" y1="47" x2="52" y2="19" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.1" />
+                  <stop offset="50%" stopColor="#ffffff" stopOpacity="0.85" />
+                  <stop offset="100%" stopColor="#e2e8f0" stopOpacity="0.95" />
+                </linearGradient>
+
+                {/* Specialized blur filters */}
+                <filter id="blurSoft" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="1.5" />
+                </filter>
+                <filter id="blurPurple" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="3.5" />
+                </filter>
+                <filter id="blurHalo" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="6" />
+                </filter>
                 {/* Neon Bloom Filters */}
                 <filter id="arcGlowWide" x="-40%" y="-40%" width="180%" height="180%">
-                  <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#00f5c4" floodOpacity="0.8" />
-                  <feDropShadow dx="0" dy="0" stdDeviation="9" floodColor="#8b5cf6" floodOpacity="0.65" />
+                  <feGaussianBlur stdDeviation="4" result="blur1" />
+                  <feGaussianBlur stdDeviation="8" result="blur2" />
+                  <feMerge>
+                    <feMergeNode in="blur2" />
+                    <feMergeNode in="blur1" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
                 </filter>
               </defs>
 
-              {/* Inactive 3D Toroidal Tube Track */}
+              {/* 1. Inactive 3D Toroidal Tube Track */}
               <circle
-                cx="60"
-                cy="60"
+                cx={cx}
+                cy={cy}
                 r={radius}
                 stroke="url(#torusBaseGrad)"
-                strokeWidth="15"
+                strokeWidth="16"
                 fill="none"
               />
 
-              {/* Inactive Tube Inner Shadow / Bevel */}
+              {/* Inactive Tube Inner Shadow Bevel */}
               <circle
-                cx="60"
-                cy="60"
-                r={radius - 7.5}
-                stroke="#090d16"
-                strokeWidth="1.5"
+                cx={cx}
+                cy={cy}
+                r={radius - 8}
+                stroke="#070a12"
+                strokeWidth="1.2"
                 fill="none"
                 opacity="0.8"
               />
+              {/* Inactive Tube Outer Rim Bevel */}
               <circle
-                cx="60"
-                cy="60"
-                r={radius + 7.5}
+                cx={cx}
+                cy={cy}
+                r={radius + 8}
                 stroke="#ffffff"
                 strokeWidth="0.8"
                 fill="none"
-                opacity="0.12"
+                opacity="0.1"
               />
 
-              {/* Glowing Active Neon Arc */}
-              <circle
-                cx="60"
-                cy="60"
-                r={radius}
-                stroke="url(#neonArcGrad)"
-                strokeWidth="15"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
+              {/* 2. Top-Left Specular Highlight on Inactive Tube (~10:00 - 11:20) */}
+              <path
+                d={specularArcPath}
+                stroke="#ffffff"
+                strokeWidth="6"
+                strokeLinecap="round"
+                fill="none"
+                opacity="0.15"
+                filter="url(#blurSoft)"
+              />
+              <path
+                d={specularArcPath}
+                stroke="url(#specularGlintGrad)"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                fill="none"
+                opacity="0.9"
+              />
+
+              {/* 3. Soft Purple Ambient Reflection on Bottom Rim (~5:00 - 7:00) */}
+              <path
+                d={purpleReflectPath}
+                stroke="#8b5cf6"
+                strokeWidth="12"
+                strokeLinecap="round"
+                fill="none"
+                opacity="0.32"
+                filter="url(#blurPurple)"
+              />
+
+              {/* 4. Active Glowing Arc - Ambient Neon Halo */}
+              <path
+                d={activeArcPath}
+                stroke="url(#activeNeonArcGrad)"
+                strokeWidth="24"
+                strokeLinecap="round"
+                fill="none"
+                opacity="0.45"
+                filter="url(#blurHalo)"
+                className="transition-all duration-700 ease-out"
+              />
+
+              {/* 5. Active Glowing Arc - Core High-Intensity Tube */}
+              <path
+                d={activeArcPath}
+                stroke="url(#activeNeonArcGrad)"
+                strokeWidth="16"
                 strokeLinecap="round"
                 fill="none"
                 filter="url(#arcGlowWide)"
                 className="transition-all duration-700 ease-out"
               />
-
-              {/* Centerline 3D Specular Highlight on Arc */}
-              <circle
-                cx="60"
-                cy="60"
-                r={radius}
-                stroke="#ffffff"
-                strokeWidth="2.5"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset + 2}
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.55"
-                className="transition-all duration-700 ease-out"
-              />
             </svg>
 
             {/* Center Content: 3D Laptop + Bold Number + "Total Solved" */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pt-1">
-              <LaptopCode3D className="w-8 h-6 sm:w-9 sm:h-7 shrink-0 transition-transform duration-200 hover:scale-105" />
-              <span className="font-black text-2xl sm:text-3xl text-white tracking-tight leading-none mt-1.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pt-0.5">
+              <LaptopCode3D className="w-[34px] h-[26px] shrink-0 transition-transform duration-200 hover:scale-105" />
+              <span className="font-extrabold text-[28px] sm:text-[30px] text-white tracking-tight leading-none mt-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
                 {loading ? "—" : safeTotal}
               </span>
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-400 mt-1 leading-none tracking-wide">
+              <span className="text-[11px] sm:text-[11.5px] font-semibold text-slate-300 mt-1 leading-none tracking-wide">
                 Total Solved
               </span>
             </div>
@@ -502,69 +593,69 @@ export function LeetcodeStatsBanner({
         </div>
 
         {/* Hairline Divider 1 */}
-        <div className="hidden xl:block w-[1.5px] h-20 bg-gradient-to-b from-transparent via-[#2a344d]/70 to-transparent shrink-0" />
+        <div className="hidden md:block w-[1px] h-12 bg-white/[0.08] shrink-0" />
 
         {/* ========================================================
             2. MIDDLE: 3 Glowing Squircle Cards (Easy, Medium, Hard)
            ======================================================== */}
-        <div className="flex items-center justify-center gap-3 sm:gap-4 md:gap-5 w-full sm:w-auto shrink-0">
+        <div className="flex items-center justify-center gap-3.5 sm:gap-4 shrink-0">
           
-          {/* EASY SQUIRCLE (Cyan / Aquamarine) */}
-          <div className="group relative flex flex-col items-center justify-center w-[84px] h-[96px] sm:w-[94px] sm:h-[104px] rounded-[24px] sm:rounded-[26px] border-[1.5px] border-[#00f5c4] bg-gradient-to-b from-[#0f443b] via-[#072c26] to-[#041916] p-2 text-center shadow-[0_0_35px_-2px_rgba(0,245,196,0.55),0_8px_24px_-4px_rgba(0,0,0,0.7),inset_0_1.5px_2px_rgba(255,255,255,0.35)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_45px_0px_rgba(0,245,196,0.7)]">
-            <LightningBolt3D className="w-6 h-6 sm:w-7 sm:h-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-            <span className="font-black text-2xl sm:text-3xl text-white leading-none mt-1 sm:mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+          {/* EASY SQUIRCLE (Cyan / Mint) */}
+          <div className="group relative flex flex-col items-center justify-center w-[82px] h-[88px] sm:w-[86px] sm:h-[92px] rounded-[22px] border-[1.5px] border-[#00f5c4]/50 bg-gradient-to-b from-[#063b32] via-[#02241e] to-[#011411] p-2 text-center shadow-[0_0_24px_rgba(0,245,196,0.42),0_8px_20px_rgba(0,0,0,0.65),inset_0_1.5px_2px_rgba(255,255,255,0.35)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_35px_rgba(0,245,196,0.65)]">
+            <LightningBolt3D className="w-[26px] h-[26px] sm:w-[28px] sm:h-[28px] shrink-0 transition-transform duration-200 group-hover:scale-110" />
+            <span className="font-extrabold text-[26px] sm:text-[28px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
               {loading ? "—" : easySolved}
             </span>
-            <span className="text-xs sm:text-[13px] font-semibold text-slate-200 mt-1 leading-none">
+            <span className="text-[12px] sm:text-[13px] font-semibold text-slate-200 mt-1 leading-none">
               Easy
             </span>
           </div>
 
           {/* MEDIUM SQUIRCLE (Warm Amber / Gold) */}
-          <div className="group relative flex flex-col items-center justify-center w-[84px] h-[96px] sm:w-[94px] sm:h-[104px] rounded-[24px] sm:rounded-[26px] border-[1.5px] border-[#f59e0b] bg-gradient-to-b from-[#482e05] via-[#281902] to-[#150d01] p-2 text-center shadow-[0_0_35px_-2px_rgba(245,158,11,0.55),0_8px_24px_-4px_rgba(0,0,0,0.7),inset_0_1.5px_2px_rgba(255,255,255,0.35)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_45px_0px_rgba(245,158,11,0.7)]">
-            <Layers3D className="w-6 h-6 sm:w-7 sm:h-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-            <span className="font-black text-2xl sm:text-3xl text-white leading-none mt-1 sm:mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+          <div className="group relative flex flex-col items-center justify-center w-[82px] h-[88px] sm:w-[86px] sm:h-[92px] rounded-[22px] border-[1.5px] border-[#f59e0b]/50 bg-gradient-to-b from-[#422605] via-[#241402] to-[#120a01] p-2 text-center shadow-[0_0_24px_rgba(245,158,11,0.42),0_8px_20px_rgba(0,0,0,0.65),inset_0_1.5px_2px_rgba(255,255,255,0.35)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_35px_rgba(245,158,11,0.65)]">
+            <Layers3D className="w-[26px] h-[26px] sm:w-[28px] sm:h-[28px] shrink-0 transition-transform duration-200 group-hover:scale-110" />
+            <span className="font-extrabold text-[26px] sm:text-[28px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
               {loading ? "—" : mediumSolved}
             </span>
-            <span className="text-xs sm:text-[13px] font-semibold text-slate-200 mt-1 leading-none">
+            <span className="text-[12px] sm:text-[13px] font-semibold text-slate-200 mt-1 leading-none">
               Medium
             </span>
           </div>
 
           {/* HARD SQUIRCLE (Crimson / Ruby) */}
-          <div className="group relative flex flex-col items-center justify-center w-[84px] h-[96px] sm:w-[94px] sm:h-[104px] rounded-[24px] sm:rounded-[26px] border-[1.5px] border-[#f43f5e] bg-gradient-to-b from-[#460c17] via-[#26050c] to-[#140205] p-2 text-center shadow-[0_0_35px_-2px_rgba(244,63,94,0.55),0_8px_24px_-4px_rgba(0,0,0,0.7),inset_0_1.5px_2px_rgba(255,255,255,0.35)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_45px_0px_rgba(244,63,94,0.7)]">
-            <Flag3D className="w-6 h-6 sm:w-7 sm:h-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-            <span className="font-black text-2xl sm:text-3xl text-white leading-none mt-1 sm:mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+          <div className="group relative flex flex-col items-center justify-center w-[82px] h-[88px] sm:w-[86px] sm:h-[92px] rounded-[22px] border-[1.5px] border-[#f43f5e]/50 bg-gradient-to-b from-[#3d0d17] via-[#22050b] to-[#120205] p-2 text-center shadow-[0_0_24px_rgba(244,63,94,0.42),0_8px_20px_rgba(0,0,0,0.65),inset_0_1.5px_2px_rgba(255,255,255,0.35)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_35px_rgba(244,63,94,0.65)]">
+            <Flag3D className="w-[26px] h-[26px] sm:w-[28px] sm:h-[28px] shrink-0 transition-transform duration-200 group-hover:scale-110" />
+            <span className="font-extrabold text-[26px] sm:text-[28px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
               {loading ? "—" : hardSolved}
             </span>
-            <span className="text-xs sm:text-[13px] font-semibold text-slate-200 mt-1 leading-none">
+            <span className="text-[12px] sm:text-[13px] font-semibold text-slate-200 mt-1 leading-none">
               Hard
             </span>
           </div>
         </div>
 
         {/* Hairline Divider 2 */}
-        <div className="hidden xl:block w-[1.5px] h-20 bg-gradient-to-b from-transparent via-[#2a344d]/70 to-transparent shrink-0" />
+        <div className="hidden md:block w-[1px] h-12 bg-white/[0.08] shrink-0" />
 
         {/* ========================================================
             3. RIGHT: Global Ranking Pill (Trophy with Laurels)
            ======================================================== */}
-        <div className="w-full sm:w-auto shrink-0 flex items-center justify-center">
-          <div className="group relative flex items-center justify-between sm:justify-start gap-3 sm:gap-4 px-5 sm:px-6 py-3.5 h-[96px] sm:h-[104px] w-full sm:w-auto rounded-[28px] sm:rounded-[30px] border-[1.5px] border-[#a855f7] bg-gradient-to-b from-[#2a1650] via-[#160b2d] to-[#0c051a] shadow-[0_0_40px_-2px_rgba(168,85,247,0.55),0_8px_24px_-4px_rgba(0,0,0,0.7),inset_0_1.5px_2px_rgba(255,255,255,0.35)] transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_50px_0px_rgba(168,85,247,0.75)]">
+        <div className="w-full md:w-auto shrink-0 flex items-center justify-center">
+          <div className="group relative flex items-center justify-between sm:justify-start gap-3 sm:gap-3.5 px-4 sm:px-5 py-2.5 h-[88px] sm:h-[92px] w-full md:w-[260px] lg:w-[280px] rounded-[24px] border-[1.5px] border-[#a855f7]/50 bg-gradient-to-b from-[#2a1350] via-[#16092d] to-[#0d041c] shadow-[0_0_28px_rgba(168,85,247,0.42),0_8px_20px_rgba(0,0,0,0.65),inset_0_1.5px_2px_rgba(255,255,255,0.35)] transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(168,85,247,0.65)]">
             {/* 3D Golden Trophy with Laurel Wreaths */}
             <div className="shrink-0 flex items-center justify-center">
-              <TrophyLaurel3D className="w-13 h-12 sm:w-15 sm:h-13 transition-transform duration-200 group-hover:scale-105" />
+              <TrophyLaurel3D className="w-[54px] h-[46px] transition-transform duration-200 group-hover:scale-105" />
             </div>
 
             {/* Crisp Vertical Divider */}
-            <div className="w-[1.5px] h-10 sm:h-12 bg-white/20 shrink-0" />
+            <div className="w-[1px] h-9 bg-white/20 shrink-0" />
 
             {/* Ranking Number & Subtitle */}
             <div className="flex flex-col text-left pr-1 min-w-0">
-              <span className="font-black text-2xl sm:text-3xl text-white tracking-tight leading-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <span className="font-black text-[23px] sm:text-[25px] text-white tracking-tight leading-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                 {loading ? "—" : formattedRanking}
               </span>
-              <span className="text-xs sm:text-[13px] font-semibold text-slate-300 mt-1.5 leading-none tracking-wide">
+              <span className="text-[12px] font-semibold text-purple-200/80 mt-1 leading-none tracking-wide">
                 Global Ranking
               </span>
             </div>
