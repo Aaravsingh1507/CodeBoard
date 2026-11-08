@@ -14,9 +14,10 @@ export interface LeetcodeStatsBannerProps {
 
 /**
  * Pixel-Perfect Cyber-Glassmorphic LeetCode Stats Banner matching uploaded design:
- * - Left: Circular cyber HUD dial with glowing arcs, 3D laptop with </> screen, live total solved count.
+ * - Left: Circular cyber HUD dial with dynamic real-time progress arc, 3D laptop with </> screen, live total solved count.
  * - Center: 3 circuit wires with glowing junction nodes connecting directly to 3 glass pills (Easy, Medium, Hard).
- * - Right: Hexagonal glass shield with 3D realistic golden/lime trophy with laurel wreath, 3D bottom chevron bevel, and live real-time global ranking.
+ *   In each pill, the question count is vertically centered, with a real continuous progress line underneath the label.
+ * - Right: Hexagonal glass shield with an enlarged realistic 3D golden/lime trophy with laurel wreath, 3D bottom chevron bevel, and live real-time global ranking.
  */
 export function LeetcodeStatsBanner({
   totalSolved = 0,
@@ -38,11 +39,28 @@ export function LeetcodeStatsBanner({
       ? `#${ranking.toLocaleString()}`
       : "#—";
 
-  // Calculate dynamic lit progress blocks (out of 10) for each difficulty
-  const maxDifficulty = Math.max(safeEasy, safeMedium, safeHard, 1);
-  const litEasy = safeTotal > 0 ? Math.min(10, Math.max(0, Math.round((safeEasy / maxDifficulty) * 10))) : 0;
-  const litMedium = safeTotal > 0 ? Math.min(10, Math.max(0, Math.round((safeMedium / maxDifficulty) * 10))) : 0;
-  const litHard = safeTotal > 0 ? Math.min(10, Math.max(0, Math.round((safeHard / maxDifficulty) * 10))) : 0;
+  // =========================================================================
+  // REAL-TIME PROGRESS CALCULATIONS
+  // =========================================================================
+
+  // Circular Dial: 270° arc from (86, 329) to (284, 329), total length = 659.7px
+  const totalArcLength = 659.73;
+  // Adaptive milestone target (e.g. 50, 100, 150, 200...)
+  const totalGoal = Math.max(100, Math.ceil(safeTotal / 50) * 50);
+  const circlePct = safeTotal > 0 ? Math.min(1, safeTotal / totalGoal) : 0;
+  // Lit arc length for stroke-dasharray (minimum 18px if at least 1 problem is solved)
+  const litArcLength = safeTotal > 0 ? Math.max(18, Math.round(circlePct * totalArcLength)) : 0;
+  const topAccentOpacity = circlePct > 0.4 ? Math.min(1, (circlePct - 0.4) / 0.4) : 0.2;
+
+  // Real progress lines for Easy, Medium, Hard (bar track width = 145px)
+  const progressBarWidth = 145;
+  const easyTarget = Math.max(50, Math.ceil(safeEasy / 50) * 50);
+  const medTarget = Math.max(50, Math.ceil(safeMedium / 50) * 50);
+  const hardTarget = Math.max(20, Math.ceil(safeHard / 20) * 20);
+
+  const easyLineWidth = safeEasy > 0 ? Math.max(10, Math.min(progressBarWidth, Math.round((safeEasy / easyTarget) * progressBarWidth))) : 0;
+  const medLineWidth = safeMedium > 0 ? Math.max(10, Math.min(progressBarWidth, Math.round((safeMedium / medTarget) * progressBarWidth))) : 0;
+  const hardLineWidth = safeHard > 0 ? Math.max(10, Math.min(progressBarWidth, Math.round((safeHard / hardTarget) * progressBarWidth))) : 0;
 
   return (
     <div className={`relative w-full max-w-[1040px] mx-auto select-none overflow-visible ${className}`}>
@@ -50,7 +68,7 @@ export function LeetcodeStatsBanner({
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-80 h-40 bg-emerald-500/10 blur-3xl rounded-full pointer-events-none" />
       <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-80 h-40 bg-lime-500/10 blur-3xl rounded-full pointer-events-none" />
 
-      {/* Unified Proportional SVG Canvas matching media_1794123896316_7f3aaa20.jpg exactly */}
+      {/* Unified Proportional SVG Canvas */}
       <svg
         viewBox="0 0 1024 450"
         className="w-full h-auto overflow-visible"
@@ -82,10 +100,10 @@ export function LeetcodeStatsBanner({
             <stop offset="100%" stopColor="#02140c" stopOpacity="0.95" />
           </linearGradient>
 
-          <linearGradient id="litSegmentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#e3f610" />
-            <stop offset="45%" stopColor="#4ade80" />
-            <stop offset="100%" stopColor="#22c55e" />
+          <linearGradient id="litSegmentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22c55e" />
+            <stop offset="50%" stopColor="#4ade80" />
+            <stop offset="100%" stopColor="#e3f610" />
           </linearGradient>
 
           <linearGradient id="shieldGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -129,7 +147,7 @@ export function LeetcodeStatsBanner({
             <feDropShadow dx="0" dy="0" stdDeviation="4.5" floodColor="#bef264" floodOpacity="1" />
           </filter>
           <filter id="segmentGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#4ade80" floodOpacity="0.95" />
+            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#4ade80" floodOpacity="0.95" />
           </filter>
           <filter id="bevelGlow" x="-30%" y="-30%" width="160%" height="160%">
             <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#bef264" floodOpacity="0.95" />
@@ -140,32 +158,43 @@ export function LeetcodeStatsBanner({
         </defs>
 
         {/* ========================================================
-            1. LEFT: CYBER DIAL (Total Solved)
+            1. LEFT: CYBER DIAL (Total Solved with Real Progress Arc)
            ======================================================== */}
         <g id="cyber-dial">
           {/* Groove Ring */}
           <circle cx="185" cy="230" r="142" stroke="url(#dialGrooveGrad)" strokeWidth="15" fill="none" />
           <circle cx="185" cy="230" r="150" stroke="rgba(74, 222, 128, 0.35)" strokeWidth="1.6" fill="none" />
 
-          {/* Active Neon Arc (Left side from ~5:15 to ~12:15) */}
+          {/* Full Circular Track Arc Background (270° from 7:30 to 4:30) */}
           <path
-            d="M 235 364 A 140 140 0 1 1 209 92"
+            d="M 86 329 A 140 140 0 1 1 284 329"
+            stroke="rgba(14, 61, 43, 0.55)"
+            strokeWidth="14"
+            strokeLinecap="round"
+            fill="none"
+          />
+
+          {/* Real Dynamic Neon Progress Arc */}
+          <path
+            d="M 86 329 A 140 140 0 1 1 284 329"
             stroke="url(#dialNeonGrad)"
             strokeWidth="14"
             strokeLinecap="round"
+            strokeDasharray={`${litArcLength} ${totalArcLength}`}
             fill="none"
             filter="url(#dialArcGlow)"
           />
           <path
-            d="M 235 364 A 140 140 0 1 1 209 92"
+            d="M 86 329 A 140 140 0 1 1 284 329"
             stroke="#ffffff"
             strokeWidth="2.5"
             strokeLinecap="round"
+            strokeDasharray={`${litArcLength} ${totalArcLength}`}
             fill="none"
             opacity="0.65"
           />
 
-          {/* Top Neon Accent Arc */}
+          {/* Top Neon Accent Arc (Illuminates brighter with progress) */}
           <path
             d="M 125 104 A 140 140 0 0 1 245 104"
             stroke="#e3f610"
@@ -173,6 +202,7 @@ export function LeetcodeStatsBanner({
             strokeLinecap="round"
             fill="none"
             filter="url(#dialPeakGlow)"
+            opacity={topAccentOpacity}
           />
 
           {/* Inner Glass Core Disk */}
@@ -273,8 +303,10 @@ export function LeetcodeStatsBanner({
 
         {/* ========================================================
             3. MIDDLE: 3 DIFFICULTY PILLS (Easy, Medium, Hard)
+            Number vertically centered; real progress line underneath.
            ======================================================== */}
-        {/* PILL 1: EASY */}
+
+        {/* PILL 1: EASY (Center Y = 118) */}
         <g id="pill-easy">
           <rect x="380" y="65" width="325" height="106" rx="38" fill="url(#pillGlassGrad)" stroke="rgba(74, 222, 128, 0.75)" strokeWidth="1.8" />
           <path d="M 400 67 Q 542 66, 685 67" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
@@ -289,33 +321,36 @@ export function LeetcodeStatsBanner({
             <path d="M 18 3 L 7 16 H 15.5 L 13.5 28" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.85" />
           </g>
 
-          {/* Label & Real-Time Count */}
-          <text x="466" y="104" fill="#ffffff" fontFamily="Inter, sans-serif" fontSize="20" fontWeight="700">Easy</text>
-          <text x="675" y="104" textAnchor="end" fill="#ffffff" fontFamily="Inter, sans-serif" fontSize="36" fontWeight="900">
+          {/* Label */}
+          <text x="466" y="106" fill="#ffffff" fontFamily="Inter, sans-serif" fontSize="20" fontWeight="700">Easy</text>
+
+          {/* Real Continuous Progress Line */}
+          <g transform="translate(466, 118)">
+            {/* Background Track */}
+            <rect x="0" y="0" width={progressBarWidth} height="7" rx="3.5" fill="#0d2e20" fillOpacity="0.85" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" />
+            {/* Real Illuminated Progress Line */}
+            {easyLineWidth > 0 && (
+              <rect x="0" y="0" width={easyLineWidth} height="7" rx="3.5" fill="url(#litSegmentGrad)" filter="url(#segmentGlow)" />
+            )}
+          </g>
+
+          {/* Real-Time Solved Count (Vertically Centered in the Pill) */}
+          <text
+            x="672"
+            y="118"
+            textAnchor="end"
+            dominantBaseline="central"
+            fill="#ffffff"
+            fontFamily="Inter, sans-serif"
+            fontSize="36"
+            fontWeight="900"
+            filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))"
+          >
             {loading ? "—" : safeEasy}
           </text>
-
-          {/* 10 Segmented Progress Blocks */}
-          <g transform="translate(466, 116)">
-            {Array.from({ length: 10 }).map((_, idx) => (
-              <rect
-                key={idx}
-                x={idx * 14}
-                y={0}
-                width={9}
-                height={12}
-                rx={2.5}
-                fill={idx < litEasy ? "url(#litSegmentGrad)" : "#0d2e20"}
-                fillOpacity={idx < litEasy ? 1 : 0.75}
-                stroke={idx < litEasy ? "none" : "rgba(255,255,255,0.06)"}
-                strokeWidth={idx < litEasy ? 0 : 0.8}
-                filter={idx < litEasy ? "url(#segmentGlow)" : undefined}
-              />
-            ))}
-          </g>
         </g>
 
-        {/* PILL 2: MEDIUM */}
+        {/* PILL 2: MEDIUM (Center Y = 230) */}
         <g id="pill-medium">
           <rect x="380" y="177" width="325" height="106" rx="38" fill="url(#pillGlassGrad)" stroke="rgba(74, 222, 128, 0.75)" strokeWidth="1.8" />
           <path d="M 400 179 Q 542 178, 685 179" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
@@ -333,33 +368,36 @@ export function LeetcodeStatsBanner({
             <path d="M 5 8 L 15 12 L 25 8 V 10 L 15 14 L 5 10 Z" fill="#65a30d" />
           </g>
 
-          {/* Label & Real-Time Count */}
-          <text x="466" y="216" fill="#ffffff" fontFamily="Inter, sans-serif" fontSize="20" fontWeight="700">Medium</text>
-          <text x="675" y="216" textAnchor="end" fill="#ffffff" fontFamily="Inter, sans-serif" fontSize="36" fontWeight="900">
+          {/* Label */}
+          <text x="466" y="218" fill="#ffffff" fontFamily="Inter, sans-serif" fontSize="20" fontWeight="700">Medium</text>
+
+          {/* Real Continuous Progress Line */}
+          <g transform="translate(466, 230)">
+            {/* Background Track */}
+            <rect x="0" y="0" width={progressBarWidth} height="7" rx="3.5" fill="#0d2e20" fillOpacity="0.85" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" />
+            {/* Real Illuminated Progress Line */}
+            {medLineWidth > 0 && (
+              <rect x="0" y="0" width={medLineWidth} height="7" rx="3.5" fill="url(#litSegmentGrad)" filter="url(#segmentGlow)" />
+            )}
+          </g>
+
+          {/* Real-Time Solved Count (Vertically Centered in the Pill) */}
+          <text
+            x="672"
+            y="230"
+            textAnchor="end"
+            dominantBaseline="central"
+            fill="#ffffff"
+            fontFamily="Inter, sans-serif"
+            fontSize="36"
+            fontWeight="900"
+            filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))"
+          >
             {loading ? "—" : safeMedium}
           </text>
-
-          {/* 10 Segmented Progress Blocks */}
-          <g transform="translate(466, 228)">
-            {Array.from({ length: 10 }).map((_, idx) => (
-              <rect
-                key={idx}
-                x={idx * 14}
-                y={0}
-                width={9}
-                height={12}
-                rx={2.5}
-                fill={idx < litMedium ? "url(#litSegmentGrad)" : "#0d2e20"}
-                fillOpacity={idx < litMedium ? 1 : 0.75}
-                stroke={idx < litMedium ? "none" : "rgba(255,255,255,0.06)"}
-                strokeWidth={idx < litMedium ? 0 : 0.8}
-                filter={idx < litMedium ? "url(#segmentGlow)" : undefined}
-              />
-            ))}
-          </g>
         </g>
 
-        {/* PILL 3: HARD */}
+        {/* PILL 3: HARD (Center Y = 342) */}
         <g id="pill-hard">
           <rect x="380" y="289" width="325" height="106" rx="38" fill="url(#pillGlassGrad)" stroke="rgba(74, 222, 128, 0.75)" strokeWidth="1.8" />
           <path d="M 400 291 Q 542 290, 685 291" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
@@ -375,34 +413,37 @@ export function LeetcodeStatsBanner({
             <path d="M 8.4 5 Q 16 9 24 12" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.85" />
           </g>
 
-          {/* Label & Real-Time Count */}
-          <text x="466" y="328" fill="#ffffff" fontFamily="Inter, sans-serif" fontSize="20" fontWeight="700">Hard</text>
-          <text x="675" y="328" textAnchor="end" fill="#ffffff" fontFamily="Inter, sans-serif" fontSize="36" fontWeight="900">
+          {/* Label */}
+          <text x="466" y="330" fill="#ffffff" fontFamily="Inter, sans-serif" fontSize="20" fontWeight="700">Hard</text>
+
+          {/* Real Continuous Progress Line */}
+          <g transform="translate(466, 342)">
+            {/* Background Track */}
+            <rect x="0" y="0" width={progressBarWidth} height="7" rx="3.5" fill="#0d2e20" fillOpacity="0.85" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" />
+            {/* Real Illuminated Progress Line */}
+            {hardLineWidth > 0 && (
+              <rect x="0" y="0" width={hardLineWidth} height="7" rx="3.5" fill="url(#litSegmentGrad)" filter="url(#segmentGlow)" />
+            )}
+          </g>
+
+          {/* Real-Time Solved Count (Vertically Centered in the Pill) */}
+          <text
+            x="672"
+            y="342"
+            textAnchor="end"
+            dominantBaseline="central"
+            fill="#ffffff"
+            fontFamily="Inter, sans-serif"
+            fontSize="36"
+            fontWeight="900"
+            filter="drop-shadow(0 2px 4px rgba(0,0,0,0.8))"
+          >
             {loading ? "—" : safeHard}
           </text>
-
-          {/* 10 Segmented Progress Blocks */}
-          <g transform="translate(466, 340)">
-            {Array.from({ length: 10 }).map((_, idx) => (
-              <rect
-                key={idx}
-                x={idx * 14}
-                y={0}
-                width={9}
-                height={12}
-                rx={2.5}
-                fill={idx < litHard ? "url(#litSegmentGrad)" : "#0d2e20"}
-                fillOpacity={idx < litHard ? 1 : 0.75}
-                stroke={idx < litHard ? "none" : "rgba(255,255,255,0.06)"}
-                strokeWidth={idx < litHard ? 0 : 0.8}
-                filter={idx < litHard ? "url(#segmentGlow)" : undefined}
-              />
-            ))}
-          </g>
         </g>
 
         {/* ========================================================
-            4. RIGHT: GLOBAL RANKING SHIELD (With 3D Bottom Chevron Bevel)
+            4. RIGHT: GLOBAL RANKING SHIELD (With Enlarged Realistic Trophy)
            ======================================================== */}
         <g id="shield">
           <path
@@ -425,8 +466,8 @@ export function LeetcodeStatsBanner({
           />
           <line x1="860" y1="398" x2="860" y2="413" stroke="#ffffff" strokeWidth="2" opacity="0.85" />
 
-          {/* Realistic 3D Golden-Lime Trophy with full Laurel Wreath */}
-          <g id="trophy" transform="translate(805, 85)">
+          {/* ENLARGED 3D Golden-Lime Trophy with Full Laurel Wreath (Scaled up ~1.85x) */}
+          <g id="trophy-enlarged" transform="translate(758, 80) scale(1.85)">
             {/* Left Laurel Branch */}
             <path d="M 23 22 C 15 33 15 46 26 55" stroke="url(#laurelLeafGrad)" strokeWidth="2.5" strokeLinecap="round" fill="none" />
             <g fill="url(#laurelLeafGrad)">
@@ -472,11 +513,11 @@ export function LeetcodeStatsBanner({
           {/* Real-Time Global Ranking Number */}
           <text
             x="860"
-            y="275"
+            y="262"
             textAnchor="middle"
             fill="#ffffff"
             fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
-            fontSize="33"
+            fontSize="34"
             fontWeight="900"
             letterSpacing="-1"
             filter="drop-shadow(0 2px 6px rgba(0,0,0,0.85))"
@@ -487,7 +528,7 @@ export function LeetcodeStatsBanner({
           {/* Subtitle */}
           <text
             x="860"
-            y="310"
+            y="296"
             textAnchor="middle"
             fill="#d1fae5"
             fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
