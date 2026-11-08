@@ -37,6 +37,113 @@ import { useFetch } from "@/lib/use-fetch";
 import type { GithubStats } from "@/lib/github";
 import type { LeetcodeStats } from "@/lib/leetcode";
 
+const PREVIEW_USER = {
+  name: "Aarav Singh",
+  githubUsername: "Aaravsingh1507",
+  image: null,
+};
+
+const PREVIEW_READINESS = {
+  score: 12,
+  breakdown: [
+    { label: "Consistency", score: 0, max: 25, detail: "0-day streak" },
+    { label: "Problem-solving", score: 0, max: 25, detail: "No LeetCode account linked" },
+    { label: "Job-search momentum", score: 0, max: 25, detail: "0 applications" },
+    { label: "Goal follow-through", score: 12, max: 25, detail: "Goals active" },
+  ],
+  focusArea: "Consistency",
+  nudges: ["Your streak reset — your best was 1 days. Today's a good day to restart it."],
+};
+
+const PREVIEW_STREAK = {
+  currentStreak: 1,
+  longestStreak: 2,
+  heatmap: Array.from({ length: 365 }, (_, i) => {
+    const d = new Date(Date.now() - (364 - i) * 86400000);
+    const count =
+      i === 364 ? 2 :
+      i === 363 ? 1 :
+      i === 345 ? 3 :
+      i === 340 ? 2 :
+      i === 310 ? 4 :
+      i === 280 ? 1 :
+      i === 240 ? 3 :
+      i === 200 ? 2 :
+      i === 150 ? 4 :
+      i === 110 ? 1 :
+      i === 60 ? 3 : 0;
+    return {
+      date: d.toISOString().split("T")[0],
+      count,
+    };
+  }),
+};
+
+const PREVIEW_GITHUB: GithubStats = {
+  login: "Aaravsingh1507",
+  avatarUrl: "",
+  publicRepos: 4,
+  followers: 7,
+  following: 10,
+  totalStars: 4,
+  totalForks: 0,
+  totalWatchers: 0,
+  totalPRs: 0,
+  totalIssues: 0,
+  totalContributionsLastYear: 34,
+  contributionCalendar: [
+    { date: "2026-07-06", count: 3 },
+    { date: "2026-07-20", count: 1 },
+    { date: "2026-08-03", count: 1 },
+    { date: "2026-08-17", count: 2 },
+    { date: "2026-08-31", count: 3 },
+    { date: "2026-09-14", count: 3 },
+  ],
+  topLanguages: [
+    { name: "TypeScript", bytes: 498000 },
+    { name: "CSS", bytes: 136000 },
+    { name: "JavaScript", bytes: 10000 },
+    { name: "HTML", bytes: 4000 },
+  ],
+  recentActivity: [],
+  totalClones: 0,
+  totalViews: 0,
+  topReferrers: [],
+};
+
+const DEFAULT_LEETCODE: LeetcodeStats = {
+  username: "",
+  ranking: null,
+  totalSolved: 0,
+  easySolved: 0,
+  mediumSolved: 0,
+  hardSolved: 0,
+  acceptanceRate: "0.0%",
+  recentSubmissions: [],
+  topicBreakdown: [],
+};
+
+const PREVIEW_GOALS = [
+  {
+    id: "goal-1",
+    label: "Automate my full work by using agentic AI, learning How to build agents",
+    current: 0,
+    target: 1,
+    deadline: "2026-10-20",
+    status: "in_progress",
+    type: "custom",
+  },
+  {
+    id: "goal-2",
+    label: "Setup a automatic income source using ai agents for youtube",
+    current: 0,
+    target: 2,
+    deadline: "2026-10-30",
+    status: "in_progress",
+    type: "custom",
+  },
+];
+
 export default function PreviewPage() {
   const [activeTab, setActiveTab] = useState<
     "overview" | "github" | "leetcode" | "matchscope" | "settings" | "resume" | "goals" | "circles" | "reviews" | "applications"
@@ -54,112 +161,12 @@ export default function PreviewPage() {
 
   const { data: liveLeetcode, loading: leetcodeLoading } = useFetch<LeetcodeStats>("/api/leetcode/stats");
 
-  const previewUser = {
-    name: "Aarav Singh",
-    githubUsername: "Aaravsingh1507",
-    image: null,
-  };
-
-  const previewReadiness = {
-    score: 12,
-    breakdown: [
-      { label: "Consistency", score: 0, max: 25, detail: "0-day streak" },
-      { label: "Problem-solving", score: 0, max: 25, detail: "No LeetCode account linked" },
-      { label: "Job-search momentum", score: 0, max: 25, detail: "0 applications" },
-      { label: "Goal follow-through", score: 12, max: 25, detail: "Goals active" },
-    ],
-    focusArea: "Consistency",
-    nudges: ["Your streak reset — your best was 1 days. Today's a good day to restart it."],
-  };
-
-  const previewStreak = {
-    currentStreak: 1,
-    longestStreak: 2,
-    heatmap: Array.from({ length: 365 }, (_, i) => {
-      const d = new Date(Date.now() - (364 - i) * 86400000);
-      const count =
-        i === 364 ? 2 :
-        i === 363 ? 1 :
-        i === 345 ? 3 :
-        i === 340 ? 2 :
-        i === 310 ? 4 :
-        i === 280 ? 1 :
-        i === 240 ? 3 :
-        i === 200 ? 2 :
-        i === 150 ? 4 :
-        i === 110 ? 1 :
-        i === 60 ? 3 : 0;
-      return {
-        date: d.toISOString().split("T")[0],
-        count,
-      };
-    }),
-  };
-
-  const previewGithub: GithubStats = {
-    login: "Aaravsingh1507",
-    avatarUrl: "",
-    publicRepos: 4,
-    followers: 7,
-    following: 10,
-    totalStars: 4,
-    totalForks: 0,
-    totalWatchers: 0,
-    totalPRs: 0,
-    totalIssues: 0,
-    totalContributionsLastYear: 34,
-    contributionCalendar: [
-      { date: "2026-07-06", count: 3 },
-      { date: "2026-07-20", count: 1 },
-      { date: "2026-08-03", count: 1 },
-      { date: "2026-08-17", count: 2 },
-      { date: "2026-08-31", count: 3 },
-      { date: "2026-09-14", count: 3 },
-    ],
-    topLanguages: [
-      { name: "TypeScript", bytes: 498000 },
-      { name: "CSS", bytes: 136000 },
-      { name: "JavaScript", bytes: 10000 },
-      { name: "HTML", bytes: 4000 },
-    ],
-    recentActivity: [],
-    totalClones: 0,
-    totalViews: 0,
-    topReferrers: [],
-  };
-
-  const previewLeetcode: LeetcodeStats = liveLeetcode ?? {
-    username: "",
-    ranking: null,
-    totalSolved: 0,
-    easySolved: 0,
-    mediumSolved: 0,
-    hardSolved: 0,
-    acceptanceRate: "0.0%",
-    recentSubmissions: [],
-    topicBreakdown: [],
-  };
-
-  const previewGoals = [
-    {
-      id: "goal-1",
-      label: "Automate my full work by using agentic AI, learning How to build agents",
-      current: 0,
-      target: 1,
-      deadline: "2026-10-20",
-      status: "in_progress",
-      type: "custom",
-    },
-    {
-      id: "goal-2",
-      label: "Setup a automatic income source using ai agents for youtube",
-      current: 0,
-      target: 2,
-      deadline: "2026-10-30",
-      status: "in_progress",
-      type: "custom",
-    },
-  ];
+  const previewUser = PREVIEW_USER;
+  const previewReadiness = PREVIEW_READINESS;
+  const previewStreak = PREVIEW_STREAK;
+  const previewGithub = PREVIEW_GITHUB;
+  const previewLeetcode: LeetcodeStats = liveLeetcode ?? DEFAULT_LEETCODE;
+  const previewGoals = PREVIEW_GOALS;
 
   const [previewReviews, setPreviewReviews] = useState([
     {

@@ -42,6 +42,7 @@ async function githubGraphQL(token: string, query: string, variables: Record<str
     body: JSON.stringify({ query, variables }),
     // never cache — the caller decides its own cache window
     cache: "no-store",
+    signal: AbortSignal.timeout(6000),
   });
   if (!res.ok) throw new Error(`GitHub GraphQL error: ${res.status}`);
   const json = await res.json();
@@ -56,6 +57,7 @@ async function githubRest(token: string, path: string) {
       Accept: "application/vnd.github+json",
     },
     cache: "no-store",
+    signal: AbortSignal.timeout(6000),
   });
   if (!res.ok) throw new Error(`GitHub REST error: ${res.status} on ${path}`);
   return res.json();
@@ -63,16 +65,21 @@ async function githubRest(token: string, path: string) {
 
 /** Like githubRest but returns null on 403/404 instead of throwing. */
 async function githubRestSafe(token: string, path: string) {
-  const res = await fetch(`${GITHUB_REST}${path}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-    },
-    cache: "no-store",
-  });
-  if (res.status === 403 || res.status === 404) return null;
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch(`${GITHUB_REST}${path}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(4000),
+    });
+    if (res.status === 403 || res.status === 404) return null;
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 const CONTRIBUTIONS_QUERY = `
@@ -279,8 +286,8 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
   }
 
   // Traffic data — only available for repos with push access.
-  // Fetch for top 10 repos (by stars) in parallel, skip 403s gracefully.
-  const trafficRepos = repoNames.slice(0, 10);
+  // Fetch for top 3 repos (by stars) in parallel, skip 403s gracefully.
+  const trafficRepos = repoNames.slice(0, 3);
   const [cloneResults, viewResults, referrerResults] = await Promise.all([
     Promise.all(trafficRepos.map((r) => githubRestSafe(token, `/repos/${r}/traffic/clones`))),
     Promise.all(trafficRepos.map((r) => githubRestSafe(token, `/repos/${r}/traffic/views`))),

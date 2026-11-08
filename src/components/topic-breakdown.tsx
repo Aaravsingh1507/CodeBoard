@@ -24,6 +24,12 @@ const DEFAULT_12_TOPIC_NAMES = [
   "Two Pointers",
 ];
 
+const DEFAULT_TOPIC_ITEMS: TopicItem[] = DEFAULT_12_TOPIC_NAMES.map((name) => ({
+  tag: name,
+  solved: 0,
+  level: "fundamental",
+}));
+
 // Helper: polar to cartesian coordinate conversion
 function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
   const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
@@ -244,10 +250,10 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
   // Top 12 columns for the bar chart
   const top12: TopicItem[] = useMemo(() => {
-    return hasRealData
-      ? sorted.slice(0, 12)
-      : DEFAULT_12_TOPIC_NAMES.map((name) => ({ tag: name, solved: 0, level: "fundamental" }));
+    return hasRealData ? sorted.slice(0, 12) : DEFAULT_TOPIC_ITEMS;
   }, [hasRealData, sorted]);
+
+  const top12Solved = useMemo(() => top12.map((t) => t.solved), [top12]);
 
   // Calculate real metrics across all topics
   const { fundSolved, interSolved, advSolved, totalProblems, fundPct, interPct, advPct } = useMemo(() => {
@@ -275,13 +281,13 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
 
   // Number counting states for central dial and 12 bar columns - defaults to REAL VALUES so never stuck at 0!
   const [displayTotal, setDisplayTotal] = useState(totalProblems);
-  const [displayCounts, setDisplayCounts] = useState<number[]>(() => top12.map((t) => t.solved));
+  const [displayCounts, setDisplayCounts] = useState<number[]>(top12Solved);
 
   // Sync state immediately if totalProblems or topics change
   useEffect(() => {
     setDisplayTotal(totalProblems);
-    setDisplayCounts(top12.map((t) => t.solved));
-  }, [totalProblems, top12]);
+    setDisplayCounts(top12Solved);
+  }, [totalProblems, top12Solved]);
 
   // IntersectionObserver: Triggers animations once when entering viewport
   useEffect(() => {
@@ -403,7 +409,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
     >
       <svg
         viewBox="0 0 1024 490"
-        className="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
+        className="w-full h-auto"
         style={{ fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
       >
         <defs>
@@ -690,11 +696,20 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           <filter id="tcGlowAmber" x="-30%" y="-30%" width="160%" height="160%">
             <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#fbbf24" floodOpacity="0.75" />
           </filter>
+          {/* Ambient Lighting Gradients (Hardware Accelerated) */}
+          <radialGradient id="tcAmbientViolet" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="tcAmbientTeal" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#2dd4bf" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
         {/* Ambient Radial Lighting matching CodeBoard App Theme */}
-        <circle cx="120" cy="80" r="140" fill="#8b5cf6" opacity="0.04" filter="blur(40px)" />
-        <circle cx="860" cy="420" r="150" fill="#2dd4bf" opacity="0.04" filter="blur(50px)" />
+        <circle cx="120" cy="80" r="140" fill="url(#tcAmbientViolet)" />
+        <circle cx="860" cy="420" r="150" fill="url(#tcAmbientTeal)" />
 
         {/* =====================================================
             1. HEADER BAR

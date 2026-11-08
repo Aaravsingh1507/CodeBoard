@@ -167,16 +167,16 @@ export function LeetcodeStatsBanner({
           <filter id="dialPeakGlow" x="-30%" y="-30%" width="160%" height="160%">
             <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#c084fc" floodOpacity="0.95" />
           </filter>
-          <filter id="wireGlow" x="0" y="0" width="1024" height="450" filterUnits="userSpaceOnUse">
+          <filter id="wireGlow" x="150" y="100" width="550" height="280" filterUnits="userSpaceOnUse">
             <feDropShadow dx="0" dy="0" stdDeviation="3.2" floodColor="#818cf8" floodOpacity="0.9" />
           </filter>
-          <filter id="nodeHaloEasy" x="0" y="0" width="1024" height="450" filterUnits="userSpaceOnUse">
+          <filter id="nodeHaloEasy" x="-100%" y="-100%" width="300%" height="300%">
             <feDropShadow dx="0" dy="0" stdDeviation="5.5" floodColor="#2dd4bf" floodOpacity="1" />
           </filter>
-          <filter id="nodeHaloMed" x="0" y="0" width="1024" height="450" filterUnits="userSpaceOnUse">
+          <filter id="nodeHaloMed" x="-100%" y="-100%" width="300%" height="300%">
             <feDropShadow dx="0" dy="0" stdDeviation="5.5" floodColor="#c084fc" floodOpacity="1" />
           </filter>
-          <filter id="nodeHaloHard" x="0" y="0" width="1024" height="450" filterUnits="userSpaceOnUse">
+          <filter id="nodeHaloHard" x="-100%" y="-100%" width="300%" height="300%">
             <feDropShadow dx="0" dy="0" stdDeviation="5.5" floodColor="#f43f5e" floodOpacity="1" />
           </filter>
           <filter id="segmentGlow" x="-30%" y="-30%" width="160%" height="160%">

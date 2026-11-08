@@ -64,6 +64,7 @@ export async function fetchLeetcodeStats(username: string): Promise<LeetcodeStat
       },
       body: JSON.stringify({ query: PROFILE_QUERY, variables: { username } }),
       cache: "no-store",
+      signal: AbortSignal.timeout(6000),
     });
   } catch {
     throw new LeetcodeFetchError("Could not reach LeetCode — network error.");

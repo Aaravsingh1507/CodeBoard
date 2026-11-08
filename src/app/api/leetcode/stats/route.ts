@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
-import { fetchLeetcodeStats, LEETCODE_CACHE_HOURS } from "@/lib/leetcode";
+import { fetchLeetcodeStats, LEETCODE_CACHE_HOURS, type LeetcodeStats } from "@/lib/leetcode";
+
+// In-memory LRU cache to prevent hammering LeetCode on repeated requests
+const memoryCache = new Map<string, { stats: LeetcodeStats; timestamp: number }>();
+const MEMORY_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -52,8 +56,19 @@ export async function GET(req: Request) {
     }
   }
 
+  // Check in-memory cache for fast response on public/preview queries
+  const memCached = memoryCache.get(username.toLowerCase());
+  if (!force && memCached && Date.now() - memCached.timestamp < MEMORY_CACHE_TTL) {
+    return NextResponse.json({
+      data: memCached.stats,
+      cached: true,
+      syncedAt: new Date(memCached.timestamp),
+    });
+  }
+
   try {
     const stats = await fetchLeetcodeStats(username);
+    memoryCache.set(username.toLowerCase(), { stats, timestamp: Date.now() });
 
     // Save to user cache if authenticated for this account
     if (isUserOwnStats && user) {

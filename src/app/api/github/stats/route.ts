@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     );
   }
 
-  const GITHUB_CACHE_MS = 5 * 60 * 1000; // 5 minutes cache TTL
+  const GITHUB_CACHE_MS = 15 * 60 * 1000; // 15 minutes cache TTL
   const isFresh =
     !force &&
     user.githubStatsCache &&

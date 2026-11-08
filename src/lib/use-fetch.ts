@@ -42,6 +42,8 @@ export function useFetch<T>(url: string): UseFetchResult<T> {
           }
         })
         .catch((err) => {
+          // Cache error state with recent timestamp so component re-renders do not spin in an infinite fetch loop
+          cache.set(url, { data: null, warning: null, timestamp: Date.now() });
           if (isMounted.current) {
             setError(err instanceof Error ? err.message : "Something went wrong.");
           }
