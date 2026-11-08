@@ -377,6 +377,10 @@ export default function PreviewPage() {
               loading={leetcodeLoading}
             />
 
+            {leetcodeLoading && !liveLeetcode && (
+              <div className="h-96 w-full animate-pulse rounded-[34px] bg-emerald-950/20 border border-emerald-500/20" />
+            )}
+
             {!liveLeetcode && !leetcodeLoading && (
               <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-center">
                 <p className="text-sm font-semibold text-amber-200">
