@@ -498,9 +498,16 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           Problem distribution across DSA topics
         </text>
 
-        {/* Legend Filter Pills (Top Right) */}
+        {/* Legend Filter Pills (Top Right with Staggered Entrance Animation) */}
         {/* Fundamental - Cyan */}
-        <g transform="translate(572, 26)">
+        <g
+          transform="translate(572, 26)"
+          style={{
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? "translateX(0)" : "translateX(12px)",
+            transition: "all 0.6s ease-out 0.1s",
+          }}
+        >
           <rect
             width="124"
             height="34"
@@ -517,7 +524,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         </g>
 
         {/* Intermediate - Violet */}
-        <g transform="translate(712, 26)">
+        <g
+          transform="translate(712, 26)"
+          style={{
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? "translateX(0)" : "translateX(12px)",
+            transition: "all 0.6s ease-out 0.2s",
+          }}
+        >
           <rect
             width="134"
             height="34"
@@ -534,7 +548,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         </g>
 
         {/* Advanced - Amber */}
-        <g transform="translate(862, 26)">
+        <g
+          transform="translate(862, 26)"
+          style={{
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? "translateX(0)" : "translateX(12px)",
+            transition: "all 0.6s ease-out 0.3s",
+          }}
+        >
           <rect
             width="114"
             height="34"
@@ -553,7 +574,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* =====================================================
             2. LEFT SUBCARD: 3D Glassmorphic Donut Gauge & Summary
            ===================================================== */}
-        <g transform="translate(32, 80)">
+        <g
+          transform="translate(32, 80)"
+          style={{
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? "translateY(0)" : "translateY(12px)",
+            transition: "opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+        >
           {/* Background Card */}
           <rect
             width="224"
@@ -725,45 +753,76 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             </text>
           </g>
 
-          {/* Breakdown Percentage Rows */}
+          {/* Breakdown Percentage Rows (Staggered Fade-In) */}
           {/* Row 1: Fundamental - Cyan */}
-          <circle cx="24" cy="214" r="4.5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
-          <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e2e8f0">
-            Fundamental
-          </text>
-          <text x="204" y="218" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-            {fundSolved}{" "}
-            <tspan fontWeight="500" fill="#2dd4bf" opacity="0.9">
-              ({fundPct.toFixed(1)}%)
-            </tspan>
-          </text>
+          <g
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateX(0)" : "translateX(-6px)",
+              transition: "all 0.5s ease-out 0.25s",
+            }}
+          >
+            <circle cx="24" cy="214" r="4.5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
+            <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e2e8f0">
+              Fundamental
+            </text>
+            <text x="204" y="218" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+              {fundSolved}{" "}
+              <tspan fontWeight="500" fill="#2dd4bf" opacity="0.9">
+                ({fundPct.toFixed(1)}%)
+              </tspan>
+            </text>
+          </g>
 
           {/* Row 2: Intermediate - Violet */}
-          <circle cx="24" cy="238" r="4.5" fill="#a855f7" filter="url(#tcGlowViolet)" />
-          <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e2e8f0">
-            Intermediate
-          </text>
-          <text x="204" y="242" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-            {interSolved}{" "}
-            <tspan fontWeight="500" fill="#c084fc" opacity="0.9">
-              ({interPct.toFixed(1)}%)
-            </tspan>
-          </text>
+          <g
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateX(0)" : "translateX(-6px)",
+              transition: "all 0.5s ease-out 0.35s",
+            }}
+          >
+            <circle cx="24" cy="238" r="4.5" fill="#a855f7" filter="url(#tcGlowViolet)" />
+            <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e2e8f0">
+              Intermediate
+            </text>
+            <text x="204" y="242" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+              {interSolved}{" "}
+              <tspan fontWeight="500" fill="#c084fc" opacity="0.9">
+                ({interPct.toFixed(1)}%)
+              </tspan>
+            </text>
+          </g>
 
           {/* Row 3: Advanced - Amber */}
-          <circle cx="24" cy="262" r="4.5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
-          <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e2e8f0">
-            Advanced
-          </text>
-          <text x="204" y="266" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-            {advSolved}{" "}
-            <tspan fontWeight="500" fill="#fbbf24" opacity="0.9">
-              ({advPct.toFixed(1)}%)
-            </tspan>
-          </text>
+          <g
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateX(0)" : "translateX(-6px)",
+              transition: "all 0.5s ease-out 0.45s",
+            }}
+          >
+            <circle cx="24" cy="262" r="4.5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
+            <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e2e8f0">
+              Advanced
+            </text>
+            <text x="204" y="266" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
+              {advSolved}{" "}
+              <tspan fontWeight="500" fill="#fbbf24" opacity="0.9">
+                ({advPct.toFixed(1)}%)
+              </tspan>
+            </text>
+          </g>
 
           {/* Bottom 3-Stat Glass Box */}
-          <g transform="translate(14, 296)">
+          <g
+            transform="translate(14, 296)"
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "translateY(0)" : "translateY(6px)",
+              transition: "all 0.6s ease-out 0.4s",
+            }}
+          >
             <rect
               width="196"
               height="64"
@@ -808,7 +867,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* =====================================================
             3. CENTER/RIGHT TOP: 12-Bar DSA 3D Glass Chart
            ===================================================== */}
-        <g transform="translate(272, 80)">
+        <g
+          transform="translate(272, 80)"
+          style={{
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? "translateY(0)" : "translateY(12px)",
+            transition: "opacity 0.7s ease-out 0.1s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s",
+          }}
+        >
           {/* Background Card */}
           <rect
             width="720"
@@ -878,7 +944,8 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   filter="drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
                   style={{
                     opacity: mounted ? 1 : 0,
-                    transition: `opacity 0.6s ease-out ${i * 45 + 150}ms`,
+                    transform: mounted ? "translateY(0)" : "translateY(6px)",
+                    transition: `opacity 0.6s ease-out ${i * 45 + 200}ms, transform 0.6s ease-out ${i * 45 + 200}ms`,
                   }}
                 >
                   {item.solved}
@@ -899,7 +966,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                     opacity="0.25"
                     filter="blur(4px)"
                     style={{
-                      transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                      transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
                     }}
                   />
                 )}
@@ -917,7 +984,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                       stroke="rgba(255, 255, 255, 0.35)"
                       strokeWidth="1"
                       style={{
-                        transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                        transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
                       }}
                     />
                     {/* Specular Curved Reflection at Top Cap of Bar */}
@@ -931,7 +998,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                         fill="#ffffff"
                         opacity="0.45"
                         style={{
-                          transition: `y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                          transition: `y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
                         }}
                       />
                     )}
@@ -945,7 +1012,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                         rx="1.2"
                         fill="url(#tcSpecularVertical)"
                         style={{
-                          transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                          transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
                         }}
                       />
                     )}
@@ -960,7 +1027,7 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                         fill="#000000"
                         opacity="0.35"
                         style={{
-                          transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45}ms`,
+                          transition: `height 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms, y 0.85s cubic-bezier(0.16, 1, 0.3, 1) ${i * 45 + 80}ms`,
                         }}
                       />
                     )}
@@ -986,6 +1053,12 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                   fill="url(#tcIconGlass)"
                   stroke="rgba(139, 92, 246, 0.45)"
                   strokeWidth="1.2"
+                  style={{
+                    opacity: mounted ? 1 : 0,
+                    transform: mounted ? "scale(1)" : "scale(0.85)",
+                    transformOrigin: `${colX}px 178px`,
+                    transition: `all 0.5s ease-out ${i * 45 + 120}ms`,
+                  }}
                 />
 
                 {/* Top Glass Shine Line on Icon Box */}
@@ -1034,7 +1107,14 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         {/* =====================================================
             4. BOTTOM LEFT: Top Covered Topics Badges
            ===================================================== */}
-        <g transform="translate(272, 350)">
+        <g
+          transform="translate(272, 350)"
+          style={{
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? "translateY(0)" : "translateY(12px)",
+            transition: "opacity 0.7s ease-out 0.2s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s",
+          }}
+        >
           {/* Background Card */}
           <rect
             width="348"
@@ -1058,9 +1138,17 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             </text>
           </g>
 
-          {/* 3 Topic Badges with 3D Trophy and Medals */}
+          {/* 3 Topic Badges with 3D Trophy and Medals (Staggered Pop-In Animation) */}
           {/* Badge 1: Golden Trophy (#1) */}
-          <g transform="translate(14, 44)">
+          <g
+            transform="translate(14, 44)"
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "scale(1)" : "scale(0.9)",
+              transformOrigin: "64px 70px",
+              transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s",
+            }}
+          >
             <rect
               width="100"
               height="52"
@@ -1093,7 +1181,15 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           </g>
 
           {/* Badge 2: Star Medal (#2) */}
-          <g transform="translate(122, 44)">
+          <g
+            transform="translate(122, 44)"
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "scale(1)" : "scale(0.9)",
+              transformOrigin: "174px 70px",
+              transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s",
+            }}
+          >
             <rect
               width="104"
               height="52"
@@ -1131,7 +1227,15 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
           </g>
 
           {/* Badge 3: Star Medal (#3) */}
-          <g transform="translate(234, 44)">
+          <g
+            transform="translate(234, 44)"
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? "scale(1)" : "scale(0.9)",
+              transformOrigin: "286px 70px",
+              transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s",
+            }}
+          >
             <rect
               width="104"
               height="52"
@@ -1170,9 +1274,16 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
         </g>
 
         {/* =====================================================
-            5. BOTTOM RIGHT: Coverage Insight (With Animated Rising Graphic)
+            5. BOTTOM RIGHT: Coverage Insight (Clean Proportional Spacing & Animated Graphic)
            ===================================================== */}
-        <g transform="translate(636, 350)">
+        <g
+          transform="translate(636, 350)"
+          style={{
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? "translateY(0)" : "translateY(12px)",
+            transition: "opacity 0.7s ease-out 0.25s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.25s",
+          }}
+        >
           {/* Background Card */}
           <rect
             width="356"
@@ -1195,17 +1306,28 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
             </text>
           </g>
 
-          {/* Dynamic Insight Prose based on actual percentages */}
-          <text x="18" y="46" fontSize="11.5" fontWeight="500" fill="#e2e8f0" opacity="0.95">
+          {/* Dynamic Insight Prose - Clean professional spacing below heading (y=52 instead of y=46) */}
+          <text
+            x="18"
+            y="52"
+            fontSize="11.5"
+            fontWeight="500"
+            fill="#e2e8f0"
+            opacity="0.95"
+            style={{
+              opacity: mounted ? 0.95 : 0,
+              transition: "opacity 0.8s ease-out 0.35s",
+            }}
+          >
             {totalProblems > 0 ? (
               <>
                 <tspan x="18" dy="0">
                   Most problems are Fundamental ({fundPct.toFixed(1)}%),
                 </tspan>
-                <tspan x="18" dy="16">
+                <tspan x="18" dy="16.5">
                   with a good mix of Intermediate ({interPct.toFixed(1)}%)
                 </tspan>
-                <tspan x="18" dy="16">
+                <tspan x="18" dy="16.5">
                   and Advanced ({advPct.toFixed(1)}%).
                 </tspan>
               </>
@@ -1214,10 +1336,10 @@ export function TopicBreakdown({ topics }: TopicBreakdownProps) {
                 <tspan x="18" dy="0">
                   No DSA problems solved yet.
                 </tspan>
-                <tspan x="18" dy="16">
+                <tspan x="18" dy="16.5">
                   Connect your LeetCode account in Settings
                 </tspan>
-                <tspan x="18" dy="16">
+                <tspan x="18" dy="16.5">
                   to track your real-time topic progress.
                 </tspan>
               </>
