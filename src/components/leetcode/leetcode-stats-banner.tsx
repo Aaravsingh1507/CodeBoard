@@ -3,24 +3,24 @@
 import React from "react";
 
 // =========================================================================
-// 3D ICONS - PIXEL-PERFECT ASSETS
+// 3D ICONS - PIXEL-PERFECT ASSETS MATCHING media_1794123896316_7f3aaa20.jpg
 // =========================================================================
 
 /**
- * 3D Open Laptop with </> code on screen matching reference design
+ * 3D Open Laptop with glowing </> code screen matching reference design
  */
-export function LaptopCode3D({ className = "w-8 h-6" }: { className?: string }) {
+export function LaptopCode3D({ className = "w-10 h-8" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <svg viewBox="0 0 56 42" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <defs>
         <linearGradient id="laptopLidGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3d4966" />
+          <stop offset="0%" stopColor="#475569" />
           <stop offset="25%" stopColor="#252f44" />
-          <stop offset="100%" stopColor="#141a27" />
+          <stop offset="100%" stopColor="#0f172a" />
         </linearGradient>
         <linearGradient id="laptopScreenGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#0b101c" />
-          <stop offset="100%" stopColor="#05080e" />
+          <stop offset="0%" stopColor="#020617" />
+          <stop offset="100%" stopColor="#000000" />
         </linearGradient>
         <linearGradient id="laptopBaseGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#cbd5e1" />
@@ -28,89 +28,109 @@ export function LaptopCode3D({ className = "w-8 h-6" }: { className?: string }) 
           <stop offset="100%" stopColor="#475569" />
         </linearGradient>
         <filter id="laptopDropShadow" x="-20%" y="-10%" width="140%" height="150%">
-          <feDropShadow dx="0" dy="3" stdDeviation="2" floodColor="#000000" floodOpacity="0.65" />
+          <feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#000000" floodOpacity="0.75" />
+        </filter>
+        <filter id="codeGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="0" stdDeviation="1.5" floodColor="#4ade80" floodOpacity="0.95" />
         </filter>
       </defs>
 
-      {/* Ambient shadow beneath laptop */}
-      <ellipse cx="27" cy="37.5" rx="23" ry="2.5" fill="#000000" opacity="0.6" filter="blur(1.5px)" />
+      {/* Ambient shadow beneath laptop base */}
+      <ellipse cx="28" cy="39" rx="25" ry="3" fill="#000000" opacity="0.7" filter="blur(1.5px)" />
 
-      {/* Screen Lid (3D Bevel Box) */}
+      {/* Screen Lid (3D Beveled Box) */}
       <g filter="url(#laptopDropShadow)">
-        {/* Outer Lid Frame */}
         <rect
-          x="8.5"
+          x="9"
           y="4"
-          width="37"
-          height="25"
-          rx="3.5"
+          width="38"
+          height="26"
+          rx="4"
           fill="url(#laptopLidGrad)"
-          stroke="#475569"
-          strokeWidth="0.9"
+          stroke="#64748b"
+          strokeWidth="1"
         />
         {/* Specular top highlight */}
-        <path d="M12 4.6H42" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.4" />
+        <line x1="13" y1="5" x2="43" y2="5" stroke="#ffffff" strokeWidth="0.9" strokeLinecap="round" opacity="0.5" />
 
         {/* Inner OLED Display */}
-        <rect x="11" y="6.5" width="32" height="19.5" rx="2" fill="url(#laptopScreenGrad)" />
+        <rect x="11.5" y="6.5" width="33" height="21" rx="2.5" fill="url(#laptopScreenGrad)" />
 
-        {/* Code </> Brackets on Screen */}
-        <path
-          d="M21.5 12.5L16.5 16L21.5 19.5M32.5 12.5L37.5 16L32.5 19.5M28.5 11L25.5 21"
-          stroke="#ffffff"
-          strokeWidth="2.1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        {/* Glowing Neon Code </> Brackets on Screen */}
+        <g filter="url(#codeGlow)">
+          <path
+            d="M22.5 12.5L17.5 16.5L22.5 20.5"
+            stroke="#4ade80"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M33.5 12.5L38.5 16.5L33.5 20.5"
+            stroke="#4ade80"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <line
+            x1="29.5"
+            y1="11"
+            x2="26.5"
+            y2="22"
+            stroke="#4ade80"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+          />
+        </g>
       </g>
 
       {/* Laptop Keyboard Deck (Front 3D Wedge) */}
       <path
-        d="M4.5 28C4.5 26.6 5.6 25.5 7 25.5H47C48.4 25.5 49.5 26.6 49.5 28L48 33.5C47.7 34.7 46.6 35.5 45.4 35.5H8.6C7.4 35.5 6.3 34.7 6 33.5L4.5 28Z"
+        d="M5 29C5 27.6 6.1 26.5 7.5 26.5H48.5C49.9 26.5 51 27.6 51 29L49.5 35C49.2 36.2 48.1 37 46.9 37H9.1C7.9 37 6.8 36.2 6.5 35L5 29Z"
         fill="url(#laptopBaseGrad)"
         stroke="#64748b"
         strokeWidth="0.8"
       />
       {/* Front Edge Bevel */}
-      <path d="M8 35H46" stroke="#ffffff" strokeWidth="0.75" opacity="0.5" />
+      <line x1="9" y1="36.5" x2="47" y2="36.5" stroke="#ffffff" strokeWidth="0.8" opacity="0.6" />
       {/* Trackpad Notch */}
-      <rect x="23" y="26.2" width="8" height="1.6" rx="0.8" fill="#1e293b" opacity="0.8" />
+      <rect x="23.5" y="27.5" width="9" height="1.8" rx="0.9" fill="#1e293b" opacity="0.8" />
     </svg>
   );
 }
 
 /**
- * 3D Mint-Cyan Glowing Lightning Bolt (Easy)
+ * 3D Electric Lime-Cyan Lightning Bolt (Easy) matching reference design
  */
 export function LightningBolt3D({ className = "w-7 h-7" }: { className?: string }) {
   return (
     <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <defs>
-        <linearGradient id="boltFront" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#67e8f9" />
-          <stop offset="40%" stopColor="#00f5c4" />
-          <stop offset="100%" stopColor="#059669" />
+        <linearGradient id="boltLimeFront" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#bef264" />
+          <stop offset="45%" stopColor="#4ade80" />
+          <stop offset="100%" stopColor="#10b981" />
         </linearGradient>
-        <linearGradient id="boltSide" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#047857" />
-          <stop offset="100%" stopColor="#064e3b" />
+        <linearGradient id="boltLimeSide" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#15803d" />
+          <stop offset="100%" stopColor="#052e16" />
         </linearGradient>
-        <filter id="boltNeonBloom" x="-30%" y="-30%" width="160%" height="160%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3.5" floodColor="#00f5c4" floodOpacity="0.85" />
+        <filter id="boltLimeNeonBloom" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3.5" floodColor="#4ade80" floodOpacity="0.9" />
         </filter>
       </defs>
 
-      <g filter="url(#boltNeonBloom)">
+      <g filter="url(#boltLimeNeonBloom)">
         {/* 3D Depth Extrusion */}
         <path
           d="M21 3L9 18.5H18.5L16 33L28 16.5H19L21 3Z"
-          fill="url(#boltSide)"
+          fill="url(#boltLimeSide)"
           transform="translate(1, 1)"
         />
         {/* Main Front Face */}
         <path
           d="M21 3L9 18.5H18.5L16 33L28 16.5H19L21 3Z"
-          fill="url(#boltFront)"
+          fill="url(#boltLimeFront)"
         />
         {/* Specular Ridge Line */}
         <path
@@ -119,7 +139,7 @@ export function LightningBolt3D({ className = "w-7 h-7" }: { className?: string 
           strokeWidth="1.3"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.8"
+          opacity="0.85"
         />
       </g>
     </svg>
@@ -127,102 +147,102 @@ export function LightningBolt3D({ className = "w-7 h-7" }: { className?: string 
 }
 
 /**
- * 3D Isometric Stacked Golden Layers (Medium)
+ * 3D Isometric Stacked Layers in Lime/Amber (Medium) matching reference design
  */
 export function Layers3D({ className = "w-7 h-7" }: { className?: string }) {
   return (
     <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <defs>
-        <linearGradient id="layerTopFace" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="layerLimeTop" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#fef08a" />
-          <stop offset="45%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#d97706" />
+          <stop offset="40%" stopColor="#bef264" />
+          <stop offset="100%" stopColor="#84cc16" />
         </linearGradient>
-        <linearGradient id="layerMidFace" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#fbbf24" />
-          <stop offset="100%" stopColor="#b45309" />
+        <linearGradient id="layerLimeMid" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#bef264" />
+          <stop offset="100%" stopColor="#65a30d" />
         </linearGradient>
-        <linearGradient id="layerBotFace" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#78350f" />
+        <linearGradient id="layerLimeBot" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#a3e635" />
+          <stop offset="100%" stopColor="#4d7c0f" />
         </linearGradient>
-        <filter id="layerAmberBloom" x="-30%" y="-30%" width="160%" height="160%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3.5" floodColor="#f59e0b" floodOpacity="0.8" />
+        <filter id="layerLimeBloom" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3.5" floodColor="#bef264" floodOpacity="0.85" />
         </filter>
       </defs>
 
-      <g filter="url(#layerAmberBloom)">
+      <g filter="url(#layerLimeBloom)">
         {/* BOTTOM LAYER */}
-        <path d="M18 26.5L7 21.5L18 16.5L29 21.5L18 26.5Z" fill="url(#layerBotFace)" />
-        <path d="M7 21.5L18 26.5L29 21.5V23.5L18 28.5L7 23.5V21.5Z" fill="#78350f" />
+        <path d="M18 26.5L7 21.5L18 16.5L29 21.5L18 26.5Z" fill="url(#layerLimeBot)" />
+        <path d="M7 21.5L18 26.5L29 21.5V23.5L18 28.5L7 23.5V21.5Z" fill="#365314" />
 
         {/* MIDDLE LAYER */}
-        <path d="M18 20.5L7 15.5L18 10.5L29 15.5L18 20.5Z" fill="url(#layerMidFace)" />
-        <path d="M7 15.5L18 20.5L29 15.5V17.5L18 22.5L7 17.5V15.5Z" fill="#92400e" />
+        <path d="M18 20.5L7 15.5L18 10.5L29 15.5L18 20.5Z" fill="url(#layerLimeMid)" />
+        <path d="M7 15.5L18 20.5L29 15.5V17.5L18 22.5L7 17.5V15.5Z" fill="#3f6212" />
 
         {/* TOP LAYER */}
         <path
           d="M18 14.5L7 9.5L18 4.5L29 9.5L18 14.5Z"
-          fill="url(#layerTopFace)"
-          stroke="#fffbeb"
+          fill="url(#layerLimeTop)"
+          stroke="#fef08a"
           strokeWidth="0.8"
         />
-        <path d="M7 9.5L18 14.5L29 9.5V11.5L18 16.5L7 11.5V9.5Z" fill="#b45309" />
+        <path d="M7 9.5L18 14.5L29 9.5V11.5L18 16.5L7 11.5V9.5Z" fill="#4d7c0f" />
         {/* Centerline shine */}
-        <path d="M7 9.5L18 14.5L29 9.5" stroke="#ffffff" strokeWidth="1" opacity="0.65" />
+        <path d="M7 9.5L18 14.5L29 9.5" stroke="#ffffff" strokeWidth="1.1" opacity="0.75" />
       </g>
     </svg>
   );
 }
 
 /**
- * 3D Waving Crimson Pennant Flag (Hard)
+ * 3D Waving Pennant Flag in Electric Lime (Hard) matching reference design
  */
 export function Flag3D({ className = "w-7 h-7" }: { className?: string }) {
   return (
     <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <defs>
-        <linearGradient id="flagCloth" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#fda4af" />
-          <stop offset="30%" stopColor="#f43f5e" />
-          <stop offset="75%" stopColor="#e11d48" />
-          <stop offset="100%" stopColor="#9f1239" />
+        <linearGradient id="flagLimeCloth" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#fef08a" />
+          <stop offset="35%" stopColor="#bef264" />
+          <stop offset="75%" stopColor="#65a30d" />
+          <stop offset="100%" stopColor="#365314" />
         </linearGradient>
         <linearGradient id="flagPoleGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#f8fafc" />
           <stop offset="50%" stopColor="#cbd5e1" />
           <stop offset="100%" stopColor="#64748b" />
         </linearGradient>
-        <filter id="flagCrimsonBloom" x="-30%" y="-30%" width="160%" height="160%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3.5" floodColor="#f43f5e" floodOpacity="0.8" />
+        <filter id="flagLimeBloom" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3.5" floodColor="#bef264" floodOpacity="0.85" />
         </filter>
       </defs>
 
-      <g filter="url(#flagCrimsonBloom)">
+      <g filter="url(#flagLimeBloom)">
         {/* Flag Pole */}
         <rect x="7" y="4.5" width="2.8" height="27" rx="1.4" fill="url(#flagPoleGrad)" />
-        {/* Golden Finial Ball on top */}
-        <circle cx="8.4" cy="4.5" r="2.2" fill="#fef08a" stroke="#d97706" strokeWidth="0.6" />
+        {/* Golden/Lime Finial Ball on top */}
+        <circle cx="8.4" cy="4.5" r="2.2" fill="#fef08a" stroke="#84cc16" strokeWidth="0.6" />
 
         {/* 3D Pennant Flag Body */}
         <path
           d="M9.8 6.5L29 13.5C29.8 13.8 29.8 14.8 29 15.1L9.8 22V6.5Z"
-          fill="url(#flagCloth)"
+          fill="url(#flagLimeCloth)"
         />
 
         {/* 3D Wave Ripple Highlight */}
         <path
           d="M9.8 6.5Q19 11 29 14.3"
-          stroke="#ffe4e6"
+          stroke="#ffffff"
           strokeWidth="1.4"
           strokeLinecap="round"
           fill="none"
-          opacity="0.85"
+          opacity="0.9"
         />
         {/* Shadow crease */}
         <path
           d="M10 20Q18 16 27 15"
-          stroke="#881337"
+          stroke="#14532d"
           strokeWidth="1.2"
           strokeLinecap="round"
           fill="none"
@@ -234,179 +254,170 @@ export function Flag3D({ className = "w-7 h-7" }: { className?: string }) {
 }
 
 /**
- * Realistic 3D Golden Trophy with Laurel Wreath (Global Ranking) matching reference design exactly
+ * 3D Electric Lime-Golden Trophy with Laurel Wreath matching media_1794123896316_7f3aaa20.jpg exactly
  */
-export function TrophyLaurel3D({ className = "w-18 h-16" }: { className?: string }) {
+export function TrophyLaurel3D({ className = "w-20 h-18" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 72 62" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <svg viewBox="0 0 80 68" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <defs>
-        {/* Realistic Metallic Gold Gradients */}
-        <linearGradient id="goldCupBody" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#fff8b8" />
-          <stop offset="20%" stopColor="#fde047" />
-          <stop offset="50%" stopColor="#f59e0b" />
-          <stop offset="85%" stopColor="#d97706" />
-          <stop offset="100%" stopColor="#92400e" />
-        </linearGradient>
-
-        <linearGradient id="goldRimGrad" x1="0" y1="0" x2="0" y2="1">
+        {/* Vibrant Lime-Gold Gradients */}
+        <linearGradient id="trophyGoldLimeBody" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="50%" stopColor="#fde047" />
-          <stop offset="100%" stopColor="#d97706" />
+          <stop offset="20%" stopColor="#fef08a" />
+          <stop offset="50%" stopColor="#bef264" />
+          <stop offset="80%" stopColor="#84cc16" />
+          <stop offset="100%" stopColor="#3f6212" />
         </linearGradient>
 
-        <linearGradient id="goldHandleGrad" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="trophyRimGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="50%" stopColor="#bef264" />
+          <stop offset="100%" stopColor="#65a30d" />
+        </linearGradient>
+
+        <linearGradient id="trophyHandleGrad" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#fef08a" />
-          <stop offset="35%" stopColor="#f59e0b" />
-          <stop offset="70%" stopColor="#b45309" />
-          <stop offset="100%" stopColor="#78350f" />
+          <stop offset="40%" stopColor="#bef264" />
+          <stop offset="80%" stopColor="#65a30d" />
+          <stop offset="100%" stopColor="#365314" />
         </linearGradient>
 
-        <linearGradient id="goldLeafGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#fffbeb" />
-          <stop offset="30%" stopColor="#fde047" />
-          <stop offset="70%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#b45309" />
+        <linearGradient id="laurelLeafGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="25%" stopColor="#bef264" />
+          <stop offset="70%" stopColor="#4ade80" />
+          <stop offset="100%" stopColor="#15803d" />
         </linearGradient>
 
-        <linearGradient id="goldStemGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#fde047" />
-          <stop offset="50%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#92400e" />
-        </linearGradient>
-
-        <filter id="realisticTrophyGlow" x="-25%" y="-25%" width="150%" height="150%">
-          <feDropShadow dx="0" dy="2.5" stdDeviation="3.5" floodColor="#f59e0b" floodOpacity="0.75" />
+        <filter id="trophyLimeGlow" x="-25%" y="-25%" width="150%" height="150%">
+          <feDropShadow dx="0" dy="2.5" stdDeviation="4.5" floodColor="#bef264" floodOpacity="0.85" />
         </filter>
       </defs>
 
-      <g filter="url(#realisticTrophyGlow)">
+      <g filter="url(#trophyLimeGlow)">
         {/* ========================================================
-            1. LAUREL WREATH STEMS & LEAVES
+            1. LAUREL WREATH STEMS & LEAVES (Lime-Green Wreath)
            ======================================================== */}
         {/* Left Laurel Branch Stem */}
         <path
-          d="M17 22C10.5 32 10.5 44 20 52"
-          stroke="url(#goldLeafGrad)"
-          strokeWidth="2.2"
+          d="M20 25C13 35 13 47 23 55"
+          stroke="url(#laurelLeafGrad)"
+          strokeWidth="2.4"
           strokeLinecap="round"
           fill="none"
         />
-        {/* Left Laurel Leaves (4 discrete 3D sculpted leaves) */}
-        <g fill="url(#goldLeafGrad)">
-          <path d="M12.5 22C9.5 20.8 7.5 23.5 10 26C12.5 27.8 15 25 12.5 22Z" />
-          <path d="M9 29C6 28.2 5 31.8 7.8 33.8C10.8 35 12 32 9 29Z" />
-          <path d="M9.5 37C6.8 37 6.5 40.8 9.5 42.5C12.5 43.8 13.5 40 9.5 37Z" />
-          <path d="M13.5 44C11 44.8 11.5 48.5 14.5 49.8C17.5 50.5 18 46.8 13.5 44Z" />
+        {/* Left Laurel Leaves */}
+        <g fill="url(#laurelLeafGrad)">
+          <path d="M15 24C12 22.8 10 25.5 12.5 28C15 29.8 17.5 27 15 24Z" />
+          <path d="M11.5 31C8.5 30.2 7.5 33.8 10.3 35.8C13.3 37 14.5 34 11.5 31Z" />
+          <path d="M12 39C9.3 39 9 42.8 12 44.5C15 45.8 16 42 12 39Z" />
+          <path d="M16 47C13.5 47.8 14 51.5 17 52.8C20 53.5 20.5 49.8 16 47Z" />
         </g>
-        {/* Left Leaf Center Ribs (Metallic Specular Highlights) */}
-        <path d="M10 24.5C11.5 25.5 13 24.5 13 24.5" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
-        <path d="M7.8 32C9.5 33 10.8 32 10.8 32" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
-        <path d="M8.5 40C10.2 41 11.8 40 11.8 40" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
-        <path d="M13 47C14.8 48 16 47 16 47" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+        {/* Left Leaf Center Ribs */}
+        <path d="M12.5 26.5C14 27.5 15.5 26.5 15.5 26.5" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.7" />
+        <path d="M10.3 34C12 35 13.3 34 13.3 34" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.7" />
+        <path d="M11 42C12.7 43 14.3 42 14.3 42" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.7" />
+        <path d="M15.5 49.5C17.3 50.5 18.5 49.5 18.5 49.5" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.7" />
 
         {/* Right Laurel Branch Stem */}
         <path
-          d="M55 22C61.5 32 61.5 44 52 52"
-          stroke="url(#goldLeafGrad)"
-          strokeWidth="2.2"
+          d="M60 25C67 35 67 47 57 55"
+          stroke="url(#laurelLeafGrad)"
+          strokeWidth="2.4"
           strokeLinecap="round"
           fill="none"
         />
-        {/* Right Laurel Leaves (4 discrete 3D sculpted leaves) */}
-        <g fill="url(#goldLeafGrad)">
-          <path d="M59.5 22C62.5 20.8 64.5 23.5 62 26C59.5 27.8 57 25 59.5 22Z" />
-          <path d="M63 29C66 28.2 67 31.8 64.2 33.8C61.2 35 60 32 63 29Z" />
-          <path d="M62.5 37C65.2 37 65.5 40.8 62.5 42.5C59.5 43.8 58.5 40 62.5 37Z" />
-          <path d="M58.5 44C61 44.8 60.5 48.5 57.5 49.8C54.5 50.5 54 46.8 58.5 44Z" />
+        {/* Right Laurel Leaves */}
+        <g fill="url(#laurelLeafGrad)">
+          <path d="M65 24C68 22.8 70 25.5 67.5 28C65 29.8 62.5 27 65 24Z" />
+          <path d="M68.5 31C71.5 30.2 72.5 33.8 69.7 35.8C66.7 37 65.5 34 68.5 31Z" />
+          <path d="M68 39C70.7 39 71 42.8 68 44.5C65 45.8 64 42 68 39Z" />
+          <path d="M64 47C66.5 47.8 66 51.5 63 52.8C60 53.5 59.5 49.8 64 47Z" />
         </g>
-        {/* Right Leaf Center Ribs (Metallic Specular Highlights) */}
-        <path d="M62 24.5C60.5 25.5 59 24.5 59 24.5" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
-        <path d="M64.2 32C62.5 33 61.2 32 61.2 32" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
-        <path d="M63.5 40C61.8 41 60.2 40 60.2 40" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
-        <path d="M59 47C57.2 48 56 47 56 47" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+        {/* Right Leaf Center Ribs */}
+        <path d="M67.5 26.5C66 27.5 64.5 26.5 64.5 26.5" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.7" />
+        <path d="M69.7 34C68 35 66.7 34 66.7 34" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.7" />
+        <path d="M69 42C67.3 43 65.7 42 65.7 42" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.7" />
+        <path d="M64.5 49.5C62.7 50.5 61.5 49.5 61.5 49.5" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.7" />
 
         {/* ========================================================
             2. 3D CUP HANDLES
            ======================================================== */}
-        {/* Left Curved Handle */}
         <path
-          d="M24 19C15 19 15 33 24 33"
-          stroke="url(#goldHandleGrad)"
-          strokeWidth="3.6"
+          d="M27 21C17 21 17 36 27 36"
+          stroke="url(#trophyHandleGrad)"
+          strokeWidth="3.8"
           strokeLinecap="round"
           fill="none"
         />
         <path
-          d="M23.5 19.5C16.5 19.5 16.5 32 23.5 32"
+          d="M26.5 21.5C18.5 21.5 18.5 35 26.5 35"
           stroke="#ffffff"
-          strokeWidth="1"
+          strokeWidth="1.1"
           strokeLinecap="round"
           fill="none"
-          opacity="0.65"
+          opacity="0.7"
         />
 
-        {/* Right Curved Handle */}
         <path
-          d="M48 19C57 19 57 33 48 33"
-          stroke="url(#goldHandleGrad)"
-          strokeWidth="3.6"
+          d="M53 21C63 21 63 36 53 36"
+          stroke="url(#trophyHandleGrad)"
+          strokeWidth="3.8"
           strokeLinecap="round"
           fill="none"
         />
         <path
-          d="M48.5 19.5C55.5 19.5 55.5 32 48.5 32"
+          d="M53.5 21.5C61.5 21.5 61.5 35 53.5 35"
           stroke="#ffffff"
-          strokeWidth="1"
+          strokeWidth="1.1"
           strokeLinecap="round"
           fill="none"
-          opacity="0.65"
+          opacity="0.7"
         />
 
         {/* ========================================================
             3. 3D TROPHY CUP BODY & SPECULAR SHINE
            ======================================================== */}
-        {/* Main Cup Body */}
         <path
-          d="M23 15H49V27C49 35 43 40 36 40C29 40 23 35 23 27V15Z"
-          fill="url(#goldCupBody)"
+          d="M26 17H54V30C54 39 47 44 40 44C33 44 26 39 26 30V17Z"
+          fill="url(#trophyGoldLimeBody)"
         />
 
-        {/* 3D Curved Specular Highlight on Left Face of Cup */}
+        {/* Specular curved reflection on cup face */}
         <path
-          d="M26 18C26 27 29.5 34.5 34 37"
+          d="M29 20C29 30 33 38 38 41"
           stroke="#ffffff"
-          strokeWidth="1.8"
+          strokeWidth="2"
           strokeLinecap="round"
           fill="none"
-          opacity="0.6"
+          opacity="0.7"
         />
 
         {/* Top Rim Oval Bevel */}
-        <ellipse cx="36" cy="15" rx="13" ry="2.6" fill="url(#goldRimGrad)" />
-        <ellipse cx="36" cy="15" rx="11" ry="1.8" fill="#d97706" opacity="0.6" />
+        <ellipse cx="40" cy="17" rx="14" ry="2.8" fill="url(#trophyRimGrad)" />
+        <ellipse cx="40" cy="17" rx="12" ry="1.9" fill="#65a30d" opacity="0.7" />
 
-        {/* 3D Embossed Golden/White 5-Point Star */}
+        {/* 3D Embossed Star on Front of Cup */}
         <path
-          d="M36 21.2L37.4 24.6L41 24.9L38.3 27.2L39.1 30.8L36 28.7L32.9 30.8L33.7 27.2L31 24.9L34.6 24.6Z"
-          fill="#ffffff"
-          opacity="0.95"
-          filter="drop-shadow(0 1px 2px rgba(0,0,0,0.4))"
+          d="M40 24L41.5 27.5L45.5 27.8L42.5 30.3L43.4 34.2L40 31.9L36.6 34.2L37.5 30.3L34.5 27.8L38.5 27.5Z"
+          fill="#14532d"
+          stroke="#bef264"
+          strokeWidth="0.8"
+          filter="drop-shadow(0 1px 2px rgba(0,0,0,0.5))"
         />
 
         {/* ========================================================
             4. 3D STEM & STEPPED PEDESTAL BASE
            ======================================================== */}
-        {/* Cylindrical Stem */}
-        <rect x="33.5" y="40" width="5" height="5.5" rx="1" fill="url(#goldStemGrad)" />
+        <rect x="37.5" y="44" width="5" height="6" rx="1" fill="#4d7c0f" />
 
         {/* Flared Pedestal Tier */}
-        <path d="M28 45.5H44L46 51H26L28 45.5Z" fill="url(#goldCupBody)" />
-        <path d="M28.5 46H43.5" stroke="#ffffff" strokeWidth="0.8" opacity="0.7" />
+        <path d="M31 50H49L51 56H29L31 50Z" fill="url(#trophyGoldLimeBody)" />
+        <line x1="31.5" y1="50.5" x2="48.5" y2="50.5" stroke="#ffffff" strokeWidth="0.8" opacity="0.8" />
 
         {/* Bottom Base Plinth */}
-        <rect x="23" y="51" width="26" height="4" rx="2" fill="#78350f" stroke="#f59e0b" strokeWidth="0.8" />
-        <rect x="24" y="51.5" width="24" height="1.2" rx="0.6" fill="#fef08a" opacity="0.8" />
+        <rect x="25" y="56" width="30" height="4.5" rx="2.2" fill="#14532d" stroke="#bef264" strokeWidth="0.9" />
+        <rect x="26" y="56.5" width="28" height="1.4" rx="0.7" fill="#fef08a" opacity="0.85" />
       </g>
     </svg>
   );
@@ -414,7 +425,7 @@ export function TrophyLaurel3D({ className = "w-18 h-16" }: { className?: string
 
 // =========================================================================
 // 1. TOTAL SOLVED CYBER DIAL (With Branching Circuit Connector Nodes)
-// Matching media_1794123896316_7f3aaa20.jpg with glassmorphism
+// Matching media_1794123896316_7f3aaa20.jpg exactly
 // =========================================================================
 
 export interface TotalSolvedCyberDialProps {
@@ -433,96 +444,96 @@ export function TotalSolvedCyberDial({
   return (
     <div className={`relative flex items-center justify-center w-full max-w-[370px] aspect-square mx-auto ${className}`}>
       <svg
-        viewBox="0 0 370 380"
+        viewBox="0 0 380 380"
         className="w-full h-full overflow-visible select-none"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
-          {/* Neon Arc Gradient (Lime to Emerald to Mint Cyan) */}
+          {/* Outer Neon Arc Gradient: Electric Lime to Vibrant Green to Mint Cyan */}
           <linearGradient id="dialNeonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#bef264" />
-            <stop offset="40%" stopColor="#22c55e" />
+            <stop offset="0%" stopColor="#e3f610" />
+            <stop offset="40%" stopColor="#4ade80" />
             <stop offset="100%" stopColor="#00f5c4" />
           </linearGradient>
 
-          {/* Core Dark Glass Gradient */}
-          <radialGradient id="dialCoreGrad" cx="45%" cy="40%" r="65%">
-            <stop offset="0%" stopColor="#0a2a1d" />
-            <stop offset="70%" stopColor="#03150d" />
-            <stop offset="100%" stopColor="#010a06" />
+          {/* Core Dark Translucent Emerald Glass Gradient */}
+          <radialGradient id="dialCoreGrad" cx="45%" cy="38%" r="68%">
+            <stop offset="0%" stopColor="#0a3524" />
+            <stop offset="60%" stopColor="#031b12" />
+            <stop offset="100%" stopColor="#010e08" />
           </radialGradient>
 
           {/* Outer Ring Groove Gradient */}
           <linearGradient id="dialGrooveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0d3324" />
+            <stop offset="0%" stopColor="#0e3d2b" />
             <stop offset="50%" stopColor="#041810" />
-            <stop offset="100%" stopColor="#062216" />
+            <stop offset="100%" stopColor="#072b1c" />
           </linearGradient>
 
           {/* Glow Filters */}
           <filter id="dialArcGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="5.5" floodColor="#4ade80" floodOpacity="0.85" />
+            <feDropShadow dx="0" dy="0" stdDeviation="6.5" floodColor="#bef264" floodOpacity="0.95" />
           </filter>
 
           <filter id="dialPeakGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#bef264" floodOpacity="0.95" />
+            <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#e3f610" floodOpacity="1" />
           </filter>
 
           <filter id="wireGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#22c55e" floodOpacity="0.8" />
+            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#4ade80" floodOpacity="0.9" />
           </filter>
 
-          <filter id="nodeHalo" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#4ade80" floodOpacity="0.9" />
+          <filter id="nodeHalo" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="0" stdDeviation="4.5" floodColor="#bef264" floodOpacity="1" />
           </filter>
         </defs>
 
-        {/* Ambient Outer Halo */}
-        <circle cx="160" cy="190" r="132" fill="#22c55e" opacity="0.08" filter="blur(16px)" />
+        {/* Ambient Outer Emerald Halo */}
+        <circle cx="165" cy="190" r="135" fill="#22c55e" opacity="0.1" filter="blur(20px)" />
 
         {/* 1. OUTER GROOVE BEVEL RING */}
         <circle
-          cx="160"
+          cx="165"
           cy="190"
-          r="130"
+          r="132"
           stroke="url(#dialGrooveGrad)"
-          strokeWidth="14"
+          strokeWidth="15"
           fill="none"
         />
         <circle
-          cx="160"
+          cx="165"
           cy="190"
-          r="137"
-          stroke="rgba(74, 222, 128, 0.3)"
-          strokeWidth="1.5"
+          r="140"
+          stroke="rgba(74, 222, 128, 0.4)"
+          strokeWidth="1.6"
           fill="none"
         />
 
-        {/* 2. MAIN ACTIVE NEON ARC (Left side from ~5:20 to ~12:20, span 210°) */}
+        {/* 2. MAIN ACTIVE NEON ARC (Left side from ~5:15 to ~12:15) */}
         <path
-          d="M 203.8 310.3 A 128 128 0 1 1 182.2 63.9"
+          d="M 212 314 A 130 130 0 1 1 188 62"
           stroke="url(#dialNeonGrad)"
-          strokeWidth="13"
+          strokeWidth="14"
           strokeLinecap="round"
           fill="none"
           filter="url(#dialArcGlow)"
         />
 
-        {/* Specular Ridge Line on Main Arc */}
+        {/* Specular Ridge Line along Main Arc */}
         <path
-          d="M 203.8 310.3 A 128 128 0 1 1 182.2 63.9"
+          d="M 212 314 A 130 130 0 1 1 188 62"
           stroke="#ffffff"
-          strokeWidth="2.2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           fill="none"
-          opacity="0.6"
+          opacity="0.65"
         />
 
-        {/* 3. TOP SECONDARY NEON ARC (~11:00 to ~1:00) */}
+        {/* 3. TOP SECONDARY NEON ACCENT ARC (~11:00 to ~1:00) */}
         <path
-          d="M 105.9 74.0 A 128 128 0 0 1 214.1 74.0"
-          stroke="#bef264"
-          strokeWidth="12"
+          d="M 110 73 A 130 130 0 0 1 220 73"
+          stroke="#e3f610"
+          strokeWidth="13"
           strokeLinecap="round"
           fill="none"
           filter="url(#dialPeakGlow)"
@@ -530,64 +541,52 @@ export function TotalSolvedCyberDial({
 
         {/* 4. INNER GLASS CORE DISK */}
         <circle
-          cx="160"
+          cx="165"
           cy="190"
-          r="104"
+          r="106"
           fill="url(#dialCoreGrad)"
-          stroke="rgba(74, 222, 128, 0.45)"
-          strokeWidth="2.2"
+          stroke="rgba(74, 222, 128, 0.55)"
+          strokeWidth="2.4"
         />
 
-        {/* Specular Top-Left Glass Reflection on Core */}
+        {/* Specular Top-Left Glass Arc Reflection */}
         <path
-          d="M 96 116 A 104 104 0 0 1 216 112"
+          d="M 100 114 A 106 106 0 0 1 222 110"
           stroke="#ffffff"
-          strokeWidth="1.8"
+          strokeWidth="2"
           strokeLinecap="round"
           fill="none"
-          opacity="0.45"
+          opacity="0.5"
         />
-        <ellipse cx="120" cy="120" rx="18" ry="5" fill="#ffffff" opacity="0.3" transform="rotate(-25 120 120)" filter="blur(1px)" />
+        <ellipse cx="125" cy="118" rx="20" ry="5.5" fill="#ffffff" opacity="0.35" transform="rotate(-25 125 118)" filter="blur(1px)" />
 
         {/* 5. 3D OPEN LAPTOP INSIDE CORE */}
-        <g transform="translate(133, 116)">
-          {/* Lid Bezel */}
-          <rect x="5" y="4" width="44" height="29" rx="3.5" fill="#1e293b" stroke="#475569" strokeWidth="1" />
-          <line x1="8" y1="5.5" x2="46" y2="5.5" stroke="#94a3b8" strokeWidth="0.8" opacity="0.7" />
-          {/* OLED Screen */}
-          <rect x="7.5" y="6.5" width="39" height="24" rx="2" fill="#020408" />
-          {/* Glowing Code on Screen */}
-          <path d="M 22 15 L 17 18.5 L 22 22" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          <path d="M 32 15 L 37 18.5 L 32 22" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          <line x1="29" y1="13" x2="25" y2="24" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" />
-          {/* Deck */}
-          <path d="M 1 33 L 53 33 L 49 40 L 5 40 Z" fill="#94a3b8" stroke="#64748b" strokeWidth="0.8" />
-          <line x1="5" y1="40" x2="49" y2="40" stroke="#f8fafc" strokeWidth="1" opacity="0.7" />
-          <rect x="22" y="34.5" width="10" height="1.8" rx="0.8" fill="#1e293b" />
+        <g transform="translate(137, 108)">
+          <LaptopCode3D className="w-[56px] h-[42px]" />
         </g>
 
         {/* 6. BIG NUMBER & LABEL */}
         <text
-          x="160"
+          x="165"
           y="204"
           textAnchor="middle"
           fill="#ffffff"
           fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
-          fontSize="64"
+          fontSize="66"
           fontWeight="900"
           letterSpacing="-1.5"
-          filter="drop-shadow(0 2px 6px rgba(0,0,0,0.85))"
+          filter="drop-shadow(0 2px 8px rgba(0,0,0,0.9))"
         >
           {loading ? "—" : safeTotal}
         </text>
 
         <text
-          x="160"
-          y="232"
+          x="165"
+          y="233"
           textAnchor="middle"
           fill="#d1fae5"
           fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
-          fontSize="17"
+          fontSize="18"
           fontWeight="700"
           letterSpacing="0.4"
         >
@@ -595,43 +594,46 @@ export function TotalSolvedCyberDial({
         </text>
 
         {/* 7. 3-WAY BRANCHING CIRCUIT WIRES WITH GLOWING JUNCTION NODES */}
-        {/* Branch 1 to Easy */}
+        {/* Branch 1: Curves UP towards Easy Pill */}
         <path
-          d="M 284 150 Q 306 150, 327 160 Q 348 170, 370 120"
+          d="M 292 186 C 308 186, 318 168, 330 156 C 342 144, 355 128, 380 61"
           stroke="#4ade80"
-          strokeWidth="2.8"
+          strokeWidth="3"
           strokeLinecap="round"
           fill="none"
           filter="url(#wireGlow)"
         />
-        <circle cx="327" cy="160" r="7.5" fill="#22c55e" filter="url(#nodeHalo)" />
-        <circle cx="327" cy="160" r="3.2" fill="#ffffff" />
+        {/* Node 1 */}
+        <circle cx="330" cy="156" r="8" fill="#bef264" filter="url(#nodeHalo)" />
+        <circle cx="330" cy="156" r="3.2" fill="#ffffff" />
 
-        {/* Branch 2 to Medium (Horizontal) */}
+        {/* Branch 2: Horizontal straight into Medium Pill */}
         <line
-          x1="290"
-          y1="252"
-          x2="370"
-          y2="252"
+          x1="295"
+          y1="186"
+          x2="380"
+          y2="186"
           stroke="#4ade80"
-          strokeWidth="2.8"
+          strokeWidth="3"
           strokeLinecap="round"
           filter="url(#wireGlow)"
         />
-        <circle cx="357" cy="252" r="7.5" fill="#22c55e" filter="url(#nodeHalo)" />
-        <circle cx="357" cy="252" r="3.2" fill="#ffffff" />
+        {/* Node 2 */}
+        <circle cx="355" cy="186" r="8" fill="#bef264" filter="url(#nodeHalo)" />
+        <circle cx="355" cy="186" r="3.2" fill="#ffffff" />
 
-        {/* Branch 3 to Hard */}
+        {/* Branch 3: Curves DOWN towards Hard Pill */}
         <path
-          d="M 284 230 Q 306 230, 327 220 Q 348 210, 370 270"
+          d="M 292 186 C 308 186, 318 204, 330 216 C 342 228, 355 244, 380 311"
           stroke="#4ade80"
-          strokeWidth="2.8"
+          strokeWidth="3"
           strokeLinecap="round"
           fill="none"
           filter="url(#wireGlow)"
         />
-        <circle cx="326" cy="220" r="7.5" fill="#22c55e" filter="url(#nodeHalo)" />
-        <circle cx="326" cy="220" r="3.2" fill="#ffffff" />
+        {/* Node 3 */}
+        <circle cx="330" cy="216" r="8" fill="#bef264" filter="url(#nodeHalo)" />
+        <circle cx="330" cy="216" r="3.2" fill="#ffffff" />
       </svg>
     </div>
   );
@@ -639,7 +641,7 @@ export function TotalSolvedCyberDial({
 
 // =========================================================================
 // 2. DIFFICULTY PILL CARD (With 10-Block Segmented Progress Bar)
-// Matching media_1794123896316_7f3aaa20.jpg with glassmorphism
+// Matching media_1794123896316_7f3aaa20.jpg exactly
 // =========================================================================
 
 export interface DifficultyPillCardProps {
@@ -657,20 +659,20 @@ export function DifficultyPillCard({
   icon,
   loading = false,
 }: DifficultyPillCardProps) {
-  // 10 discrete blocks in the progress bar
+  // 10 discrete blocks in the progress bar matching reference
   const totalBlocks = 10;
-  // Calculate lit blocks dynamically:
+  // Calculate lit blocks dynamically based on real data
   const litBlocks = Math.max(0, Math.min(totalBlocks, Math.round((count / totalForMax) * totalBlocks)));
 
   return (
     <div
-      className="group relative flex items-center justify-between px-4 sm:px-5 py-3 h-[112px] sm:h-[116px] w-full rounded-[38px] sm:rounded-[42px] transition-all duration-300 hover:scale-[1.02] cursor-default overflow-hidden select-none"
+      className="group relative flex items-center justify-between px-4 sm:px-5 py-3 h-[110px] w-full rounded-[38px] transition-all duration-300 hover:scale-[1.02] cursor-default overflow-hidden select-none"
       style={{
         background:
-          "linear-gradient(135deg, rgba(6, 42, 28, 0.65) 0%, rgba(2, 20, 14, 0.88) 100%)",
-        border: "1.6px solid rgba(74, 222, 128, 0.65)",
+          "linear-gradient(135deg, rgba(6, 42, 28, 0.72) 0%, rgba(2, 20, 14, 0.92) 100%)",
+        border: "1.8px solid rgba(74, 222, 128, 0.7)",
         boxShadow:
-          "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 18px rgba(34, 197, 94, 0.22), 0 0 22px rgba(34, 197, 94, 0.3)",
+          "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 20px rgba(34, 197, 94, 0.25), 0 0 24px rgba(34, 197, 94, 0.35)",
         backdropFilter: "blur(25px)",
         WebkitBackdropFilter: "blur(25px)",
       }}
@@ -686,9 +688,9 @@ export function DifficultyPillCard({
           style={{
             background:
               "radial-gradient(circle at 40% 35%, rgba(12, 54, 38, 0.95), rgba(3, 20, 13, 0.98))",
-            border: "1.5px solid rgba(74, 222, 128, 0.7)",
+            border: "1.6px solid rgba(74, 222, 128, 0.75)",
             boxShadow:
-              "inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 0 14px rgba(34, 197, 94, 0.35)",
+              "inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 0 14px rgba(34, 197, 94, 0.4)",
           }}
         >
           {icon}
@@ -700,7 +702,7 @@ export function DifficultyPillCard({
             {label}
           </span>
 
-          {/* 10 Segmented Rounded Blocks */}
+          {/* 10 Segmented Rounded Blocks directly underneath Title */}
           <div className="flex items-center gap-1 sm:gap-1.5 mt-2">
             {Array.from({ length: totalBlocks }).map((_, idx) => {
               const isLit = idx < litBlocks;
@@ -709,8 +711,8 @@ export function DifficultyPillCard({
                   key={idx}
                   className={`h-3 w-2 sm:w-2.5 rounded-[2.5px] transition-all duration-300 ${
                     isLit
-                      ? "bg-gradient-to-b from-[#bef264] via-[#4ade80] to-[#22c55e] shadow-[0_0_6px_#4ade80]"
-                      : "bg-[#0d2e20]/60 border border-white/5"
+                      ? "bg-gradient-to-b from-[#e3f610] via-[#4ade80] to-[#22c55e] shadow-[0_0_8px_#4ade80]"
+                      : "bg-[#0d2e20]/70 border border-white/5"
                   }`}
                 />
               );
@@ -719,7 +721,7 @@ export function DifficultyPillCard({
         </div>
       </div>
 
-      {/* Right: Big Bold Metric Number */}
+      {/* Right: Big Bold Metric Number matching reference */}
       <div className="shrink-0 pl-2">
         <span className="font-black text-3xl sm:text-[38px] text-white tracking-tight leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
           {loading ? "—" : count}
@@ -731,7 +733,7 @@ export function DifficultyPillCard({
 
 // =========================================================================
 // 3. GLOBAL RANKING HEXAGONAL SHIELD (With 3D Bottom Chevron Bevel)
-// Matching media_1794123896316_7f3aaa20.jpg with glassmorphism
+// Matching media_1794123896316_7f3aaa20.jpg exactly
 // =========================================================================
 
 export interface GlobalRankingShieldProps {
@@ -752,7 +754,7 @@ export function GlobalRankingShield({
 
   return (
     <div
-      className={`group relative flex flex-col items-center justify-between w-full max-w-[290px] h-[360px] sm:h-[375px] mx-auto transition-all duration-300 hover:scale-[1.01] select-none ${className}`}
+      className={`group relative flex flex-col items-center justify-between w-full max-w-[290px] h-[360px] sm:h-[370px] mx-auto transition-all duration-300 hover:scale-[1.01] select-none ${className}`}
     >
       <svg
         viewBox="0 0 280 375"
@@ -760,27 +762,27 @@ export function GlobalRankingShield({
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
-          {/* Shield Dark Glass Gradient */}
+          {/* Shield Dark Emerald Glass Gradient */}
           <linearGradient id="shieldGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#083827" stopOpacity="0.75" />
-            <stop offset="50%" stopColor="#031c12" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#02120b" stopOpacity="0.95" />
+            <stop offset="0%" stopColor="#083827" stopOpacity="0.8" />
+            <stop offset="50%" stopColor="#031c12" stopOpacity="0.92" />
+            <stop offset="100%" stopColor="#02120b" stopOpacity="0.96" />
           </linearGradient>
 
           {/* Bottom Chevron 3D Neon Bevel Gradient */}
           <linearGradient id="chevronBevelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="50%" stopColor="#bef264" />
+            <stop offset="50%" stopColor="#e3f610" />
             <stop offset="100%" stopColor="#22c55e" />
           </linearGradient>
 
           {/* Glow Filters */}
           <filter id="shieldGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="#22c55e" floodOpacity="0.35" />
+            <feDropShadow dx="0" dy="0" stdDeviation="10" floodColor="#22c55e" floodOpacity="0.4" />
           </filter>
 
           <filter id="bevelGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#bef264" floodOpacity="0.9" />
+            <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#bef264" floodOpacity="0.95" />
           </filter>
         </defs>
 
@@ -789,7 +791,7 @@ export function GlobalRankingShield({
         <path
           d="M 38 15 L 242 15 Q 265 15, 265 38 L 265 305 L 140 365 L 15 305 L 15 38 Q 15 15, 38 15 Z"
           fill="url(#shieldGlassGrad)"
-          stroke="rgba(74, 222, 128, 0.7)"
+          stroke="rgba(74, 222, 128, 0.75)"
           strokeWidth="2.2"
           filter="url(#shieldGlow)"
         />
@@ -798,19 +800,19 @@ export function GlobalRankingShield({
         <path
           d="M 38 18 L 242 18"
           stroke="#ffffff"
-          strokeWidth="1.5"
+          strokeWidth="1.6"
           strokeLinecap="round"
-          opacity="0.45"
+          opacity="0.5"
         />
         <path
           d="M 18 42 Q 18 18, 42 18"
           stroke="#ffffff"
-          strokeWidth="2.5"
+          strokeWidth="2.6"
           strokeLinecap="round"
           fill="none"
-          opacity="0.65"
+          opacity="0.7"
         />
-        <ellipse cx="40" cy="28" rx="14" ry="4" fill="#ffffff" opacity="0.4" transform="rotate(-30 40 28)" filter="blur(1px)" />
+        <ellipse cx="40" cy="28" rx="14" ry="4" fill="#ffffff" opacity="0.45" transform="rotate(-30 40 28)" filter="blur(1px)" />
 
         {/* 2. RAISED 3D NEON CHEVRON BEVEL ALONG BOTTOM V-EDGE */}
         <path
@@ -819,17 +821,17 @@ export function GlobalRankingShield({
           filter="url(#bevelGlow)"
         />
         {/* Center Ridge Highlight on Chevron */}
-        <line x1="140" y1="348" x2="140" y2="363" stroke="#ffffff" strokeWidth="1.8" opacity="0.8" />
+        <line x1="140" y1="348" x2="140" y2="363" stroke="#ffffff" strokeWidth="2" opacity="0.85" />
 
         {/* 3. TROPHY WITH LAUREL WREATH */}
-        <g transform="translate(104, 52) scale(1.02)">
-          <TrophyLaurel3D className="w-[72px] h-[62px]" />
+        <g transform="translate(100, 48)">
+          <TrophyLaurel3D className="w-[80px] h-[68px]" />
         </g>
 
         {/* 4. RANKING NUMBER */}
         <text
           x="140"
-          y="235"
+          y="232"
           textAnchor="middle"
           fill="#ffffff"
           fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
@@ -844,7 +846,7 @@ export function GlobalRankingShield({
         {/* 5. SUBTITLE */}
         <text
           x="140"
-          y="272"
+          y="268"
           textAnchor="middle"
           fill="#d1fae5"
           fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
@@ -886,27 +888,18 @@ export function LeetcodeStatsBanner({
 
   return (
     <div
-      className={`relative w-full max-w-[1080px] mx-auto rounded-[48px] p-4 sm:p-6 md:p-7 overflow-visible transition-all duration-300 ${className}`}
-      style={{
-        background:
-          "linear-gradient(135deg, rgba(8, 24, 18, 0.45) 0%, rgba(3, 12, 8, 0.72) 50%, rgba(6, 18, 14, 0.45) 100%)",
-        border: "1.5px solid rgba(74, 222, 128, 0.25)",
-        boxShadow:
-          "0 25px 60px rgba(0, 0, 0, 0.85), inset 0 2px 6px rgba(255, 255, 255, 0.15), inset 0 -4px 12px rgba(0, 0, 0, 0.7)",
-        backdropFilter: "blur(30px)",
-        WebkitBackdropFilter: "blur(30px)",
-      }}
+      className={`relative w-full max-w-[1040px] mx-auto overflow-visible select-none transition-all duration-300 ${className}`}
     >
-      {/* Ambient Neon Glow in Background */}
-      <div className="absolute -top-16 left-1/4 w-72 h-32 bg-emerald-500/15 blur-3xl rounded-full pointer-events-none" />
-      <div className="absolute -bottom-16 right-1/4 w-72 h-32 bg-lime-500/15 blur-3xl rounded-full pointer-events-none" />
+      {/* Subtle Ambient Cyber Halos in Background (matching pure dark background) */}
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-80 h-40 bg-emerald-500/10 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-80 h-40 bg-lime-500/10 blur-3xl rounded-full pointer-events-none" />
 
       {/* Proportional 3-Column Cyber Layout matching media_1794123896316_7f3aaa20.jpg:
           Col 1: Cyber Dial with 3 Branching Connectors
           Col 2: 3 Stacked Difficulty Glass Pills (Easy, Medium, Hard)
           Col 3: Global Ranking Hexagonal Shield Badge
       */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.1fr_1.1fr_0.9fr] items-center gap-5 lg:gap-4 xl:gap-5">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.15fr_1.1fr_0.95fr] items-center gap-5 lg:gap-3 xl:gap-4">
         
         {/* 1. LEFT: Cyber Dial (Total Solved) */}
         <div className="flex items-center justify-center w-full">
@@ -917,13 +910,13 @@ export function LeetcodeStatsBanner({
         </div>
 
         {/* 2. MIDDLE: 3 Stacked Difficulty Glass Pills */}
-        <div className="flex flex-col gap-3.5 sm:gap-4 justify-center w-full">
+        <div className="flex flex-col gap-3.5 justify-center w-full h-[360px]">
           {/* Easy Pill */}
           <DifficultyPillCard
             label="Easy"
             count={easySolved}
             totalForMax={14}
-            icon={<LightningBolt3D className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(0,245,210,0.7)]" />}
+            icon={<LightningBolt3D className="w-7 h-7 sm:w-8 sm:h-8" />}
             loading={loading}
           />
 
@@ -932,7 +925,7 @@ export function LeetcodeStatsBanner({
             label="Medium"
             count={mediumSolved}
             totalForMax={10}
-            icon={<Layers3D className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(255,174,34,0.7)]" />}
+            icon={<Layers3D className="w-7 h-7 sm:w-8 sm:h-8" />}
             loading={loading}
           />
 
@@ -941,7 +934,7 @@ export function LeetcodeStatsBanner({
             label="Hard"
             count={hardSolved}
             totalForMax={5}
-            icon={<Flag3D className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-[0_0_8px_rgba(255,68,78,0.7)]" />}
+            icon={<Flag3D className="w-7 h-7 sm:w-8 sm:h-8" />}
             loading={loading}
           />
         </div>
@@ -958,3 +951,4 @@ export function LeetcodeStatsBanner({
     </div>
   );
 }
+
