@@ -167,11 +167,17 @@ export function LeetcodeStatsBanner({
           <filter id="dialPeakGlow" x="-30%" y="-30%" width="160%" height="160%">
             <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#c084fc" floodOpacity="0.95" />
           </filter>
-          <filter id="wireGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#818cf8" floodOpacity="0.85" />
+          <filter id="wireGlow" x="0" y="0" width="1024" height="450" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="0" dy="0" stdDeviation="3.2" floodColor="#818cf8" floodOpacity="0.9" />
           </filter>
-          <filter id="nodeHalo" x="-60%" y="-60%" width="220%" height="220%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4.5" floodColor="#2dd4bf" floodOpacity="1" />
+          <filter id="nodeHaloEasy" x="0" y="0" width="1024" height="450" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="0" dy="0" stdDeviation="5.5" floodColor="#2dd4bf" floodOpacity="1" />
+          </filter>
+          <filter id="nodeHaloMed" x="0" y="0" width="1024" height="450" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="0" dy="0" stdDeviation="5.5" floodColor="#c084fc" floodOpacity="1" />
+          </filter>
+          <filter id="nodeHaloHard" x="0" y="0" width="1024" height="450" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="0" dy="0" stdDeviation="5.5" floodColor="#f43f5e" floodOpacity="1" />
           </filter>
           <filter id="segmentGlow" x="-30%" y="-30%" width="160%" height="160%">
             <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#818cf8" floodOpacity="0.75" />
@@ -304,38 +310,57 @@ export function LeetcodeStatsBanner({
           <path
             d="M 285 200 C 305 190, 318 160, 327 138 C 336 116, 350 118, 380 118"
             stroke="#818cf8"
-            strokeWidth="3"
+            strokeWidth="3.2"
             strokeLinecap="round"
             fill="none"
             filter="url(#wireGlow)"
           />
-          <circle cx="327" cy="138" r="8" fill="#2dd4bf" filter="url(#nodeHalo)" />
+          <path
+            d="M 285 200 C 305 190, 318 160, 327 138 C 336 116, 350 118, 380 118"
+            stroke="#818cf8"
+            strokeWidth="3.2"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <circle cx="327" cy="138" r="8" fill="#2dd4bf" filter="url(#nodeHaloEasy)" />
           <circle cx="327" cy="138" r="3.2" fill="#ffffff" />
 
-          {/* Branch 2: to Medium Pill (Straight line) */}
-          <line
-            x1="285"
-            y1="230"
-            x2="380"
-            y2="230"
+          {/* Branch 2: to Medium Pill (Continuous glowing line passing through purple dot) */}
+          <path
+            d="M 285 230 L 380 230"
             stroke="#818cf8"
-            strokeWidth="3"
+            strokeWidth="3.2"
             strokeLinecap="round"
+            fill="none"
             filter="url(#wireGlow)"
           />
-          <circle cx="357" cy="230" r="8" fill="#a855f7" filter="url(#nodeHalo)" />
+          <path
+            d="M 285 230 L 380 230"
+            stroke="#818cf8"
+            strokeWidth="3.2"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <circle cx="357" cy="230" r="8" fill="#c084fc" filter="url(#nodeHaloMed)" />
           <circle cx="357" cy="230" r="3.2" fill="#ffffff" />
 
           {/* Branch 3: to Hard Pill */}
           <path
             d="M 285 260 C 305 270, 318 300, 326 322 C 334 344, 350 342, 380 342"
             stroke="#818cf8"
-            strokeWidth="3"
+            strokeWidth="3.2"
             strokeLinecap="round"
             fill="none"
             filter="url(#wireGlow)"
           />
-          <circle cx="326" cy="322" r="8" fill="#f43f5e" filter="url(#nodeHalo)" />
+          <path
+            d="M 285 260 C 305 270, 318 300, 326 322 C 334 344, 350 342, 380 342"
+            stroke="#818cf8"
+            strokeWidth="3.2"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <circle cx="326" cy="322" r="8" fill="#f43f5e" filter="url(#nodeHaloHard)" />
           <circle cx="326" cy="322" r="3.2" fill="#ffffff" />
         </g>
 
