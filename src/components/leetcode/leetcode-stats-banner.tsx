@@ -414,7 +414,7 @@ export function TrophyLaurel3D({ className = "w-18 h-16" }: { className?: string
 
 // =========================================================================
 // TOTAL SOLVED SPEEDOMETER ARCH & 3D LAPTOP ON PODIUM CARD
-// Matching media_1794121472841_b90579f5.png pixel-for-pixel
+// Matching media_1794122991334_1e1e6bb2.jpg with full glassmorphism
 // =========================================================================
 
 export interface TotalSolvedSpeedometerCardProps {
@@ -436,10 +436,10 @@ export function TotalSolvedSpeedometerCard({
 
   // 20 discrete radial curved pill segments spanning from 200° to 340°
   const totalSegs = 20;
-  const cx = 585;
-  const cy = 345;
-  const rIn = 160;
-  const rOut = 205;
+  const cx = 282;
+  const cy = 162;
+  const rIn = 68;
+  const rOut = 88;
 
   const segments = Array.from({ length: totalSegs }, (_, i) => {
     const deg = 200 + i * (140.0 / (totalSegs - 1));
@@ -475,27 +475,31 @@ export function TotalSolvedSpeedometerCard({
 
   return (
     <div
-      className={`group relative w-full rounded-[38px] sm:rounded-[44px] overflow-hidden transition-all duration-300 hover:scale-[1.01] ${className}`}
+      className={`group relative w-full h-full rounded-[30px] sm:rounded-[34px] overflow-hidden transition-all duration-300 hover:scale-[1.01] ${className}`}
       style={{
         background:
-          "linear-gradient(135deg, rgba(7, 34, 22, 0.96), rgba(2, 16, 10, 0.98) 50%, rgba(5, 24, 16, 0.96))",
-        border: "2px solid rgba(74, 222, 128, 0.82)",
+          "linear-gradient(135deg, rgba(6, 45, 32, 0.62) 0%, rgba(2, 22, 15, 0.85) 100%)",
+        border: "1.5px solid rgba(74, 222, 128, 0.65)",
         boxShadow:
-          "0 0 32px rgba(34, 197, 94, 0.38), inset 0 2px 4px rgba(255, 255, 255, 0.22), inset 0 -6px 14px rgba(0, 0, 0, 0.85)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
+          "inset 0 1.5px 3px rgba(255, 255, 255, 0.4), inset 0 0 18px rgba(34, 197, 94, 0.22), 0 0 24px rgba(34, 197, 94, 0.3)",
+        backdropFilter: "blur(25px)",
+        WebkitBackdropFilter: "blur(25px)",
       }}
     >
+      {/* Specular Top-Left Glass Bubble Sheen */}
+      <div className="absolute inset-x-3 top-1 h-[42%] rounded-t-[26px] bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
+      <div className="absolute top-2 left-4 w-7 h-3 rounded-full bg-white/45 blur-[1px] pointer-events-none transform -rotate-12" />
+
       <svg
-        viewBox="0 0 900 567"
-        className="w-full h-auto block select-none"
+        viewBox="0 0 402 245"
+        className="w-full h-full block select-none"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
           <linearGradient id="cardBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#072216" />
-            <stop offset="45%" stopColor="#02120b" />
-            <stop offset="100%" stopColor="#051910" />
+            <stop offset="0%" stopColor="#083827" stopOpacity="0.4" />
+            <stop offset="50%" stopColor="#031b12" stopOpacity="0.7" />
+            <stop offset="100%" stopColor="#052418" stopOpacity="0.8" />
           </linearGradient>
 
           <linearGradient id="numGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -503,12 +507,6 @@ export function TotalSolvedSpeedometerCard({
             <stop offset="35%" stopColor="#86efac" />
             <stop offset="70%" stopColor="#4ade80" />
             <stop offset="100%" stopColor="#22c55e" />
-          </linearGradient>
-
-          <linearGradient id="underlineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="50%" stopColor="#4ade80" />
-            <stop offset="100%" stopColor="#bef264" />
           </linearGradient>
 
           <linearGradient id="pedestalRimGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -536,132 +534,115 @@ export function TotalSolvedSpeedometerCard({
           </linearGradient>
 
           <filter id="peakGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#bef264" floodOpacity="0.95" />
+            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#bef264" floodOpacity="0.95" />
           </filter>
 
           <filter id="limeGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#4ade80" floodOpacity="0.85" />
+            <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#4ade80" floodOpacity="0.85" />
           </filter>
 
           <filter id="emeraldGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#22c55e" floodOpacity="0.75" />
+            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#22c55e" floodOpacity="0.75" />
           </filter>
 
           <filter id="pedestalBloom" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#4ade80" floodOpacity="0.9" />
+            <feDropShadow dx="0" dy="0" stdDeviation="4.5" floodColor="#4ade80" floodOpacity="0.9" />
           </filter>
 
           <filter id="codeBloom" x="-40%" y="-40%" width="180%" height="180%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4.5" floodColor="#4ade80" floodOpacity="0.95" />
+            <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#4ade80" floodOpacity="0.95" />
           </filter>
 
           <filter id="waveBloom" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#4ade80" floodOpacity="0.7" />
+            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#4ade80" floodOpacity="0.7" />
           </filter>
 
           <filter id="numShadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#22c55e" floodOpacity="0.4" />
+            <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#22c55e" floodOpacity="0.4" />
           </filter>
         </defs>
 
-        {/* Ambient Top Light Reflection */}
-        <path d="M 55 18 L 845 18" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" opacity="0.3" />
-
         {/* 1. LAYERED ORGANIC WAVES AT BOTTOM */}
         <path
-          d="M 0 440 Q 220 380, 460 420 T 900 400 L 900 567 L 0 567 Z"
-          fill="rgba(6, 42, 27, 0.55)"
+          d="M 0 190 Q 95 160, 200 180 T 402 170 L 402 245 L 0 245 Z"
+          fill="rgba(6, 45, 30, 0.45)"
         />
         <path
-          d="M 0 470 Q 280 410, 560 460 T 900 440 L 900 567 L 0 567 Z"
-          fill="rgba(3, 20, 13, 0.88)"
+          d="M 0 205 Q 120 175, 240 200 T 402 190 L 402 245 L 0 245 Z"
+          fill="rgba(3, 22, 14, 0.75)"
         />
         <path
-          d="M 0 470 Q 280 410, 560 460 T 900 440"
+          d="M 0 205 Q 120 175, 240 200 T 402 190"
           stroke="url(#waveCrestGrad)"
-          strokeWidth="5"
+          strokeWidth="2.4"
           fill="none"
-          opacity="0.9"
+          opacity="0.85"
           filter="url(#waveBloom)"
         />
 
-        {/* 2. TOP-LEFT HEADER: SQUIRCLE + DIVIDER + TITLE */}
+        {/* 2. TOP-LEFT HEADER: SQUIRCLE + TITLE (NO DIVIDER) */}
         <rect
-          x="75"
-          y="60"
-          width="105"
-          height="105"
-          rx="28"
-          ry="28"
+          x="22"
+          y="20"
+          width="44"
+          height="44"
+          rx="13"
+          ry="13"
           fill="rgba(10, 46, 32, 0.85)"
           stroke="#22c55e"
-          strokeWidth="3"
-          strokeOpacity="0.65"
+          strokeWidth="1.8"
+          strokeOpacity="0.7"
           filter="url(#emeraldGlow)"
         />
-        <path d="M 92 65 L 163 65" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" opacity="0.35" />
+        <path d="M 28 23 L 60 23" stroke="#ffffff" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
 
         {/* </> in Header Squircle */}
         <g filter="url(#codeBloom)">
           <path
-            d="M 115 97 L 98 112.5 L 115 128"
+            d="M 39 36 L 33 42 L 39 48"
             stroke="#4ade80"
-            strokeWidth="5.5"
+            strokeWidth="2.6"
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
           />
           <path
-            d="M 140 97 L 157 112.5 L 140 128"
+            d="M 49 36 L 55 42 L 49 48"
             stroke="#4ade80"
-            strokeWidth="5.5"
+            strokeWidth="2.6"
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
           />
-          <line x1="133" y1="92" x2="122" y2="133" stroke="#4ade80" strokeWidth="5.5" strokeLinecap="round" />
+          <line x1="47" y1="34" x2="41" y2="50" stroke="#4ade80" strokeWidth="2.6" strokeLinecap="round" />
         </g>
 
-        {/* Hairline Divider */}
-        <line x1="215" y1="78" x2="215" y2="148" stroke="rgba(255, 255, 255, 0.35)" strokeWidth="3" strokeLinecap="round" />
-
-        {/* Title */}
+        {/* "Total Solved" Title (directly next to squircle, matching image) */}
         <text
-          x="245"
-          y="126"
+          x="78"
+          y="48"
           fill="#ffffff"
           fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
-          fontSize="44"
+          fontSize="20"
           fontWeight="700"
-          letterSpacing="0.5"
+          letterSpacing="0.3"
         >
           Total Solved
         </text>
 
-        {/* 3. BIG METRIC (Number + Underline) */}
+        {/* 3. BIG METRIC (Number ONLY, NO underline, matching image) */}
         <text
-          x="75"
-          y="340"
+          x="24"
+          y="160"
           fill="url(#numGrad)"
           fontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
-          fontSize="160"
+          fontSize="82"
           fontWeight="900"
-          letterSpacing="-3"
+          letterSpacing="-2"
           filter="url(#numShadow)"
         >
           {loading ? "—" : safeTotal}
         </text>
-
-        <line
-          x1="78"
-          y1="375"
-          x2="245"
-          y2="375"
-          stroke="url(#underlineGrad)"
-          strokeWidth="11"
-          strokeLinecap="round"
-          filter="url(#limeGlow)"
-        />
 
         {/* 4. SPEEDOMETER ARCH SEGMENTS */}
         {segments.map((s, idx) => (
@@ -672,7 +653,7 @@ export function TotalSolvedSpeedometerCard({
             x2={s.x2}
             y2={s.y2}
             stroke={s.stroke}
-            strokeWidth="14"
+            strokeWidth="6.5"
             strokeLinecap="round"
             filter={s.filter}
             opacity={s.opacity}
@@ -680,84 +661,82 @@ export function TotalSolvedSpeedometerCard({
         ))}
 
         {/* 5. 3D GLOWING PEDESTAL */}
-        <ellipse cx="585" cy="420" rx="145" ry="22" fill="#000000" opacity="0.75" />
+        <ellipse cx="282" cy="186" rx="60" ry="10" fill="#000000" opacity="0.75" />
         <path
-          d="M 450 375 A 135 28 0 0 0 720 375 V 415 A 135 28 0 0 1 450 415 Z"
+          d="M 224 168 A 58 12 0 0 0 340 168 V 184 A 58 12 0 0 1 224 184 Z"
           fill="url(#pedestalCylinderGrad)"
         />
-        <path d="M 455 385 A 135 28 0 0 0 715 385" stroke="#22c55e" strokeWidth="1.8" opacity="0.3" fill="none" />
-        <ellipse cx="585" cy="375" rx="135" ry="28" fill="url(#pedestalTopGrad)" />
+        <path d="M 226 172 A 58 12 0 0 0 338 172" stroke="#22c55e" strokeWidth="1" opacity="0.3" fill="none" />
+        <ellipse cx="282" cy="168" rx="58" ry="12" fill="url(#pedestalTopGrad)" />
         <ellipse
-          cx="585"
-          cy="375"
-          rx="135"
-          ry="28"
+          cx="282"
+          cy="168"
+          rx="58"
+          ry="12"
           fill="none"
           stroke="url(#pedestalRimGrad)"
-          strokeWidth="7"
+          strokeWidth="3.2"
           filter="url(#pedestalBloom)"
         />
         <path
-          d="M 485 392 A 135 28 0 0 0 685 392"
+          d="M 238 175 A 58 12 0 0 0 326 175"
           stroke="#ffffff"
-          strokeWidth="2.2"
+          strokeWidth="1.2"
           strokeLinecap="round"
           fill="none"
           opacity="0.85"
         />
 
         {/* 6. 3D METALLIC OPEN LAPTOP */}
-        <ellipse cx="585" cy="358" rx="80" ry="8" fill="#000000" opacity="0.7" />
+        <ellipse cx="282" cy="160" rx="38" ry="4" fill="#000000" opacity="0.7" />
         {/* Lid Bezel */}
         <rect
-          x="515"
-          y="222"
-          width="140"
-          height="96"
-          rx="11"
-          ry="11"
+          x="252"
+          y="110"
+          width="60"
+          height="40"
+          rx="5"
+          ry="5"
           fill="#1e293b"
           stroke="#475569"
-          strokeWidth="2"
+          strokeWidth="1.2"
         />
-        <path d="M 527 225 L 643 225" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+        <path d="M 257 111.5 L 307 111.5" stroke="#94a3b8" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
         {/* OLED Screen */}
-        <rect x="523" y="230" width="124" height="80" rx="6" ry="6" fill="#020408" />
-        <path d="M 528 234 L 565 234 L 540 306 L 528 306 Z" fill="#ffffff" opacity="0.08" />
+        <rect x="255.5" y="113.5" width="53" height="33" rx="3" ry="3" fill="#020408" />
+        <path d="M 257 115 L 274 115 L 263 145 L 257 145 Z" fill="#ffffff" opacity="0.08" />
         {/* Glowing Code on Screen */}
         <g filter="url(#codeBloom)">
           <path
-            d="M 568 262 L 550 274 L 568 286"
+            d="M 275 125 L 268 130 L 275 135"
             stroke="#4ade80"
-            strokeWidth="6"
+            strokeWidth="2.6"
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
           />
           <path
-            d="M 602 262 L 620 274 L 602 286"
+            d="M 289 125 L 296 130 L 289 135"
             stroke="#4ade80"
-            strokeWidth="6"
+            strokeWidth="2.6"
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
           />
-          <line x1="592" y1="254" x2="578" y2="294" stroke="#4ade80" strokeWidth="6" strokeLinecap="round" />
+          <line x1="285" y1="122" x2="279" y2="138" stroke="#4ade80" strokeWidth="2.6" strokeLinecap="round" />
         </g>
         {/* Keyboard Deck */}
         <path
-          d="M 490 318 L 680 318 L 702 348 L 468 348 Z"
+          d="M 241 150 L 323 150 L 332 163 L 232 163 Z"
           fill="#94a3b8"
           stroke="#64748b"
-          strokeWidth="1.8"
+          strokeWidth="1"
         />
-        <line x1="468" y1="348" x2="702" y2="348" stroke="#f8fafc" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
+        <line x1="232" y1="163" x2="332" y2="163" stroke="#f8fafc" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
         {/* Keyboard Well */}
-        <path d="M 506 322 L 664 322 L 678 337 L 492 337 Z" fill="#0f172a" />
-        <line x1="512" y1="327" x2="658" y2="327" stroke="#334155" strokeWidth="2" strokeDasharray="10 4" />
-        <line x1="504" y1="333" x2="666" y2="333" stroke="#334155" strokeWidth="2" strokeDasharray="10 4" />
+        <path d="M 248 152 L 316 152 L 322 158 L 242 158 Z" fill="#0f172a" />
         {/* Trackpad */}
-        <rect x="565" y="339" width="40" height="6" rx="2" fill="#1e293b" stroke="#475569" strokeWidth="1" />
+        <rect x="274" y="159" width="16" height="2.5" rx="1" fill="#1e293b" stroke="#475569" strokeWidth="0.6" />
       </svg>
     </div>
   );
@@ -795,34 +774,45 @@ export function LeetcodeStatsBanner({
 
   return (
     <div
-      className={`relative w-full max-w-[1240px] mx-auto rounded-[46px] p-4 sm:p-5 md:p-6 overflow-visible transition-all duration-300 ${className}`}
+      className={`relative w-full max-w-[1040px] mx-auto rounded-[46px] sm:rounded-[54px] p-3 sm:p-4 md:p-5 overflow-hidden transition-all duration-300 ${className}`}
       style={{
         background:
-          "linear-gradient(135deg, rgba(28, 34, 46, 0.95), rgba(12, 14, 20, 0.98) 45%, rgba(24, 18, 34, 0.95))",
-        border: "1.5px solid rgba(160, 180, 220, 0.25)",
+          "linear-gradient(135deg, rgba(25, 34, 48, 0.45) 0%, rgba(10, 14, 22, 0.72) 50%, rgba(22, 18, 34, 0.45) 100%)",
+        border: "2px solid rgba(255, 255, 255, 0.32)",
         boxShadow:
-          "inset 0 2px 5px rgba(255,255,255,0.16), inset 0 -5px 12px rgba(0,0,0,0.7), 0 20px 50px rgba(0,0,0,0.85)",
-        backdropFilter: "blur(25px)",
-        WebkitBackdropFilter: "blur(25px)",
+          "0 25px 60px rgba(0, 0, 0, 0.85), inset 0 2px 6px rgba(255, 255, 255, 0.45), inset 0 -4px 12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 255, 255, 0.06)",
+        backdropFilter: "blur(35px)",
+        WebkitBackdropFilter: "blur(35px)",
       }}
     >
-      {/* Specular Top Edge Light Highlight */}
-      <div className="absolute inset-x-12 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+      {/* Specular Outer Glass Capsule Highlights */}
+      {/* Top-Left Specular Lens Glint */}
+      <div className="absolute top-2 left-6 w-14 h-3.5 rounded-full bg-white/60 blur-[2px] pointer-events-none transform -rotate-6" />
+      <div className="absolute top-2.5 left-7 w-3 h-3 rounded-full bg-cyan-200 blur-[1px] pointer-events-none" />
+
+      {/* Bottom-Right Specular Lens Glint */}
+      <div className="absolute bottom-2 right-6 w-14 h-3.5 rounded-full bg-white/45 blur-[2px] pointer-events-none transform -rotate-6" />
+      <div className="absolute bottom-2.5 right-7 w-3 h-3 rounded-full bg-purple-300 blur-[1px] pointer-events-none" />
+
+      {/* Top Outer Rim Light Refraction */}
+      <div className="absolute inset-x-12 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none" />
 
       {/* Atmospheric neon back-glow */}
       <div className="absolute -top-16 left-1/4 w-72 h-32 bg-emerald-500/15 blur-3xl rounded-full pointer-events-none" />
       <div className="absolute -bottom-16 right-1/4 w-72 h-32 bg-purple-600/15 blur-3xl rounded-full pointer-events-none" />
 
-      {/* Proportional Layout:
-          Left: Speedometer Arch Card (Replacing the circle!)
-          Right: 3 Difficulty Cards (Easy, Medium, Hard) + Global Ranking Card
+      {/* Proportional 2-Column Layout matching media_1794122991334_1e1e6bb2.jpg exactly:
+          Left Column (44%): Speedometer Arch Card
+          Right Column (56%): 2 Rows:
+            - Top Row: 3 Glass Squircles (Easy, Medium, Hard)
+            - Bottom Row: Global Ranking Pill
       */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1.35fr_1.65fr] items-center gap-5 lg:gap-6">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1fr_1.28fr] items-stretch gap-3.5 sm:gap-4 md:gap-4.5">
         
         {/* ========================================================
-            1. LEFT: Speedometer Arch Card replacing the donut circle
+            1. LEFT COLUMN: Total Solved Speedometer Arch Card
            ======================================================== */}
-        <div className="flex items-center justify-center lg:border-r lg:border-white/15 lg:pr-6 py-1">
+        <div className="flex w-full">
           <TotalSolvedSpeedometerCard
             totalSolved={safeTotal}
             loading={loading}
@@ -830,95 +820,120 @@ export function LeetcodeStatsBanner({
         </div>
 
         {/* ========================================================
-            2. RIGHT: Difficulty Cards + Global Ranking Pill
+            2. RIGHT COLUMN: 2 Rows (3 Squircles + Global Ranking)
            ======================================================== */}
-        <div className="flex flex-col gap-4 sm:gap-4.5 justify-center py-1">
+        <div className="flex flex-col justify-between gap-3 sm:gap-3.5">
           
-          {/* 3 Glowing Squircles (Easy, Medium, Hard) */}
-          <div className="grid grid-cols-3 gap-3 sm:gap-3.5">
-            {/* EASY SQUIRCLE (Green / Mint) */}
+          {/* TOP ROW: 3 Glassmorphic Squircles (Easy, Medium, Hard) */}
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+            
+            {/* EASY SQUIRCLE (Cyan / Mint Glass) */}
             <div
-              className="group relative flex flex-col items-center justify-center h-[116px] sm:h-[124px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
+              className="group relative flex flex-col items-center justify-center h-[112px] sm:h-[118px] rounded-[26px] sm:rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default overflow-hidden"
               style={{
                 background:
-                  "linear-gradient(145deg, rgba(0, 115, 95, 0.95), rgba(0, 48, 42, 0.98))",
-                border: "2px solid rgba(58, 255, 220, 0.8)",
+                  "linear-gradient(145deg, rgba(0, 150, 135, 0.52), rgba(0, 60, 55, 0.78))",
+                border: "1.5px solid rgba(58, 255, 220, 0.75)",
                 boxShadow:
-                  "inset 0 0 14px rgba(0, 245, 196, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 22px rgba(0, 255, 210, 0.42)",
+                  "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 16px rgba(0, 245, 196, 0.25), 0 0 22px rgba(0, 255, 210, 0.35)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
               }}
             >
+              {/* Glassmorphic Specular Bubble Sheen */}
+              <div className="absolute inset-x-2 top-1 h-[48%] rounded-t-[22px] bg-gradient-to-b from-white/35 via-white/5 to-transparent pointer-events-none" />
+              <div className="absolute top-1.5 left-2.5 w-5 h-2.5 rounded-full bg-white/50 blur-[1px] pointer-events-none transform -rotate-12" />
+
               <LightningBolt3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(0,245,210,0.7)]" />
-              <span className="font-bold text-2xl sm:text-[30px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+              <span className="font-extrabold text-2xl sm:text-[29px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
                 {loading ? "—" : easySolved}
               </span>
-              <span className="text-xs sm:text-[13px] font-semibold text-slate-100 mt-1 leading-none">
+              <span className="text-xs sm:text-[13px] font-semibold text-cyan-100 mt-1 leading-none">
                 Easy
               </span>
             </div>
 
-            {/* MEDIUM SQUIRCLE (Warm Amber / Gold) */}
+            {/* MEDIUM SQUIRCLE (Warm Amber / Gold Glass) */}
             <div
-              className="group relative flex flex-col items-center justify-center h-[116px] sm:h-[124px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
+              className="group relative flex flex-col items-center justify-center h-[112px] sm:h-[118px] rounded-[26px] sm:rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default overflow-hidden"
               style={{
                 background:
-                  "linear-gradient(145deg, rgba(165, 95, 12, 0.95), rgba(85, 42, 4, 0.98))",
-                border: "2px solid rgba(255, 190, 60, 0.85)",
+                  "linear-gradient(145deg, rgba(200, 115, 15, 0.52), rgba(95, 45, 5, 0.78))",
+                border: "1.5px solid rgba(255, 190, 60, 0.8)",
                 boxShadow:
-                  "inset 0 0 14px rgba(245, 158, 11, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 24px rgba(255, 163, 30, 0.45)",
+                  "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 16px rgba(245, 158, 11, 0.25), 0 0 22px rgba(255, 163, 30, 0.35)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
               }}
             >
+              {/* Glassmorphic Specular Bubble Sheen */}
+              <div className="absolute inset-x-2 top-1 h-[48%] rounded-t-[22px] bg-gradient-to-b from-white/35 via-white/5 to-transparent pointer-events-none" />
+              <div className="absolute top-1.5 left-2.5 w-5 h-2.5 rounded-full bg-white/50 blur-[1px] pointer-events-none transform -rotate-12" />
+
               <Layers3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,174,34,0.7)]" />
-              <span className="font-bold text-2xl sm:text-[30px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+              <span className="font-extrabold text-2xl sm:text-[29px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
                 {loading ? "—" : mediumSolved}
               </span>
-              <span className="text-xs sm:text-[13px] font-semibold text-slate-100 mt-1 leading-none">
+              <span className="text-xs sm:text-[13px] font-semibold text-amber-100 mt-1 leading-none">
                 Medium
               </span>
             </div>
 
-            {/* HARD SQUIRCLE (Crimson / Ruby) */}
+            {/* HARD SQUIRCLE (Crimson / Ruby Glass) */}
             <div
-              className="group relative flex flex-col items-center justify-center h-[116px] sm:h-[124px] rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default"
+              className="group relative flex flex-col items-center justify-center h-[112px] sm:h-[118px] rounded-[26px] sm:rounded-[28px] p-2 text-center transition-all duration-200 hover:scale-[1.04] cursor-default overflow-hidden"
               style={{
                 background:
-                  "linear-gradient(145deg, rgba(150, 48, 58, 0.95), rgba(75, 20, 28, 0.98))",
-                border: "2px solid rgba(255, 110, 120, 0.85)",
+                  "linear-gradient(145deg, rgba(180, 45, 65, 0.52), rgba(85, 18, 28, 0.78))",
+                border: "1.5px solid rgba(255, 110, 120, 0.8)",
                 boxShadow:
-                  "inset 0 0 14px rgba(244, 63, 94, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 24px rgba(255, 65, 80, 0.45)",
+                  "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 16px rgba(244, 63, 94, 0.25), 0 0 22px rgba(255, 65, 80, 0.35)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
               }}
             >
+              {/* Glassmorphic Specular Bubble Sheen */}
+              <div className="absolute inset-x-2 top-1 h-[48%] rounded-t-[22px] bg-gradient-to-b from-white/35 via-white/5 to-transparent pointer-events-none" />
+              <div className="absolute top-1.5 left-2.5 w-5 h-2.5 rounded-full bg-white/50 blur-[1px] pointer-events-none transform -rotate-12" />
+
               <Flag3D className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 transition-transform duration-200 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,68,78,0.7)]" />
-              <span className="font-bold text-2xl sm:text-[30px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+              <span className="font-extrabold text-2xl sm:text-[29px] text-white leading-none mt-1.5 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
                 {loading ? "—" : hardSolved}
               </span>
-              <span className="text-xs sm:text-[13px] font-semibold text-slate-100 mt-1 leading-none">
+              <span className="text-xs sm:text-[13px] font-semibold text-rose-100 mt-1 leading-none">
                 Hard
               </span>
             </div>
           </div>
 
-          {/* Global Ranking Pill with Realistic 3D Golden Trophy */}
+          {/* BOTTOM ROW: Global Ranking Pill (Spans width of 3 cards above) */}
           <div
-            className="group relative flex items-center justify-evenly gap-3 sm:gap-4 px-4 sm:px-6 py-3 h-[116px] sm:h-[124px] w-full rounded-[32px] sm:rounded-[36px] transition-all duration-200 hover:scale-[1.02] cursor-default"
+            className="group relative flex items-center justify-evenly gap-3 sm:gap-4 px-4 sm:px-6 py-2.5 h-[110px] sm:h-[116px] w-full rounded-[30px] sm:rounded-[34px] transition-all duration-200 hover:scale-[1.02] cursor-default overflow-hidden"
             style={{
               background:
-                "linear-gradient(135deg, rgba(65, 22, 112, 0.96), rgba(35, 11, 62, 0.98))",
-              border: "2px solid rgba(175, 95, 255, 0.85)",
+                "linear-gradient(135deg, rgba(85, 25, 145, 0.58), rgba(40, 10, 75, 0.82))",
+              border: "1.5px solid rgba(175, 95, 255, 0.8)",
               boxShadow:
-                "inset 0 0 16px rgba(168, 85, 247, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 24px rgba(168, 85, 247, 0.5)",
+                "inset 0 1.5px 3px rgba(255, 255, 255, 0.45), inset 0 0 18px rgba(168, 85, 247, 0.3), 0 0 26px rgba(168, 85, 247, 0.4)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
             }}
           >
+            {/* Glassmorphic Specular Bubble Sheen */}
+            <div className="absolute inset-x-3 top-1 h-[48%] rounded-t-[26px] bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
+            <div className="absolute top-1.5 left-4 w-7 h-3 rounded-full bg-white/50 blur-[1px] pointer-events-none transform -rotate-12" />
+
             {/* 3D Realistic Golden Trophy with Laurel Wreaths */}
             <div className="shrink-0 flex items-center justify-center">
-              <TrophyLaurel3D className="w-[68px] h-[58px] sm:w-[74px] sm:h-[64px] transition-transform duration-200 group-hover:scale-105" />
+              <TrophyLaurel3D className="w-[66px] h-[56px] sm:w-[72px] sm:h-[62px] transition-transform duration-200 group-hover:scale-105" />
             </div>
 
             {/* Crisp Vertical Divider */}
-            <div className="w-[1.5px] h-14 bg-white/35 shrink-0 mx-2 sm:mx-3 rounded-full" />
+            <div className="w-[1.5px] h-12 bg-white/35 shrink-0 mx-2 sm:mx-3 rounded-full" />
 
             {/* Ranking Number & Subtitle */}
             <div className="flex flex-col text-left pr-1 min-w-0">
-              <span className="font-bold text-2xl sm:text-[28px] lg:text-[34px] text-white tracking-tight leading-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
+              <span className="font-extrabold text-2xl sm:text-[28px] lg:text-[34px] text-white tracking-tight leading-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
                 {loading ? "—" : formattedRanking}
               </span>
               <span className="text-xs sm:text-[13px] font-medium text-[#d8b4fe] mt-1.5 leading-none tracking-wide">
