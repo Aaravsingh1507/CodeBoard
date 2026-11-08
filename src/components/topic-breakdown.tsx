@@ -24,6 +24,24 @@ const FALLBACK_TOPICS: TopicItem[] = [
   { tag: "Divide & Conquer", solved: 1, level: "advanced" },
 ];
 
+// Helper: polar to cartesian coordinate conversion
+function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
+  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+  return {
+    x: Number((centerX + radius * Math.cos(angleInRadians)).toFixed(2)),
+    y: Number((centerY + radius * Math.sin(angleInRadians)).toFixed(2)),
+  };
+}
+
+// Helper: exact clockwise SVG arc path
+function describeArc(centerX: number, centerY: number, radius: number, startAngle: number, endAngle: number) {
+  const start = polarToCartesian(centerX, centerY, radius, startAngle);
+  const end = polarToCartesian(centerX, centerY, radius, endAngle);
+  const diff = endAngle - startAngle;
+  const largeArcFlag = diff > 180 ? "1" : "0";
+  return ["M", start.x, start.y, "A", radius, radius, 0, largeArcFlag, 1, end.x, end.y].join(" ");
+}
+
 // Specialized vector icons for DSA topics
 function renderTopicIcon(tag: string) {
   const norm = tag.toLowerCase().trim();
@@ -222,17 +240,23 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
     0,
   ];
 
-  // Donut Gauge Arc Calculations
+  // EXACT CIRCULAR PROGRESS BAR / GAUGE CALCULATION (360 degrees)
   const radius = 62;
-  const circumference = 2 * Math.PI * radius;
-  const fundLen = totalProblems > 0 ? (fundPct / 100) * circumference : 0;
-  const interLen = totalProblems > 0 ? (interPct / 100) * circumference : 0;
-  const advLen = totalProblems > 0 ? (advPct / 100) * circumference : 0;
+  const fundDeg = (fundPct / 100) * 360;
+  const interDeg = (interPct / 100) * 360;
+  const advDeg = (advPct / 100) * 360;
 
-  const gap = 3;
-  const arcFund = Math.max(0, fundLen - gap);
-  const arcInter = Math.max(0, interLen - gap);
-  const arcAdv = Math.max(0, advLen - gap);
+  // Tiny 2-degree clean gap between segments
+  const gapDeg = 2;
+  const arc1 = fundDeg > 4 ? describeArc(95, 95, radius, gapDeg, fundDeg - gapDeg) : null;
+  const arc2 =
+    interDeg > 4
+      ? describeArc(95, 95, radius, fundDeg + gapDeg, fundDeg + interDeg - gapDeg)
+      : null;
+  const arc3 =
+    advDeg > 4
+      ? describeArc(95, 95, radius, fundDeg + interDeg + gapDeg, 360 - gapDeg)
+      : null;
 
   // Tier ranking for Coverage Insight prose
   const tiers = [
@@ -245,25 +269,33 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
   const second = tiers[1];
   const third = tiers[2];
 
-  // Real Coverage Insight Bar heights (scale to max 52px, min 10px)
+  // Dynamic Pillar heights in Coverage Insight (proportional to real percentages)
   const maxTierPct = Math.max(fundPct, interPct, advPct, 1);
   const hFund = Math.max(12, Math.round((fundPct / maxTierPct) * 52));
   const hInter = Math.max(12, Math.round((interPct / maxTierPct) * 52));
   const hAdv = Math.max(12, Math.round((advPct / maxTierPct) * 52));
 
   return (
-    <div className="relative w-full rounded-[32px] p-6 sm:p-7 overflow-hidden text-white transition-all bg-gradient-to-br from-[#082216]/95 via-[#04140d]/97 to-[#020a06]/99 border-[1.5px] border-emerald-500/35 backdrop-blur-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85),inset_0_1px_2px_rgba(255,255,255,0.2),inset_0_0_40px_rgba(16,185,129,0.06),0_0_35px_rgba(16,185,129,0.15)]">
-      {/* Dynamic Ambient Glow Behind Glass */}
-      <div className="pointer-events-none absolute -top-32 -left-32 w-96 h-96 rounded-full bg-emerald-500/15 blur-[90px]" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-lime-500/12 blur-[90px]" />
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-emerald-600/10 blur-[110px]" />
+    <div
+      className="relative w-full rounded-[32px] p-6 sm:p-7 overflow-hidden text-white transition-all"
+      style={{
+        background: "linear-gradient(135deg, rgba(8, 14, 10, 0.95) 0%, rgba(3, 6, 4, 0.98) 50%, rgba(1, 3, 2, 0.99) 100%)",
+        backdropFilter: "blur(30px)",
+        WebkitBackdropFilter: "blur(30px)",
+        border: "1.5px solid rgba(52, 211, 153, 0.38)",
+        boxShadow: "0 25px 60px -15px rgba(0, 0, 0, 0.95), inset 0 1px 2px rgba(255, 255, 255, 0.22), inset 0 0 30px rgba(16, 185, 129, 0.05), 0 0 35px rgba(16, 185, 129, 0.15)",
+      }}
+    >
+      {/* Subtle Dark Ambient Light Behind Obsidian Glass (Pure Black Base) */}
+      <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 rounded-full bg-emerald-500/10 blur-[90px]" />
+      <div className="pointer-events-none absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-lime-500/08 blur-[90px]" />
 
       {/* 1. HEADER SECTION */}
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         {/* Title + Subtitle + 3D Layers Badge */}
         <div className="flex items-center gap-3.5">
           {/* 3D Stacked Layers Icon Badge */}
-          <div className="relative shrink-0 flex items-center justify-center w-12 h-12 rounded-[14px] bg-gradient-to-br from-[#166534] to-[#052e16] border border-emerald-400/50 shadow-[0_0_14px_rgba(34,197,94,0.55),inset_0_1px_1px_rgba(255,255,255,0.3)]">
+          <div className="relative shrink-0 flex items-center justify-center w-12 h-12 rounded-[14px] bg-gradient-to-br from-[#166534] to-[#052e16] border border-emerald-400/50 shadow-[0_0_15px_rgba(34,197,94,0.55),inset_0_1px_1px_rgba(255,255,255,0.3)]">
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
               <defs>
                 <linearGradient id="hdrTopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -304,112 +336,109 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
         {/* Legend Filter Pills */}
         <div className="flex items-center gap-2.5 flex-wrap">
           {/* Fundamental */}
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-500/40 bg-[#062518]/90 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform hover:scale-105">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981]" />
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-500/40 bg-[#06120b]/90 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform hover:scale-105">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00f076] shadow-[0_0_10px_#00f076]" />
             <span className="text-xs font-bold text-white tracking-wide">Fundamental</span>
           </div>
 
           {/* Intermediate */}
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-lime-500/40 bg-[#0d2813]/90 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform hover:scale-105">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#84cc16] shadow-[0_0_8px_#84cc16]" />
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-lime-500/40 bg-[#0a150b]/90 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform hover:scale-105">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#88ff00] shadow-[0_0_10px_#88ff00]" />
             <span className="text-xs font-bold text-white tracking-wide">Intermediate</span>
           </div>
 
           {/* Advanced */}
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-yellow-500/40 bg-[#1a2b0e]/90 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform hover:scale-105">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#eab308] shadow-[0_0_8px_#eab308]" />
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-yellow-500/40 bg-[#161a08]/90 backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform hover:scale-105">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#eaff00] shadow-[0_0_10px_#eaff00]" />
             <span className="text-xs font-bold text-white tracking-wide">Advanced</span>
           </div>
         </div>
       </div>
 
-      {/* 2. MAIN LAYOUT GRID */}
+      {/* 2. MAIN LAYOUT GRID WITH AUTHENTIC GLASSMORPHISM */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* LEFT COLUMN: Donut Gauge & Summary (Col 1-4) */}
-        <div className="lg:col-span-4 xl:col-span-3.5 rounded-2xl p-5 sm:p-6 flex flex-col justify-between border border-emerald-500/30 bg-gradient-to-br from-[#07281c]/80 to-[#03150e]/90 backdrop-blur-xl shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.5)]">
-          {/* Donut Gauge Visual */}
+        <div
+          className="lg:col-span-4 xl:col-span-3.5 rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all"
+          style={{
+            background: "linear-gradient(145deg, rgba(14, 22, 17, 0.72) 0%, rgba(5, 10, 7, 0.85) 100%)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid rgba(74, 222, 128, 0.3)",
+            boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.18), inset 0 0 20px rgba(16, 185, 129, 0.04), 0 12px 30px rgba(0, 0, 0, 0.65)",
+          }}
+        >
+          {/* REAL PROGRESS CIRCLE / DONUT GAUGE */}
           <div className="relative flex items-center justify-center my-1">
-            <svg width="190" height="190" viewBox="0 0 190 190" className="transform -rotate-90">
+            <svg width="190" height="190" viewBox="0 0 190 190">
               <defs>
-                <linearGradient id="dFundGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#34d399" />
-                  <stop offset="100%" stopColor="#059669" />
+                <linearGradient id="realFundGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#00f076" />
+                  <stop offset="100%" stopColor="#00a852" />
                 </linearGradient>
-                <linearGradient id="dInterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#a3e635" />
-                  <stop offset="100%" stopColor="#65a30d" />
+                <linearGradient id="realInterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#88ff00" />
+                  <stop offset="100%" stopColor="#55aa00" />
                 </linearGradient>
-                <linearGradient id="dAdvGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#facc15" />
-                  <stop offset="100%" stopColor="#ca8a04" />
+                <linearGradient id="realAdvGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#eaff00" />
+                  <stop offset="100%" stopColor="#b3bb00" />
                 </linearGradient>
-                <filter id="dGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#10b981" floodOpacity="0.55" />
+                <filter id="ringGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#00f076" floodOpacity="0.6" />
                 </filter>
               </defs>
 
               {/* Background Track Circle */}
-              <circle cx="95" cy="95" r={radius} fill="none" stroke="#052417" strokeWidth="16" />
+              <circle cx="95" cy="95" r={radius} fill="none" stroke="#051a10" strokeWidth="15" />
 
               {/* Inner Dark Glass Disc */}
-              <circle cx="95" cy="95" r={radius - 10} fill="#04150e" stroke="rgba(74, 222, 128, 0.25)" strokeWidth="1" />
+              <circle cx="95" cy="95" r={radius - 10} fill="#040e08" stroke="rgba(74, 222, 128, 0.25)" strokeWidth="1" />
 
-              {/* Fundamental Arc */}
-              {arcFund > 0 && (
-                <circle
-                  cx="95"
-                  cy="95"
-                  r={radius}
+              {/* Arc 1: Fundamental (Real Progress Arc) */}
+              {arc1 && (
+                <path
+                  d={arc1}
                   fill="none"
-                  stroke="url(#dFundGrad)"
-                  strokeWidth="16"
-                  strokeDasharray={`${arcFund} ${circumference}`}
-                  strokeDashoffset={0}
-                  strokeLinecap="round"
-                  filter="url(#dGlow)"
+                  stroke="url(#realFundGrad)"
+                  strokeWidth="15"
+                  strokeLinecap="butt"
+                  filter="url(#ringGlow)"
                   className="transition-all duration-700 ease-out"
                 />
               )}
 
-              {/* Intermediate Arc */}
-              {arcInter > 0 && (
-                <circle
-                  cx="95"
-                  cy="95"
-                  r={radius}
+              {/* Arc 2: Intermediate (Real Progress Arc) */}
+              {arc2 && (
+                <path
+                  d={arc2}
                   fill="none"
-                  stroke="url(#dInterGrad)"
-                  strokeWidth="16"
-                  strokeDasharray={`${arcInter} ${circumference}`}
-                  strokeDashoffset={-fundLen}
-                  strokeLinecap="round"
-                  filter="url(#dGlow)"
+                  stroke="url(#realInterGrad)"
+                  strokeWidth="15"
+                  strokeLinecap="butt"
+                  filter="url(#ringGlow)"
                   className="transition-all duration-700 ease-out"
                 />
               )}
 
-              {/* Advanced Arc */}
-              {arcAdv > 0 && (
-                <circle
-                  cx="95"
-                  cy="95"
-                  r={radius}
+              {/* Arc 3: Advanced (Real Progress Arc) */}
+              {arc3 && (
+                <path
+                  d={arc3}
                   fill="none"
-                  stroke="url(#dAdvGrad)"
-                  strokeWidth="16"
-                  strokeDasharray={`${arcAdv} ${circumference}`}
-                  strokeDashoffset={-(fundLen + interLen)}
-                  strokeLinecap="round"
-                  filter="url(#dGlow)"
+                  stroke="url(#realAdvGrad)"
+                  strokeWidth="15"
+                  strokeLinecap="butt"
+                  filter="url(#ringGlow)"
                   className="transition-all duration-700 ease-out"
                 />
               )}
             </svg>
 
-            {/* Center Content Inside Donut */}
+            {/* Center Content: </> Code Badge, Total Count, Label */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none select-none">
               {/* </> Code Badge */}
-              <div className="px-2 py-0.5 rounded-md bg-[#062a1b] border border-emerald-500/50 text-emerald-300 font-mono text-[11px] font-black shadow-[0_0_8px_rgba(16,185,129,0.35)] mb-1">
+              <div className="px-2 py-0.5 rounded-md bg-[#051c12] border border-emerald-500/50 text-[#34d399] font-mono text-[11px] font-black shadow-[0_0_8px_rgba(16,185,129,0.35)] mb-1">
                 &lt;/&gt;
               </div>
               <div className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-none">
@@ -426,7 +455,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             {/* Fundamental */}
             <div className="flex items-center justify-between text-xs sm:text-sm">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00f076] shadow-[0_0_8px_#00f076]" />
                 <span className="font-semibold text-emerald-100">Fundamental</span>
               </div>
               <span className="font-black text-white tracking-wide">
@@ -438,7 +467,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             {/* Intermediate */}
             <div className="flex items-center justify-between text-xs sm:text-sm">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#84cc16] shadow-[0_0_8px_#84cc16]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#88ff00] shadow-[0_0_8px_#88ff00]" />
                 <span className="font-semibold text-emerald-100">Intermediate</span>
               </div>
               <span className="font-black text-white tracking-wide">
@@ -450,7 +479,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             {/* Advanced */}
             <div className="flex items-center justify-between text-xs sm:text-sm">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#eab308] shadow-[0_0_8px_#eab308]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#eaff00] shadow-[0_0_8px_#eaff00]" />
                 <span className="font-semibold text-emerald-100">Advanced</span>
               </div>
               <span className="font-black text-white tracking-wide">
@@ -461,7 +490,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
           </div>
 
           {/* Mini 3-Stat Bottom Strip */}
-          <div className="mt-6 pt-3.5 border-t border-emerald-500/20 grid grid-cols-3 divide-x divide-emerald-500/20 text-center rounded-xl p-2.5 border border-emerald-500/20 bg-[#03150e]/90 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
+          <div className="mt-6 pt-3.5 border-t border-emerald-500/20 grid grid-cols-3 divide-x divide-emerald-500/20 text-center rounded-xl p-2.5 border border-emerald-500/20 bg-[#030a06]/90 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
             <div className="px-1">
               <div className="text-base font-black text-white">{displayTopics.length}</div>
               <div className="text-[10px] font-bold text-emerald-300/75 uppercase tracking-wider mt-0.5">
@@ -486,7 +515,16 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
         {/* RIGHT COLUMN: Vertical Bar Chart & Bottom Cards (Col 5-12) */}
         <div className="lg:col-span-8 xl:col-span-8.5 flex flex-col gap-4">
           {/* TOP CARD: Stylized Vertical Bar Chart */}
-          <div className="rounded-2xl p-5 sm:p-6 border border-emerald-500/30 bg-gradient-to-br from-[#07281c]/80 to-[#03150e]/90 backdrop-blur-xl shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+          <div
+            className="rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all"
+            style={{
+              background: "linear-gradient(145deg, rgba(14, 22, 17, 0.72) 0%, rgba(5, 10, 7, 0.85) 100%)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              border: "1px solid rgba(74, 222, 128, 0.3)",
+              boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.18), inset 0 0 20px rgba(16, 185, 129, 0.04), 0 12px 30px rgba(0, 0, 0, 0.65)",
+            }}
+          >
             {/* Chart Area with Y-Axis and Bars */}
             <div className="relative flex items-stretch gap-2.5 overflow-x-auto pb-2 scrollbar-thin">
               {/* Y-Axis */}
@@ -516,16 +554,16 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                   const isInter = item.level === "intermediate";
 
                   const barBg = isFund
-                    ? "linear-gradient(to top, #047857 0%, #059669 45%, #34d399 100%)"
+                    ? "linear-gradient(to top, #047857 0%, #059669 45%, #00f076 100%)"
                     : isInter
-                    ? "linear-gradient(to top, #4d7c0f 0%, #65a30d 45%, #a3e635 100%)"
-                    : "linear-gradient(to top, #a16207 0%, #ca8a04 45%, #facc15 100%)";
+                    ? "linear-gradient(to top, #4d7c0f 0%, #65a30d 45%, #88ff00 100%)"
+                    : "linear-gradient(to top, #a16207 0%, #ca8a04 45%, #eaff00 100%)";
 
                   const barGlow = isFund
-                    ? "0 0 14px rgba(52, 211, 153, 0.5)"
+                    ? "0 0 14px rgba(0, 240, 118, 0.55)"
                     : isInter
-                    ? "0 0 14px rgba(163, 230, 53, 0.5)"
-                    : "0 0 14px rgba(250, 204, 21, 0.5)";
+                    ? "0 0 14px rgba(136, 255, 0, 0.55)"
+                    : "0 0 14px rgba(234, 255, 0, 0.55)";
 
                   const [labelLine1, labelLine2] = splitTopicLabel(item.tag);
 
@@ -557,7 +595,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                       {/* Bottom Section: Rounded Icon Box + Label */}
                       <div className="absolute top-[148px] flex flex-col items-center">
                         {/* Rounded Square Icon Box */}
-                        <div className="w-8 h-8 rounded-lg bg-[#07251a]/95 border border-emerald-400/50 flex items-center justify-center text-emerald-300 shadow-[0_0_10px_rgba(52,211,153,0.3)] transition-all duration-300 group-hover:border-emerald-300 group-hover:scale-110">
+                        <div className="w-8 h-8 rounded-lg bg-[#06150e]/95 border border-emerald-400/50 flex items-center justify-center text-emerald-300 shadow-[0_0_10px_rgba(52,211,153,0.3)] transition-all duration-300 group-hover:border-emerald-300 group-hover:scale-110">
                           {renderTopicIcon(item.tag)}
                         </div>
 
@@ -573,9 +611,9 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
               </div>
             </div>
 
-            {/* Real-time Tooltip on Hover */}
+            {/* Tooltip on Hover */}
             {hoveredTopic && (
-              <div className="mt-2 text-center text-xs font-semibold text-emerald-200 bg-emerald-950/60 rounded-lg py-1 border border-emerald-500/20">
+              <div className="mt-2 text-center text-xs font-semibold text-emerald-200 bg-[#05140d]/80 rounded-lg py-1 border border-emerald-500/20">
                 <span className="text-white font-bold">{hoveredTopic.tag}</span>: {hoveredTopic.solved} solved ({hoveredTopic.level.toUpperCase()} • {((hoveredTopic.solved / totalProblems) * 100).toFixed(1)}% of total)
               </div>
             )}
@@ -584,7 +622,16 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
           {/* BOTTOM ROW: "Top Covered Topics" & "Coverage Insight" */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* 1. TOP COVERED TOPICS CARD */}
-            <div className="rounded-2xl p-4 sm:p-5 border border-emerald-500/30 bg-gradient-to-br from-[#07281c]/80 to-[#03150e]/90 backdrop-blur-xl shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+            <div
+              className="rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all"
+              style={{
+                background: "linear-gradient(145deg, rgba(14, 22, 17, 0.72) 0%, rgba(5, 10, 7, 0.85) 100%)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                border: "1px solid rgba(74, 222, 128, 0.3)",
+                boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.18), inset 0 0 20px rgba(16, 185, 129, 0.04), 0 12px 30px rgba(0, 0, 0, 0.65)",
+              }}
+            >
               {/* Header with Bullseye Target Icon */}
               <div className="flex items-center gap-2">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 drop-shadow-[0_0_8px_rgba(74,222,128,0.6)]">
@@ -601,7 +648,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
               <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mt-3.5">
                 {/* 1st Place */}
                 {top3[0] && (
-                  <div className="flex flex-col items-center sm:items-start p-2.5 rounded-2xl border border-emerald-400/50 bg-[#08291a]/95 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-transform hover:scale-105">
+                  <div className="flex flex-col items-center sm:items-start p-2.5 rounded-2xl border border-emerald-400/50 bg-[#06180f]/95 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-transform hover:scale-105">
                     <div className="flex items-center gap-1.5 w-full">
                       {/* Golden Trophy Icon Badge */}
                       <div className="w-6 h-6 rounded-full bg-[#047857] border border-[#34d399] flex items-center justify-center shrink-0">
@@ -618,7 +665,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                       </div>
                     </div>
                     {/* Mini Real Progress Line */}
-                    <div className="w-full h-1 bg-[#052417] rounded-full mt-2 overflow-hidden">
+                    <div className="w-full h-1 bg-[#030d07] rounded-full mt-2 overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-emerald-500 to-lime-400 rounded-full" style={{ width: "100%" }} />
                     </div>
                   </div>
@@ -626,7 +673,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
 
                 {/* 2nd Place */}
                 {top3[1] && (
-                  <div className="flex flex-col items-center sm:items-start p-2.5 rounded-2xl border border-emerald-400/50 bg-[#08291a]/95 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-transform hover:scale-105">
+                  <div className="flex flex-col items-center sm:items-start p-2.5 rounded-2xl border border-emerald-400/50 bg-[#06180f]/95 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-transform hover:scale-105">
                     <div className="flex items-center gap-1.5 w-full">
                       {/* Lime Medal Icon Badge */}
                       <div className="w-6 h-6 rounded-full bg-[#065f46] border border-[#4ade80] flex items-center justify-center shrink-0">
@@ -641,7 +688,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                       </div>
                     </div>
                     {/* Mini Real Progress Line */}
-                    <div className="w-full h-1 bg-[#052417] rounded-full mt-2 overflow-hidden">
+                    <div className="w-full h-1 bg-[#030d07] rounded-full mt-2 overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-emerald-500 to-lime-400 rounded-full"
                         style={{ width: `${top3[0] ? (top3[1].solved / top3[0].solved) * 100 : 80}%` }}
@@ -652,7 +699,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
 
                 {/* 3rd Place */}
                 {top3[2] && (
-                  <div className="flex flex-col items-center sm:items-start p-2.5 rounded-2xl border border-emerald-400/50 bg-[#08291a]/95 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-transform hover:scale-105">
+                  <div className="flex flex-col items-center sm:items-start p-2.5 rounded-2xl border border-emerald-400/50 bg-[#06180f]/95 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-transform hover:scale-105">
                     <div className="flex items-center gap-1.5 w-full">
                       {/* Lime Medal Icon Badge */}
                       <div className="w-6 h-6 rounded-full bg-[#065f46] border border-[#4ade80] flex items-center justify-center shrink-0">
@@ -667,7 +714,7 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                       </div>
                     </div>
                     {/* Mini Real Progress Line */}
-                    <div className="w-full h-1 bg-[#052417] rounded-full mt-2 overflow-hidden">
+                    <div className="w-full h-1 bg-[#030d07] rounded-full mt-2 overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-emerald-500 to-lime-400 rounded-full"
                         style={{ width: `${top3[0] ? (top3[2].solved / top3[0].solved) * 100 : 60}%` }}
@@ -679,7 +726,16 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
             </div>
 
             {/* 2. COVERAGE INSIGHT CARD (With REAL Graphical Data) */}
-            <div className="rounded-2xl p-4 sm:p-5 border border-emerald-500/30 bg-gradient-to-br from-[#07281c]/80 to-[#03150e]/90 backdrop-blur-xl shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3">
+            <div
+              className="rounded-2xl p-4 sm:p-5 flex items-center justify-between gap-3 transition-all"
+              style={{
+                background: "linear-gradient(145deg, rgba(14, 22, 17, 0.72) 0%, rgba(5, 10, 7, 0.85) 100%)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                border: "1px solid rgba(74, 222, 128, 0.3)",
+                boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.18), inset 0 0 20px rgba(16, 185, 129, 0.04), 0 12px 30px rgba(0, 0, 0, 0.65)",
+              }}
+            >
               {/* Left Side: Real-time Prose Commentary */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1.5">
@@ -702,24 +758,24 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                 <svg width="96" height="80" viewBox="0 0 96 80" fill="none" className="drop-shadow-[0_0_16px_rgba(74,222,128,0.6)]">
                   <defs>
                     <linearGradient id="realBar1" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#4ade80" />
-                      <stop offset="100%" stopColor="#15803d" />
+                      <stop offset="0%" stopColor="#00f076" />
+                      <stop offset="100%" stopColor="#057838" />
                     </linearGradient>
                     <linearGradient id="realBar2" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#86efac" />
-                      <stop offset="100%" stopColor="#16a34a" />
+                      <stop offset="0%" stopColor="#88ff00" />
+                      <stop offset="100%" stopColor="#4f8a00" />
                     </linearGradient>
                     <linearGradient id="realBar3" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#fde047" />
-                      <stop offset="100%" stopColor="#ca8a04" />
+                      <stop offset="0%" stopColor="#eaff00" />
+                      <stop offset="100%" stopColor="#888f00" />
                     </linearGradient>
                     <linearGradient id="realArrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#22c55e" />
-                      <stop offset="50%" stopColor="#86efac" />
+                      <stop offset="0%" stopColor="#00f076" />
+                      <stop offset="50%" stopColor="#88ff00" />
                       <stop offset="100%" stopColor="#ffffff" />
                     </linearGradient>
                     <filter id="realGlow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#86efac" floodOpacity="0.8" />
+                      <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#88ff00" floodOpacity="0.85" />
                     </filter>
                   </defs>
 
@@ -736,7 +792,6 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                       stroke="rgba(255, 255, 255, 0.2)"
                       strokeWidth="0.8"
                     />
-                    {/* Specular highlight line */}
                     <rect x="12" y={72 - hFund} width="2" height={Math.max(2, hFund - 4)} rx="1" fill="#ffffff" opacity="0.35" />
                   </g>
 
@@ -752,7 +807,6 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                       stroke="rgba(255, 255, 255, 0.2)"
                       strokeWidth="0.8"
                     />
-                    {/* Specular highlight line */}
                     <rect x="36" y={72 - hInter} width="2" height={Math.max(2, hInter - 4)} rx="1" fill="#ffffff" opacity="0.35" />
                   </g>
 
@@ -768,12 +822,10 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                       stroke="rgba(255, 255, 255, 0.2)"
                       strokeWidth="0.8"
                     />
-                    {/* Specular highlight line */}
                     <rect x="60" y={72 - hAdv} width="2" height={Math.max(2, hAdv - 4)} rx="1" fill="#ffffff" opacity="0.35" />
                   </g>
 
                   {/* Glowing Real Trend Line & Arrowhead */}
-                  {/* Tracing a sleek upward trajectory */}
                   <path
                     d={`M 10 52 C 34 38, 58 24, 82 8`}
                     stroke="url(#realArrowGrad)"
@@ -782,7 +834,6 @@ export function TopicBreakdown({ topics }: { topics?: TopicItem[] }) {
                     fill="none"
                     filter="url(#realGlow)"
                   />
-                  {/* Arrowhead */}
                   <polygon points="82,4 89,10 78,13" fill="#ffffff" filter="url(#realGlow)" />
                 </svg>
               </div>
