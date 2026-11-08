@@ -244,25 +244,27 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
           </div>
         )}
 
-        {/* 3 Stat Cards Row - matching Image 2 with refined icon size */}
+        {/* 3 Stat Cards Row - Vertical glassmorphic layout with glowing neon purple borders */}
         <div className="relative z-10 mt-3 sm:mt-4 grid grid-cols-3 gap-2 sm:gap-3.5">
           {/* Card 1: Repos */}
-          <div className="h-[94px] sm:h-[116px] rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#2b244d]/70 dark:bg-[#0d1222]/85 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-purple-500/40">
+          <div className="rounded-2xl border border-purple-500/40 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-purple-500/40 dark:bg-gradient-to-b dark:from-[#15112e]/90 dark:to-[#0a0d1e]/95 shadow-sm dark:shadow-[0_0_16px_rgba(168,85,247,0.2),inset_0_1px_1px_rgba(255,255,255,0.12)] min-w-0 transition-all hover:border-purple-400 hover:shadow-[0_0_24px_rgba(168,85,247,0.35)]">
             {/* Sleek Refined Frosted Purple Icon Box */}
-            <div className="flex h-[34px] w-[34px] sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-100 to-purple-50 border border-purple-200 text-purple-600 dark:from-[#2e1d52]/90 dark:to-[#1c1236]/95 dark:border-purple-400/35 dark:text-[#d8b4fe] shrink-0 shadow-sm dark:shadow-[0_3px_12px_rgba(147,51,234,0.2),inset_0_1px_1px_rgba(255,255,255,0.18)]">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-b from-purple-100 to-purple-50 border border-purple-200 text-purple-600 dark:from-[#2e1d52]/90 dark:to-[#1c1236]/95 dark:border-purple-400/50 dark:text-[#d8b4fe] shrink-0 shadow-sm dark:shadow-[0_2px_12px_rgba(147,51,234,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]">
               <Layers className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
             </div>
 
-            {/* Label and Value on single line */}
-            <div className="mt-2 sm:mt-2.5 mb-0.5 sm:mb-1 flex items-center justify-center gap-1.5 min-w-0 max-w-full">
-              <span className="text-[11px] sm:text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300">Repos</span>
-              <span className="font-data text-xs sm:text-sm md:text-base font-bold text-foreground dark:text-white">
-                {loading && !data ? "..." : (data ? data.publicRepos : "—")}
-              </span>
-            </div>
+            {/* Label */}
+            <span className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-300 tracking-wide whitespace-nowrap leading-tight">
+              Repos
+            </span>
 
-            {/* Comparison / Trend on single line */}
-            <p className="flex items-center justify-center gap-1 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-emerald-600 dark:text-[#00E599] whitespace-nowrap min-w-0">
+            {/* Value with prominent font size */}
+            <span className="mt-0.5 font-data text-sm sm:text-lg md:text-xl font-bold text-foreground dark:text-white leading-tight">
+              {loading && !data ? "..." : (data ? data.publicRepos : "—")}
+            </span>
+
+            {/* Comparison / Trend */}
+            <p className="mt-1 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-emerald-600 dark:text-[#00E599] whitespace-nowrap min-w-0">
               <span className="text-[8.5px] sm:text-[10px]">{reposChange.isUp ? "▲" : "▼"}</span>
               <span>{reposChange.pct}%</span>
               <span className="font-normal text-muted dark:text-slate-400 text-[8px] sm:text-[10px]">vs last month</span>
@@ -270,22 +272,24 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
           </div>
 
           {/* Card 2: Contributions */}
-          <div className="h-[94px] sm:h-[116px] rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#2b244d]/70 dark:bg-[#0d1222]/85 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-purple-500/40">
+          <div className="rounded-2xl border border-purple-500/40 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-purple-500/40 dark:bg-gradient-to-b dark:from-[#15112e]/90 dark:to-[#0a0d1e]/95 shadow-sm dark:shadow-[0_0_16px_rgba(168,85,247,0.2),inset_0_1px_1px_rgba(255,255,255,0.12)] min-w-0 transition-all hover:border-purple-400 hover:shadow-[0_0_24px_rgba(168,85,247,0.35)]">
             {/* Sleek Refined Frosted Purple Icon Box */}
-            <div className="flex h-[34px] w-[34px] sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-100 to-purple-50 border border-purple-200 text-purple-600 dark:from-[#2e1d52]/90 dark:to-[#1c1236]/95 dark:border-purple-400/35 dark:text-[#d8b4fe] shrink-0 shadow-sm dark:shadow-[0_3px_12px_rgba(147,51,234,0.2),inset_0_1px_1px_rgba(255,255,255,0.18)]">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-b from-purple-100 to-purple-50 border border-purple-200 text-purple-600 dark:from-[#2e1d52]/90 dark:to-[#1c1236]/95 dark:border-purple-400/50 dark:text-[#d8b4fe] shrink-0 shadow-sm dark:shadow-[0_2px_12px_rgba(147,51,234,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]">
               <GitBranch className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
             </div>
 
-            {/* Label and Value on single line */}
-            <div className="mt-2 sm:mt-2.5 mb-0.5 sm:mb-1 flex items-center justify-center gap-1.5 min-w-0 max-w-full">
-              <span className="text-[11px] sm:text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300">Contributions</span>
-              <span className="font-data text-xs sm:text-sm md:text-base font-bold text-foreground dark:text-white">
-                {loading && !data ? "..." : (data ? (data.totalContributionsLastYear ?? 0).toLocaleString() : "—")}
-              </span>
-            </div>
+            {/* Label */}
+            <span className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-300 tracking-wide whitespace-nowrap leading-tight">
+              Contributions
+            </span>
 
-            {/* Comparison / Trend on single line */}
-            <p className="flex items-center justify-center gap-1 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-emerald-600 dark:text-[#00E599] whitespace-nowrap min-w-0">
+            {/* Value with prominent font size */}
+            <span className="mt-0.5 font-data text-sm sm:text-lg md:text-xl font-bold text-foreground dark:text-white leading-tight">
+              {loading && !data ? "..." : (data ? (data.totalContributionsLastYear ?? 0).toLocaleString() : "—")}
+            </span>
+
+            {/* Comparison / Trend */}
+            <p className="mt-1 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-emerald-600 dark:text-[#00E599] whitespace-nowrap min-w-0">
               <span className="text-[8.5px] sm:text-[10px]">{contribChange.isUp ? "▲" : "▼"}</span>
               <span>{contribChange.pct}%</span>
               <span className="font-normal text-muted dark:text-slate-400 text-[8px] sm:text-[10px]">vs last month</span>
@@ -293,22 +297,24 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
           </div>
 
           {/* Card 3: Followers */}
-          <div className="h-[94px] sm:h-[116px] rounded-2xl border border-border/80 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-[#2b244d]/70 dark:bg-[#0d1222]/85 shadow-sm dark:shadow-md dark:shadow-black/30 min-w-0 transition-all hover:border-purple-500/40">
+          <div className="rounded-2xl border border-purple-500/40 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-purple-500/40 dark:bg-gradient-to-b dark:from-[#15112e]/90 dark:to-[#0a0d1e]/95 shadow-sm dark:shadow-[0_0_16px_rgba(168,85,247,0.2),inset_0_1px_1px_rgba(255,255,255,0.12)] min-w-0 transition-all hover:border-purple-400 hover:shadow-[0_0_24px_rgba(168,85,247,0.35)]">
             {/* Sleek Refined Frosted Purple Icon Box */}
-            <div className="flex h-[34px] w-[34px] sm:h-10 sm:w-10 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-b from-purple-100 to-purple-50 border border-purple-200 text-purple-600 dark:from-[#2e1d52]/90 dark:to-[#1c1236]/95 dark:border-purple-400/35 dark:text-[#d8b4fe] shrink-0 shadow-sm dark:shadow-[0_3px_12px_rgba(147,51,234,0.2),inset_0_1px_1px_rgba(255,255,255,0.18)]">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-b from-purple-100 to-purple-50 border border-purple-200 text-purple-600 dark:from-[#2e1d52]/90 dark:to-[#1c1236]/95 dark:border-purple-400/50 dark:text-[#d8b4fe] shrink-0 shadow-sm dark:shadow-[0_2px_12px_rgba(147,51,234,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]">
               <Users className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
             </div>
 
-            {/* Label and Value on single line */}
-            <div className="mt-2 sm:mt-2.5 mb-0.5 sm:mb-1 flex items-center justify-center gap-1.5 min-w-0 max-w-full">
-              <span className="text-[11px] sm:text-xs md:text-sm font-medium text-slate-600 dark:text-slate-300">Followers</span>
-              <span className="font-data text-xs sm:text-sm md:text-base font-bold text-foreground dark:text-white">
-                {loading && !data ? "..." : (data ? data.followers : "—")}
-              </span>
-            </div>
+            {/* Label */}
+            <span className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-300 tracking-wide whitespace-nowrap leading-tight">
+              Followers
+            </span>
 
-            {/* Comparison / Trend on single line */}
-            <p className="flex items-center justify-center gap-1 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-emerald-600 dark:text-[#00E599] whitespace-nowrap min-w-0">
+            {/* Value with prominent font size */}
+            <span className="mt-0.5 font-data text-sm sm:text-lg md:text-xl font-bold text-foreground dark:text-white leading-tight">
+              {loading && !data ? "..." : (data ? data.followers : "—")}
+            </span>
+
+            {/* Comparison / Trend */}
+            <p className="mt-1 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-emerald-600 dark:text-[#00E599] whitespace-nowrap min-w-0">
               <span className="text-[8.5px] sm:text-[10px]">{followersChange.isUp ? "▲" : "▼"}</span>
               <span>{followersChange.pct}%</span>
               <span className="font-normal text-muted dark:text-slate-400 text-[8px] sm:text-[10px]">vs last month</span>

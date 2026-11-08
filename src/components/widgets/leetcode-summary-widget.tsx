@@ -7,7 +7,6 @@ import { useFetch } from "@/lib/use-fetch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LeetcodeIcon } from "@/components/icons";
-import { LeetcodeStatsBanner } from "@/components/leetcode/leetcode-stats-banner";
 import type { LeetcodeStats } from "@/lib/leetcode";
 
 type TimeRange = "4" | "8" | "12";
@@ -163,16 +162,82 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
 
         {!previewData && loading && <Skeleton className="my-3 h-12 w-full rounded-xl" />}
 
-        {/* 3D LeetCode Stats Banner matching uploaded design */}
-        <div className="relative z-10 mt-3 sm:mt-4">
-          <LeetcodeStatsBanner
-            totalSolved={data?.totalSolved ?? 0}
-            easySolved={data?.easySolved ?? 0}
-            mediumSolved={data?.mediumSolved ?? 0}
-            hardSolved={data?.hardSolved ?? 0}
-            ranking={data?.ranking ?? null}
-            loading={loading && !data}
-          />
+        {/* 3 Stat Cards Row - matching GitHub section with glowing neon amber borders */}
+        <div className="relative z-10 mt-3 sm:mt-4 grid grid-cols-3 gap-2 sm:gap-3.5">
+          {/* Card 1: Problems */}
+          <div className="rounded-2xl border border-amber-500/40 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-amber-500/40 dark:bg-gradient-to-b dark:from-[#21160a]/90 dark:to-[#0c101d]/95 shadow-sm dark:shadow-[0_0_16px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.12)] min-w-0 transition-all hover:border-amber-400 hover:shadow-[0_0_24px_rgba(245,158,11,0.35)]">
+            {/* Sleek Refined Frosted Amber Icon Box */}
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-b from-amber-100 to-amber-50 border border-amber-300 text-amber-600 dark:from-[#35230f]/90 dark:to-[#1a1106]/95 dark:border-[#f59e0b]/50 dark:text-[#f59e0b] shrink-0 shadow-sm dark:shadow-[0_2px_12px_rgba(245,158,11,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]">
+              <Check className="h-4 w-4 sm:h-[18px] sm:w-[18px] stroke-[2.5]" />
+            </div>
+
+            {/* Label */}
+            <span className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-300 tracking-wide whitespace-nowrap leading-tight">
+              Problems
+            </span>
+
+            {/* Value with prominent font size */}
+            <span className="mt-0.5 font-data text-sm sm:text-lg md:text-xl font-bold text-foreground dark:text-white leading-tight">
+              {loading && !data ? "—" : (hasData && data ? data.totalSolved : 0)}
+            </span>
+
+            {/* Comparison / Subtext */}
+            <p className="mt-1 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-emerald-600 dark:text-[#00E599] whitespace-nowrap min-w-0">
+              <span className="text-[8.5px] sm:text-[10px]">▲</span>
+              <span>{(data?.totalSolved ?? 0) > 0 ? "Active" : "—"}</span>
+              <span className="font-normal text-muted dark:text-slate-400 text-[8px] sm:text-[10px]">solved</span>
+            </p>
+          </div>
+
+          {/* Card 2: Acceptances */}
+          <div className="rounded-2xl border border-amber-500/40 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-amber-500/40 dark:bg-gradient-to-b dark:from-[#21160a]/90 dark:to-[#0c101d]/95 shadow-sm dark:shadow-[0_0_16px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.12)] min-w-0 transition-all hover:border-amber-400 hover:shadow-[0_0_24px_rgba(245,158,11,0.35)]">
+            {/* Sleek Refined Frosted Amber Icon Box */}
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-b from-amber-100 to-amber-50 border border-amber-300 text-amber-600 dark:from-[#35230f]/90 dark:to-[#1a1106]/95 dark:border-[#f59e0b]/50 dark:text-[#f59e0b] shrink-0 shadow-sm dark:shadow-[0_2px_12px_rgba(245,158,11,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]">
+              <BarChart2 className="h-4 w-4 sm:h-[18px] sm:w-[18px] stroke-[2.2]" />
+            </div>
+
+            {/* Label */}
+            <span className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-300 tracking-wide whitespace-nowrap leading-tight">
+              Acceptance
+            </span>
+
+            {/* Value with prominent font size */}
+            <span className="mt-0.5 font-data text-sm sm:text-lg md:text-xl font-bold text-foreground dark:text-white leading-tight">
+              {loading && !data ? "—" : (hasData && data ? `${data.acceptanceRate ?? 0}%` : "—")}
+            </span>
+
+            {/* Comparison / Subtext */}
+            <p className="mt-1 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap min-w-0">
+              <span className="text-[8.5px] sm:text-[10px]">★</span>
+              <span>Rate</span>
+              <span className="font-normal text-muted dark:text-slate-400 text-[8px] sm:text-[10px]">overall</span>
+            </p>
+          </div>
+
+          {/* Card 3: Ranking */}
+          <div className="rounded-2xl border border-amber-500/40 bg-surface-2/50 p-2.5 sm:p-3.5 flex flex-col items-center justify-center text-center dark:border-amber-500/40 dark:bg-gradient-to-b dark:from-[#21160a]/90 dark:to-[#0c101d]/95 shadow-sm dark:shadow-[0_0_16px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.12)] min-w-0 transition-all hover:border-amber-400 hover:shadow-[0_0_24px_rgba(245,158,11,0.35)]">
+            {/* Sleek Refined Frosted Amber Icon Box */}
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-b from-amber-100 to-amber-50 border border-amber-300 text-amber-600 dark:from-[#35230f]/90 dark:to-[#1a1106]/95 dark:border-[#f59e0b]/50 dark:text-[#f59e0b] shrink-0 shadow-sm dark:shadow-[0_2px_12px_rgba(245,158,11,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]">
+              <Trophy className="h-4 w-4 sm:h-[18px] sm:w-[18px] stroke-[2]" />
+            </div>
+
+            {/* Label */}
+            <span className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-300 tracking-wide whitespace-nowrap leading-tight">
+              Ranking
+            </span>
+
+            {/* Value with prominent font size */}
+            <span className="mt-0.5 font-data text-sm sm:text-lg md:text-xl font-bold text-foreground dark:text-white leading-tight">
+              {loading && !data ? "—" : (hasData && data ? (data.ranking ? `#${data.ranking.toLocaleString()}` : "—") : "—")}
+            </span>
+
+            {/* Comparison / Subtext */}
+            <p className="mt-1 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] md:text-[11px] font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap min-w-0">
+              <span className="text-[8.5px] sm:text-[10px]">★</span>
+              <span>Global</span>
+              <span className="font-normal text-muted dark:text-slate-400 text-[8px] sm:text-[10px]">standing</span>
+            </p>
+          </div>
         </div>
 
         {/* Chart Header with Interactive Working Dropdown */}
