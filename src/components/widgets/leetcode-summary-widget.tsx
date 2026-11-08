@@ -172,7 +172,6 @@ export function LeetcodeSummaryWidget({ previewData }: { previewData?: LeetcodeS
             hardSolved={data?.hardSolved ?? 0}
             ranking={data?.ranking ?? null}
             loading={loading && !data}
-            compact={true}
           />
         </div>
 

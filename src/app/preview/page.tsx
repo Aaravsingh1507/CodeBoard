@@ -33,6 +33,7 @@ import { MatchScopeClient } from "@/components/matchscope/MatchScopeClient";
 import { TopLanguagesCard } from "@/components/github/top-languages-card";
 import { ProfileOverviewCard } from "@/components/github/profile-overview-card";
 import { StreakHeatmap } from "@/components/streak-heatmap";
+import { useFetch } from "@/lib/use-fetch";
 import type { GithubStats } from "@/lib/github";
 import type { LeetcodeStats } from "@/lib/leetcode";
 
@@ -50,6 +51,8 @@ export default function PreviewPage() {
       }
     }
   }, []);
+
+  const { data: liveLeetcode, loading: leetcodeLoading } = useFetch<LeetcodeStats>("/api/leetcode/stats");
 
   const previewUser = {
     name: "Aarav Singh",
@@ -125,30 +128,7 @@ export default function PreviewPage() {
     topReferrers: [],
   };
 
-  const previewLeetcode: LeetcodeStats = {
-    username: "aaravsingh1507",
-    ranking: 5000001,
-    totalSolved: 16,
-    easySolved: 10,
-    mediumSolved: 6,
-    hardSolved: 0,
-    acceptanceRate: "64.2%",
-    recentSubmissions: [
-      { title: "Two Sum", difficulty: "Easy", status: "Accepted", timestamp: "2026-11-04" },
-      { title: "Add Two Numbers", difficulty: "Medium", status: "Accepted", timestamp: "2026-11-03" },
-      { title: "Longest Substring Without Repeating Characters", difficulty: "Medium", status: "Accepted", timestamp: "2026-11-01" },
-      { title: "Valid Parentheses", difficulty: "Easy", status: "Accepted", timestamp: "2026-10-28" },
-      { title: "Merge Two Sorted Lists", difficulty: "Easy", status: "Accepted", timestamp: "2026-10-26" },
-    ],
-    topicBreakdown: [
-      { tag: "Array", solved: 9, level: "fundamental" },
-      { tag: "Hash Table", solved: 7, level: "fundamental" },
-      { tag: "String", solved: 5, level: "fundamental" },
-      { tag: "Two Pointers", solved: 4, level: "intermediate" },
-      { tag: "Linked List", solved: 3, level: "intermediate" },
-      { tag: "Stack", solved: 2, level: "intermediate" },
-    ],
-  };
+  const previewLeetcode = liveLeetcode ?? undefined;
 
   const previewGoals = [
     {
@@ -379,31 +359,51 @@ export default function PreviewPage() {
 
             {/* 3D Glowing Stats Banner matching design */}
             <LeetcodeStatsBanner
-              totalSolved={previewLeetcode.totalSolved}
-              easySolved={previewLeetcode.easySolved}
-              mediumSolved={previewLeetcode.mediumSolved}
-              hardSolved={previewLeetcode.hardSolved}
-              ranking={previewLeetcode.ranking}
+              totalSolved={liveLeetcode?.totalSolved ?? 0}
+              easySolved={liveLeetcode?.easySolved ?? 0}
+              mediumSolved={liveLeetcode?.mediumSolved ?? 0}
+              hardSolved={liveLeetcode?.hardSolved ?? 0}
+              ranking={liveLeetcode?.ranking ?? null}
+              loading={leetcodeLoading}
             />
 
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-              <Card className="p-5">
-                <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Topic coverage</h3>
-                <TopicBreakdown topics={previewLeetcode.topicBreakdown ?? []} />
-              </Card>
+            {!liveLeetcode && !leetcodeLoading && (
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-center">
+                <p className="text-sm font-semibold text-amber-200">
+                  No LeetCode username linked yet.
+                </p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Add your LeetCode username in Settings to pull your real-time stats directly from LeetCode.
+                </p>
+                <button
+                  onClick={() => setActiveTab("settings")}
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-3.5 py-1.5 text-xs font-semibold text-black hover:bg-amber-400 transition-colors cursor-pointer"
+                >
+                  Configure in Settings
+                </button>
+              </div>
+            )}
 
-              <Card className="p-5">
-                <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Recent submissions</h3>
-                <ul className="divide-y divide-border/60">
-                  {previewLeetcode.recentSubmissions.map((s, i) => (
-                    <li key={i} className="flex items-center justify-between py-2.5 text-sm">
-                      <span className="text-foreground dark:text-slate-200">{s.title}</span>
-                      <Badge tone="success">{s.status}</Badge>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            </div>
+            {liveLeetcode && (
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <Card className="p-5">
+                  <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Topic coverage</h3>
+                  <TopicBreakdown topics={liveLeetcode.topicBreakdown ?? []} />
+                </Card>
+
+                <Card className="p-5">
+                  <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Recent submissions</h3>
+                  <ul className="divide-y divide-border/60">
+                    {liveLeetcode.recentSubmissions.map((s, i) => (
+                      <li key={i} className="flex items-center justify-between py-2.5 text-sm">
+                        <span className="text-foreground dark:text-slate-200">{s.title}</span>
+                        <Badge tone="success">{s.status}</Badge>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              </div>
+            )}
           </div>
         )}
 
