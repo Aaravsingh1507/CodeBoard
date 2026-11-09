@@ -16,8 +16,8 @@ export async function buildWeeklyReviewInput(userId: string): Promise<WeeklyRevi
   const logs = await prisma.activityLog.findMany({
     where: { userId, date: { gte: start, lt: weekEndExclusive } },
   });
-  const githubContributionsThisWeek = logs.reduce((s, l) => s + l.githubContributions, 0);
-  const leetcodeSubmissionsThisWeek = logs.reduce((s, l) => s + l.leetcodeSubmissions, 0);
+  let githubContributionsThisWeek = logs.reduce((s, l) => s + l.githubContributions, 0);
+  let leetcodeSubmissionsThisWeek = logs.reduce((s, l) => s + l.leetcodeSubmissions, 0);
 
   const allLogs = await prisma.activityLog.findMany({ where: { userId } });
   const { currentStreak, longestStreak } = computeStreaks(allLogs);
@@ -25,19 +25,47 @@ export async function buildWeeklyReviewInput(userId: string): Promise<WeeklyRevi
   const user = await prisma.user.findUnique({ where: { id: userId } });
   let githubPRsThisWeek = 0;
   let leetcodeTotalsAllTime = { easy: 0, medium: 0, hard: 0 };
+
   if (user?.githubStatsCache) {
-    const stats = JSON.parse(user.githubStatsCache);
-    githubPRsThisWeek = (stats.recentActivity ?? []).filter(
-      (a: any) => a.type === "pr" && new Date(a.date) >= start
-    ).length;
+    try {
+      const stats = JSON.parse(user.githubStatsCache);
+      githubPRsThisWeek = (stats.recentActivity ?? []).filter(
+        (a: any) => a.type === "pr" && new Date(a.date) >= start
+      ).length;
+
+      // Fallback: if activity logs haven't synced for this week, calculate from cached contribution calendar
+      if (githubContributionsThisWeek === 0 && Array.isArray(stats.contributionCalendar)) {
+        githubContributionsThisWeek = stats.contributionCalendar
+          .filter((item: any) => {
+            const d = new Date(item.date + "T00:00:00Z");
+            return d >= start && d < weekEndExclusive;
+          })
+          .reduce((sum: number, item: any) => sum + (Number(item.count) || 0), 0);
+      }
+    } catch {
+      // Non-fatal parse failure
+    }
   }
+
   if (user?.leetcodeStatsCache) {
-    const stats = JSON.parse(user.leetcodeStatsCache);
-    leetcodeTotalsAllTime = {
-      easy: stats.easySolved ?? 0,
-      medium: stats.mediumSolved ?? 0,
-      hard: stats.hardSolved ?? 0,
-    };
+    try {
+      const stats = JSON.parse(user.leetcodeStatsCache);
+      leetcodeTotalsAllTime = {
+        easy: stats.easySolved ?? 0,
+        medium: stats.mediumSolved ?? 0,
+        hard: stats.hardSolved ?? 0,
+      };
+
+      // Fallback: if activity logs haven't synced, calculate from recent submissions
+      if (leetcodeSubmissionsThisWeek === 0 && Array.isArray(stats.recentSubmissions)) {
+        leetcodeSubmissionsThisWeek = stats.recentSubmissions.filter((s: any) => {
+          const ts = Number(s.timestamp) * 1000;
+          return ts >= start.getTime() && ts < weekEndExclusive.getTime();
+        }).length;
+      }
+    } catch {
+      // Non-fatal parse failure
+    }
   }
 
   const applicationsAdded = await prisma.application.count({
@@ -64,6 +92,9 @@ export async function buildWeeklyReviewInput(userId: string): Promise<WeeklyRevi
     applicationsAdded,
     applicationsAdvanced,
     goalsProgress,
+    targetRole: user?.targetRole ?? undefined,
+    targetCompanies: user?.targetCompanies ?? undefined,
+    jobSearchStatus: user?.jobSearchStatus ?? undefined,
   };
 }
 
@@ -92,7 +123,7 @@ export async function generateAndStoreWeeklyReview(userId: string) {
   });
 
   // Retain only the current (latest) review and immediate previous review.
-  // Erase any older reviews from the database.
+  // Automatically erase any older reviews from the database.
   const allReviews = await prisma.weeklyReview.findMany({
     where: { userId },
     orderBy: [{ generatedAt: "desc" }, { weekStart: "desc" }],

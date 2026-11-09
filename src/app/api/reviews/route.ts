@@ -2,6 +2,19 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 
+function safeParseArray(val: string | unknown): string[] {
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string") {
+    try {
+      const parsed = JSON.parse(val);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 export async function GET() {
   const { user, error } = await requireUser();
   if (error) return error;
@@ -25,8 +38,8 @@ export async function GET() {
   return NextResponse.json({
     data: activeReviews.map((r) => ({
       ...r,
-      observations: JSON.parse(r.observations),
-      suggestions: JSON.parse(r.suggestions),
+      observations: safeParseArray(r.observations),
+      suggestions: safeParseArray(r.suggestions),
     })),
   });
 }

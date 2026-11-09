@@ -3,6 +3,19 @@ import { requireUser } from "@/lib/api-auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { generateAndStoreWeeklyReview } from "@/lib/weekly-review";
 
+function safeParseArray(val: string | unknown): string[] {
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string") {
+    try {
+      const parsed = JSON.parse(val);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 // "Generate this week's review now" button on the dashboard/reviews page.
 export async function POST() {
   const { user, error } = await requireUser();
@@ -21,8 +34,8 @@ export async function POST() {
     return NextResponse.json({
       data: {
         ...review,
-        observations: JSON.parse(review.observations),
-        suggestions: JSON.parse(review.suggestions),
+        observations: safeParseArray(review.observations),
+        suggestions: safeParseArray(review.suggestions),
       },
     });
   } catch (err) {
