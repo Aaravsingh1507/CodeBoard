@@ -144,12 +144,12 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
           <div className="hidden lg:flex lg:col-span-5 h-full items-stretch">
             <div className="relative w-full h-full min-h-[300px] rounded-2xl border border-slate-200/80 bg-black overflow-hidden shadow-sm dark:border-white/10 dark:bg-black dark:shadow-2xl flex items-center justify-center">
               <Image
-                src="/streak-workspace.png"
+                src="/streak-workspace.png?v=2"
                 alt="Developer Workspace"
                 fill
                 priority
                 unoptimized
-                className="object-cover object-center"
+                className="object-contain object-center"
                 sizes="(min-width: 1024px) 45vw, 100vw"
               />
             </div>
