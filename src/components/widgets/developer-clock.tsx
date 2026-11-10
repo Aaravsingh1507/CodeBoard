@@ -40,13 +40,13 @@ export function DeveloperClock() {
   }, []);
 
   return (
-    <div className="relative w-full h-full min-h-[320px] lg:min-h-[350px] rounded-2xl bg-black border border-white/[0.08] shadow-2xl flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+    <div className="relative w-full h-full min-h-[320px] lg:min-h-[350px] rounded-2xl bg-black border border-white/[0.08] shadow-2xl flex items-center justify-center p-3 sm:p-4 overflow-hidden">
       {/* Ambient glass backlight glow: electric purple on left, warm amber on right over the black backdrop */}
       <div className="pointer-events-none absolute inset-0 bg-radial from-purple-950/30 via-black to-black" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-purple-600/15 via-transparent to-amber-500/15 blur-2xl opacity-60" />
 
-      {/* Floating Circular Clock Orb - reduced size with elegant framing and breathing room */}
-      <div className="relative w-full max-w-[270px] xl:max-w-[300px] aspect-square flex items-center justify-center transition-transform duration-300 drop-shadow-[0_12px_32px_rgba(0,0,0,0.8)]">
+      {/* Floating Circular Clock Orb - balanced size with clean framing */}
+      <div className="relative w-full max-w-[315px] xl:max-w-[345px] aspect-square flex items-center justify-center transition-transform duration-300 drop-shadow-[0_14px_36px_rgba(0,0,0,0.8)]">
         {/* Circular glassmorphic dial face with purple/amber rim, caustics, and no background */}
         <Image
           src="/developer-clock-dial.png?v=orb2"
