@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
 import Image from "next/image";
 import { StreakHeatmap } from "@/components/streak-heatmap";
+import { DeveloperClock } from "@/components/widgets/developer-clock";
 
 interface StreakData {
   currentStreak: number;
@@ -140,21 +141,9 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
             )}
           </div>
 
-          {/* Right Column (5 cols): Neon Diagrammatic Developer Desk Artwork */}
+          {/* Right Column (5 cols): Real-Time Glassmorphic Developer Clock */}
           <div className="hidden lg:flex lg:col-span-5 h-full items-stretch">
-            <div className="relative w-full h-full min-h-[360px] xl:min-h-[400px] rounded-2xl overflow-hidden flex items-center justify-center p-0">
-              {/* Soft ambient aura behind the artwork */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-cyan-500/10 via-purple-500/10 to-transparent blur-2xl" />
-              <Image
-                src="/streak-workspace.png?v=6"
-                alt="Developer Workspace"
-                fill
-                priority
-                unoptimized
-                className="object-contain object-center scale-110 lg:scale-115 transition-transform duration-300 drop-shadow-[0_12px_36px_rgba(0,0,0,0.6)]"
-                sizes="(min-width: 1024px) 45vw, 100vw"
-              />
-            </div>
+            <DeveloperClock />
           </div>
         </div>
       </CardContent>
