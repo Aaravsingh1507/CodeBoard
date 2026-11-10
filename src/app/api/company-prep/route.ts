@@ -7,5 +7,12 @@ export async function GET() {
   if (error) return error;
 
   const matches = matchCompanyPrep(user.targetCompanies);
-  return NextResponse.json({ data: matches });
+  return NextResponse.json(
+    { data: matches },
+    {
+      headers: {
+        "Cache-Control": "private, max-age=60, stale-while-revalidate=300",
+      },
+    }
+  );
 }

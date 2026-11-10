@@ -18,5 +18,12 @@ export async function GET() {
   }
 
   const result = await computeReadiness(user.id);
-  return NextResponse.json({ data: result });
+  return NextResponse.json(
+    { data: result },
+    {
+      headers: {
+        "Cache-Control": "private, max-age=15, stale-while-revalidate=60",
+      },
+    }
+  );
 }

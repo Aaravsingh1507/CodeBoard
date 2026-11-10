@@ -48,11 +48,18 @@ export async function GET(req: Request) {
       Date.now() - user.leetcodeStatsSyncedAt.getTime() < LEETCODE_CACHE_HOURS * 60 * 60 * 1000;
 
     if (isFresh) {
-      return NextResponse.json({
-        data: JSON.parse(user.leetcodeStatsCache!),
-        cached: true,
-        syncedAt: user.leetcodeStatsSyncedAt,
-      });
+      return NextResponse.json(
+        {
+          data: JSON.parse(user.leetcodeStatsCache!),
+          cached: true,
+          syncedAt: user.leetcodeStatsSyncedAt,
+        },
+        {
+          headers: {
+            "Cache-Control": "private, max-age=30, stale-while-revalidate=120",
+          },
+        }
+      );
     }
   }
 

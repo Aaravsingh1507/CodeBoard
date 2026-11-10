@@ -24,11 +24,18 @@ export async function GET(req: Request) {
     Date.now() - user.githubStatsSyncedAt.getTime() < GITHUB_CACHE_MS;
 
   if (isFresh) {
-    return NextResponse.json({
-      data: JSON.parse(user.githubStatsCache!),
-      cached: true,
-      syncedAt: user.githubStatsSyncedAt,
-    });
+    return NextResponse.json(
+      {
+        data: JSON.parse(user.githubStatsCache!),
+        cached: true,
+        syncedAt: user.githubStatsSyncedAt,
+      },
+      {
+        headers: {
+          "Cache-Control": "private, max-age=30, stale-while-revalidate=120",
+        },
+      }
+    );
   }
 
   try {

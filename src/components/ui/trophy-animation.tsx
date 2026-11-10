@@ -37,6 +37,8 @@ export function TrophyAnimation({ className = "h-7 w-7", size }: TrophyAnimation
         style={{
           filter: "drop-shadow(0 0 6px rgba(245, 158, 11, 0.6)) drop-shadow(0 0 12px rgba(217, 119, 6, 0.35))",
           animation: "trophy-glow 2.5s ease-in-out infinite alternate",
+          willChange: "transform",
+          transform: "translateZ(0)",
         }}
       >
         <defs>

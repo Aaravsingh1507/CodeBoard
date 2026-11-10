@@ -35,13 +35,20 @@ export async function GET() {
 
   const activeReviews = reviews.slice(0, 2);
 
-  return NextResponse.json({
-    data: activeReviews.map((r) => ({
-      ...r,
-      observations: safeParseArray(r.observations),
-      suggestions: safeParseArray(r.suggestions),
-    })),
-  });
+  return NextResponse.json(
+    {
+      data: activeReviews.map((r) => ({
+        ...r,
+        observations: safeParseArray(r.observations),
+        suggestions: safeParseArray(r.suggestions),
+      })),
+    },
+    {
+      headers: {
+        "Cache-Control": "private, max-age=15, stale-while-revalidate=60",
+      },
+    }
+  );
 }
 
 export async function DELETE(req: Request) {

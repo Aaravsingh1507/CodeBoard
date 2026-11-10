@@ -29,6 +29,8 @@ export function FlameAnimation({ className = "h-7 w-7", size }: FlameAnimationPr
         style={{
           filter: "drop-shadow(0 0 7px rgba(249, 115, 22, 0.75)) drop-shadow(0 0 14px rgba(234, 88, 12, 0.45))",
           animation: "flame-glow 2.2s ease-in-out infinite alternate",
+          willChange: "transform",
+          transform: "translateZ(0)",
         }}
       >
         <defs>
