@@ -40,12 +40,13 @@ export function DeveloperClock() {
   }, []);
 
   return (
-    <div className="relative w-full h-full min-h-[360px] xl:min-h-[400px] flex items-center justify-center p-0">
-      {/* Ambient glass backlight glow: electric purple on left, warm amber on right */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-purple-600/20 via-transparent to-amber-500/20 blur-3xl opacity-80" />
+    <div className="relative w-full h-full min-h-[320px] lg:min-h-[350px] rounded-2xl bg-black border border-white/[0.08] shadow-2xl flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+      {/* Ambient glass backlight glow: electric purple on left, warm amber on right over the black backdrop */}
+      <div className="pointer-events-none absolute inset-0 bg-radial from-purple-950/30 via-black to-black" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-purple-600/15 via-transparent to-amber-500/15 blur-2xl opacity-60" />
 
-      {/* Floating Circular Clock Orb - zero outer background */}
-      <div className="relative w-full h-full min-h-[360px] xl:min-h-[400px] max-w-[420px] max-h-[420px] aspect-square flex items-center justify-center scale-110 lg:scale-115 transition-transform duration-300 drop-shadow-[0_16px_40px_rgba(0,0,0,0.65)]">
+      {/* Floating Circular Clock Orb - reduced size with elegant framing and breathing room */}
+      <div className="relative w-full max-w-[270px] xl:max-w-[300px] aspect-square flex items-center justify-center transition-transform duration-300 drop-shadow-[0_12px_32px_rgba(0,0,0,0.8)]">
         {/* Circular glassmorphic dial face with purple/amber rim, caustics, and no background */}
         <Image
           src="/developer-clock-dial.png?v=orb2"
