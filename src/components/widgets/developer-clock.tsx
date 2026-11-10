@@ -41,15 +41,15 @@ export function DeveloperClock() {
 
   return (
     <div className="relative w-full h-full min-h-[360px] xl:min-h-[400px] flex items-center justify-center p-0">
-      {/* Soft ambient aura matching the clock's green and amber glass glowing corners */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-emerald-500/10 via-amber-500/10 to-transparent blur-2xl" />
+      {/* Ambient glass backlight glow: electric purple on left, warm amber on right */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-purple-600/20 via-transparent to-amber-500/20 blur-3xl opacity-80" />
 
-      {/* Clock housing matching exact scale and size of previous workspace artwork */}
-      <div className="relative w-full h-full min-h-[360px] xl:min-h-[400px] max-w-[420px] max-h-[420px] aspect-square flex items-center justify-center scale-110 lg:scale-115 transition-transform duration-300 drop-shadow-[0_12px_36px_rgba(0,0,0,0.6)]">
-        {/* Glassmorphic dial face with GitHub grid, Octocat, LeetCode icon, and caustics */}
+      {/* Floating Circular Clock Orb - zero outer background */}
+      <div className="relative w-full h-full min-h-[360px] xl:min-h-[400px] max-w-[420px] max-h-[420px] aspect-square flex items-center justify-center scale-110 lg:scale-115 transition-transform duration-300 drop-shadow-[0_16px_40px_rgba(0,0,0,0.65)]">
+        {/* Circular glassmorphic dial face with purple/amber rim, caustics, and no background */}
         <Image
-          src="/developer-clock-dial.png?v=1"
-          alt="Real-time Developer Glassmorphic Clock"
+          src="/developer-clock-dial.png?v=orb2"
+          alt="Real-time Circular Glassmorphic Developer Clock"
           fill
           priority
           unoptimized
@@ -57,7 +57,7 @@ export function DeveloperClock() {
           sizes="(min-width: 1024px) 45vw, 100vw"
         />
 
-        {/* Dynamic Real-Time Clock Hands Layer */}
+        {/* Dynamic Real-Time Skeleton Clock Hands Layer */}
         <svg
           viewBox="0 0 1024 1024"
           className="absolute inset-0 w-full h-full pointer-events-none select-none z-10"
@@ -65,18 +65,18 @@ export function DeveloperClock() {
           <defs>
             {/* Hour hand soft 3D drop shadow */}
             <filter id="clock-hour-shadow" x="-30%" y="-30%" width="160%" height="160%">
-              <feDropShadow dx="3" dy="8" stdDeviation="8" floodColor="#000000" floodOpacity="0.55" />
+              <feDropShadow dx="3" dy="8" stdDeviation="7" floodColor="#000000" floodOpacity="0.6" />
             </filter>
 
             {/* Minute hand soft 3D drop shadow */}
             <filter id="clock-minute-shadow" x="-30%" y="-30%" width="160%" height="160%">
-              <feDropShadow dx="4" dy="10" stdDeviation="10" floodColor="#000000" floodOpacity="0.6" />
+              <feDropShadow dx="4" dy="10" stdDeviation="9" floodColor="#000000" floodOpacity="0.65" />
             </filter>
 
             {/* Second hand glow and drop shadow */}
             <filter id="clock-second-shadow" x="-40%" y="-40%" width="180%" height="180%">
-              <feDropShadow dx="2" dy="6" stdDeviation="5" floodColor="#000000" floodOpacity="0.45" />
-              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#f59e0b" floodOpacity="0.5" />
+              <feDropShadow dx="2" dy="5" stdDeviation="5" floodColor="#000000" floodOpacity="0.45" />
+              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#f59e0b" floodOpacity="0.55" />
             </filter>
 
             {/* Specular White Hand Gradient */}
@@ -94,63 +94,55 @@ export function DeveloperClock() {
             </linearGradient>
           </defs>
 
-          {/* Hour Hand: 175px reach, 26px wide, rounded pill cap */}
+          {/* Skeleton Hour Hand: Tapered needle with central slit cutout */}
           <g ref={hourHandRef} transform="rotate(300 512 512)">
-            <rect
-              x={512 - 13}
-              y={512 - 175}
-              width="26"
-              height="190"
-              rx="13"
-              ry="13"
+            <path
+              d="M 503 522 L 505 450 L 509 336 A 3 3 0 0 1 515 336 L 519 450 L 521 522 Z M 509 445 L 509 360 A 3 3 0 0 1 515 360 L 515 445 A 3 3 0 0 1 509 445 Z"
               fill="url(#clock-hand-white)"
+              fillRule="evenodd"
               filter="url(#clock-hour-shadow)"
             />
           </g>
 
-          {/* Minute Hand: 265px reach, 26px wide, reaching out towards dial ticks */}
+          {/* Skeleton Minute Hand: Longer tapered needle with elongated slit cutout */}
           <g ref={minuteHandRef} transform="rotate(60 512 512)">
-            <rect
-              x={512 - 13}
-              y={512 - 265}
-              width="26"
-              height="280"
-              rx="13"
-              ry="13"
+            <path
+              d="M 503 522 L 506 430 L 509.5 248 A 2.5 2.5 0 0 1 514.5 248 L 518 430 L 521 522 Z M 509.5 450 L 509.5 280 A 2.5 2.5 0 0 1 514.5 280 L 514.5 450 A 2.5 2.5 0 0 1 509.5 450 Z"
               fill="url(#clock-hand-white)"
+              fillRule="evenodd"
               filter="url(#clock-minute-shadow)"
             />
           </g>
 
-          {/* Second Hand: Sleek needle with 275px reach + 48px counterweight */}
+          {/* Second Hand: Razor-thin needle with counterweight */}
           <g ref={secondHandRef} transform="rotate(225 512 512)">
             {/* Counterweight */}
             <path
-              d="M 509.5 512 L 510 560 A 2 2 0 0 0 514 560 L 514.5 512 Z"
+              d="M 510.5 512 L 510 564 A 2 2 0 0 0 514 564 L 513.5 512 Z"
               fill="url(#clock-second-gradient)"
               filter="url(#clock-second-shadow)"
             />
-            {/* Forward needle */}
+            {/* Forward needle extending 280px */}
             <path
-              d="M 509.5 512 L 511 237 A 1 1 0 0 1 513 237 L 514.5 512 Z"
+              d="M 510.5 512 L 511.2 232 A 0.8 0.8 0 0 1 512.8 232 L 513.5 512 Z"
               fill="url(#clock-second-gradient)"
               filter="url(#clock-second-shadow)"
             />
           </g>
 
-          {/* Center Hub: Orange ring with dark center dot and highlight */}
+          {/* Center Hub: Amber/gold ring with dark center dot and highlight */}
           <g>
             <circle
               cx="512"
               cy="512"
-              r="20"
+              r="19"
               fill="#f59e0b"
               stroke="#fbbf24"
               strokeWidth="1.5"
               filter="drop-shadow(0 2px 6px rgba(0,0,0,0.6))"
             />
-            <circle cx="512" cy="512" r="9" fill="#0a0f1d" />
-            <circle cx="509" cy="509" r="2.5" fill="#ffffff" opacity="0.75" />
+            <circle cx="512" cy="512" r="8.5" fill="#0c0714" />
+            <circle cx="509" cy="509" r="2.5" fill="#ffffff" opacity="0.8" />
           </g>
         </svg>
       </div>
