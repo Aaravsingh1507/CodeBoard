@@ -10,6 +10,7 @@ import Image from "next/image";
 import { StreakHeatmap } from "@/components/streak-heatmap";
 import { DeveloperClock } from "@/components/widgets/developer-clock";
 import { FlameAnimation } from "@/components/ui/flame-animation";
+import { TrophyAnimation } from "@/components/ui/trophy-animation";
 
 interface StreakData {
   currentStreak: number;
@@ -97,12 +98,7 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
                   <div className="flex items-center justify-between rounded-xl sm:rounded-2xl border border-slate-200/90 bg-slate-50/70 p-2.5 sm:p-3.5 shadow-md shadow-black/40 dark:border-white/[0.07] dark:bg-[#12192e]/60 dark:shadow-[0_14px_34px_-4px_rgba(0,0,0,0.88),0_4px_12px_rgba(0,0,0,0.68)] md:backdrop-blur-md min-w-0 transition-shadow">
                     <div className="flex items-center min-w-0">
                       <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-amber-200/80 bg-gradient-to-b from-amber-100/90 to-yellow-50/90 p-1 shadow-sm shadow-black/40 dark:border-amber-500/30 dark:bg-gradient-to-b dark:from-[#281e0c]/90 dark:to-[#181206]/95 dark:shadow-[0_6px_18px_rgba(0,0,0,0.88),0_2px_6px_rgba(0,0,0,0.65)]">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src="/streak-trophy-clean.png"
-                          alt="Longest streak trophy"
-                          className="h-full w-full object-contain"
-                        />
+                        <TrophyAnimation className="h-full w-full" />
                       </div>
                       <div className="ml-2.5 sm:ml-3 min-w-0 flex flex-col justify-center">
                         <p className="font-data text-xl sm:text-2xl font-bold leading-none text-slate-900 dark:text-white tracking-tight">
