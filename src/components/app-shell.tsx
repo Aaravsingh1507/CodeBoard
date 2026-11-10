@@ -80,14 +80,14 @@ export function AppShell({
 
   return (
     <div className="flex h-[100dvh] min-h-[100dvh] w-full overflow-hidden bg-background text-foreground">
-      {/* Desktop sidebar */}
-      <div className="hidden md:block">
+      {/* Desktop sidebar - permanent on laptop/desktop (lg: 1024px+), drawer on mobile/tablet */}
+      <div className="hidden lg:block">
         <Sidebar user={user} />
       </div>
 
       {/* Mobile drawer */}
       {open && (
-        <div className="fixed inset-0 z-50 md:hidden" aria-modal="true" role="dialog">
+        <div className="fixed inset-0 z-50 lg:hidden" aria-modal="true" role="dialog">
           <div
             className={`absolute inset-0 bg-black/70 backdrop-blur-[3px] ${
               closing ? "animate-backdrop-out" : "animate-backdrop-in"
@@ -105,8 +105,8 @@ export function AppShell({
       )}
 
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
-        {/* Mobile Header Bar (hidden on desktop) - Sticky top */}
-        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background/95 px-4 backdrop-blur-md md:hidden supports-[backdrop-filter]:bg-background/80">
+        {/* Mobile Header Bar (hidden on desktop lg: 1024px+) - Sticky top */}
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-border/60 bg-background/95 px-4 backdrop-blur-md lg:hidden supports-[backdrop-filter]:bg-background/80">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setOpen(true)}
@@ -150,7 +150,7 @@ export function AppShell({
 
         {/* Main Content Area with Optimized Ambient Background */}
         <main
-          className="relative flex-1 overflow-y-auto overflow-x-hidden scroll-touch bg-background dark:bg-[#080c17] w-full max-w-full pb-20 md:pb-0"
+          className="relative flex-1 overflow-y-auto overflow-x-hidden scroll-touch bg-background dark:bg-[#080c17] w-full max-w-full pb-20 lg:pb-0"
           style={{ WebkitOverflowScrolling: "touch", overscrollBehaviorY: "contain" }}
         >
           {/* High-Performance Radial Gradient Background Glows */}
@@ -167,15 +167,15 @@ export function AppShell({
             }}
           />
 
-          <div className="relative z-10 mx-auto max-w-7xl w-full min-w-0 px-4 pt-4 pb-16 sm:px-6 md:px-8 md:py-7 animate-fade-in">
+          <div className="relative z-10 mx-auto max-w-7xl w-full min-w-0 px-4 pt-4 pb-16 sm:px-6 lg:px-8 lg:py-7 animate-fade-in">
             {children}
           </div>
         </main>
 
-        {/* Mobile Bottom Navigation Bar (hidden on desktop) */}
+        {/* Mobile Bottom Navigation Bar (hidden on desktop lg: 1024px+) */}
         <nav
           aria-label="Mobile Navigation"
-          className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center justify-around border-t border-border/70 bg-background/95 px-2 backdrop-blur-xl md:hidden supports-[backdrop-filter]:bg-background/85"
+          className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center justify-around border-t border-border/70 bg-background/95 px-2 backdrop-blur-xl lg:hidden supports-[backdrop-filter]:bg-background/85"
           style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         >
           {mobileNav.map((item) => (
