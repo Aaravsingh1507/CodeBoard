@@ -16,11 +16,11 @@ function levelFor(count: number) {
 }
 
 const LEVEL_CLASSES = [
-  "bg-[#131929] border border-neutral-800/80 shadow-[0_1px_3px_rgba(0,0,0,0.7)] dark:bg-[#131929] dark:border-neutral-800/80 dark:shadow-[0_1px_3px_rgba(0,0,0,0.7)]",
-  "bg-teal-900/80 border border-teal-700/80 shadow-[0_0_5px_rgba(20,184,166,0.3)] dark:bg-[#0d4f5b] dark:border-[#146b7b] dark:shadow-[0_0_6px_rgba(20,184,166,0.45)]",
-  "bg-teal-700/90 border border-teal-500/80 shadow-[0_0_8px_rgba(13,148,136,0.4)] dark:bg-[#0b7484] dark:border-[#0f9bb0] dark:shadow-[0_0_9px_rgba(14,165,233,0.65)]",
-  "bg-teal-500 border border-teal-400 shadow-[0_0_10px_rgba(20,184,166,0.5)] dark:bg-[#06b6d4] dark:border-[#22d3ee] dark:shadow-[0_0_12px_rgba(6,182,212,0.85)]",
-  "bg-cyan-400 border border-cyan-200 shadow-[0_0_12px_rgba(6,182,212,0.6)] dark:bg-[#22d3ee] dark:border-cyan-100 dark:shadow-[0_0_16px_rgba(34,211,238,1)]",
+  "bg-slate-100 border border-slate-200/90 shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:bg-[#1a233b] dark:border-slate-600/70 dark:shadow-[0_1px_3px_rgba(0,0,0,0.6)]",
+  "bg-teal-200/90 border border-teal-300 shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:bg-[#0d4f5b] dark:border-[#146b7b] dark:shadow-[0_1px_3px_rgba(0,0,0,0.6)]",
+  "bg-teal-400 border border-teal-500/80 shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:bg-[#0b7484] dark:border-[#0f9bb0] dark:shadow-[0_1px_3px_rgba(0,0,0,0.6)]",
+  "bg-teal-500 border border-teal-600 shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:bg-[#06b6d4] dark:border-[#22d3ee] dark:shadow-[0_1px_3px_rgba(0,0,0,0.6)]",
+  "bg-cyan-400 border border-cyan-300 shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:bg-[#22d3ee] dark:border-cyan-100 dark:shadow-[0_1px_3px_rgba(0,0,0,0.6)]",
 ];
 
 const MONTH_NAMES = [
@@ -202,7 +202,7 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
       </div>
 
       {/* Legend & Sliding Bar Hint */}
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-slate-400 dark:text-slate-400">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
         <div className="flex items-center gap-1.5 sm:gap-2">
           <span className="text-[11px] sm:text-xs">Less activity</span>
           <div className="flex items-center gap-1 sm:gap-1.5">

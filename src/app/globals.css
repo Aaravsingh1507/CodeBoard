@@ -330,9 +330,8 @@ img {
 }
 
 .dark .heatmap-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .heatmap-scrollbar::-webkit-scrollbar-thumb {
