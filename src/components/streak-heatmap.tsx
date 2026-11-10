@@ -16,11 +16,11 @@ function levelFor(count: number) {
 }
 
 const LEVEL_CLASSES = [
-  "bg-slate-100 border border-slate-200/90 dark:bg-[#1a233b] dark:border-slate-600/70",
-  "bg-teal-200/90 border border-teal-300 dark:bg-[#0d4f5b] dark:border-[#146b7b]",
-  "bg-teal-400 border border-teal-500/80 dark:bg-[#0b7484] dark:border-[#0f9bb0]",
-  "bg-teal-500 border border-teal-600 shadow-[0_0_6px_rgba(20,184,166,0.35)] dark:bg-[#06b6d4] dark:border-[#22d3ee] dark:shadow-[0_0_8px_rgba(6,182,212,0.6)]",
-  "bg-cyan-400 border border-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.5)] dark:bg-[#22d3ee] dark:border-cyan-100 dark:shadow-[0_0_12px_rgba(34,211,238,0.95)]",
+  "bg-slate-100 border border-slate-200/90 shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:bg-[#1a233b] dark:border-slate-600/70 dark:shadow-[0_1px_3px_rgba(0,0,0,0.5)]",
+  "bg-teal-200/90 border border-teal-300 shadow-[0_0_5px_rgba(20,184,166,0.3)] dark:bg-[#0d4f5b] dark:border-[#146b7b] dark:shadow-[0_0_6px_rgba(20,184,166,0.45)]",
+  "bg-teal-400 border border-teal-500/80 shadow-[0_0_8px_rgba(13,148,136,0.4)] dark:bg-[#0b7484] dark:border-[#0f9bb0] dark:shadow-[0_0_9px_rgba(14,165,233,0.65)]",
+  "bg-teal-500 border border-teal-600 shadow-[0_0_10px_rgba(20,184,166,0.5)] dark:bg-[#06b6d4] dark:border-[#22d3ee] dark:shadow-[0_0_12px_rgba(6,182,212,0.85)]",
+  "bg-cyan-400 border border-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.6)] dark:bg-[#22d3ee] dark:border-cyan-100 dark:shadow-[0_0_16px_rgba(34,211,238,1)]",
 ];
 
 const MONTH_NAMES = [

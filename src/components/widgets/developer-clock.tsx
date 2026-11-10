@@ -74,7 +74,7 @@ export function DeveloperClock() {
     <div className="relative w-full h-full min-h-[320px] lg:min-h-[350px] flex items-center justify-center p-0">
       {/* Tight circular black background directly hugging the clock so it does not spread out */}
       <div
-        className="group relative w-full max-w-[315px] xl:max-w-[345px] aspect-square rounded-full bg-black border border-white/[0.08] shadow-[0_16px_44px_rgba(0,0,0,0.85)] flex items-center justify-center p-1 overflow-hidden transition-transform duration-300"
+        className="group relative w-full max-w-[315px] xl:max-w-[345px] aspect-square rounded-full bg-black border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_30px_rgba(147,51,234,0.15),0_0_15px_rgba(245,158,11,0.12)] flex items-center justify-center p-1 overflow-hidden transition-transform duration-300"
         title={timeDisplay ? `Real-Time Developer Clock — ${timeDisplay}` : "Real-Time Developer Clock"}
         aria-label={timeDisplay ? `Real-Time Developer Clock: ${timeDisplay}` : "Real-Time Developer Clock"}
       >
