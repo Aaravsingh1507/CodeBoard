@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
 import { StreakHeatmap } from "@/components/streak-heatmap";
+import { NeonWorkspaceArtwork } from "@/components/neon-workspace-artwork";
 
 interface StreakData {
   currentStreak: number;
@@ -139,15 +140,10 @@ export function StreakWidget({ previewData }: { previewData?: StreakData } = {})
             )}
           </div>
 
-          {/* Right Column (5 cols): 3D Developer Desk Artwork */}
+          {/* Right Column (5 cols): Neon Diagrammatic Developer Desk Artwork */}
           <div className="hidden lg:flex lg:col-span-5 h-full items-stretch">
-            <div className="relative w-full h-full min-h-[300px] rounded-2xl border border-slate-200 bg-slate-100 overflow-hidden shadow-sm dark:border-white/10 dark:bg-[#070b16] dark:shadow-2xl flex items-center justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/streak-workspace.png"
-                alt="Developer Workspace"
-                className="w-full h-full object-cover object-center"
-              />
+            <div className="relative w-full h-full min-h-[300px] rounded-2xl border border-slate-200/80 bg-[#020307] overflow-hidden shadow-inner dark:border-white/10 dark:bg-[#020307] dark:shadow-2xl flex items-center justify-center p-2">
+              <NeonWorkspaceArtwork className="w-full h-full" />
             </div>
           </div>
         </div>
