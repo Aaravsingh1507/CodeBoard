@@ -15,19 +15,19 @@ export function ReadinessWidget(props?: { previewData?: unknown }) {
         <picture className="relative z-10 block w-full h-full">
           <source
             type="image/webp"
-            srcSet="/small-steps-banner@3x.webp 3072w, /small-steps-banner@2x.webp 2048w"
-            sizes="(max-width: 768px) 100vw, 1280px"
+            srcSet="/small-steps-banner@3x.webp?v=max 3072w, /small-steps-banner@2x.webp?v=max 2048w"
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 1280px, 1600px"
           />
           <source
             type="image/png"
-            srcSet="/small-steps-banner@3x.png 3072w, /small-steps-banner@2x.png 2048w"
-            sizes="(max-width: 768px) 100vw, 1280px"
+            srcSet="/small-steps-banner@3x.png?v=max 3072w, /small-steps-banner@2x.png?v=max 2048w"
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 1280px, 1600px"
           />
           <img
-            src="/small-steps-banner.png"
+            src="/small-steps-banner.png?v=max"
             alt="Small Steps Big Progress — Stay consistent, solve one problem at a time, and watch your progress grow."
-            width={1024}
-            height={341}
+            width={3072}
+            height={1024}
             draggable={false}
             className="w-full h-full object-cover select-none pointer-events-none"
             style={{
