@@ -88,7 +88,10 @@ export async function syncActivityForUser(userId: string) {
           });
         }
         if (toUpdate.length > 0) {
-          await prisma.$transaction(toUpdate);
+          // Chunk updates in batches of 50 to avoid serverless connection timeouts
+          for (let i = 0; i < toUpdate.length; i += 50) {
+            await prisma.$transaction(toUpdate.slice(i, i + 50));
+          }
         }
       }
     } catch {
@@ -185,10 +188,18 @@ export function computeStreaks(
     heatmap.push({ date: key, count: byDate.get(key) ?? 0 });
   }
 
+  // Current streak: active today, or active through yesterday waiting for today's commit
   let currentStreak = 0;
-  for (let i = heatmap.length - 1; i >= 0; i--) {
-    if (heatmap[i].count > 0) currentStreak++;
-    else break;
+  const lastIndex = heatmap.length - 1;
+  const todayActive = (heatmap[lastIndex]?.count ?? 0) > 0;
+  const startIndex = todayActive ? lastIndex : lastIndex - 1;
+
+  for (let i = startIndex; i >= 0; i--) {
+    if ((heatmap[i]?.count ?? 0) > 0) {
+      currentStreak++;
+    } else {
+      break;
+    }
   }
 
   let longestStreak = 0;

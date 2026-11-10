@@ -42,6 +42,22 @@ export async function GET() {
     }
   }
 
+  // Fallback: if logs table is still empty, populate in-memory from user's GitHub stats cache
+  if (logs.length === 0 && user.githubStatsCache) {
+    try {
+      const stats = JSON.parse(user.githubStatsCache);
+      if (Array.isArray(stats.contributionCalendar)) {
+        logs = stats.contributionCalendar.map((d: any) => ({
+          date: new Date(d.date + "T00:00:00Z"),
+          githubContributions: Number(d.count) || 0,
+          leetcodeSubmissions: 0,
+        }));
+      }
+    } catch {
+      // Non-fatal
+    }
+  }
+
   const result = computeStreaks(logs);
   return NextResponse.json({ data: result });
 }

@@ -13,7 +13,7 @@ if (typeof WebSocket === "undefined") {
 }
 
 // Create a non-pooling or pooling connection based on the URL available
-const connectionString = `${process.env.POSTGRES_URL}`;
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || "";
 
 const adapter = new PrismaNeon({ connectionString });
 

@@ -27,57 +27,57 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
   const { dateLabels, values, maxY } = useMemo(() => {
     const daysCount = numWeeks * 7;
     const now = new Date();
-    const labels: string[] = [];
-    
-    // 7 sample points across the timeframe
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(now.getTime() - ((i * daysCount) / 6) * 86400000);
-      labels.push(
-        d.toLocaleDateString("en-US", { month: "short", day: "2-digit" })
-      );
-    }
+    const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
-    let calculatedValues = [0, 0, 0, 0, 0, 0, 0];
-
-    if (total > 0) {
-      if (data?.contributionCalendar && data.contributionCalendar.length > 0) {
-        const cal = [...data.contributionCalendar].sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
-        const recent = cal.slice(-daysCount);
-        const step = Math.max(1, Math.floor(recent.length / 6));
-        
-        calculatedValues[0] = 0;
-        for (let i = 1; i <= 6; i++) {
-          const slice = recent.slice(0, i * step);
-          const sum = slice.reduce((acc, curr) => acc + curr.count, 0);
-          calculatedValues[i] = sum;
+    // Create day-by-day contribution lookup
+    const dayMap = new Map<string, number>();
+    if (data?.contributionCalendar) {
+      for (const d of data.contributionCalendar) {
+        if (d?.date) {
+          dayMap.set(d.date, (dayMap.get(d.date) ?? 0) + (Number(d.count) || 0));
         }
-      } else {
-        // Real total scaled to the selected period
-        const periodFactor = numWeeks / 52;
-        const periodTotal = Math.max(1, Math.round(total * periodFactor));
-        calculatedValues = [
-          0,
-          Math.round(periodTotal * 0.2),
-          Math.round(periodTotal * 0.35),
-          Math.round(periodTotal * 0.5),
-          Math.round(periodTotal * 0.7),
-          Math.round(periodTotal * 0.88),
-          periodTotal,
-        ];
       }
     }
 
-    const maxVal = Math.max(...calculatedValues, 10);
-    const calculatedMaxY = Math.ceil(maxVal / 10) * 10;
+    // Build continuous days ending today
+    const intervalDays: { date: Date; dateStr: string; count: number }[] = [];
+    for (let i = daysCount - 1; i >= 0; i--) {
+      const d = new Date(todayUTC.getTime() - i * 86400000);
+      const dStr = d.toISOString().slice(0, 10);
+      intervalDays.push({
+        date: d,
+        dateStr: dStr,
+        count: dayMap.get(dStr) ?? 0,
+      });
+    }
+
+    // Divide into 7 equal time buckets
+    const labels: string[] = [];
+    const calculatedValues: number[] = [];
+
+    const bucketSize = daysCount / 7;
+    for (let i = 0; i < 7; i++) {
+      const startIdx = Math.floor(i * bucketSize);
+      const endIdx = i === 6 ? daysCount : Math.floor((i + 1) * bucketSize);
+      const bucket = intervalDays.slice(startIdx, endIdx);
+      const sum = bucket.reduce((acc, curr) => acc + curr.count, 0);
+      calculatedValues.push(sum);
+
+      const midDay = bucket[Math.floor(bucket.length / 2)] ?? bucket[0];
+      labels.push(
+        midDay.date.toLocaleDateString("en-US", { month: "short", day: "2-digit" })
+      );
+    }
+
+    const maxVal = Math.max(...calculatedValues, 5);
+    const calculatedMaxY = Math.ceil(maxVal / 5) * 5;
 
     return {
       dateLabels: labels,
       values: calculatedValues,
       maxY: calculatedMaxY,
     };
-  }, [data, total, numWeeks]);
+  }, [data, numWeeks]);
 
   const xCoords = [45, 115, 185, 255, 325, 395, 465];
   const chartHeight = 110;
@@ -145,8 +145,8 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
 
   // Calculate real metrics and month-over-month trends from GitHub data
   const { contribChange, reposChange, followersChange } = useMemo(() => {
-    // 1. Contributions Month-over-Month (exact real calculation from calendar, clamped 0%–100%)
-    let contribPct = 86;
+    // 1. Contributions Month-over-Month (exact real calculation from calendar)
+    let contribPct = 0;
     let contribUp = true;
     if (data?.contributionCalendar && data.contributionCalendar.length > 0) {
       const now = new Date();
@@ -168,7 +168,7 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
       if (lastMonth > 0) {
         const diff = thisMonth - lastMonth;
         const raw = Math.round((Math.abs(diff) / lastMonth) * 100);
-        contribPct = Math.min(100, Math.max(0, raw));
+        contribPct = Math.min(999, raw);
         contribUp = diff >= 0;
       } else if (thisMonth > 0) {
         contribPct = 100;
@@ -507,7 +507,7 @@ export function GithubSummaryWidget({ previewData }: { previewData?: GithubStats
                   {dateLabels[activePointIndex]}
                 </p>
                 <p className="font-data text-xs font-bold text-purple-700 dark:text-purple-300 leading-tight mt-0.5">
-                  {activePoint.val} {activePoint.val === 1 ? "event" : "events"}
+                  {activePoint.val} {activePoint.val === 1 ? "contribution" : "contributions"}
                 </p>
               </div>
               <div className="h-1.5 w-1.5 rotate-45 border-r border-b border-purple-200 bg-white -mt-1 dark:border-purple-500/40 dark:bg-[#121828]" />

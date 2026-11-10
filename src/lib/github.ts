@@ -255,35 +255,64 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
 
   const recentActivity = combinedActivity.slice(0, 15);
 
-  // 4. Ensure today's commits are reflected in contributionCalendar even if GraphQL calendar hasn't re-indexed yet
+  // 4. Merge recent verified activity (commits, PRs, issues) into contributionCalendar
+  // This catches real-time events that GitHub's GraphQL calendar hasn't indexed yet.
   const now = new Date();
   const todayUTC = now.toISOString().slice(0, 10);
-  const todayLocal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
-  const todayCommits = repoCommits.filter((c) => {
-    const cDate = new Date(c.date);
-    const cDateUTC = cDate.toISOString().slice(0, 10);
-    const cDateLocal = `${cDate.getFullYear()}-${String(cDate.getMonth() + 1).padStart(2, "0")}-${String(cDate.getDate()).padStart(2, "0")}`;
-    return cDateUTC === todayUTC || cDateLocal === todayLocal || (now.getTime() - cDate.getTime() < 24 * 60 * 60 * 1000);
-  });
-
-  const todayCommitCount = todayCommits.length;
-
-  if (todayCommitCount > 0) {
-    let todayCalItem = contributionCalendar.find((d: { date: string; count: number }) => d.date === todayUTC);
-    if (!todayCalItem && todayLocal !== todayUTC) {
-      todayCalItem = contributionCalendar.find((d: { date: string; count: number }) => d.date === todayLocal);
-    }
-    if (todayCalItem) {
-      if (todayCalItem.count < todayCommitCount) {
-        calendar.totalContributions += (todayCommitCount - todayCalItem.count);
-        todayCalItem.count = todayCommitCount;
-      }
-    } else {
-      contributionCalendar.push({ date: todayUTC, count: todayCommitCount });
-      calendar.totalContributions += todayCommitCount;
+  const dateMap = new Map<string, number>();
+  for (const day of contributionCalendar) {
+    if (day && day.date) {
+      dateMap.set(day.date, (dateMap.get(day.date) ?? 0) + (Number(day.count) || 0));
     }
   }
+
+  // Count verified activity events per UTC date
+  const recentEventsPerDate = new Map<string, number>();
+  for (const item of allActivity) {
+    if (!item.date) continue;
+    try {
+      const d = new Date(item.date);
+      const dStr = d.toISOString().slice(0, 10);
+      recentEventsPerDate.set(dStr, (recentEventsPerDate.get(dStr) ?? 0) + 1);
+    } catch {
+      // Ignore unparseable date
+    }
+  }
+
+  // If recent events exceed the GraphQL calendar for any date, reconcile it
+  for (const [dStr, eventCount] of recentEventsPerDate.entries()) {
+    const current = dateMap.get(dStr) ?? 0;
+    if (eventCount > current) {
+      dateMap.set(dStr, eventCount);
+    }
+  }
+
+  // Ensure today's date exists in calendar
+  if (!dateMap.has(todayUTC)) {
+    dateMap.set(todayUTC, 0);
+  }
+
+  // Build sorted, deduplicated, gap-free contributionCalendar
+  const sortedDates = [...dateMap.keys()].sort();
+  const cleanCalendar: { date: string; count: number }[] = [];
+
+  if (sortedDates.length > 0) {
+    const firstDate = new Date(sortedDates[0] + "T00:00:00Z");
+    const lastDate = new Date(Math.max(
+      new Date(sortedDates[sortedDates.length - 1] + "T00:00:00Z").getTime(),
+      new Date(todayUTC + "T00:00:00Z").getTime()
+    ));
+
+    const cur = new Date(firstDate);
+    while (cur <= lastDate) {
+      const key = cur.toISOString().slice(0, 10);
+      cleanCalendar.push({ date: key, count: dateMap.get(key) ?? 0 });
+      cur.setUTCDate(cur.getUTCDate() + 1);
+    }
+  }
+
+  const verifiedTotal = cleanCalendar.reduce((sum, d) => sum + d.count, 0);
 
   // Traffic data — only available for repos with push access.
   // Fetch for top 3 repos (by stars) in parallel, skip 403s gracefully.
@@ -330,8 +359,8 @@ export async function fetchGithubStats(login: string, token: string): Promise<Gi
     totalWatchers,
     totalPRs: u.pullRequests.totalCount,
     totalIssues: u.issues.totalCount,
-    totalContributionsLastYear: calendar.totalContributions,
-    contributionCalendar,
+    totalContributionsLastYear: verifiedTotal,
+    contributionCalendar: cleanCalendar,
     topLanguages,
     recentActivity,
     totalClones,

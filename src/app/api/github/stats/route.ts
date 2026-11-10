@@ -40,6 +40,12 @@ export async function GET(req: Request) {
         githubStatsSyncedAt: new Date(),
       },
     });
+
+    // Re-sync ActivityLog in the background so dashboard streak & heatmaps stay in sync
+    import("@/lib/activity")
+      .then(({ syncActivityForUser }) => syncActivityForUser(user.id))
+      .catch(() => {});
+
     return NextResponse.json({ data: stats, cached: false, syncedAt: new Date() });
   } catch (err) {
     // Fall back to last known cache rather than a hard failure, if we have one.

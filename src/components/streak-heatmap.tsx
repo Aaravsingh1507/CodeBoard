@@ -46,23 +46,59 @@ export function StreakHeatmap({ days }: { days: HeatmapDay[] }) {
 
   // Auto-scroll to current day (far right) on mount/update so latest streak is seen first
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
-    }
+    const el = scrollRef.current;
+    if (!el) return;
+    const scrollToEnd = () => {
+      el.scrollLeft = el.scrollWidth;
+    };
+    scrollToEnd();
+    const timer = setTimeout(scrollToEnd, 80);
+    return () => clearTimeout(timer);
   }, [days]);
 
   if (!days || days.length === 0) return null;
 
-  // Align into weeks (columns), Monday-first (Mon=0, Tue=1, ... Sun=6)
-  const first = new Date(days[0].date + "T00:00:00Z");
-  const leadingBlanks = (first.getUTCDay() + 6) % 7;
-  const cells: (HeatmapDay | null)[] = [
-    ...Array(leadingBlanks).fill(null),
-    ...days,
-  ];
+  // Build calendar map by YYYY-MM-DD
+  const dayMap = new Map<string, number>();
+  for (const d of days) {
+    if (d?.date) {
+      dayMap.set(d.date, d.count);
+    }
+  }
+
+  // Sort days ascending to find true date boundaries
+  const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
+  const startDate = new Date(sorted[0].date + "T00:00:00Z");
+  const endDate = new Date(sorted[sorted.length - 1].date + "T00:00:00Z");
+
+  // Monday-first alignment: Mon=0, Tue=1, ... Sun=6
+  const startDayOfWeek = (startDate.getUTCDay() + 6) % 7;
+  const cursor = new Date(startDate.getTime() - startDayOfWeek * 86400000);
+
+  const endDayOfWeek = (endDate.getUTCDay() + 6) % 7;
+  const endBoundary = new Date(endDate.getTime() + (6 - endDayOfWeek) * 86400000);
+
   const weeks: (HeatmapDay | null)[][] = [];
-  for (let i = 0; i < cells.length; i += 7) {
-    weeks.push(cells.slice(i, i + 7));
+  let currentWeek: (HeatmapDay | null)[] = [];
+
+  while (cursor <= endBoundary) {
+    const key = cursor.toISOString().slice(0, 10);
+    if (cursor < startDate || cursor > endDate) {
+      currentWeek.push(null);
+    } else {
+      currentWeek.push({ date: key, count: dayMap.get(key) ?? 0 });
+    }
+
+    if (currentWeek.length === 7) {
+      weeks.push(currentWeek);
+      currentWeek = [];
+    }
+
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  if (currentWeek.length > 0) {
+    while (currentWeek.length < 7) currentWeek.push(null);
+    weeks.push(currentWeek);
   }
 
   // Determine where each month starts along the week columns
