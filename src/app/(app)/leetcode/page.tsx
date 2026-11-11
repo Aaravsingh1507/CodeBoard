@@ -8,7 +8,6 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LeetcodeStatsBanner } from "@/components/leetcode/leetcode-stats-banner";
 import { TopicBreakdown } from "@/components/topic-breakdown";
 import type { LeetcodeStats } from "@/lib/leetcode";
 
@@ -48,7 +47,8 @@ export default function LeetcodePage() {
         <div className="space-y-5">
           {warning && <p className="rounded-lg bg-warn/10 px-3 py-2 text-xs text-warn">{warning}</p>}
 
-          <LeetcodeStatsBanner
+          <TopicBreakdown
+            topics={data.topicBreakdown ?? []}
             totalSolved={data.totalSolved}
             easySolved={data.easySolved}
             mediumSolved={data.mediumSolved}
@@ -56,8 +56,6 @@ export default function LeetcodePage() {
             ranking={data.ranking}
             loading={loading}
           />
-
-          <TopicBreakdown topics={data.topicBreakdown ?? []} totalSolved={data.totalSolved} />
 
           <Card>
             <CardHeader>

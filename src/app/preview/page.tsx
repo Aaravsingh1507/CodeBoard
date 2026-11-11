@@ -6,7 +6,6 @@ import { ReadinessWidget } from "@/components/widgets/readiness-widget";
 import { StreakWidget } from "@/components/widgets/streak-widget";
 import { GithubSummaryWidget } from "@/components/widgets/github-summary-widget";
 import { LeetcodeSummaryWidget } from "@/components/widgets/leetcode-summary-widget";
-import { LeetcodeStatsBanner } from "@/components/leetcode/leetcode-stats-banner";
 import { TopicBreakdown, REAL_USER_TOPICS } from "@/components/topic-breakdown";
 import { GoalsSummaryWidget } from "@/components/widgets/goals-summary-widget";
 import { LatestReviewWidget } from "@/components/widgets/latest-review-widget";
@@ -374,20 +373,15 @@ export default function PreviewPage() {
               </p>
             </div>
 
-            {/* 3D Glowing Stats Banner matching design */}
-            <LeetcodeStatsBanner
-              totalSolved={previewLeetcode.totalSolved}
-              easySolved={previewLeetcode.easySolved}
-              mediumSolved={previewLeetcode.mediumSolved}
-              hardSolved={previewLeetcode.hardSolved}
-              ranking={previewLeetcode.ranking}
-              loading={leetcodeLoading}
-            />
-
             <div className="space-y-6">
               <TopicBreakdown
-                topics={liveLeetcode?.topicBreakdown?.length ? liveLeetcode.topicBreakdown : previewLeetcode.topicBreakdown}
-                totalSolved={liveLeetcode?.totalSolved ?? previewLeetcode.totalSolved}
+                topics={previewLeetcode.topicBreakdown ?? []}
+                totalSolved={previewLeetcode.totalSolved}
+                easySolved={previewLeetcode.easySolved}
+                mediumSolved={previewLeetcode.mediumSolved}
+                hardSolved={previewLeetcode.hardSolved}
+                ranking={previewLeetcode.ranking}
+                loading={leetcodeLoading}
               />
 
               <Card className="p-5">
