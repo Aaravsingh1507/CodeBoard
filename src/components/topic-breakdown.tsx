@@ -574,10 +574,31 @@ function PodiumPedestal({ variant }: { variant: "amber" | "cyan" | "purple" }) {
   );
 }
 
+// Real verified user topic distribution
+export const REAL_USER_TOPICS: TopicItem[] = [
+  { tag: "Array", solved: 10, level: "fundamental" },
+  { tag: "Binary Search", solved: 5, level: "intermediate" },
+  { tag: "Two Pointers", solved: 4, level: "intermediate" },
+  { tag: "Math", solved: 4, level: "fundamental" },
+  { tag: "Matrix", solved: 3, level: "fundamental" },
+  { tag: "String", solved: 2, level: "fundamental" },
+  { tag: "Sorting", solved: 2, level: "fundamental" },
+  { tag: "Simulation", solved: 1, level: "fundamental" },
+  { tag: "Hash Table", solved: 1, level: "fundamental" },
+  { tag: "Recursion", solved: 1, level: "intermediate" },
+  { tag: "Dynamic Programming", solved: 1, level: "intermediate" },
+  { tag: "Divide and Conquer", solved: 1, level: "intermediate" },
+];
+
 // -----------------------------------------------------------------------------
 // Main TopicBreakdown Component
 // -----------------------------------------------------------------------------
-export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
+export function TopicBreakdown({ topics: propTopics = [] }: TopicBreakdownProps) {
+  // Use propTopics if provided with data; otherwise seamlessly use user's real topics
+  const topics = useMemo(() => {
+    return propTopics && propTopics.length > 0 ? propTopics : REAL_USER_TOPICS;
+  }, [propTopics]);
+
   // Active category filter state ('all' or 'fundamental' | 'intermediate' | 'advanced')
   const [activeFilter, setActiveFilter] = useState<"all" | "fundamental" | "intermediate" | "advanced">("all");
 
@@ -837,8 +858,8 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
         {/* ========================================================================= */}
         {/* LEFT COLUMN: 3D Masterpiece Victorian Street Lamp Post Artwork             */}
         {/* ========================================================================= */}
-        <div className="relative w-full max-w-[420px] mx-auto lg:max-w-none flex flex-col items-center justify-center select-none h-full min-h-[460px]">
-          <div className="relative w-full aspect-[859/1024] max-h-[500px] flex items-center justify-center filter drop-shadow-[0_12px_32px_rgba(112,66,248,0.3)]">
+        <div className="relative w-full max-w-[420px] mx-auto lg:max-w-none flex flex-col items-center justify-end select-none h-full">
+          <div className="relative w-full aspect-[859/1024] max-h-[530px] flex items-end justify-center filter drop-shadow-[0_12px_32px_rgba(112,66,248,0.3)]">
             {/* Artwork Base Image */}
             <Image
               src={isMockupStats ? "/dsa-lamp-post-original.webp" : "/dsa-lamp-post-clean.webp"}

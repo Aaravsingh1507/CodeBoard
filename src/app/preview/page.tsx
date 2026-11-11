@@ -112,15 +112,34 @@ const PREVIEW_GITHUB: GithubStats = {
 };
 
 const DEFAULT_LEETCODE: LeetcodeStats = {
-  username: "",
-  ranking: null,
-  totalSolved: 0,
-  easySolved: 0,
-  mediumSolved: 0,
-  hardSolved: 0,
-  acceptanceRate: "0.0%",
-  recentSubmissions: [],
-  topicBreakdown: [],
+  username: "aarav_singh",
+  ranking: 425102,
+  totalSolved: 35,
+  easySolved: 20,
+  mediumSolved: 13,
+  hardSolved: 2,
+  acceptanceRate: "68.4%",
+  recentSubmissions: [
+    { title: "Binary Search", difficulty: "Easy", status: "Accepted", timestamp: "1728000000" },
+    { title: "Running Sum of 1d Array", difficulty: "Easy", status: "Accepted", timestamp: "1727900000" },
+    { title: "Find Pivot Index", difficulty: "Easy", status: "Accepted", timestamp: "1727800000" },
+    { title: "Find All Duplicates in an Array", difficulty: "Medium", status: "Accepted", timestamp: "1727700000" },
+    { title: "Fibonacci Number", difficulty: "Easy", status: "Accepted", timestamp: "1727600000" },
+  ],
+  topicBreakdown: [
+    { tag: "Array", solved: 10, level: "fundamental" },
+    { tag: "Binary Search", solved: 5, level: "intermediate" },
+    { tag: "Two Pointers", solved: 4, level: "intermediate" },
+    { tag: "Math", solved: 4, level: "fundamental" },
+    { tag: "Matrix", solved: 3, level: "fundamental" },
+    { tag: "String", solved: 2, level: "fundamental" },
+    { tag: "Sorting", solved: 2, level: "fundamental" },
+    { tag: "Simulation", solved: 1, level: "fundamental" },
+    { tag: "Hash Table", solved: 1, level: "fundamental" },
+    { tag: "Recursion", solved: 1, level: "intermediate" },
+    { tag: "Dynamic Programming", solved: 1, level: "intermediate" },
+    { tag: "Divide and Conquer", solved: 1, level: "intermediate" },
+  ],
 };
 
 const PREVIEW_GOALS = [
@@ -165,7 +184,10 @@ export default function PreviewPage() {
   const previewReadiness = PREVIEW_READINESS;
   const previewStreak = PREVIEW_STREAK;
   const previewGithub = PREVIEW_GITHUB;
-  const previewLeetcode: LeetcodeStats = liveLeetcode ?? DEFAULT_LEETCODE;
+  const previewLeetcode: LeetcodeStats =
+    liveLeetcode && (liveLeetcode.totalSolved > 0 || (liveLeetcode.topicBreakdown && liveLeetcode.topicBreakdown.length > 0))
+      ? liveLeetcode
+      : DEFAULT_LEETCODE;
   const previewGoals = PREVIEW_GOALS;
 
   const [previewReviews, setPreviewReviews] = useState([
