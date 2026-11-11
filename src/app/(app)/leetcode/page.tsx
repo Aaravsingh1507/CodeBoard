@@ -58,25 +58,25 @@ export default function LeetcodePage() {
             loading={loading}
           />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent submissions</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="rounded-2xl border border-slate-800/90 dark:border-white/[0.08] dark:bg-[#060913] bg-slate-900/95 p-5 sm:p-6 shadow-[0_14px_36px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:border-white/15 hover:shadow-[0_18px_44px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,255,255,0.12)]">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 dark:border-white/[0.06]">
+              <h3 className="text-base font-bold text-white">Recent submissions</h3>
+            </div>
+            <div className="pt-3">
               {data.recentSubmissions.length === 0 ? (
                 <EmptyState title="No submissions yet" description="Solve a problem on LeetCode to see it here." />
               ) : (
-                <ul className="divide-y divide-border">
+                <ul className="divide-y divide-slate-800/80 dark:divide-white/[0.06]">
                   {data.recentSubmissions.map((s, i) => (
                     <li key={i} className="flex items-center justify-between py-2.5 text-sm">
-                      <span className="text-foreground">{s.title}</span>
+                      <span className="text-white font-medium">{s.title}</span>
                       <Badge tone={STATUS_TONE[s.status] ?? "neutral"}>{s.status}</Badge>
                     </li>
                   ))}
                 </ul>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       )}
     </div>

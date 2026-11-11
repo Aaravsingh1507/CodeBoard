@@ -385,17 +385,19 @@ export default function PreviewPage() {
                 loading={leetcodeLoading}
               />
 
-              <Card className="p-5">
-                <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Recent submissions</h3>
-                <ul className="divide-y divide-border/60">
+              <div className="rounded-2xl border border-slate-800/90 dark:border-white/[0.08] dark:bg-[#060913] bg-slate-900/95 p-5 sm:p-6 shadow-[0_14px_36px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:border-white/15 hover:shadow-[0_18px_44px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,255,255,0.12)]">
+                <h3 className="font-bold text-white text-base mb-4 pb-3 border-b border-slate-800/80 dark:border-white/[0.06]">
+                  Recent submissions
+                </h3>
+                <ul className="divide-y divide-slate-800/80 dark:divide-white/[0.06]">
                   {(liveLeetcode?.recentSubmissions?.length ? liveLeetcode.recentSubmissions : previewLeetcode.recentSubmissions).map((s, i) => (
                     <li key={i} className="flex items-center justify-between py-2.5 text-sm">
-                      <span className="text-foreground dark:text-slate-200">{s.title}</span>
+                      <span className="text-white font-medium">{s.title}</span>
                       <Badge tone="success">{s.status}</Badge>
                     </li>
                   ))}
                 </ul>
-              </Card>
+              </div>
             </div>
           </div>
         )}
