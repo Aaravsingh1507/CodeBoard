@@ -579,13 +579,13 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
       </div>
 
       {/* Main Grid Container (No artificial outer background, pure glassmorphic floating cards) */}
-      <div className="grid grid-cols-1 lg:grid-cols-[265px_1fr] gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[265px_1fr] gap-4 items-stretch">
         {/* ========================================================================= */}
         {/* LEFT COLUMN: 3D Desk Scene on top + Summary Card underneath               */}
         {/* ========================================================================= */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center h-full">
           {/* 3D Desk Scene Illustration (Floating naturally above card) */}
-          <div className="relative w-[265px] h-[210px] -mb-4 z-10 pointer-events-none select-none">
+          <div className="relative w-[265px] h-[200px] -mb-4 z-10 flex-shrink-0 pointer-events-none select-none">
             <Image
               src="/dsa-desk-scene.webp"
               alt="DSA Desk Scene"
@@ -596,75 +596,81 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
             {/* Ambient lamp glow reflection on desk */}
             <div className="absolute top-10 left-6 w-20 h-20 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
             {/* Glowing </> Code bracket pulse on laptop screen */}
-            <div className="absolute top-[88px] left-[138px] w-8 h-8 rounded-full bg-cyan-400/25 blur-md animate-pulse pointer-events-none" />
+            <div className="absolute top-[84px] left-[138px] w-8 h-8 rounded-full bg-cyan-400/25 blur-md animate-pulse pointer-events-none" />
           </div>
 
-          {/* Left Glassmorphism Summary Card */}
-          <div className="relative w-full rounded-2xl p-4 pt-6 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
-            {/* Row 1: Fundamental */}
-            <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
-              <div className="flex items-center gap-2.5">
-                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-cyan-400 to-blue-600 shadow-[0_0_10px_rgba(34,211,238,0.6)] flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-sm bg-white/90" />
+          {/* Left Glassmorphism Summary Card (flex-1 to match right column height perfectly) */}
+          <div className="relative w-full flex-1 flex flex-col justify-between rounded-2xl p-4 pt-6 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
+            {/* Top Section: 3 Levels */}
+            <div className="space-y-1">
+              {/* Row 1: Fundamental */}
+              <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-cyan-400 to-blue-600 shadow-[0_0_10px_rgba(34,211,238,0.6)] flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-sm bg-white/90" />
+                  </div>
+                  <span className="text-sm font-semibold text-slate-200">Fundamental</span>
                 </div>
-                <span className="text-sm font-semibold text-slate-200">Fundamental</span>
+                <span className="text-sm font-bold text-white tracking-wide">
+                  {stats.fundamentalCount}{" "}
+                  <span className="text-xs font-normal text-slate-400">({stats.fundamentalPct}%)</span>
+                </span>
               </div>
-              <span className="text-sm font-bold text-white tracking-wide">
-                {stats.fundamentalCount}{" "}
-                <span className="text-xs font-normal text-slate-400">({stats.fundamentalPct}%)</span>
-              </span>
+
+              {/* Row 2: Intermediate */}
+              <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-400 to-indigo-600 shadow-[0_0_10px_rgba(192,132,252,0.6)] flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-sm bg-white/90" />
+                  </div>
+                  <span className="text-sm font-semibold text-slate-200">Intermediate</span>
+                </div>
+                <span className="text-sm font-bold text-white tracking-wide">
+                  {stats.intermediateCount}{" "}
+                  <span className="text-xs font-normal text-slate-400">({stats.intermediatePct}%)</span>
+                </span>
+              </div>
+
+              {/* Row 3: Advanced */}
+              <div className="flex items-center justify-between py-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-400 to-orange-600 shadow-[0_0_10px_rgba(251,191,36,0.6)] flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-sm bg-white/90" />
+                  </div>
+                  <span className="text-sm font-semibold text-slate-200">Advanced</span>
+                </div>
+                <span className="text-sm font-bold text-white tracking-wide">
+                  {stats.advancedCount}{" "}
+                  <span className="text-xs font-normal text-slate-400">({stats.advancedPct}%)</span>
+                </span>
+              </div>
             </div>
 
-            {/* Row 2: Intermediate */}
-            <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
-              <div className="flex items-center gap-2.5">
-                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-400 to-indigo-600 shadow-[0_0_10px_rgba(192,132,252,0.6)] flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-sm bg-white/90" />
-                </div>
-                <span className="text-sm font-semibold text-slate-200">Intermediate</span>
-              </div>
-              <span className="text-sm font-bold text-white tracking-wide">
-                {stats.intermediateCount}{" "}
-                <span className="text-xs font-normal text-slate-400">({stats.intermediatePct}%)</span>
-              </span>
-            </div>
+            {/* Bottom Section: Divider + 3 Stats */}
+            <div>
+              {/* Horizontal Divider Line */}
+              <div className="h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-3.5" />
 
-            {/* Row 3: Advanced */}
-            <div className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-2.5">
-                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-400 to-orange-600 shadow-[0_0_10px_rgba(251,191,36,0.6)] flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-sm bg-white/90" />
+              {/* 3-Column Stats at Bottom */}
+              <div className="grid grid-cols-3 gap-2 text-center pt-1">
+                <div>
+                  <div className="text-xl font-extrabold text-white font-mono">
+                    {stats.totalTopicsCount}
+                  </div>
+                  <div className="text-[11px] font-medium text-slate-400">Topics</div>
                 </div>
-                <span className="text-sm font-semibold text-slate-200">Advanced</span>
-              </div>
-              <span className="text-sm font-bold text-white tracking-wide">
-                {stats.advancedCount}{" "}
-                <span className="text-xs font-normal text-slate-400">({stats.advancedPct}%)</span>
-              </span>
-            </div>
-
-            {/* Horizontal Divider Line */}
-            <div className="h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-3.5" />
-
-            {/* 3-Column Stats at Bottom */}
-            <div className="grid grid-cols-3 gap-2 text-center pt-1">
-              <div>
-                <div className="text-xl font-extrabold text-white font-mono">
-                  {stats.totalTopicsCount}
+                <div>
+                  <div className="text-xl font-extrabold text-white font-mono">
+                    {stats.totalProblems}
+                  </div>
+                  <div className="text-[11px] font-medium text-slate-400">Problems</div>
                 </div>
-                <div className="text-[11px] font-medium text-slate-400">Topics</div>
-              </div>
-              <div>
-                <div className="text-xl font-extrabold text-white font-mono">
-                  {stats.totalProblems}
+                <div>
+                  <div className="text-xl font-extrabold text-white font-mono">
+                    {stats.fundamentalPct}%
+                  </div>
+                  <div className="text-[11px] font-medium text-slate-400">Fundamental</div>
                 </div>
-                <div className="text-[11px] font-medium text-slate-400">Problems</div>
-              </div>
-              <div>
-                <div className="text-xl font-extrabold text-white font-mono">
-                  {stats.fundamentalPct}%
-                </div>
-                <div className="text-[11px] font-medium text-slate-400">Fundamental</div>
               </div>
             </div>
           </div>
@@ -673,11 +679,11 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
         {/* ========================================================================= */}
         {/* RIGHT COLUMN: Distribution Chart (Top) + Bottom 2 Cards                  */}
         {/* ========================================================================= */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 justify-between h-full">
           {/* Card 2: Topic-wise Problem Distribution */}
           <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
             {/* Header: Trending Graph Icon + Title */}
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3">
               <div className="relative flex items-center justify-center">
                 <svg
                   viewBox="0 0 24 24"
@@ -712,49 +718,62 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                   ))}
                 </div>
 
-                {/* 12 Topic Columns Grid */}
-                <div className="grid grid-cols-12 gap-1.5 pl-6 pr-2">
+                {/* 12 Topic Columns Grid: Every tier has a fixed height for 100% synchronized alignment */}
+                <div className="grid grid-cols-12 gap-1 pl-6 pr-2">
                   {chartColumns.map((col) => {
                     const isDimmed = activeFilter !== "all" && col.level !== activeFilter;
-                    // Normalized height in pixels for solved bar (max 65px)
-                    const barHeight = col.solved > 0 ? Math.max(8, Math.min(65, (col.solved / maxSolved) * 65)) : 0;
+                    // Normalized height in pixels for solved bar (max 60px)
+                    const barHeight = col.solved > 0 ? Math.max(8, Math.min(60, (col.solved / maxSolved) * 60)) : 0;
 
                     return (
                       <div
                         key={col.id}
-                        className={`flex flex-col items-center justify-end transition-opacity duration-300 ${
+                        className={`flex flex-col items-center transition-opacity duration-300 ${
                           isDimmed ? "opacity-30" : "opacity-100"
                         }`}
                       >
-                        {/* Solved Count Hover/Display */}
-                        <div className="text-[11px] font-bold font-mono text-white mb-1">
-                          {col.solved}
+                        {/* Tier 1: Chart / Pedestal Area (Fixed height 32px so all 0s and discs align in a straight horizontal line) */}
+                        <div className="relative w-full h-[32px] flex flex-col items-center justify-end">
+                          {/* Solved Count Hover/Display */}
+                          <div className="text-[11px] font-bold font-mono text-white mb-0.5">
+                            {col.solved}
+                          </div>
+
+                          {/* Animated Rising Neon Bar (when solved > 0) */}
+                          {barHeight > 0 && (
+                            <div
+                              style={{ height: `${barHeight}px` }}
+                              className="absolute bottom-3 w-3 rounded-t-md bg-gradient-to-t from-purple-600 via-cyan-400 to-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.7)] transition-all duration-700 ease-out z-10"
+                            />
+                          )}
+
+                          {/* 3D Oval Glowing Disc / Pedestal at Baseline (Fixed position) */}
+                          <div className="relative w-9 h-3 flex items-center justify-center">
+                            <div className="w-8 h-2.5 rounded-[50%] bg-[#1a1238] border border-purple-400/60 shadow-[0_0_10px_rgba(168,85,247,0.5),inset_0_0_4px_rgba(192,132,252,0.3)]" />
+                          </div>
                         </div>
 
-                        {/* Animated Rising Neon Bar (when solved > 0) */}
-                        {barHeight > 0 && (
-                          <div
-                            style={{ height: `${barHeight}px` }}
-                            className="w-3 rounded-t-md bg-gradient-to-t from-purple-600 via-cyan-400 to-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.7)] transition-all duration-700 ease-out mb-[-4px] z-10"
-                          />
-                        )}
-
-                        {/* 3D Oval Glowing Disc / Pedestal at Baseline */}
-                        <div className="relative w-9 h-3.5 flex items-center justify-center my-0.5">
-                          <div className="w-8 h-2.5 rounded-[50%] bg-[#1a1238] border border-purple-400/60 shadow-[0_0_10px_rgba(168,85,247,0.5),inset_0_0_4px_rgba(192,132,252,0.3)]" />
+                        {/* Tier 2: Floating Neon Icon Tile (Fixed height 36px so all tiles are identical height) */}
+                        <div className="h-[36px] flex items-center justify-center my-0.5">
+                          <div className="w-8 h-8 rounded-lg bg-[#140e2b]/90 border border-purple-400/40 shadow-[0_0_8px_rgba(168,85,247,0.3)] flex items-center justify-center transition-transform duration-200 hover:scale-110 hover:border-purple-300">
+                            <TopicTileIcon id={col.id} />
+                          </div>
                         </div>
 
-                        {/* Floating Neon Icon Tile */}
-                        <div className="relative w-8 h-8 rounded-lg bg-[#140e2b]/90 border border-purple-400/40 shadow-[0_0_8px_rgba(168,85,247,0.3)] flex items-center justify-center my-1 transition-transform duration-200 hover:scale-110 hover:border-purple-300">
-                          <TopicTileIcon id={col.id} />
-                        </div>
-
-                        {/* Topic Label Underneath */}
+                        {/* Tier 3: Topic Label (Fixed height 24px so text length never shifts the columns) */}
                         <div
                           title={col.name}
-                          className="text-[9.5px] font-medium text-slate-300 text-center leading-tight mt-0.5 max-w-[52px] line-clamp-2 min-h-[22px] flex items-center justify-center"
+                          className="h-[24px] w-full flex items-center justify-center text-[9px] font-medium text-slate-300 text-center leading-[11px] px-0.5"
                         >
-                          {col.name}
+                          <span className="line-clamp-2">
+                            {col.name === "Dynamic Programming"
+                              ? "Dynamic Prog."
+                              : col.name === "Depth-First Search"
+                              ? "Depth-First"
+                              : col.name === "Breadth-First Search"
+                              ? "Breadth-First"
+                              : col.name}
+                          </span>
                         </div>
                       </div>
                     );
@@ -764,14 +783,14 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
             </div>
           </div>
 
-          {/* Bottom 2 Cards Grid: Top Covered Topics & Coverage Insight */}
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-4">
+          {/* Bottom 2 Cards Grid: EXACT SAME SIZE (50% / 50% grid-cols-2, equal height h-full) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch flex-1">
             {/* ========================================================================= */}
             {/* Card 3: Top Covered Topics (with Animated Cup, Star, Medal Podiums)       */}
             {/* ========================================================================= */}
-            <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex flex-col justify-between">
+            <div className="relative w-full h-full rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex flex-col justify-between">
               {/* Header: Trophy Icon + Title + Circular Chevron Button */}
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <svg
                     viewBox="0 0 24 24"
@@ -787,15 +806,15 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                 </div>
               </div>
 
-              {/* 3 Stepped Glowing Podiums */}
-              <div className="grid grid-cols-3 gap-2">
+              {/* 3 Stepped Glowing Podiums (Equal width, equal height) */}
+              <div className="grid grid-cols-3 gap-2 flex-1 items-stretch pt-1">
                 {/* Podium 1 (Rank 1): Golden Trophy Cup */}
-                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#2a1a0f]/40 to-[#181126]/60 border border-amber-500/20">
+                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#2a1a0f]/40 to-[#181126]/60 border border-amber-500/20 h-full">
                   {/* Animated Golden Trophy Cup */}
                   <PodiumCupAnimation />
 
                   {/* Topic Name & Count */}
-                  <div className="text-center my-1">
+                  <div className="text-center my-0.5">
                     <div
                       title={stats.top1?.tag ?? "—"}
                       className="text-xs font-bold text-white truncate max-w-[70px]"
@@ -808,19 +827,19 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                   </div>
 
                   {/* Tiered Glowing Amber/Gold 3D Pedestal Base */}
-                  <div className="relative w-full flex flex-col items-center mt-1">
+                  <div className="relative w-full flex flex-col items-center mt-0.5">
                     <div className="w-14 h-2 rounded-[50%] bg-[#ca8a04] border border-amber-300/60 shadow-[0_0_10px_rgba(251,191,36,0.6)]" />
                     <div className="w-16 h-2 rounded-[50%] bg-[#b45309] -mt-1 shadow-[0_4px_14px_rgba(245,158,11,0.6)]" />
                   </div>
                 </div>
 
                 {/* Podium 2 (Rank 2): Glowing 3D Star */}
-                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#0f1f3a]/40 to-[#181126]/60 border border-cyan-500/20">
+                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#0f1f3a]/40 to-[#181126]/60 border border-cyan-500/20 h-full">
                   {/* Animated Glowing 3D Star */}
                   <PodiumStarAnimation />
 
                   {/* Topic Name & Count */}
-                  <div className="text-center my-1">
+                  <div className="text-center my-0.5">
                     <div
                       title={stats.top2?.tag ?? "—"}
                       className="text-xs font-bold text-white truncate max-w-[70px]"
@@ -833,19 +852,19 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                   </div>
 
                   {/* Tiered Glowing Cyan/Blue 3D Pedestal Base */}
-                  <div className="relative w-full flex flex-col items-center mt-1">
+                  <div className="relative w-full flex flex-col items-center mt-0.5">
                     <div className="w-14 h-2 rounded-[50%] bg-[#6366f1] border border-cyan-300/60 shadow-[0_0_10px_rgba(56,189,248,0.6)]" />
                     <div className="w-16 h-2 rounded-[50%] bg-[#4338ca] -mt-1 shadow-[0_4px_14px_rgba(99,102,241,0.6)]" />
                   </div>
                 </div>
 
                 {/* Podium 3 (Rank 3): Glowing Award Medal */}
-                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#25103a]/40 to-[#181126]/60 border border-purple-500/20">
+                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#25103a]/40 to-[#181126]/60 border border-purple-500/20 h-full">
                   {/* Animated Award Medal */}
                   <PodiumMedalAnimation />
 
                   {/* Topic Name & Count */}
-                  <div className="text-center my-1">
+                  <div className="text-center my-0.5">
                     <div
                       title={stats.top3?.tag ?? "—"}
                       className="text-xs font-bold text-white truncate max-w-[70px]"
@@ -858,7 +877,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                   </div>
 
                   {/* Tiered Glowing Magenta/Purple 3D Pedestal Base */}
-                  <div className="relative w-full flex flex-col items-center mt-1">
+                  <div className="relative w-full flex flex-col items-center mt-0.5">
                     <div className="w-14 h-2 rounded-[50%] bg-[#a855f7] border border-purple-300/60 shadow-[0_0_10px_rgba(192,132,252,0.6)]" />
                     <div className="w-16 h-2 rounded-[50%] bg-[#7e22ce] -mt-1 shadow-[0_4px_14px_rgba(168,85,247,0.6)]" />
                   </div>
@@ -867,11 +886,11 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
             </div>
 
             {/* ========================================================================= */}
-            {/* Card 4: Coverage Insight (with 3D Target Bullseye Dart)                    */}
+            {/* Card 4: Coverage Insight (EXACT SAME SIZE as Card 3)                       */}
             {/* ========================================================================= */}
-            <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex items-center justify-between">
+            <div className="relative w-full h-full rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex items-center justify-between">
               {/* Left Content */}
-              <div className="flex-1 pr-2">
+              <div className="flex-1 pr-2 flex flex-col justify-center">
                 {/* Header: Target Bullseye Icon + Title */}
                 <div className="flex items-center gap-2 mb-2">
                   <svg
@@ -896,7 +915,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                 </div>
 
                 {/* Subtitle / Tip */}
-                <p className="text-xs text-slate-300/90 leading-relaxed mt-1.5 max-w-[210px]">
+                <p className="text-xs text-slate-300/90 leading-relaxed mt-1.5 max-w-[200px]">
                   {stats.totalProblems === 0
                     ? "Connect your LeetCode account in Settings to track your real-time topic progress."
                     : stats.top1
