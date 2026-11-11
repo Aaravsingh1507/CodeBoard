@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useMemo } from "react";
+import Image from "next/image";
 
 export interface TopicItem {
   tag: string;
@@ -8,1678 +9,915 @@ export interface TopicItem {
   level: "fundamental" | "intermediate" | "advanced" | string;
 }
 
-// Default standard DSA topics shown with 0 solved if user has not solved problems yet
-const DEFAULT_12_TOPIC_NAMES = [
-  "Array",
-  "String",
-  "Hash Table",
-  "Dynamic Programming",
-  "Math",
-  "Sorting",
-  "Greedy",
-  "Depth-First Search",
-  "Binary Search",
-  "Tree",
-  "Breadth-First Search",
-  "Two Pointers",
-];
-
-const DEFAULT_TOPIC_ITEMS: TopicItem[] = DEFAULT_12_TOPIC_NAMES.map((name) => ({
-  tag: name,
-  solved: 0,
-  level: "fundamental",
-}));
-
-// Helper: polar to cartesian coordinate conversion
-function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
-  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-  return {
-    x: Number((centerX + radius * Math.cos(angleInRadians)).toFixed(2)),
-    y: Number((centerY + radius * Math.sin(angleInRadians)).toFixed(2)),
-  };
-}
-
-// Helper: exact clockwise SVG arc path
-function describeArc(centerX: number, centerY: number, radius: number, startAngle: number, endAngle: number) {
-  const start = polarToCartesian(centerX, centerY, radius, startAngle);
-  const end = polarToCartesian(centerX, centerY, radius, endAngle);
-  const diff = (endAngle - startAngle + 360) % 360;
-  const largeArcFlag = diff > 180 ? "1" : "0";
-  return ["M", start.x, start.y, "A", radius, radius, 0, largeArcFlag, 1, end.x, end.y].join(" ");
-}
-
-// Helper: creates a continuous annular donut arc with clean radial cut gaps
-function getDonutArcPath(centerX: number, centerY: number, radius: number, startDeg: number, spanDeg: number, gapDeg: number = 2.4) {
-  if (spanDeg <= gapDeg) return null;
-  const s = (startDeg + gapDeg / 2) % 360;
-  const e = (startDeg + spanDeg - gapDeg / 2) % 360;
-  return describeArc(centerX, centerY, radius, s, e);
-}
-
-// Specialized vector icons for DSA topics (Using the app's Teal/Cyan & Violet palette)
-function renderTopicIcon(tag: string, x: number, y: number) {
-  const norm = tag.toLowerCase().trim();
-
-  if (norm.includes("array")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <polyline points="13 14 17 10 13 6" stroke="#2dd4bf" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <polyline points="7 6 3 10 7 14" stroke="#2dd4bf" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      </g>
-    );
-  }
-  if (norm.includes("search") || norm.includes("binary search")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <circle cx="9.5" cy="9.5" r="5" stroke="#38bdf8" strokeWidth="2" fill="none" />
-        <line x1="13.5" y1="13.5" x2="17.5" y2="17.5" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" />
-      </g>
-    );
-  }
-  if (norm.includes("pointer")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <path d="M6 14l-3-3 3-3" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <path d="M3 11h9" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" />
-        <path d="M14 6l3 3-3 3" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <path d="M17 9H8" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" />
-      </g>
-    );
-  }
-  if (norm.includes("tree")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="4" r="2.2" fill="#a855f7" />
-        <circle cx="4.5" cy="15" r="2.2" fill="#a855f7" />
-        <circle cx="15.5" cy="15" r="2.2" fill="#a855f7" />
-        <path d="M10 6v3m0 0l-5.5 4m5.5-4l5.5 4" stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      </g>
-    );
-  }
-  if (norm.includes("stack")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <ellipse cx="10" cy="5" rx="7" ry="2.2" stroke="#2dd4bf" strokeWidth="1.4" fill="none" />
-        <path d="M3 5v4c0 1.2 3.1 2.2 7 2.2s7-1 7-2.2V5" stroke="#2dd4bf" strokeWidth="1.4" fill="none" />
-        <path d="M3 9v4c0 1.2 3.1 2.2 7 2.2s7-1 7-2.2V9" stroke="#2dd4bf" strokeWidth="1.4" fill="none" />
-      </g>
-    );
-  }
-  if (norm.includes("math")) {
-    return (
-      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="14" fontWeight="900" fill="#a855f7" fontFamily="serif">
-        Σ
-      </text>
-    );
-  }
-  if (norm.includes("matrix")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <rect x="4" y="4" width="12" height="12" rx="1.5" stroke="#2dd4bf" strokeWidth="1.5" fill="none" />
-        <line x1="8" y1="4" x2="8" y2="16" stroke="#2dd4bf" strokeWidth="1.2" />
-        <line x1="12" y1="4" x2="12" y2="16" stroke="#2dd4bf" strokeWidth="1.2" />
-        <line x1="4" y1="8" x2="16" y2="8" stroke="#2dd4bf" strokeWidth="1.2" />
-        <line x1="4" y1="12" x2="16" y2="12" stroke="#2dd4bf" strokeWidth="1.2" />
-      </g>
-    );
-  }
-  if (norm.includes("string")) {
-    return (
-      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="13" fontWeight="900" fill="#2dd4bf" fontFamily="monospace">
-        “ ”
-      </text>
-    );
-  }
-  if (norm.includes("sort")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <line x1="6" y1="4" x2="6" y2="16" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" />
-        <polyline points="3 7 6 4 9 7" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <line x1="14" y1="16" x2="14" y2="4" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" />
-        <polyline points="11 13 14 16 17 13" stroke="#2dd4bf" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      </g>
-    );
-  }
-  if (norm.includes("hash")) {
-    return (
-      <text x={x + 10} y={y + 15} textAnchor="middle" fontSize="14" fontWeight="900" fill="#a855f7">
-        #
-      </text>
-    );
-  }
-  if (norm.includes("recursi")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="10" r="6" stroke="#a855f7" strokeWidth="1.8" fill="none" strokeDasharray="28 8" />
-        <polyline points="8 4 10 2 12 4" stroke="#a855f7" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <circle cx="10" cy="10" r="2.2" fill="#a855f7" />
-      </g>
-    );
-  }
-  if (norm.includes("dynamic") || norm.includes("dp")) {
-    return (
-      <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#fbbf24" fontFamily="monospace">
-        &lt;/&gt;
-      </text>
-    );
-  }
-  if (norm.includes("divide") || norm.includes("conquer")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="4" r="2.2" fill="#fbbf24" />
-        <circle cx="4.5" cy="15" r="2.2" fill="#fbbf24" />
-        <circle cx="15.5" cy="15" r="2.2" fill="#fbbf24" />
-        <path d="M10 6v3m0 0l-5.5 4m5.5-4l5.5 4" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      </g>
-    );
-  }
-  if (norm.includes("dfs") || norm.includes("depth")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <circle cx="10" cy="4" r="2.2" fill="#a855f7" />
-        <circle cx="10" cy="10.5" r="2.2" fill="#a855f7" />
-        <circle cx="10" cy="16.5" r="2.2" fill="#a855f7" />
-        <line x1="10" y1="6" x2="10" y2="8.5" stroke="#a855f7" strokeWidth="1.5" />
-        <line x1="10" y1="12.5" x2="10" y2="14.5" stroke="#a855f7" strokeWidth="1.5" />
-      </g>
-    );
-  }
-  if (norm.includes("bfs") || norm.includes("breadth")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <circle cx="4" cy="10" r="2" fill="#a855f7" />
-        <circle cx="10" cy="10" r="2" fill="#a855f7" />
-        <circle cx="16" cy="10" r="2" fill="#a855f7" />
-        <line x1="6" y1="10" x2="8" y2="10" stroke="#a855f7" strokeWidth="1.5" />
-        <line x1="12" y1="10" x2="14" y2="10" stroke="#a855f7" strokeWidth="1.5" />
-      </g>
-    );
-  }
-  if (norm.includes("list")) {
-    return (
-      <g transform={`translate(${x}, ${y})`}>
-        <circle cx="5" cy="10" r="2" fill="#2dd4bf" />
-        <circle cx="15" cy="10" r="2" fill="#2dd4bf" />
-        <line x1="7" y1="10" x2="13" y2="10" stroke="#2dd4bf" strokeWidth="1.5" strokeLinecap="round" />
-      </g>
-    );
-  }
-
-  // Default code icon
-  return (
-    <text x={x + 10} y={y + 14} textAnchor="middle" fontSize="11" fontWeight="800" fill="#2dd4bf" fontFamily="monospace">
-      &lt;&gt;
-    </text>
-  );
-}
-
-// Format 2-line labels nicely so long names fit without truncation
-function splitTopicLabel(tag: string): [string, string | null] {
-  const norm = tag.trim();
-  const lower = norm.toLowerCase();
-  if (lower === "binary search") return ["Binary", "Search"];
-  if (lower === "binary tree") return ["Binary", "Tree"];
-  if (lower === "two pointers") return ["Two", "Pointers"];
-  if (lower === "linked list") return ["Linked", "List"];
-  if (lower === "hash table") return ["Hash", "Table"];
-  if (lower === "dynamic programming") return ["Dynamic", "Programming"];
-  if (lower.includes("divide") && lower.includes("conquer")) return ["Divide &", "Conquer"];
-  if (lower.includes("depth") || lower === "dfs") return ["Depth-First", "Search"];
-  if (lower.includes("breadth") || lower === "bfs") return ["Breadth-First", "Search"];
-  if (lower.includes("bit manip")) return ["Bit", "Manip."];
-  if (lower.includes("sliding window")) return ["Sliding", "Window"];
-  return [norm, null];
-}
-
 interface TopicBreakdownProps {
   topics?: TopicItem[];
 }
 
-export function TopicBreakdown({ topics }: TopicBreakdownProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+// Canonical 12 DSA topics matching the reference design exactly
+interface CanonicalTopic {
+  id: string;
+  name: string;
+  level: "fundamental" | "intermediate" | "advanced";
+  aliases: string[];
+}
 
-  // Memoize real topics passed from the user's account. No fake preloaded data!
-  const userTopics = useMemo(() => topics ?? [], [topics]);
-  const hasRealData = useMemo(() => userTopics.length > 0 && userTopics.some((t) => t.solved > 0), [userTopics]);
+const CANONICAL_TOPICS: CanonicalTopic[] = [
+  { id: "array", name: "Array", level: "fundamental", aliases: ["array", "arrays"] },
+  { id: "string", name: "String", level: "fundamental", aliases: ["string", "strings"] },
+  { id: "hash-table", name: "Hash Table", level: "fundamental", aliases: ["hash table", "hash map", "hashmap", "hashtable"] },
+  { id: "dp", name: "Dynamic Programming", level: "intermediate", aliases: ["dynamic programming", "dp"] },
+  { id: "math", name: "Math", level: "fundamental", aliases: ["math", "mathematics"] },
+  { id: "sorting", name: "Sorting", level: "fundamental", aliases: ["sorting", "sort"] },
+  { id: "greedy", name: "Greedy", level: "intermediate", aliases: ["greedy"] },
+  { id: "dfs", name: "Depth-First Search", level: "intermediate", aliases: ["depth-first search", "dfs"] },
+  { id: "binary-search", name: "Binary Search", level: "intermediate", aliases: ["binary search"] },
+  { id: "tree", name: "Tree", level: "intermediate", aliases: ["tree", "trees", "binary tree"] },
+  { id: "bfs", name: "Breadth-First Search", level: "intermediate", aliases: ["breadth-first search", "bfs"] },
+  { id: "two-pointers", name: "Two Pointers", level: "fundamental", aliases: ["two pointers", "two-pointer"] },
+];
 
-  // Sort descending by solved count
-  const sorted = useMemo(() => {
-    return hasRealData ? [...userTopics].sort((a, b) => b.solved - a.solved) : [];
-  }, [hasRealData, userTopics]);
+// High-fidelity vector icons for the 12 floating topic tiles
+function TopicTileIcon({ id }: { id: string }) {
+  switch (id) {
+    case "array":
+      // < >
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="8 7 3 12 8 17" />
+          <polyline points="16 7 21 12 16 17" />
+        </svg>
+      );
+    case "string":
+      // " "
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="currentColor">
+          <path d="M7 8h2v5H6.5c0 1.5 1 2.5 2.5 2.5v1.5C6.5 17 5 15.5 5 13V8h2zm8 0h2v5h-2.5c0 1.5 1 2.5 2.5 2.5v1.5c-2.5 0-4-1.5-4-4V8h2z" />
+        </svg>
+      );
+    case "hash-table":
+      // #
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-purple-400 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+          <line x1="4" y1="9" x2="20" y2="9" />
+          <line x1="4" y1="15" x2="20" y2="15" />
+          <line x1="10" y1="3" x2="8" y2="21" />
+          <line x1="16" y1="3" x2="14" y2="21" />
+        </svg>
+      );
+    case "dp":
+      // </>
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="7 8 3 12 7 16" />
+          <polyline points="17 8 21 12 17 16" />
+          <line x1="14" y1="4" x2="10" y2="20" />
+        </svg>
+      );
+    case "math":
+      // Σ
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-purple-400 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="18 4 6 4 13 12 6 20 18 20" />
+        </svg>
+      );
+    case "sorting":
+      // ⇅
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M8 18V6m0 0l-3 3m3-3l3 3" />
+          <path d="M16 6v12m0 0l-3-3m3 3l3-3" />
+        </svg>
+      );
+    case "greedy":
+      // <>
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 8 5 12 9 16" />
+          <polyline points="15 8 19 12 15 16" />
+        </svg>
+      );
+    case "dfs":
+      // 🔍 depth
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="10.5" cy="10.5" r="6" />
+          <line x1="15" y1="15" x2="20" y2="20" />
+        </svg>
+      );
+    case "binary-search":
+      // 🔍 binary
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="10.5" cy="10.5" r="6" />
+          <line x1="15" y1="15" x2="20" y2="20" />
+        </svg>
+      );
+    case "tree":
+      // ⑂
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-purple-400 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="5" r="2.5" fill="currentColor" fillOpacity="0.4" />
+          <circle cx="6" cy="18" r="2.5" fill="currentColor" fillOpacity="0.4" />
+          <circle cx="18" cy="18" r="2.5" fill="currentColor" fillOpacity="0.4" />
+          <path d="M12 7.5v4m0 0l-6 4m6-4l6 4" />
+        </svg>
+      );
+    case "bfs":
+      // 🔍 bfs
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="10.5" cy="10.5" r="6" />
+          <line x1="15" y1="15" x2="20" y2="20" />
+        </svg>
+      );
+    case "two-pointers":
+      // ⇄
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 7l4 4-4 4" />
+          <path d="M21 11H7" />
+          <path d="M7 17l-4-4 4-4" />
+          <path d="M3 13h14" />
+        </svg>
+      );
+    default:
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="8" />
+        </svg>
+      );
+  }
+}
 
-  // Top 12 columns for the bar chart
-  const top12: TopicItem[] = useMemo(() => {
-    return hasRealData ? sorted.slice(0, 12) : DEFAULT_TOPIC_ITEMS;
-  }, [hasRealData, sorted]);
+// -----------------------------------------------------------------------------
+// Animated 3D Vector Assets for the 3 Podiums in "Top Covered Topics"
+// -----------------------------------------------------------------------------
 
-  const top12Solved = useMemo(() => top12.map((t) => t.solved), [top12]);
+// 1. Golden Trophy Cup Animation (Rank 1)
+function PodiumCupAnimation() {
+  return (
+    <div className="relative w-12 h-12 flex items-center justify-center pointer-events-none select-none">
+      {/* Golden Aura Glow */}
+      <div className="absolute inset-0 rounded-full bg-amber-500/20 blur-md animate-pulse" />
 
-  // Calculate real metrics across all topics
-  const { fundSolved, interSolved, advSolved, totalProblems, fundPct, interPct, advPct } = useMemo(() => {
-    let f = 0;
-    let i = 0;
-    let a = 0;
-    userTopics.forEach((t) => {
-      const lvl = (t.level || "").toLowerCase();
-      if (lvl.includes("fund")) f += t.solved;
-      else if (lvl.includes("inter")) i += t.solved;
-      else if (lvl.includes("adv")) a += t.solved;
-      else f += t.solved;
-    });
-    const total = f + i + a;
-    return {
-      fundSolved: f,
-      interSolved: i,
-      advSolved: a,
-      totalProblems: total,
-      fundPct: total > 0 ? (f / total) * 100 : 0,
-      interPct: total > 0 ? (i / total) * 100 : 0,
-      advPct: total > 0 ? (a / total) * 100 : 0,
-    };
-  }, [userTopics]);
+      {/* Floating Trophy Cup */}
+      <div className="relative z-10 animate-cup-float filter drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">
+        <svg viewBox="0 0 48 48" className="w-10 h-10 overflow-visible" fill="none">
+          <defs>
+            <linearGradient id="cupGoldBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fef08a" />
+              <stop offset="35%" stopColor="#fbbf24" />
+              <stop offset="70%" stopColor="#d97706" />
+              <stop offset="100%" stopColor="#78350f" />
+            </linearGradient>
+            <linearGradient id="cupGoldHandle" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#fef08a" />
+              <stop offset="100%" stopColor="#b45309" />
+            </linearGradient>
+            <linearGradient id="cupShimmer" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="transparent" />
+              <stop offset="50%" stopColor="rgba(255,255,255,0.7)" />
+              <stop offset="100%" stopColor="transparent" />
+            </linearGradient>
+            <clipPath id="cupClip">
+              <path d="M 12 11 C 12 25, 18 29, 24 29 C 30 29, 36 25, 36 11 Z" />
+            </clipPath>
+          </defs>
 
-  // Number counting states for central dial and 12 bar columns - defaults to REAL VALUES so never stuck at 0!
-  const [displayTotal, setDisplayTotal] = useState(totalProblems);
-  const [displayCounts, setDisplayCounts] = useState<number[]>(top12Solved);
+          {/* Left Handle */}
+          <path
+            d="M 13 14 C 6 14, 6 24, 15 24"
+            stroke="url(#cupGoldHandle)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            fill="none"
+          />
 
-  // Sync state immediately if totalProblems or topics change
-  useEffect(() => {
-    setDisplayTotal(totalProblems);
-    setDisplayCounts(top12Solved);
-  }, [totalProblems, top12Solved]);
+          {/* Right Handle */}
+          <path
+            d="M 35 14 C 42 14, 42 24, 33 24"
+            stroke="url(#cupGoldHandle)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            fill="none"
+          />
 
-  // IntersectionObserver: Triggers animations once when entering viewport
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+          {/* Cup Bowl */}
+          <path d="M 12 11 C 12 25, 18 29, 24 29 C 30 29, 36 25, 36 11 Z" fill="url(#cupGoldBody)" />
 
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setIsVisible(true);
-      setDisplayTotal(totalProblems);
-      setDisplayCounts(top12.map((t) => t.solved));
-      return;
-    }
+          {/* Top Rim */}
+          <ellipse cx="24" cy="11" rx="12" ry="2.8" fill="#fde047" stroke="#b45309" strokeWidth="0.8" />
+          <ellipse cx="24" cy="11" rx="10" ry="1.8" fill="#ca8a04" />
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
+          {/* Shimmer Light Sweep across Bowl */}
+          <g clipPath="url(#cupClip)">
+            <rect x="0" y="8" width="16" height="24" fill="url(#cupShimmer)" className="animate-cup-shimmer" />
+          </g>
 
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [totalProblems, top12]);
+          {/* Center Star Emblem on Cup */}
+          <path
+            d="M 24 16 L 25.2 19 L 28.5 19.3 L 26 21.4 L 26.8 24.5 L 24 22.8 L 21.2 24.5 L 22 21.4 L 19.5 19.3 L 22.8 19 Z"
+            fill="#fef9c3"
+            filter="drop-shadow(0 1px 2px rgba(0,0,0,0.5))"
+          />
 
-  // Smooth counting animation on entrance: starts from 0 up to real values
-  useEffect(() => {
-    if (!isVisible) return;
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDisplayTotal(totalProblems);
-      setDisplayCounts(top12.map((t) => t.solved));
-      return;
-    }
+          {/* Cup Stem */}
+          <path d="M 22 29 L 22 34 L 26 34 L 26 29 Z" fill="url(#cupGoldHandle)" />
 
-    const duration = 850;
-    let startTime: number | null = null;
-    let animId: number;
+          {/* Stepped Pedestal Base */}
+          <ellipse cx="24" cy="35" rx="8" ry="2" fill="#ca8a04" />
+          <path d="M 16 35 L 14 38 L 34 38 L 32 35 Z" fill="url(#cupGoldBody)" />
+          <ellipse cx="24" cy="38" rx="10" ry="2.5" fill="#f59e0b" stroke="#78350f" strokeWidth="0.8" />
 
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
+          {/* Twinkling Star Glints */}
+          <g className="animate-glint-1">
+            <polygon points="12,11 13.5,8 15,11 13.5,14" fill="#ffffff" />
+            <polygon points="10.5,11 13.5,9.5 16.5,11 13.5,12.5" fill="#ffffff" />
+          </g>
+          <g className="animate-glint-2">
+            <polygon points="36,12 37.5,9 39,12 37.5,15" fill="#ffffff" />
+            <polygon points="34.5,12 37.5,10.5 40.5,12 37.5,13.5" fill="#ffffff" />
+          </g>
+        </svg>
+      </div>
+    </div>
+  );
+}
 
-      setDisplayTotal(Math.round(ease * totalProblems));
+// 2. Glowing 3D Star Animation (Rank 2)
+function PodiumStarAnimation() {
+  return (
+    <div className="relative w-12 h-12 flex items-center justify-center pointer-events-none select-none">
+      {/* Cyan/Blue Aura Glow */}
+      <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-md animate-pulse" />
 
-      const counts = top12.map((item, i) => {
-        const barDelay = i * 35 + 80;
-        if (elapsed < barDelay) return 0;
-        const barProgress = Math.min((elapsed - barDelay) / 450, 1);
-        const barEase = 1 - Math.pow(1 - barProgress, 3);
-        return Math.round(barEase * item.solved);
-      });
-      setDisplayCounts(counts);
+      {/* Rotating Sparkle Rays behind Star */}
+      <div className="absolute inset-0 flex items-center justify-center animate-spin-slow opacity-60">
+        <div className="w-10 h-0.5 bg-gradient-to-r from-transparent via-cyan-300 to-transparent" />
+        <div className="w-0.5 h-10 bg-gradient-to-b from-transparent via-cyan-300 to-transparent absolute" />
+      </div>
 
-      if (progress < 1) {
-        animId = requestAnimationFrame(animate);
-      } else {
-        setDisplayTotal(totalProblems);
-        setDisplayCounts(top12.map((t) => t.solved));
+      {/* Floating 3D Beveled Star */}
+      <div className="relative z-10 animate-star-float filter drop-shadow-[0_0_10px_rgba(56,189,248,0.7)]">
+        <svg viewBox="0 0 48 48" className="w-10 h-10 overflow-visible" fill="none">
+          <defs>
+            <linearGradient id="starHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="50%" stopColor="#cffafe" />
+              <stop offset="100%" stopColor="#7dd3fc" />
+            </linearGradient>
+            <linearGradient id="starMid" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#a5f3fc" />
+              <stop offset="100%" stopColor="#38bdf8" />
+            </linearGradient>
+            <linearGradient id="starShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#38bdf8" />
+              <stop offset="100%" stopColor="#1d4ed8" />
+            </linearGradient>
+          </defs>
+
+          {/* 3D Beveled 5-point Star Facets with Center Vertex (24, 24) */}
+          {/* Top Tip */}
+          <polygon points="24,9 24,24 20.5,19" fill="url(#starHighlight)" />
+          <polygon points="24,9 24,24 27.5,19" fill="url(#starShadow)" />
+
+          {/* Top Right Tip */}
+          <polygon points="38,19 24,24 27.5,19" fill="url(#starHighlight)" />
+          <polygon points="38,19 24,24 30.5,26.5" fill="url(#starShadow)" />
+
+          {/* Bottom Right Tip */}
+          <polygon points="33,36 24,24 30.5,26.5" fill="url(#starMid)" />
+          <polygon points="33,36 24,24 24,31" fill="url(#starShadow)" />
+
+          {/* Bottom Left Tip */}
+          <polygon points="15,36 24,24 24,31" fill="url(#starHighlight)" />
+          <polygon points="15,36 24,24 17.5,26.5" fill="url(#starShadow)" />
+
+          {/* Top Left Tip */}
+          <polygon points="10,19 24,24 17.5,26.5" fill="url(#starMid)" />
+          <polygon points="10,19 24,24 20.5,19" fill="url(#starShadow)" />
+
+          {/* Center Jewel Glint */}
+          <circle cx="24" cy="24" r="2.2" fill="#ffffff" filter="drop-shadow(0 0 3px #ffffff)" />
+
+          {/* Twinkle Glint on Top Tip */}
+          <g className="animate-glint-1">
+            <polygon points="24,9 25,6 26,9 25,12" fill="#ffffff" />
+            <polygon points="22,9 25,7.5 28,9 25,10.5" fill="#ffffff" />
+          </g>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// 3. Glowing Award Medal Animation (Rank 3)
+function PodiumMedalAnimation() {
+  return (
+    <div className="relative w-12 h-12 flex items-center justify-center pointer-events-none select-none">
+      {/* Magenta/Purple Aura Glow */}
+      <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-md animate-pulse" />
+
+      {/* Floating & Swaying Medal */}
+      <div className="relative z-10 animate-medal-sway origin-top filter drop-shadow-[0_0_8px_rgba(192,132,252,0.65)]">
+        <svg viewBox="0 0 48 48" className="w-10 h-10 overflow-visible" fill="none">
+          <defs>
+            <linearGradient id="medalRibbonLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#e879f9" />
+              <stop offset="100%" stopColor="#86198f" />
+            </linearGradient>
+            <linearGradient id="medalRibbonRight" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#f472b6" />
+              <stop offset="100%" stopColor="#9d174d" />
+            </linearGradient>
+            <linearGradient id="medalCoin" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#f5d0fe" />
+              <stop offset="40%" stopColor="#c084fc" />
+              <stop offset="80%" stopColor="#7e22ce" />
+              <stop offset="100%" stopColor="#581c87" />
+            </linearGradient>
+            <linearGradient id="medalRim" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="50%" stopColor="#e879f9" />
+              <stop offset="100%" stopColor="#701a75" />
+            </linearGradient>
+          </defs>
+
+          {/* Draped Satin Ribbon on Top */}
+          {/* Left Ribbon */}
+          <polygon points="16,8 24,21 21,21 13,8" fill="url(#medalRibbonLeft)" />
+          {/* Right Ribbon */}
+          <polygon points="32,8 24,21 27,21 35,8" fill="url(#medalRibbonRight)" />
+
+          {/* Gold Connector Ring */}
+          <circle cx="24" cy="21" r="3.2" stroke="#fde047" strokeWidth="1.5" fill="none" />
+
+          {/* Round Medal Coin */}
+          <circle cx="24" cy="31" r="10.5" fill="url(#medalCoin)" />
+          <circle cx="24" cy="31" r="10.5" stroke="url(#medalRim)" strokeWidth="1.2" fill="none" />
+          <circle cx="24" cy="31" r="8.5" stroke="#fbcfe8" strokeWidth="0.8" strokeDasharray="1.5 1.5" fill="none" />
+
+          {/* Embossed Star inside Medal */}
+          <path
+            d="M 24 25.5 L 25.4 28.8 L 29 29.2 L 26.3 31.6 L 27.1 35 L 24 33.2 L 20.9 35 L 21.7 31.6 L 19 29.2 L 22.6 28.8 Z"
+            fill="#fdf4ff"
+            filter="drop-shadow(0 1px 2px rgba(0,0,0,0.4))"
+          />
+
+          {/* Specular Glint */}
+          <g className="animate-glint-1">
+            <polygon points="31,25 32,23 33,25 32,27" fill="#ffffff" />
+          </g>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// Main TopicBreakdown Component
+// -----------------------------------------------------------------------------
+export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
+  // Active category filter state ('all' or 'fundamental' | 'intermediate' | 'advanced')
+  const [activeFilter, setActiveFilter] = useState<"all" | "fundamental" | "intermediate" | "advanced">("all");
+
+  // Clean, real-time user LeetCode statistics calculation
+  const stats = useMemo(() => {
+    let fundamentalCount = 0;
+    let intermediateCount = 0;
+    let advancedCount = 0;
+
+    topics.forEach((t) => {
+      const lvl = t.level?.toLowerCase();
+      const count = Number(t.solved) || 0;
+      if (lvl === "fundamental") fundamentalCount += count;
+      else if (lvl === "intermediate") intermediateCount += count;
+      else if (lvl === "advanced") advancedCount += count;
+      else {
+        // Fallback classification based on standard LeetCode tags
+        const name = t.tag.toLowerCase();
+        if (
+          name.includes("array") ||
+          name.includes("string") ||
+          name.includes("hash") ||
+          name.includes("math") ||
+          name.includes("sort") ||
+          name.includes("two pointer")
+        ) {
+          fundamentalCount += count;
+        } else if (
+          name.includes("dynamic") ||
+          name.includes("tree") ||
+          name.includes("dfs") ||
+          name.includes("bfs") ||
+          name.includes("binary search") ||
+          name.includes("greedy")
+        ) {
+          intermediateCount += count;
+        } else {
+          advancedCount += count;
+        }
       }
+    });
+
+    const totalProblems = fundamentalCount + intermediateCount + advancedCount;
+    const solvedTopicsList = topics.filter((t) => (Number(t.solved) || 0) > 0);
+    const totalTopicsCount = solvedTopicsList.length;
+
+    const fundamentalPct = totalProblems > 0 ? ((fundamentalCount / totalProblems) * 100).toFixed(1) : "0.0";
+    const intermediatePct = totalProblems > 0 ? ((intermediateCount / totalProblems) * 100).toFixed(1) : "0.0";
+    const advancedPct = totalProblems > 0 ? ((advancedCount / totalProblems) * 100).toFixed(1) : "0.0";
+
+    // Sort user's solved topics descending to pick Top 3 Covered Topics
+    const sortedSolvedTopics = [...topics]
+      .filter((t) => (Number(t.solved) || 0) > 0)
+      .sort((a, b) => (Number(b.solved) || 0) - (Number(a.solved) || 0));
+
+    return {
+      fundamentalCount,
+      intermediateCount,
+      advancedCount,
+      totalProblems,
+      totalTopicsCount,
+      fundamentalPct,
+      intermediatePct,
+      advancedPct,
+      top1: sortedSolvedTopics[0] ?? null,
+      top2: sortedSolvedTopics[1] ?? null,
+      top3: sortedSolvedTopics[2] ?? null,
     };
+  }, [topics]);
 
-    animId = requestAnimationFrame(animate);
-    return () => {
-      cancelAnimationFrame(animId);
-      setDisplayTotal(totalProblems);
-      setDisplayCounts(top12.map((t) => t.solved));
-    };
-  }, [isVisible, totalProblems, top12]);
+  // Map user data to the canonical 12 columns
+  const chartColumns = useMemo(() => {
+    return CANONICAL_TOPICS.map((canonical) => {
+      // Find matching topic in user's real LeetCode list
+      const matched = topics.find((t) => {
+        const norm = t.tag.toLowerCase().trim();
+        return (
+          norm === canonical.name.toLowerCase() ||
+          canonical.aliases.some((alias) => norm === alias || norm.includes(alias))
+        );
+      });
+      const solved = matched ? Number(matched.solved) || 0 : 0;
+      return {
+        ...canonical,
+        solved,
+      };
+    });
+  }, [topics]);
 
-  // Dynamic Y-axis scale based on the maximum solved topic (default 10 if 0 solved)
-  const maxSolved = Math.max(...top12.map((t) => t.solved), 0);
-  const yMax = Math.max(10, Math.ceil((maxSolved || 1) / 2) * 2);
+  // Compute maximum solved value for dynamic Y-axis scaling
+  const maxSolved = useMemo(() => {
+    const rawMax = Math.max(0, ...chartColumns.map((c) => c.solved));
+    if (rawMax <= 10) return 10;
+    // Round up to a pleasant multiple of 10
+    return Math.ceil(rawMax / 10) * 10;
+  }, [chartColumns]);
 
-  // Y-axis ticks strictly mapped to card local coordinates (baseline at y=150, top at y=35)
-  const yTicks = [
-    { val: yMax, y: 35 },
-    { val: Math.round(yMax * 0.8), y: 58 },
-    { val: Math.round(yMax * 0.6), y: 81 },
-    { val: Math.round(yMax * 0.4), y: 104 },
-    { val: Math.round(yMax * 0.2), y: 127 },
-    { val: 0, y: 150 },
-  ];
+  // Y-axis 6 gridline ticks (10, 8, 6, 4, 2, 0 when max=10)
+  const yTicks = useMemo(() => {
+    const step = maxSolved / 5;
+    return [
+      maxSolved,
+      Math.round(step * 4),
+      Math.round(step * 3),
+      Math.round(step * 2),
+      Math.round(step * 1),
+      0,
+    ];
+  }, [maxSolved]);
 
-  // Top 3 for the badges (empty dashes if 0 solved)
-  const top3 = sorted.filter((t) => t.solved > 0).slice(0, 3);
-  const first = top3[0] ?? { tag: "—", solved: 0 };
-  const second = top3[1] ?? { tag: "—", solved: 0 };
-  const third = top3[2] ?? { tag: "—", solved: 0 };
-
-  // =========================================================================
-  // 3D GLASS PROGRESS RING CALCULATIONS
-  // Center is at (112, 104) in left subcard, radius is 62px
-  // =========================================================================
-  const cx = 112;
-  const cy = 104;
-  const radius = 62;
-
-  const fundDeg = totalProblems > 0 ? Math.round((fundSolved / totalProblems) * 360) : 0;
-  const interDeg = totalProblems > 0 ? Math.round((interSolved / totalProblems) * 360) : 0;
-  const advDeg = totalProblems > 0 ? 360 - fundDeg - interDeg : 0;
-
-  // Arcs are ONLY rendered when the user has actual solved problems!
-  const arcPathFund = totalProblems > 0 && fundSolved > 0 ? getDonutArcPath(cx, cy, radius, 0, fundDeg) : null;
-  const arcPathInter = totalProblems > 0 && interSolved > 0 ? getDonutArcPath(cx, cy, radius, fundDeg, interDeg) : null;
-  const arcPathAdv = totalProblems > 0 && advSolved > 0 ? getDonutArcPath(cx, cy, radius, fundDeg + interDeg, advDeg) : null;
+  // Filter handler
+  const handlePillClick = (filter: "fundamental" | "intermediate" | "advanced") => {
+    setActiveFilter((prev) => (prev === filter ? "all" : filter));
+  };
 
   return (
-    <div
-      ref={containerRef}
-      className={`w-full overflow-hidden select-none transition-all duration-700 ease-out ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-      }`}
-    >
-      <svg
-        viewBox="0 0 1024 490"
-        className="w-full h-auto"
-        style={{ fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
-      >
-        <defs>
-          {/* Robust Native CSS Keyframe Animations - NEVER clobbers SVG coordinate transforms */}
-          <style>{`
-            @keyframes cbBarGrow {
-              0% {
-                transform: scaleY(0);
-                opacity: 0.15;
-              }
-              100% {
-                transform: scaleY(1);
-                opacity: 1;
-              }
-            }
-            @keyframes cbArcSweep {
-              from {
-                stroke-dashoffset: 400;
-              }
-              to {
-                stroke-dashoffset: 0;
-              }
-            }
-            @keyframes cbFadeIn {
-              from {
-                opacity: 0;
-              }
-              to {
-                opacity: 1;
-              }
-            }
-            @keyframes cbArrowSweep {
-              from {
-                stroke-dashoffset: 160;
-              }
-              to {
-                stroke-dashoffset: 0;
-              }
-            }
-            @keyframes cbArrowheadPop {
-              0% {
-                opacity: 0;
-                transform: scale(0.3);
-              }
-              100% {
-                opacity: 1;
-                transform: scale(1);
-              }
-            }
-            @keyframes cbDotPulse {
-              0% {
-                transform: scale(1);
-                opacity: 0.9;
-              }
-              50% {
-                transform: scale(1.45);
-                opacity: 1;
-                filter: drop-shadow(0 0 6px currentColor);
-              }
-              100% {
-                transform: scale(1);
-                opacity: 0.9;
-              }
-            }
-            .cb-dot-pulse {
-              transform-box: fill-box;
-              transform-origin: center;
-              animation: cbDotPulse 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s 1;
-            }
-            @keyframes cbFloat {
-              0%, 100% {
-                transform: translateY(0);
-              }
-              50% {
-                transform: translateY(-2px);
-              }
-            }
-            .cb-header-float {
-              transform-box: fill-box;
-              transform-origin: center;
-              animation: cbFloat 4s ease-in-out infinite;
-            }
-            @keyframes cbIconEntrance {
-              0% {
-                opacity: 0;
-                transform: scale(0.75);
-              }
-              100% {
-                opacity: 1;
-                transform: scale(1);
-              }
-            }
-            .cb-topic-icon-btn {
-              cursor: pointer;
-              transform-box: fill-box;
-              transform-origin: center;
-              transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
-            }
-            .cb-topic-icon-btn:hover {
-              transform: scale(1.06);
-              filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.55)) drop-shadow(0 0 12px rgba(139, 92, 246, 0.35));
-            }
-            .cb-badge-card {
-              cursor: pointer;
-              transform-box: fill-box;
-              transform-origin: center;
-              transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
-            }
-            .cb-badge-card:hover {
-              transform: translateY(-3px);
-              filter: drop-shadow(0 6px 14px rgba(139, 92, 246, 0.35));
-            }
-            .cb-badge-card .cb-trophy-icon {
-              transform-box: fill-box;
-              transform-origin: center;
-              transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            }
-            .cb-badge-card:hover .cb-trophy-icon {
-              transform: scale(1.15) rotate(4deg);
-            }
-            .cb-badge-card .cb-medal-icon {
-              transform-box: fill-box;
-              transform-origin: center;
-              transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            }
-            .cb-badge-card:hover .cb-medal-icon {
-              transform: scale(1.15) rotate(-4deg);
-            }
-            .cb-legend-pill {
-              cursor: pointer;
-              transform-box: fill-box;
-              transform-origin: center;
-              transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
-            }
-            .cb-legend-pill:hover {
-              transform: translateY(-2px);
-              filter: drop-shadow(0 2px 8px rgba(139, 92, 246, 0.35));
-            }
-            @media (prefers-reduced-motion: reduce) {
-              * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                stroke-dashoffset: 0 !important;
-              }
-            }
-          `}</style>
+    <div className="relative w-full max-w-[1024px] mx-auto text-white select-none">
+      {/* Component-level scoped keyframe animations */}
+      <style jsx global>{`
+        @keyframes cupFloat {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-4px) rotate(1.2deg); }
+        }
+        @keyframes starFloat {
+          0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+          50% { transform: translateY(-4px) rotate(-3deg) scale(1.05); }
+        }
+        @keyframes medalSway {
+          0%, 100% { transform: rotate(-3deg) translateY(0px); }
+          50% { transform: rotate(3deg) translateY(-2.5px); }
+        }
+        @keyframes cupShimmer {
+          0% { transform: translateX(-150%) skewX(-20deg); opacity: 0; }
+          40% { opacity: 0.9; }
+          100% { transform: translateX(180%) skewX(-20deg); opacity: 0; }
+        }
+        @keyframes glintTwinkle {
+          0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
+          50% { transform: scale(1) rotate(90deg); opacity: 1; }
+        }
+        @keyframes spinSlow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes dartFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-4px); }
+        }
+        .animate-cup-float { animation: cupFloat 3.2s ease-in-out infinite; }
+        .animate-star-float { animation: starFloat 2.8s ease-in-out infinite; }
+        .animate-medal-sway { animation: medalSway 3.4s ease-in-out infinite; }
+        .animate-cup-shimmer { animation: cupShimmer 2.6s ease-in-out infinite; }
+        .animate-glint-1 { animation: glintTwinkle 2.4s ease-in-out infinite 0.2s; }
+        .animate-glint-2 { animation: glintTwinkle 2.4s ease-in-out infinite 1.4s; }
+        .animate-spin-slow { animation: spinSlow 8s linear infinite; }
+        .animate-dart-float { animation: dartFloat 3.6s ease-in-out infinite; }
+      `}</style>
 
-          {/* Subcard Frosted Glass Fill matching CodeBoard Dark Navy Theme */}
-          <linearGradient id="tcSubGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0f1730" stopOpacity="0.88" />
-            <stop offset="100%" stopColor="#070c1b" stopOpacity="0.96" />
-          </linearGradient>
-
-          {/* Subcard Border Gradient: Violet to Cyan specular accent */}
-          <linearGradient id="tcSubBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0.25" />
-          </linearGradient>
-
-          {/* 3D Glass Tube Progress Ring Gradients (Cyan, Violet, Amber) */}
-          {/* Fundamental: Electric Teal / Cyan */}
-          <linearGradient id="tcRingFund3D" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#5eead4" />
-            <stop offset="25%" stopColor="#2dd4bf" />
-            <stop offset="65%" stopColor="#0d9488" />
-            <stop offset="100%" stopColor="#115e59" />
-          </linearGradient>
-
-          {/* Intermediate: Vibrant Violet / Purple */}
-          <linearGradient id="tcRingInter3D" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#e9d5ff" />
-            <stop offset="25%" stopColor="#c084fc" />
-            <stop offset="65%" stopColor="#8b5cf6" />
-            <stop offset="100%" stopColor="#581c87" />
-          </linearGradient>
-
-          {/* Advanced: Warm Amber / Gold */}
-          <linearGradient id="tcRingAdv3D" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#fef08a" />
-            <stop offset="25%" stopColor="#fbbf24" />
-            <stop offset="65%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#78350f" />
-          </linearGradient>
-
-          {/* Specular White Glass Crest Gradient */}
-          <linearGradient id="tcSpecularWhite" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
-            <stop offset="60%" stopColor="#ffffff" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.05" />
-          </linearGradient>
-
-          {/* Center Convex Glass Lens: Deep Obsidian Navy */}
-          <radialGradient id="tcLensGrad" cx="50%" cy="30%" r="70%">
-            <stop offset="0%" stopColor="#131d3d" stopOpacity="0.95" />
-            <stop offset="55%" stopColor="#0a0f24" stopOpacity="0.98" />
-            <stop offset="100%" stopColor="#050814" stopOpacity="1" />
-          </radialGradient>
-
-          <linearGradient id="tcLensShine" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
-            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.06" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-          </linearGradient>
-
-          <linearGradient id="tcBadgeGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1e1b4b" />
-            <stop offset="100%" stopColor="#0a0e22" />
-          </linearGradient>
-
-          {/* 3D Glass Column Bar Gradients */}
-          {/* Fundamental: Cyan / Teal */}
-          <linearGradient id="tcBarFund3D" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#5eead4" />
-            <stop offset="12%" stopColor="#2dd4bf" />
-            <stop offset="45%" stopColor="#0d9488" />
-            <stop offset="85%" stopColor="#115e59" />
-            <stop offset="100%" stopColor="#042f2e" />
-          </linearGradient>
-
-          {/* Intermediate: Vibrant Violet */}
-          <linearGradient id="tcBarInter3D" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#e9d5ff" />
-            <stop offset="12%" stopColor="#c084fc" />
-            <stop offset="45%" stopColor="#8b5cf6" />
-            <stop offset="85%" stopColor="#6d28d9" />
-            <stop offset="100%" stopColor="#2e1065" />
-          </linearGradient>
-
-          {/* Advanced: Warm Amber / Gold */}
-          <linearGradient id="tcBarAdv3D" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#fef9c3" />
-            <stop offset="12%" stopColor="#fbbf24" />
-            <stop offset="45%" stopColor="#f59e0b" />
-            <stop offset="85%" stopColor="#b45309" />
-            <stop offset="100%" stopColor="#451a03" />
-          </linearGradient>
-
-          {/* Specular Streak down left side of bar */}
-          <linearGradient id="tcSpecularVertical" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
-            <stop offset="40%" stopColor="#ffffff" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.1" />
-          </linearGradient>
-
-          {/* Topic Icon Frosted Glass Fill */}
-          <linearGradient id="tcIconGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#141c38" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#070c1b" stopOpacity="0.95" />
-          </linearGradient>
-
-          {/* 3D Stacked Layers Icon Gradients (Violet & Cyan) */}
-          <linearGradient id="tcLayerBadge" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4338ca" />
-            <stop offset="100%" stopColor="#1e1b4b" />
-          </linearGradient>
-          <linearGradient id="tcLayerTop" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#5eead4" />
-            <stop offset="100%" stopColor="#2dd4bf" />
-          </linearGradient>
-          <linearGradient id="tcLayerMid" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#c084fc" />
-            <stop offset="100%" stopColor="#8b5cf6" />
-          </linearGradient>
-          <linearGradient id="tcLayerBot" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#818cf8" />
-            <stop offset="100%" stopColor="#4f46e5" />
-          </linearGradient>
-
-          {/* Coverage Insight Upward Arrow Gradient */}
-          <linearGradient id="tcArrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#2dd4bf" />
-            <stop offset="60%" stopColor="#8b5cf6" />
-            <stop offset="100%" stopColor="#ffffff" />
-          </linearGradient>
-
-          {/* Glow Filters */}
-          <filter id="tcGlowCyan" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#2dd4bf" floodOpacity="0.75" />
-          </filter>
-          <filter id="tcGlowViolet" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#8b5cf6" floodOpacity="0.75" />
-          </filter>
-          <filter id="tcGlowAmber" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#fbbf24" floodOpacity="0.75" />
-          </filter>
-          {/* Ambient Lighting Gradients (Hardware Accelerated) */}
-          <radialGradient id="tcAmbientViolet" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
-          </radialGradient>
-          <radialGradient id="tcAmbientTeal" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#2dd4bf" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-
-        {/* Ambient Radial Lighting matching CodeBoard App Theme */}
-        <circle cx="120" cy="80" r="140" fill="url(#tcAmbientViolet)" />
-        <circle cx="860" cy="420" r="150" fill="url(#tcAmbientTeal)" />
-
-        {/* =====================================================
-            1. HEADER BAR
-           ===================================================== */}
-        {/* Title + Subtitle (Shifted to corner) */}
-        <text x="32" y="42" fontSize="24" fontWeight="800" fill="#ffffff" letterSpacing="-0.5">
-          Topic Coverage
-        </text>
-        <text x="32" y="60" fontSize="12.5" fontWeight="500" fill="#94a3b8" opacity="0.9">
-          Problem distribution across DSA topics
-        </text>
-
-        {/* Legend Filter Pills (Top Right) */}
-        {/* Fundamental - Cyan */}
-        <g
-          transform="translate(620, 25)"
-          style={{
-            opacity: isVisible ? 1 : 0,
-            transition: "opacity 0.6s ease-out 0.15s",
-          }}
+      {/* Top Filter Pills Row (Aligned Right, matching image) */}
+      <div className="flex items-center justify-end gap-3 mb-3 px-1">
+        {/* Fundamental Pill */}
+        <button
+          onClick={() => handlePillClick("fundamental")}
+          className={`group flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
+            activeFilter === "fundamental"
+              ? "bg-[#0b1d30] border-cyan-400 text-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.45)] ring-1 ring-cyan-400"
+              : "bg-[#0c1424]/90 border-cyan-500/30 text-cyan-200/90 hover:border-cyan-400/60 hover:shadow-[0_0_12px_rgba(6,182,212,0.25)]"
+          }`}
         >
-          <g className="cb-legend-pill">
-            <rect
-              width="122"
-              height="34"
-              rx="17"
-              fill="#0b1226"
-              stroke="rgba(45, 212, 191, 0.45)"
-              strokeWidth="1.2"
-            />
-            <line x1="12" y1="1" x2="110" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-            <circle cx="17" cy="17" r="4.8" fill="#2dd4bf" filter="url(#tcGlowCyan)" className="cb-dot-pulse" />
-            <text x="30" y="17" dominantBaseline="central" fontSize="13" fontWeight="700" fill="#ffffff">
-              Fundamental
-            </text>
-          </g>
-        </g>
+          <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
+          <span>Fundamental</span>
+        </button>
 
-        {/* Intermediate - Violet */}
-        <g
-          transform="translate(756, 25)"
-          style={{
-            opacity: isVisible ? 1 : 0,
-            transition: "opacity 0.6s ease-out 0.25s",
-          }}
+        {/* Intermediate Pill */}
+        <button
+          onClick={() => handlePillClick("intermediate")}
+          className={`group flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
+            activeFilter === "intermediate"
+              ? "bg-[#201035] border-purple-400 text-purple-200 shadow-[0_0_16px_rgba(192,132,252,0.45)] ring-1 ring-purple-400"
+              : "bg-[#180e29]/90 border-purple-500/30 text-purple-200/90 hover:border-purple-400/60 hover:shadow-[0_0_12px_rgba(168,85,247,0.25)]"
+          }`}
         >
-          <g className="cb-legend-pill">
-            <rect
-              width="118"
-              height="34"
-              rx="17"
-              fill="#120f29"
-              stroke="rgba(168, 85, 247, 0.45)"
-              strokeWidth="1.2"
-            />
-            <line x1="12" y1="1" x2="106" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-            <circle cx="17" cy="17" r="4.8" fill="#a855f7" filter="url(#tcGlowViolet)" className="cb-dot-pulse" style={{ animationDelay: "0.75s" }} />
-            <text x="30" y="17" dominantBaseline="central" fontSize="13" fontWeight="700" fill="#ffffff">
-              Intermediate
-            </text>
-          </g>
-        </g>
+          <span className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_#c084fc] animate-pulse" />
+          <span>Intermediate</span>
+        </button>
 
-        {/* Advanced - Amber */}
-        <g
-          transform="translate(888, 25)"
-          style={{
-            opacity: isVisible ? 1 : 0,
-            transition: "opacity 0.6s ease-out 0.35s",
-          }}
+        {/* Advanced Pill */}
+        <button
+          onClick={() => handlePillClick("advanced")}
+          className={`group flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
+            activeFilter === "advanced"
+              ? "bg-[#2c1908] border-amber-400 text-amber-200 shadow-[0_0_16px_rgba(251,191,36,0.45)] ring-1 ring-amber-400"
+              : "bg-[#211208]/90 border-amber-500/30 text-amber-200/90 hover:border-amber-400/60 hover:shadow-[0_0_12px_rgba(245,158,11,0.25)]"
+          }`}
         >
-          <g className="cb-legend-pill">
-            <rect
-              width="104"
-              height="34"
-              rx="17"
-              fill="#1c160a"
-              stroke="rgba(251, 191, 36, 0.45)"
-              strokeWidth="1.2"
+          <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24] animate-pulse" />
+          <span>Advanced</span>
+        </button>
+      </div>
+
+      {/* Main Grid Container (No artificial outer background, pure glassmorphic floating cards) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[265px_1fr] gap-4 items-start">
+        {/* ========================================================================= */}
+        {/* LEFT COLUMN: 3D Desk Scene on top + Summary Card underneath               */}
+        {/* ========================================================================= */}
+        <div className="flex flex-col items-center">
+          {/* 3D Desk Scene Illustration (Floating naturally above card) */}
+          <div className="relative w-[265px] h-[210px] -mb-4 z-10 pointer-events-none select-none">
+            <Image
+              src="/dsa-desk-scene.webp"
+              alt="DSA Desk Scene"
+              fill
+              priority
+              className="object-contain filter drop-shadow-[0_10px_20px_rgba(168,85,247,0.3)]"
             />
-            <line x1="12" y1="1" x2="92" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-            <circle cx="17" cy="17" r="4.8" fill="#fbbf24" filter="url(#tcGlowAmber)" className="cb-dot-pulse" style={{ animationDelay: "0.9s" }} />
-            <text x="30" y="17" dominantBaseline="central" fontSize="13" fontWeight="700" fill="#ffffff">
-              Advanced
-            </text>
-          </g>
-        </g>
+            {/* Ambient lamp glow reflection on desk */}
+            <div className="absolute top-10 left-6 w-20 h-20 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
+            {/* Glowing </> Code bracket pulse on laptop screen */}
+            <div className="absolute top-[88px] left-[138px] w-8 h-8 rounded-full bg-cyan-400/25 blur-md animate-pulse pointer-events-none" />
+          </div>
 
-        {/* =====================================================
-            2. LEFT SUBCARD: 3D Glassmorphic Donut Gauge & Summary
-           ===================================================== */}
-        <g transform="translate(32, 80)">
-          <g
-            style={{
-              opacity: isVisible ? 1 : 0,
-              transform: isVisible ? "translateY(0)" : "translateY(10px)",
-              transition: "opacity 0.7s ease-out 0.08s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s",
-            }}
-          >
-            {/* Background Card */}
-            <rect
-              width="224"
-              height="382"
-              rx="22"
-              fill="url(#tcSubGlass)"
-              stroke="url(#tcSubBorderGrad)"
-              strokeWidth="1.2"
-            />
-            {/* Frosted Specular Sheen at Top of Subcard */}
-            <path d="M 66 2 L 202 2" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="1" strokeLinecap="round" />
+          {/* Left Glassmorphism Summary Card */}
+          <div className="relative w-full rounded-2xl p-4 pt-6 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
+            {/* Row 1: Fundamental */}
+            <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-cyan-400 to-blue-600 shadow-[0_0_10px_rgba(34,211,238,0.6)] flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-sm bg-white/90" />
+                </div>
+                <span className="text-sm font-semibold text-slate-200">Fundamental</span>
+              </div>
+              <span className="text-sm font-bold text-white tracking-wide">
+                {stats.fundamentalCount}{" "}
+                <span className="text-xs font-normal text-slate-400">({stats.fundamentalPct}%)</span>
+              </span>
+            </div>
 
-            {/* ===================================================
-                3D GLASS TUBE PROGRESS DONUT GAUGE (Center cx, cy)
-               =================================================== */}
-            <g>
-              {/* Ambient Halo behind Track */}
-              <circle cx={cx} cy={cy} r="62" fill="none" stroke="#8b5cf6" strokeWidth="20" opacity="0.08" filter="blur(8px)" />
+            {/* Row 2: Intermediate */}
+            <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-400 to-indigo-600 shadow-[0_0_10px_rgba(192,132,252,0.6)] flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-sm bg-white/90" />
+                </div>
+                <span className="text-sm font-semibold text-slate-200">Intermediate</span>
+              </div>
+              <span className="text-sm font-bold text-white tracking-wide">
+                {stats.intermediateCount}{" "}
+                <span className="text-xs font-normal text-slate-400">({stats.intermediatePct}%)</span>
+              </span>
+            </div>
 
-              {/* Recessed Dark Glass Track Groove */}
-              <circle cx={cx} cy={cy} r="62" fill="none" stroke="#090f22" strokeWidth="16" />
-              <circle cx={cx} cy={cy} r="62" fill="none" stroke="#040713" strokeWidth="12" />
+            {/* Row 3: Advanced */}
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center gap-2.5">
+                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-400 to-orange-600 shadow-[0_0_10px_rgba(251,191,36,0.6)] flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-sm bg-white/90" />
+                </div>
+                <span className="text-sm font-semibold text-slate-200">Advanced</span>
+              </div>
+              <span className="text-sm font-bold text-white tracking-wide">
+                {stats.advancedCount}{" "}
+                <span className="text-xs font-normal text-slate-400">({stats.advancedPct}%)</span>
+              </span>
+            </div>
 
-              {/* Concentric Frosted Glass Rims */}
-              <circle cx={cx} cy={cy} r="70" fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" />
-              <circle cx={cx} cy={cy} r="54" fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" />
+            {/* Horizontal Divider Line */}
+            <div className="h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-3.5" />
 
-              {/* ARC 1: FUNDAMENTAL (Cyan Glass Ring with Draw-In Animation) */}
-              {arcPathFund && (
-                <g>
-                  <path
-                    d={arcPathFund}
-                    fill="none"
-                    stroke="url(#tcRingFund3D)"
-                    strokeWidth="14"
-                    strokeLinecap="butt"
-                    strokeDasharray="400"
-                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.2s" }}
-                  />
-                  <path
-                    d={arcPathFund}
-                    fill="none"
-                    stroke="url(#tcSpecularWhite)"
-                    strokeWidth="2.5"
-                    strokeLinecap="butt"
-                    opacity="0.65"
-                    strokeDasharray="400"
-                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.2s" }}
-                  />
-                </g>
-              )}
+            {/* 3-Column Stats at Bottom */}
+            <div className="grid grid-cols-3 gap-2 text-center pt-1">
+              <div>
+                <div className="text-xl font-extrabold text-white font-mono">
+                  {stats.totalTopicsCount}
+                </div>
+                <div className="text-[11px] font-medium text-slate-400">Topics</div>
+              </div>
+              <div>
+                <div className="text-xl font-extrabold text-white font-mono">
+                  {stats.totalProblems}
+                </div>
+                <div className="text-[11px] font-medium text-slate-400">Problems</div>
+              </div>
+              <div>
+                <div className="text-xl font-extrabold text-white font-mono">
+                  {stats.fundamentalPct}%
+                </div>
+                <div className="text-[11px] font-medium text-slate-400">Fundamental</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              {/* ARC 2: INTERMEDIATE (Violet Glass Ring with Draw-In Animation) */}
-              {arcPathInter && (
-                <g>
-                  <path
-                    d={arcPathInter}
-                    fill="none"
-                    stroke="url(#tcRingInter3D)"
-                    strokeWidth="14"
-                    strokeLinecap="butt"
-                    strokeDasharray="400"
-                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.35s" }}
-                  />
-                  <path
-                    d={arcPathInter}
-                    fill="none"
-                    stroke="url(#tcSpecularWhite)"
-                    strokeWidth="2.5"
-                    strokeLinecap="butt"
-                    opacity="0.65"
-                    strokeDasharray="400"
-                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.35s" }}
-                  />
-                </g>
-              )}
-
-              {/* ARC 3: ADVANCED (Amber Glass Ring with Draw-In Animation) */}
-              {arcPathAdv && (
-                <g>
-                  <path
-                    d={arcPathAdv}
-                    fill="none"
-                    stroke="url(#tcRingAdv3D)"
-                    strokeWidth="14"
-                    strokeLinecap="butt"
-                    strokeDasharray="400"
-                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.5s" }}
-                  />
-                  <path
-                    d={arcPathAdv}
-                    fill="none"
-                    stroke="url(#tcSpecularWhite)"
-                    strokeWidth="2.5"
-                    strokeLinecap="butt"
-                    opacity="0.65"
-                    strokeDasharray="400"
-                    style={{ animation: isVisible ? "cbArcSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) both" : "none", animationDelay: "0.5s" }}
-                  />
-                </g>
-              )}
-
-              {/* ===================================================
-                  CENTER 3D CONVEX FROSTED GLASS LENS
-                 =================================================== */}
-              <circle cx={cx} cy={cy} r="48" fill="url(#tcLensGrad)" stroke="rgba(139, 92, 246, 0.45)" strokeWidth="1.2" />
-
-              {/* Crescent Glass Specular Reflection */}
-              <path
-                d={`M ${cx - 32} ${cy - 16} A 48 48 0 0 1 ${cx + 32} ${cy - 16} A 39 39 0 0 0 ${cx - 32} ${cy - 16} Z`}
-                fill="url(#tcLensShine)"
-                opacity="0.65"
-              />
-
-              {/* Frosted Badge for </> */}
-              <rect
-                x={cx - 16}
-                y={cy - 38}
-                width="32"
-                height="19"
-                rx="6"
-                fill="url(#tcBadgeGlass)"
-                stroke="rgba(139, 92, 246, 0.6)"
-                strokeWidth="1.2"
-              />
-              {/* Top Shine on Badge */}
-              <line
-                x1={cx - 12}
-                y1={cy - 37}
-                x2={cx + 12}
-                y2={cy - 37}
-                stroke="rgba(255, 255, 255, 0.45)"
-                strokeWidth="0.8"
-                strokeLinecap="round"
-              />
-              <text x={cx} y={cy - 25} textAnchor="middle" fontSize="10.5" fontWeight="900" fill="#2dd4bf" fontFamily="monospace">
-                &lt;/&gt;
-              </text>
-
-              {/* Large Total Count with Counting Animation */}
-              <text
-                x={cx}
-                y={cy + 8}
-                textAnchor="middle"
-                fontSize="36"
-                fontWeight="900"
-                fill="#ffffff"
-                letterSpacing="-1"
-                filter="drop-shadow(0 2px 5px rgba(0,0,0,0.95))"
-              >
-                {displayTotal}
-              </text>
-
-              {/* Total Problems Subtitle */}
-              <text x={cx} y={cy + 26} textAnchor="middle" fontSize="11" fontWeight="700" fill="#94a3b8" letterSpacing="-0.2">
-                Total Problems
-              </text>
-            </g>
-
-            {/* Breakdown Percentage Rows */}
-            {/* Row 1: Fundamental - Cyan */}
-            <g style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.6s ease-out 0.4s" }}>
-              <circle cx="24" cy="214" r="4.5" fill="#2dd4bf" filter="url(#tcGlowCyan)" />
-              <text x="36" y="218" fontSize="12" fontWeight="600" fill="#e2e8f0">
-                Fundamental
-              </text>
-              <text x="204" y="218" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-                {fundSolved}{" "}
-                <tspan fontWeight="500" fill="#2dd4bf" opacity="0.9">
-                  ({fundPct.toFixed(1)}%)
-                </tspan>
-              </text>
-            </g>
-
-            {/* Row 2: Intermediate - Violet */}
-            <g style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.6s ease-out 0.5s" }}>
-              <circle cx="24" cy="238" r="4.5" fill="#a855f7" filter="url(#tcGlowViolet)" />
-              <text x="36" y="242" fontSize="12" fontWeight="600" fill="#e2e8f0">
-                Intermediate
-              </text>
-              <text x="204" y="242" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-                {interSolved}{" "}
-                <tspan fontWeight="500" fill="#c084fc" opacity="0.9">
-                  ({interPct.toFixed(1)}%)
-                </tspan>
-              </text>
-            </g>
-
-            {/* Row 3: Advanced - Amber */}
-            <g style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.6s ease-out 0.6s" }}>
-              <circle cx="24" cy="262" r="4.5" fill="#fbbf24" filter="url(#tcGlowAmber)" />
-              <text x="36" y="266" fontSize="12" fontWeight="600" fill="#e2e8f0">
-                Advanced
-              </text>
-              <text x="204" y="266" textAnchor="end" fontSize="12" fontWeight="800" fill="#ffffff">
-                {advSolved}{" "}
-                <tspan fontWeight="500" fill="#fbbf24" opacity="0.9">
-                  ({advPct.toFixed(1)}%)
-                </tspan>
-              </text>
-            </g>
-
-            {/* Bottom 3-Stat Glass Box */}
-            <g
-              transform="translate(14, 296)"
-              style={{
-                opacity: isVisible ? 1 : 0,
-                transition: "opacity 0.6s ease-out 0.7s",
-              }}
-            >
-              <rect
-                width="196"
-                height="64"
-                rx="12"
-                fill="#0a1024"
-                stroke="url(#tcSubBorderGrad)"
-                strokeWidth="1"
-              />
-              {/* Top Shine */}
-              <line x1="20" y1="1" x2="176" y2="1" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="0.8" strokeLinecap="round" />
-
-              {/* Vertical Dividers */}
-              <line x1="65" y1="12" x2="65" y2="52" stroke="rgba(139, 92, 246, 0.2)" strokeWidth="1" />
-              <line x1="130" y1="12" x2="130" y2="52" stroke="rgba(139, 92, 246, 0.2)" strokeWidth="1" />
-
-              {/* Stat 1: Topics */}
-              <text x="32" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
-                {hasRealData ? sorted.length : 0}
-              </text>
-              <text x="32" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
-                Topics
-              </text>
-
-              {/* Stat 2: Problems */}
-              <text x="98" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
-                {displayTotal}
-              </text>
-              <text x="98" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
-                Problems
-              </text>
-
-              {/* Stat 3: Fundamental % */}
-              <text x="163" y="33" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff">
-                {fundPct.toFixed(1)}%
-              </text>
-              <text x="163" y="50" textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#94a3b8" opacity="0.9">
-                Fundamental
-              </text>
-            </g>
-          </g>
-        </g>
-
-        {/* =====================================================
-            3. CENTER/RIGHT TOP: 12-Bar DSA 3D Glass Chart
-           ===================================================== */}
-        <g transform="translate(272, 80)">
-          <g
-            style={{
-              opacity: isVisible ? 1 : 0,
-              transform: isVisible ? "translateY(0)" : "translateY(10px)",
-              transition: "opacity 0.7s ease-out 0.16s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s",
-            }}
-          >
-            {/* Background Card */}
-            <rect
-              width="720"
-              height="254"
-              rx="22"
-              fill="url(#tcSubGlass)"
-              stroke="url(#tcSubBorderGrad)"
-              strokeWidth="1.2"
-            />
-            {/* Top Specular Shine */}
-            <path d="M 30 2 L 690 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
-
-            {/* Y-Axis Line (Placed at x=46, inside card bounds) */}
-            <line x1="46" y1="35" x2="46" y2="150" stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1.2" />
-
-            {/* Horizontal Reference Lines & Y-Axis Ticks (Mathematically mapped directly inside the card!) */}
-            {yTicks.map((t, idx) => (
-              <g key={idx}>
-                <line
-                  x1="46"
-                  y1={t.y}
-                  x2="698"
-                  y2={t.y}
-                  stroke="rgba(148, 163, 184, 0.12)"
-                  strokeDasharray={t.val === 0 ? "none" : "3 3"}
-                  strokeWidth={t.val === 0 ? "1.4" : "1"}
-                />
-                <line x1="42" y1={t.y} x2="46" y2={t.y} stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1.2" />
-                <text
-                  x="38"
-                  y={t.y}
-                  dominantBaseline="middle"
-                  textAnchor="end"
-                  fontSize="11"
-                  fontWeight="700"
-                  fill="#94a3b8"
-                  opacity="0.9"
+        {/* ========================================================================= */}
+        {/* RIGHT COLUMN: Distribution Chart (Top) + Bottom 2 Cards                  */}
+        {/* ========================================================================= */}
+        <div className="flex flex-col gap-4">
+          {/* Card 2: Topic-wise Problem Distribution */}
+          <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
+            {/* Header: Trending Graph Icon + Title */}
+            <div className="flex items-center gap-2 mb-4">
+              <div className="relative flex items-center justify-center">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-5 h-5 text-purple-300 drop-shadow-[0_0_8px_rgba(192,132,252,0.85)]"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
-                  {t.val}
-                </text>
-              </g>
-            ))}
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                  <polyline points="16 7 22 7 22 13" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold text-white tracking-wide">
+                Topic-wise Problem Distribution
+              </h3>
+            </div>
 
-            {/* 12 Vertical Topic Columns (Animated Equalizer-Style Cascade!) */}
-            {top12.map((item, i) => {
-              const colX = 76 + i * 52.5;
-              const barHeight = hasRealData && item.solved > 0 ? Math.max(10, (item.solved / yMax) * 115) : 0;
-              const barY = 150 - barHeight;
+            {/* Chart Area with Horizontal Dashed Gridlines & 12 Topic Columns */}
+            <div className="relative w-full overflow-x-auto pb-1">
+              <div className="min-w-[620px] relative">
+                {/* Horizontal Dashed Gridlines (10, 8, 6, 4, 2, 0) */}
+                <div className="relative h-[80px] w-full flex flex-col justify-between pl-6 pr-2 mb-2">
+                  {yTicks.map((val, idx) => (
+                    <div key={idx} className="relative w-full flex items-center">
+                      <span className="absolute -left-6 text-[10px] font-mono text-slate-400 w-4 text-right">
+                        {val}
+                      </span>
+                      <div className="w-full border-b border-dashed border-purple-500/20" />
+                    </div>
+                  ))}
+                </div>
 
-              // Pick 3D glass gradient and glow based on tier
-              const isFund = item.level === "fundamental";
-              const isInter = item.level === "intermediate";
-              const barFill = isFund ? "url(#tcBarFund3D)" : isInter ? "url(#tcBarInter3D)" : "url(#tcBarAdv3D)";
-              const glowColor = isFund ? "#2dd4bf" : isInter ? "#a855f7" : "#fbbf24";
-              const [labelLine1, labelLine2] = splitTopicLabel(item.tag);
+                {/* 12 Topic Columns Grid */}
+                <div className="grid grid-cols-12 gap-1.5 pl-6 pr-2">
+                  {chartColumns.map((col) => {
+                    const isDimmed = activeFilter !== "all" && col.level !== activeFilter;
+                    // Normalized height in pixels for solved bar (max 65px)
+                    const barHeight = col.solved > 0 ? Math.max(8, Math.min(65, (col.solved / maxSolved) * 65)) : 0;
 
-              return (
-                <g key={item.tag + i}>
-                  {/* Count Number on top of bar with Counting Animation */}
-                  <text
-                    x={colX}
-                    y={barHeight > 0 ? barY - 6 : 142}
-                    textAnchor="middle"
-                    fontSize="13.5"
-                    fontWeight="900"
-                    fill="#ffffff"
-                    filter="drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
-                    style={{
-                      animation: isVisible ? `cbFadeIn 0.5s ease-out both` : "none",
-                      animationDelay: `${i * 35 + 140}ms`,
-                    }}
-                  >
-                    {displayCounts[i] !== undefined ? displayCounts[i] : item.solved}
-                  </text>
-
-                  {/* Base Pedestal Glow on Baseline */}
-                  <ellipse cx={colX} cy="150" rx="14" ry="3.5" fill={glowColor} opacity={barHeight > 0 ? 0.4 : 0.15} filter="blur(2px)" />
-
-                  {/* Main 3D Frosted Glass Column Pillar (Animated Rise from Baseline) */}
-                  {barHeight > 0 ? (
-                    <g
-                      style={{
-                        transformOrigin: `${colX}px 150px`,
-                        animation: isVisible ? `cbBarGrow 0.85s cubic-bezier(0.16, 1, 0.3, 1) both` : "none",
-                        animationDelay: `${i * 45}ms`,
-                      }}
-                    >
-                      {/* Ambient Backlight Glow behind the Glass Pillar */}
-                      <rect
-                        x={colX - 14}
-                        y={barY}
-                        width="28"
-                        height={barHeight}
-                        rx="8"
-                        fill={glowColor}
-                        opacity="0.25"
-                        filter="blur(4px)"
-                      />
-                      {/* Main Frosted Pillar Body */}
-                      <rect
-                        x={colX - 16}
-                        y={barY}
-                        width="32"
-                        height={barHeight}
-                        rx="8"
-                        fill={barFill}
-                        stroke="rgba(255, 255, 255, 0.35)"
-                        strokeWidth="1"
-                      />
-                      {/* Specular Curved Reflection at Top Cap of Bar */}
-                      {barHeight > 4 && (
-                        <rect
-                          x={colX - 13}
-                          y={barY + 1.5}
-                          width="26"
-                          height="4"
-                          rx="2"
-                          fill="#ffffff"
-                          opacity="0.45"
-                        />
-                      )}
-                      {/* Specular Vertical Light Streak down Left Side */}
-                      {barHeight > 9 && (
-                        <rect
-                          x={colX - 13}
-                          y={barY + 5}
-                          width="2.8"
-                          height={Math.max(2, barHeight - 9)}
-                          rx="1.2"
-                          fill="url(#tcSpecularVertical)"
-                        />
-                      )}
-                      {/* Subtle Right Edge Depth Shadow */}
-                      {barHeight > 9 && (
-                        <rect
-                          x={colX + 11}
-                          y={barY + 5}
-                          width="1.8"
-                          height={Math.max(2, barHeight - 9)}
-                          rx="0.8"
-                          fill="#000000"
-                          opacity="0.35"
-                        />
-                      )}
-                    </g>
-                  ) : (
-                    <rect
-                      x={colX - 14}
-                      y="148"
-                      width="28"
-                      height="3"
-                      rx="1.5"
-                      fill="rgba(139, 92, 246, 0.25)"
-                    />
-                  )}
-
-                  {/* Rounded Square Frosted Icon Box with Hover Scale & Soft Glow */}
-                  <g
-                    className="cb-topic-icon-btn"
-                    style={{
-                      transformOrigin: `${colX}px 178px`,
-                      animation: isVisible ? `cbIconEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) both` : "none",
-                      animationDelay: `${i * 35 + 220}ms`,
-                    }}
-                  >
-                    <rect
-                      x={colX - 16}
-                      y="162"
-                      width="32"
-                      height="32"
-                      rx="9"
-                      fill="url(#tcIconGlass)"
-                      stroke="rgba(139, 92, 246, 0.45)"
-                      strokeWidth="1.2"
-                    />
-                    {/* Top Glass Shine Line on Icon Box */}
-                    <line
-                      x1={colX - 11}
-                      y1="163.5"
-                      x2={colX + 11}
-                      y2="163.5"
-                      stroke="rgba(255, 255, 255, 0.4)"
-                      strokeWidth="1"
-                      strokeLinecap="round"
-                    />
-                    {/* Topic Vector Icon */}
-                    {renderTopicIcon(item.tag, colX - 10, 168)}
-                  </g>
-
-                  {/* Topic Name Label (Harmonized vertical centering) */}
-                  {labelLine2 ? (
-                    <>
-                      <text
-                        x={colX}
-                        y="207"
-                        textAnchor="middle"
-                        fontSize="9.5"
-                        fontWeight="700"
-                        fill="#e2e8f0"
+                    return (
+                      <div
+                        key={col.id}
+                        className={`flex flex-col items-center justify-end transition-opacity duration-300 ${
+                          isDimmed ? "opacity-30" : "opacity-100"
+                        }`}
                       >
-                        {labelLine1}
-                      </text>
-                      <text
-                        x={colX}
-                        y="219"
-                        textAnchor="middle"
-                        fontSize="8.5"
-                        fontWeight="600"
-                        fill="#94a3b8"
-                        opacity="0.9"
-                      >
-                        {labelLine2}
-                      </text>
-                    </>
-                  ) : (
-                    <text
-                      x={colX}
-                      y="213"
-                      textAnchor="middle"
-                      fontSize="9.5"
-                      fontWeight="700"
-                      fill="#e2e8f0"
+                        {/* Solved Count Hover/Display */}
+                        <div className="text-[11px] font-bold font-mono text-white mb-1">
+                          {col.solved}
+                        </div>
+
+                        {/* Animated Rising Neon Bar (when solved > 0) */}
+                        {barHeight > 0 && (
+                          <div
+                            style={{ height: `${barHeight}px` }}
+                            className="w-3 rounded-t-md bg-gradient-to-t from-purple-600 via-cyan-400 to-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.7)] transition-all duration-700 ease-out mb-[-4px] z-10"
+                          />
+                        )}
+
+                        {/* 3D Oval Glowing Disc / Pedestal at Baseline */}
+                        <div className="relative w-9 h-3.5 flex items-center justify-center my-0.5">
+                          <div className="w-8 h-2.5 rounded-[50%] bg-[#1a1238] border border-purple-400/60 shadow-[0_0_10px_rgba(168,85,247,0.5),inset_0_0_4px_rgba(192,132,252,0.3)]" />
+                        </div>
+
+                        {/* Floating Neon Icon Tile */}
+                        <div className="relative w-8 h-8 rounded-lg bg-[#140e2b]/90 border border-purple-400/40 shadow-[0_0_8px_rgba(168,85,247,0.3)] flex items-center justify-center my-1 transition-transform duration-200 hover:scale-110 hover:border-purple-300">
+                          <TopicTileIcon id={col.id} />
+                        </div>
+
+                        {/* Topic Label Underneath */}
+                        <div
+                          title={col.name}
+                          className="text-[9.5px] font-medium text-slate-300 text-center leading-tight mt-0.5 max-w-[52px] line-clamp-2 min-h-[22px] flex items-center justify-center"
+                        >
+                          {col.name}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom 2 Cards Grid: Top Covered Topics & Coverage Insight */}
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-4">
+            {/* ========================================================================= */}
+            {/* Card 3: Top Covered Topics (with Animated Cup, Star, Medal Podiums)       */}
+            {/* ========================================================================= */}
+            <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex flex-col justify-between">
+              {/* Header: Trophy Icon + Title + Circular Chevron Button */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-4 h-4 text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.85)]"
+                    fill="currentColor"
+                  >
+                    <path d="M19 4h-3V3a1 1 0 00-1-1H9a1 1 0 00-1 1v1H5a1 1 0 00-1 1v4c0 3.3 2.7 6 6 6h.2c.6 1.4 1.8 2.5 3.3 2.9V20H11a1 1 0 000 2h2a1 1 0 000-2h-2.5v-2.1c1.5-.4 2.7-1.5 3.3-2.9H14c3.3 0 6-2.7 6-6V5a1 1 0 00-1-1zM6 9V6h2v3c0 2.2-1.8 4-4 4s2-1.8 2-4zm12 0c0 2.2.2 4-2 4s-4-1.8-4-4V6h2v3c0 2.2 1.8 4 4 4z" />
+                  </svg>
+                  <h4 className="text-sm font-bold text-white tracking-wide">Top Covered Topics</h4>
+                </div>
+                <div className="w-5 h-5 rounded-full bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-purple-300 text-xs">
+                  &gt;
+                </div>
+              </div>
+
+              {/* 3 Stepped Glowing Podiums */}
+              <div className="grid grid-cols-3 gap-2">
+                {/* Podium 1 (Rank 1): Golden Trophy Cup */}
+                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#2a1a0f]/40 to-[#181126]/60 border border-amber-500/20">
+                  {/* Animated Golden Trophy Cup */}
+                  <PodiumCupAnimation />
+
+                  {/* Topic Name & Count */}
+                  <div className="text-center my-1">
+                    <div
+                      title={stats.top1?.tag ?? "—"}
+                      className="text-xs font-bold text-white truncate max-w-[70px]"
                     >
-                      {labelLine1}
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-          </g>
-        </g>
+                      {stats.top1 ? stats.top1.tag : "—"}
+                    </div>
+                    <div className="text-[10px] text-amber-300/80 font-mono">
+                      ({stats.top1 ? stats.top1.solved : 0})
+                    </div>
+                  </div>
 
-        {/* =====================================================
-            4. BOTTOM LEFT: Top Covered Topics Badges
-           ===================================================== */}
-        <g transform="translate(272, 350)">
-          <g
-            style={{
-              opacity: isVisible ? 1 : 0,
-              transform: isVisible ? "translateY(0)" : "translateY(10px)",
-              transition: "opacity 0.7s ease-out 0.24s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s",
-            }}
-          >
-            {/* Background Card */}
-            <rect
-              width="348"
-              height="112"
-              rx="20"
-              fill="url(#tcSubGlass)"
-              stroke="url(#tcSubBorderGrad)"
-              strokeWidth="1.2"
-            />
-            {/* Top Specular Shine */}
-            <path d="M 24 2 L 324 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
+                  {/* Tiered Glowing Amber/Gold 3D Pedestal Base */}
+                  <div className="relative w-full flex flex-col items-center mt-1">
+                    <div className="w-14 h-2 rounded-[50%] bg-[#ca8a04] border border-amber-300/60 shadow-[0_0_10px_rgba(251,191,36,0.6)]" />
+                    <div className="w-16 h-2 rounded-[50%] bg-[#b45309] -mt-1 shadow-[0_4px_14px_rgba(245,158,11,0.6)]" />
+                  </div>
+                </div>
 
-            {/* Header with Target Icon */}
-            <g transform="translate(18, 16)">
-              <circle cx="10" cy="10" r="9" stroke="#8b5cf6" strokeWidth="1.8" fill="none" />
-              <circle cx="10" cy="10" r="5" stroke="#2dd4bf" strokeWidth="1.6" fill="none" />
-              <circle cx="10" cy="10" r="2" fill="#38bdf8" />
-              <path d="M 17 3 L 13 7" stroke="#8b5cf6" strokeWidth="1.8" strokeLinecap="round" />
-              <text x="26" y="14" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
-                Top Covered Topics
-              </text>
-            </g>
+                {/* Podium 2 (Rank 2): Glowing 3D Star */}
+                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#0f1f3a]/40 to-[#181126]/60 border border-cyan-500/20">
+                  {/* Animated Glowing 3D Star */}
+                  <PodiumStarAnimation />
 
-            {/* 3 Topic Badges with 3D Trophy and Medals */}
-            {/* Badge 1: Golden Trophy (#1) */}
-            <g
-              transform="translate(14, 44)"
-              style={{
-                opacity: isVisible ? 1 : 0,
-                transition: "opacity 0.6s ease-out 0.35s",
-              }}
-            >
-              <g className="cb-badge-card">
-                <rect
-                  width="102"
-                  height="56"
-                  rx="12"
-                  fill="#0d1428"
-                  stroke="rgba(139, 92, 246, 0.45)"
-                  strokeWidth="1.2"
+                  {/* Topic Name & Count */}
+                  <div className="text-center my-1">
+                    <div
+                      title={stats.top2?.tag ?? "—"}
+                      className="text-xs font-bold text-white truncate max-w-[70px]"
+                    >
+                      {stats.top2 ? stats.top2.tag : "—"}
+                    </div>
+                    <div className="text-[10px] text-cyan-300/80 font-mono">
+                      ({stats.top2 ? stats.top2.solved : 0})
+                    </div>
+                  </div>
+
+                  {/* Tiered Glowing Cyan/Blue 3D Pedestal Base */}
+                  <div className="relative w-full flex flex-col items-center mt-1">
+                    <div className="w-14 h-2 rounded-[50%] bg-[#6366f1] border border-cyan-300/60 shadow-[0_0_10px_rgba(56,189,248,0.6)]" />
+                    <div className="w-16 h-2 rounded-[50%] bg-[#4338ca] -mt-1 shadow-[0_4px_14px_rgba(99,102,241,0.6)]" />
+                  </div>
+                </div>
+
+                {/* Podium 3 (Rank 3): Glowing Award Medal */}
+                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#25103a]/40 to-[#181126]/60 border border-purple-500/20">
+                  {/* Animated Award Medal */}
+                  <PodiumMedalAnimation />
+
+                  {/* Topic Name & Count */}
+                  <div className="text-center my-1">
+                    <div
+                      title={stats.top3?.tag ?? "—"}
+                      className="text-xs font-bold text-white truncate max-w-[70px]"
+                    >
+                      {stats.top3 ? stats.top3.tag : "—"}
+                    </div>
+                    <div className="text-[10px] text-purple-300/80 font-mono">
+                      ({stats.top3 ? stats.top3.solved : 0})
+                    </div>
+                  </div>
+
+                  {/* Tiered Glowing Magenta/Purple 3D Pedestal Base */}
+                  <div className="relative w-full flex flex-col items-center mt-1">
+                    <div className="w-14 h-2 rounded-[50%] bg-[#a855f7] border border-purple-300/60 shadow-[0_0_10px_rgba(192,132,252,0.6)]" />
+                    <div className="w-16 h-2 rounded-[50%] bg-[#7e22ce] -mt-1 shadow-[0_4px_14px_rgba(168,85,247,0.6)]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ========================================================================= */}
+            {/* Card 4: Coverage Insight (with 3D Target Bullseye Dart)                    */}
+            {/* ========================================================================= */}
+            <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex items-center justify-between">
+              {/* Left Content */}
+              <div className="flex-1 pr-2">
+                {/* Header: Target Bullseye Icon + Title */}
+                <div className="flex items-center gap-2 mb-2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5 text-purple-300 drop-shadow-[0_0_8px_rgba(192,132,252,0.85)]"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                  >
+                    <circle cx="12" cy="12" r="9" />
+                    <circle cx="12" cy="12" r="5" />
+                    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                  </svg>
+                  <h4 className="text-sm font-bold text-white tracking-wide">Coverage Insight</h4>
+                </div>
+
+                {/* Milestone Heading */}
+                <div className="text-sm font-extrabold text-amber-400 leading-snug drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]">
+                  {stats.totalProblems === 0
+                    ? "No DSA problems solved yet."
+                    : `Solved ${stats.totalProblems} problems across ${stats.totalTopicsCount} topics!`}
+                </div>
+
+                {/* Subtitle / Tip */}
+                <p className="text-xs text-slate-300/90 leading-relaxed mt-1.5 max-w-[210px]">
+                  {stats.totalProblems === 0
+                    ? "Connect your LeetCode account in Settings to track your real-time topic progress."
+                    : stats.top1
+                    ? `Top focus in ${stats.top1.tag} (${stats.top1.solved} solved). Expand coverage into other fundamental and intermediate patterns!`
+                    : "Solve more problems to see personalized coverage insights."}
+                </p>
+              </div>
+
+              {/* Right Side: 3D Target Dart Illustration */}
+              <div className="relative w-[115px] h-[105px] flex-shrink-0 animate-dart-float filter drop-shadow-[0_0_12px_rgba(168,85,247,0.4)] pointer-events-none select-none">
+                <Image
+                  src="/dsa-target-dart.webp"
+                  alt="DSA Target Dart"
+                  fill
+                  className="object-contain"
                 />
-                {/* Top Shine */}
-                <line x1="8" y1="1" x2="94" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-
-                {/* 3D Realistic Golden Trophy Icon with Hover Rotation */}
-                <g transform="translate(8, 12)" className="cb-trophy-icon">
-                  {/* Handles */}
-                  <path d="M 2 5 C -2 5, -2 13, 2 13 M 16 5 C 20 5, 20 13, 16 13" stroke="#fbbf24" strokeWidth="1.6" fill="none" strokeLinecap="round" />
-                  {/* Cup Body */}
-                  <path d="M 2 3 L 16 3 L 15 11 C 15 14, 11 16, 9 16 C 7 16, 3 14, 3 11 Z" fill="#f59e0b" stroke="#fef08a" strokeWidth="0.8" />
-                  {/* Stem & Base */}
-                  <rect x="7.5" y="16" width="3" height="4" fill="#b45309" />
-                  <rect x="5" y="20" width="8" height="2.5" rx="1" fill="#fbbf24" />
-                </g>
-
-                {/* Text */}
-                <text x="36" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
-                  {first.tag}
-                </text>
-                <text x="36" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                  ({first.solved})
-                </text>
-              </g>
-            </g>
-
-            {/* Badge 2: Star Medal (#2) */}
-            <g
-              transform="translate(122, 44)"
-              style={{
-                opacity: isVisible ? 1 : 0,
-                transition: "opacity 0.6s ease-out 0.45s",
-              }}
-            >
-              <g className="cb-badge-card">
-                <rect
-                  width="104"
-                  height="56"
-                  rx="12"
-                  fill="#0d1428"
-                  stroke="rgba(139, 92, 246, 0.45)"
-                  strokeWidth="1.2"
-                />
-                {/* Top Shine */}
-                <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-
-                {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
-                <g transform="translate(8, 12)" className="cb-medal-icon">
-                  {/* Ribbons */}
-                  <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
-                  <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
-                  {/* Medal Disc */}
-                  <circle cx="9" cy="13" r="7" fill="#2dd4bf" stroke="#5eead4" strokeWidth="0.8" />
-                  {/* Star inside medal */}
-                  <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#042f2e" />
-                </g>
-
-                {/* Text */}
-                {splitTopicLabel(second.tag)[1] ? (
-                  <>
-                    <text x="35" y="20" fontSize="10" fontWeight="800" fill="#ffffff">
-                      {splitTopicLabel(second.tag)[0]}
-                    </text>
-                    <text x="35" y="31" fontSize="9" fontWeight="700" fill="#ffffff">
-                      {splitTopicLabel(second.tag)[1]}
-                    </text>
-                    <text x="35" y="44" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                      ({second.solved})
-                    </text>
-                  </>
-                ) : (
-                  <>
-                    <text x="35" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
-                      {second.tag}
-                    </text>
-                    <text x="35" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                      ({second.solved})
-                    </text>
-                  </>
-                )}
-              </g>
-            </g>
-
-            {/* Badge 3: Star Medal (#3) */}
-            <g
-              transform="translate(234, 44)"
-              style={{
-                opacity: isVisible ? 1 : 0,
-                transition: "opacity 0.6s ease-out 0.55s",
-              }}
-            >
-              <g className="cb-badge-card">
-                <rect
-                  width="104"
-                  height="56"
-                  rx="12"
-                  fill="#0d1428"
-                  stroke="rgba(139, 92, 246, 0.45)"
-                  strokeWidth="1.2"
-                />
-                {/* Top Shine */}
-                <line x1="8" y1="1" x2="96" y2="1" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" strokeLinecap="round" />
-
-                {/* Violet-Cyan Star Medal Icon with Hover Rotation */}
-                <g transform="translate(8, 12)" className="cb-medal-icon">
-                  {/* Ribbons */}
-                  <path d="M 5 2 L 7 10 L 9 2" fill="#8b5cf6" opacity="0.8" />
-                  <path d="M 13 2 L 11 10 L 9 2" fill="#6366f1" opacity="0.8" />
-                  {/* Medal Disc */}
-                  <circle cx="9" cy="13" r="7" fill="#a855f7" stroke="#c084fc" strokeWidth="0.8" />
-                  {/* Star inside medal */}
-                  <polygon points="9,9 10.2,12 13,12 10.8,13.8 11.6,16.5 9,14.8 6.4,16.5 7.2,13.8 5,12 7.8,12" fill="#ffffff" />
-                </g>
-
-                {/* Text */}
-                {splitTopicLabel(third.tag)[1] ? (
-                  <>
-                    <text x="35" y="20" fontSize="10" fontWeight="800" fill="#ffffff">
-                      {splitTopicLabel(third.tag)[0]}
-                    </text>
-                    <text x="35" y="31" fontSize="9" fontWeight="700" fill="#ffffff">
-                      {splitTopicLabel(third.tag)[1]}
-                    </text>
-                    <text x="35" y="44" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                      ({third.solved})
-                    </text>
-                  </>
-                ) : (
-                  <>
-                    <text x="35" y="24" fontSize="11" fontWeight="800" fill="#ffffff">
-                      {third.tag}
-                    </text>
-                    <text x="35" y="40" fontSize="10.5" fontWeight="700" fill="#2dd4bf">
-                      ({third.solved})
-                    </text>
-                  </>
-                )}
-              </g>
-            </g>
-          </g>
-        </g>
-
-        {/* =====================================================
-            5. BOTTOM RIGHT: Coverage Insight (Clean Proportional Spacing & Animated Graphic)
-           ===================================================== */}
-        <g transform="translate(636, 350)">
-          <g
-            style={{
-              opacity: isVisible ? 1 : 0,
-              transform: isVisible ? "translateY(0)" : "translateY(10px)",
-              transition: "opacity 0.7s ease-out 0.32s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.32s",
-            }}
-          >
-            {/* Background Card */}
-            <rect
-              width="356"
-              height="112"
-              rx="20"
-              fill="url(#tcSubGlass)"
-              stroke="url(#tcSubBorderGrad)"
-              strokeWidth="1.2"
-            />
-            {/* Top Specular Shine */}
-            <path d="M 24 2 L 332 2" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1" strokeLinecap="round" />
-
-            {/* Header with 3-Bar Chart Icon */}
-            <g transform="translate(18, 16)">
-              <rect x="0" y="8" width="3.5" height="8" rx="1" fill="#2dd4bf" />
-              <rect x="5.5" y="4" width="3.5" height="12" rx="1" fill="#818cf8" />
-              <rect x="11" y="0" width="3.5" height="16" rx="1" fill="#c084fc" />
-              <text x="22" y="12" fontSize="14" fontWeight="800" fill="#ffffff" letterSpacing="-0.3">
-                Coverage Insight
-              </text>
-            </g>
-
-            {/* Dynamic Insight Prose - Clean professional spacing below heading (y=53 instead of cramped y=46) */}
-            <text
-              x="18"
-              y="53"
-              fontSize="11.5"
-              fontWeight="500"
-              fill="#e2e8f0"
-              opacity="0.95"
-              style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.8s ease-out 0.35s" }}
-            >
-              {totalProblems > 0 ? (
-                <>
-                  <tspan x="18" dy="0">
-                    Most problems are Fundamental ({fundPct.toFixed(1)}%),
-                  </tspan>
-                  <tspan x="18" dy="16.5">
-                    with a good mix of Intermediate ({interPct.toFixed(1)}%)
-                  </tspan>
-                  <tspan x="18" dy="16.5">
-                    and Advanced ({advPct.toFixed(1)}%).
-                  </tspan>
-                </>
-              ) : (
-                <>
-                  <tspan x="18" dy="0">
-                    No DSA problems solved yet.
-                  </tspan>
-                  <tspan x="18" dy="16.5">
-                    Connect your LeetCode account in Settings
-                  </tspan>
-                  <tspan x="18" dy="16.5">
-                    to track your real-time topic progress.
-                  </tspan>
-                </>
-              )}
-            </text>
-
-            {/* 3D Rising Bar Chart with Neon Upward Arrow Graphic (Animated Cascade) */}
-            <g transform="translate(250, 26)">
-              {/* 4 Rising Columns */}
-              {/* Bar 1 */}
-              <g
-                style={{
-                  transformOrigin: "15.5px 64px",
-                  animation: isVisible ? "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
-                  animationDelay: "0.2s",
-                }}
-              >
-                <rect
-                  x="10"
-                  y="46"
-                  width="11"
-                  height="18"
-                  rx="3"
-                  fill="#2dd4bf"
-                  opacity={hasRealData ? 1 : 0.4}
-                />
-                <rect x="11" y="47" width="2" height="16" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
-              </g>
-
-              {/* Bar 2 */}
-              <g
-                style={{
-                  transformOrigin: "30.5px 64px",
-                  animation: isVisible ? "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
-                  animationDelay: "0.28s",
-                }}
-              >
-                <rect
-                  x="25"
-                  y="32"
-                  width="11"
-                  height="32"
-                  rx="3"
-                  fill="#38bdf8"
-                  opacity={hasRealData ? 1 : 0.4}
-                />
-                <rect x="26" y="33" width="2" height="30" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
-              </g>
-
-              {/* Bar 3 */}
-              <g
-                style={{
-                  transformOrigin: "45.5px 64px",
-                  animation: isVisible ? "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
-                  animationDelay: "0.36s",
-                }}
-              >
-                <rect
-                  x="40"
-                  y="18"
-                  width="11"
-                  height="46"
-                  rx="3"
-                  fill="#818cf8"
-                  opacity={hasRealData ? 1 : 0.4}
-                />
-                <rect x="41" y="19" width="2" height="44" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
-              </g>
-
-              {/* Bar 4 */}
-              <g
-                style={{
-                  transformOrigin: "60.5px 64px",
-                  animation: isVisible ? "cbBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
-                  animationDelay: "0.44s",
-                }}
-              >
-                <rect
-                  x="55"
-                  y="4"
-                  width="11"
-                  height="60"
-                  rx="3"
-                  fill="#c084fc"
-                  opacity={hasRealData ? 1 : 0.4}
-                />
-                <rect x="56" y="5" width="2" height="58" rx="1" fill="#ffffff" opacity={hasRealData ? 0.3 : 0.15} />
-              </g>
-
-              {/* Upward Curved Glowing Neon Arrow with Draw-In Animation */}
-              <path
-                d="M 6 44 C 22 34, 46 18, 68 2"
-                stroke="url(#tcArrowGrad)"
-                strokeWidth="4"
-                strokeLinecap="round"
-                fill="none"
-                filter="url(#tcGlowCyan)"
-                strokeDasharray="160"
-                style={{
-                  animation: isVisible ? "cbArrowSweep 1.1s cubic-bezier(0.16, 1, 0.3, 1) both" : "none",
-                  animationDelay: "0.45s",
-                }}
-                opacity={hasRealData ? 1 : 0.6}
-              />
-              {/* Arrowhead with Scale & Fade Entrance */}
-              <polygon
-                points="74,-3 64,1 69,9"
-                fill="#ffffff"
-                filter="url(#tcGlowCyan)"
-                opacity={hasRealData ? 1 : 0.6}
-                style={{
-                  transformOrigin: "69px 3px",
-                  animation: isVisible ? "cbArrowheadPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both" : "none",
-                  animationDelay: "1.15s",
-                }}
-              />
-            </g>
-          </g>
-        </g>
-      </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
