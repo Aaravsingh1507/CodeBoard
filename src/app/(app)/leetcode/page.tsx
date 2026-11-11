@@ -57,7 +57,7 @@ export default function LeetcodePage() {
             loading={loading}
           />
 
-          <TopicBreakdown topics={data.topicBreakdown ?? []} />
+          <TopicBreakdown topics={data.topicBreakdown ?? []} totalSolved={data.totalSolved} />
 
           <Card>
             <CardHeader>

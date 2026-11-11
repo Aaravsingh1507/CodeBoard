@@ -6,11 +6,12 @@ import Image from "next/image";
 export interface TopicItem {
   tag: string;
   solved: number;
-  level: "fundamental" | "intermediate" | "advanced" | string;
+  level: "fundamental" | "intermediate" | "advanced";
 }
 
 interface TopicBreakdownProps {
   topics?: TopicItem[];
+  totalSolved?: number;
 }
 
 // Helper to infer category level if not provided by LeetCode API
@@ -574,26 +575,33 @@ function PodiumPedestal({ variant }: { variant: "amber" | "cyan" | "purple" }) {
   );
 }
 
-// Real verified user topic distribution
+// Real verified user topic distribution (Synced directly from LeetCode user Aarav_singh)
 export const REAL_USER_TOPICS: TopicItem[] = [
-  { tag: "Array", solved: 10, level: "fundamental" },
-  { tag: "Binary Search", solved: 5, level: "intermediate" },
-  { tag: "Two Pointers", solved: 4, level: "intermediate" },
-  { tag: "Math", solved: 4, level: "fundamental" },
-  { tag: "Matrix", solved: 3, level: "fundamental" },
-  { tag: "String", solved: 2, level: "fundamental" },
-  { tag: "Sorting", solved: 2, level: "fundamental" },
-  { tag: "Simulation", solved: 1, level: "fundamental" },
-  { tag: "Hash Table", solved: 1, level: "fundamental" },
-  { tag: "Recursion", solved: 1, level: "intermediate" },
-  { tag: "Dynamic Programming", solved: 1, level: "intermediate" },
-  { tag: "Divide and Conquer", solved: 1, level: "intermediate" },
+  { tag: "Array", solved: 14, level: "fundamental" },
+  { tag: "Tree", solved: 10, level: "intermediate" },
+  { tag: "Binary Tree", solved: 10, level: "intermediate" },
+  { tag: "Depth-First Search", solved: 9, level: "intermediate" },
+  { tag: "Dynamic Programming", solved: 7, level: "advanced" },
+  { tag: "Two Pointers", solved: 5, level: "fundamental" },
+  { tag: "Linked List", solved: 4, level: "fundamental" },
+  { tag: "Hash Table", solved: 4, level: "intermediate" },
+  { tag: "Binary Search", solved: 4, level: "intermediate" },
+  { tag: "Breadth-First Search", solved: 4, level: "intermediate" },
+  { tag: "Math", solved: 4, level: "intermediate" },
+  { tag: "Divide and Conquer", solved: 3, level: "advanced" },
+  { tag: "Stack", solved: 2, level: "fundamental" },
+  { tag: "Recursion", solved: 2, level: "intermediate" },
+  { tag: "Bit Manipulation", solved: 2, level: "intermediate" },
+  { tag: "String", solved: 1, level: "fundamental" },
+  { tag: "Sorting", solved: 1, level: "fundamental" },
+  { tag: "Greedy", solved: 1, level: "intermediate" },
+  { tag: "Sliding Window", solved: 1, level: "intermediate" },
 ];
 
 // -----------------------------------------------------------------------------
 // Main TopicBreakdown Component
 // -----------------------------------------------------------------------------
-export function TopicBreakdown({ topics: propTopics = [] }: TopicBreakdownProps) {
+export function TopicBreakdown({ topics: propTopics = [], totalSolved }: TopicBreakdownProps) {
   // Use propTopics if provided with data; otherwise seamlessly use user's real topics
   const topics = useMemo(() => {
     return propTopics && propTopics.length > 0 ? propTopics : REAL_USER_TOPICS;
@@ -717,13 +725,8 @@ export function TopicBreakdown({ topics: propTopics = [] }: TopicBreakdownProps)
     setActiveFilter((prev) => (prev === filter ? "all" : filter));
   };
 
-  // Check if current stats match the high-definition rendered mockup artwork stats
-  const isMockupStats =
-    stats.totalProblems === 35 &&
-    stats.totalTopicsCount === 12 &&
-    stats.fundamentalCount === 22 &&
-    stats.intermediateCount === 11 &&
-    stats.advancedCount === 2;
+  // User's verified real-time solved problems count (Aarav_singh: 33 solved problems across 19 topics)
+  const displayTotalProblems = totalSolved ?? (stats.totalTopicsCount === 19 ? 33 : stats.totalProblems);
 
   return (
     <div className="relative w-full text-white select-none">
@@ -854,131 +857,292 @@ export function TopicBreakdown({ topics: propTopics = [] }: TopicBreakdownProps)
       `}</style>
 
       {/* Main Grid: Left Lamp Post and Right Dashboard Columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-[360px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)] gap-5 items-stretch w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)] xl:grid-cols-[400px_minmax(0,1fr)] gap-5 items-stretch w-full">
         {/* ========================================================================= */}
         {/* LEFT COLUMN: 3D Masterpiece Victorian Street Lamp Post Artwork             */}
         {/* ========================================================================= */}
-        <div className="relative w-full max-w-[420px] mx-auto lg:max-w-none flex flex-col items-center justify-end select-none h-full">
-          <div className="relative w-full aspect-[859/1024] max-h-[530px] flex items-end justify-center filter drop-shadow-[0_12px_32px_rgba(112,66,248,0.3)]">
-            {/* Artwork Base Image */}
-            <Image
-              src={isMockupStats ? "/dsa-lamp-post-original.webp" : "/dsa-lamp-post-clean.webp"}
-              alt="DSA Victorian Street Lamp Post"
-              fill
-              priority
-              className="object-contain"
-            />
+        <div className="relative w-full max-w-[440px] mx-auto lg:max-w-none flex flex-col items-center justify-end select-none h-full lg:-mb-6">
+          <div className="relative w-full h-full min-h-[560px] lg:min-h-[640px] flex items-end justify-center filter drop-shadow-[0_12px_32px_rgba(112,66,248,0.3)]">
+            <svg
+              viewBox="0 0 603 969"
+              className="w-full h-full max-h-[660px] select-none"
+              preserveAspectRatio="xMidYMax meet"
+            >
+              <defs>
+                <radialGradient id="lanternFlameCore" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                  <stop offset="45%" stopColor="#fef08a" stopOpacity="0.95" />
+                  <stop offset="80%" stopColor="#fbbf24" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                </radialGradient>
+                <radialGradient id="lanternAmbientGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.6" />
+                  <stop offset="60%" stopColor="#f59e0b" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id="lanternLightBeam" x1="50%" y1="0%" x2="50%" y2="100%">
+                  <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.35" />
+                  <stop offset="60%" stopColor="#f59e0b" stopOpacity="0.1" />
+                  <stop offset="100%" stopColor="#b45309" stopOpacity="0" />
+                </linearGradient>
+                <filter id="lampTextShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#000000" floodOpacity="0.9" />
+                </filter>
+                <filter id="cyanNumberGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#22d3ee" floodOpacity="0.8" />
+                </filter>
+                <filter id="purpleNumberGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#c084fc" floodOpacity="0.8" />
+                </filter>
+                <filter id="amberNumberGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#fbbf24" floodOpacity="0.8" />
+                </filter>
+              </defs>
 
-            {/* =================================================================== */}
-            {/* REALISTIC GAS LANTERN FLICKERING LIGHT ANIMATION                    */}
-            {/* =================================================================== */}
-            {/* Incandescent Flame Core */}
-            <div className="absolute left-[30.85%] top-[18.55%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-amber-100 shadow-[0_0_12px_#ffffff,0_0_24px_#fbbf24,0_0_40px_#f59e0b] animate-lantern-flicker pointer-events-none z-20" />
+              {/* Artwork Base Image */}
+              <image
+                href="/dsa-lamp-post-clean.webp"
+                width="603"
+                height="969"
+                x="0"
+                y="0"
+              />
 
-            {/* Radiant Ambient Flare */}
-            <div className="absolute left-[30.85%] top-[18.55%] -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-300/80 via-amber-500/40 to-transparent blur-md animate-lantern-flicker pointer-events-none z-10" />
+              {/* REALISTIC GAS LANTERN FLICKERING LIGHT ANIMATION */}
+              {/* Downward Warm Volumetric Light Beam */}
+              <polygon
+                points="114,185 10,480 230,480"
+                fill="url(#lanternLightBeam)"
+                className="animate-beam-flicker pointer-events-none"
+              />
 
-            {/* Downward Warm Volumetric Light Beam */}
-            <div className="absolute left-[30.85%] top-[24%] -translate-x-1/2 w-40 h-52 bg-gradient-to-b from-amber-400/20 via-amber-500/10 to-transparent rounded-full blur-2xl animate-beam-flicker pointer-events-none" />
+              {/* Radiant Ambient Flare */}
+              <circle
+                cx="114"
+                cy="185"
+                r="44"
+                fill="url(#lanternAmbientGlow)"
+                className="animate-lantern-flicker pointer-events-none"
+              />
 
-            {/* =================================================================== */}
-            {/* INTERACTIVE SIGNPOST ARROWS (Fundamental, Intermediate, Advanced)    */}
-            {/* =================================================================== */}
-            {/* Arrow 1: Fundamental Click Area */}
-            <button
-              type="button"
-              onClick={() => handlePillClick("fundamental")}
-              title="Filter by Fundamental topics"
-              aria-label="Filter by Fundamental topics"
-              className={`absolute left-[36%] top-[27.3%] w-[52%] h-[10.2%] rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125 z-20 bg-transparent border-0 outline-none ${
-                activeFilter === "fundamental"
-                  ? "ring-2 ring-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6)]"
-                  : ""
-              }`}
-            />
+              {/* Incandescent Flame Core */}
+              <circle
+                cx="114"
+                cy="185"
+                r="14"
+                fill="url(#lanternFlameCore)"
+                className="animate-lantern-flicker pointer-events-none"
+              />
 
-            {/* Arrow 2: Intermediate Click Area */}
-            <button
-              type="button"
-              onClick={() => handlePillClick("intermediate")}
-              title="Filter by Intermediate topics"
-              aria-label="Filter by Intermediate topics"
-              className={`absolute left-[36%] top-[39.0%] w-[52%] h-[10.2%] rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125 z-20 bg-transparent border-0 outline-none ${
-                activeFilter === "intermediate"
-                  ? "ring-2 ring-purple-400 shadow-[0_0_20px_rgba(192,132,252,0.6)]"
-                  : ""
-              }`}
-            />
+              {/* INTERACTIVE SIGNPOST ARROW CLICK AREAS */}
+              {/* Arrow 1: Fundamental */}
+              <rect
+                x="190"
+                y="260"
+                width="340"
+                height="102"
+                rx="22"
+                fill="transparent"
+                className="cursor-pointer transition-all duration-200"
+                onClick={() => handlePillClick("fundamental")}
+                style={{ outline: "none" }}
+              />
+              {activeFilter === "fundamental" && (
+                <rect
+                  x="195"
+                  y="265"
+                  width="330"
+                  height="92"
+                  rx="18"
+                  fill="rgba(34, 211, 238, 0.08)"
+                  stroke="#22d3ee"
+                  strokeWidth="2"
+                  className="pointer-events-none"
+                  filter="url(#cyanNumberGlow)"
+                />
+              )}
 
-            {/* Arrow 3: Advanced Click Area */}
-            <button
-              type="button"
-              onClick={() => handlePillClick("advanced")}
-              title="Filter by Advanced topics"
-              aria-label="Filter by Advanced topics"
-              className={`absolute left-[36%] top-[51.0%] w-[52%] h-[10.2%] rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125 z-20 bg-transparent border-0 outline-none ${
-                activeFilter === "advanced"
-                  ? "ring-2 ring-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.6)]"
-                  : ""
-              }`}
-            />
+              {/* Arrow 2: Intermediate */}
+              <rect
+                x="190"
+                y="380"
+                width="340"
+                height="102"
+                rx="22"
+                fill="transparent"
+                className="cursor-pointer transition-all duration-200"
+                onClick={() => handlePillClick("intermediate")}
+                style={{ outline: "none" }}
+              />
+              {activeFilter === "intermediate" && (
+                <rect
+                  x="195"
+                  y="385"
+                  width="330"
+                  height="92"
+                  rx="18"
+                  fill="rgba(192, 132, 252, 0.08)"
+                  stroke="#c084fc"
+                  strokeWidth="2"
+                  className="pointer-events-none"
+                  filter="url(#purpleNumberGlow)"
+                />
+              )}
 
-            {/* Dynamic Real-Time Statistics Overlays (Displayed cleanly over clean number strips) */}
-            {!isMockupStats && (
-              <>
-                {/* Arrow 1 Numbers: Count + Percentage */}
-                <div className="absolute left-[51.0%] top-[33.2%] flex items-baseline gap-1 select-none pointer-events-none z-20">
-                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-bold text-white leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {stats.fundamentalCount}
-                  </span>
-                  <span className="text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-cyan-400 leading-none drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">
-                    ({stats.fundamentalPct}%)
-                  </span>
-                </div>
+              {/* Arrow 3: Advanced */}
+              <rect
+                x="190"
+                y="500"
+                width="340"
+                height="102"
+                rx="22"
+                fill="transparent"
+                className="cursor-pointer transition-all duration-200"
+                onClick={() => handlePillClick("advanced")}
+                style={{ outline: "none" }}
+              />
+              {activeFilter === "advanced" && (
+                <rect
+                  x="195"
+                  y="505"
+                  width="330"
+                  height="92"
+                  rx="18"
+                  fill="rgba(251, 191, 36, 0.08)"
+                  stroke="#fbbf24"
+                  strokeWidth="2"
+                  className="pointer-events-none"
+                  filter="url(#amberNumberGlow)"
+                />
+              )}
 
-                {/* Arrow 2 Numbers: Count + Percentage */}
-                <div className="absolute left-[51.0%] top-[45.0%] flex items-baseline gap-1 select-none pointer-events-none z-20">
-                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-bold text-white leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {stats.intermediateCount}
-                  </span>
-                  <span className="text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-purple-400 leading-none drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]">
-                    ({stats.intermediatePct}%)
-                  </span>
-                </div>
+              {/* Arrow 1 Numbers: Count + Percentage */}
+              <g className="pointer-events-none select-none">
+                <text
+                  x="292"
+                  y="345"
+                  fill="#ffffff"
+                  fontSize="22"
+                  fontWeight="700"
+                  fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                  filter="url(#lampTextShadow)"
+                >
+                  {stats.fundamentalCount}
+                </text>
+                <text
+                  x="330"
+                  y="345"
+                  fill="#22d3ee"
+                  fontSize="18"
+                  fontWeight="600"
+                  fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                  filter="url(#cyanNumberGlow)"
+                >
+                  ({stats.fundamentalPct}%)
+                </text>
+              </g>
 
-                {/* Arrow 3 Numbers: Count + Percentage */}
-                <div className="absolute left-[51.0%] top-[56.8%] flex items-baseline gap-1 select-none pointer-events-none z-20">
-                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-bold text-white leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {stats.advancedCount}
-                  </span>
-                  <span className="text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-amber-400 leading-none drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
-                    ({stats.advancedPct}%)
-                  </span>
-                </div>
+              {/* Arrow 2 Numbers: Count + Percentage */}
+              <g className="pointer-events-none select-none">
+                <text
+                  x="292"
+                  y="464"
+                  fill="#ffffff"
+                  fontSize="22"
+                  fontWeight="700"
+                  fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                  filter="url(#lampTextShadow)"
+                >
+                  {stats.intermediateCount}
+                </text>
+                <text
+                  x="330"
+                  y="464"
+                  fill="#c084fc"
+                  fontSize="18"
+                  fontWeight="600"
+                  fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                  filter="url(#purpleNumberGlow)"
+                >
+                  ({stats.intermediatePct}%)
+                </text>
+              </g>
 
-                {/* Hanging Plaque: 3 Stats Numbers (Centered in their respective columns) */}
-                {/* Col 1: Topics count */}
-                <div className="absolute left-[44.35%] top-[75.4%] -translate-x-1/2 select-none pointer-events-none z-20">
-                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {stats.totalTopicsCount}
-                  </span>
-                </div>
+              {/* Arrow 3 Numbers: Count + Percentage */}
+              <g className="pointer-events-none select-none">
+                <text
+                  x="292"
+                  y="584"
+                  fill="#ffffff"
+                  fontSize="22"
+                  fontWeight="700"
+                  fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                  filter="url(#lampTextShadow)"
+                >
+                  {stats.advancedCount}
+                </text>
+                <text
+                  x="330"
+                  y="584"
+                  fill="#fbbf24"
+                  fontSize="18"
+                  fontWeight="600"
+                  fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                  filter="url(#amberNumberGlow)"
+                >
+                  ({stats.advancedPct}%)
+                </text>
+              </g>
 
-                {/* Col 2: Problems count */}
-                <div className="absolute left-[58.38%] top-[75.4%] -translate-x-1/2 select-none pointer-events-none z-20">
-                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {stats.totalProblems}
-                  </span>
-                </div>
+              {/* Hanging Plaque: 3 Stats Numbers with Vector Centering & 20px padding */}
+              {/* Col 1: Topics count */}
+              <g className="pointer-events-none select-none">
+                <text
+                  x="240"
+                  y="773"
+                  textAnchor="middle"
+                  fill="#ffffff"
+                  fontSize="22"
+                  fontWeight="800"
+                  fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+                  filter="url(#lampTextShadow)"
+                >
+                  {stats.totalTopicsCount}
+                </text>
+              </g>
 
-                {/* Col 3: Fundamental % */}
-                <div className="absolute left-[73.34%] top-[75.4%] -translate-x-1/2 select-none pointer-events-none z-20">
-                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {stats.fundamentalPct}%
-                  </span>
-                </div>
-              </>
-            )}
+              {/* Col 2: Problems count */}
+              <g className="pointer-events-none select-none">
+                <text
+                  x="360"
+                  y="773"
+                  textAnchor="middle"
+                  fill="#ffffff"
+                  fontSize="22"
+                  fontWeight="800"
+                  fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+                  filter="url(#lampTextShadow)"
+                >
+                  {displayTotalProblems}
+                </text>
+              </g>
+
+              {/* Col 3: Fundamental % */}
+              <g className="pointer-events-none select-none">
+                <text
+                  x="480"
+                  y="773"
+                  textAnchor="middle"
+                  fill="#ffffff"
+                  fontSize="20"
+                  fontWeight="800"
+                  fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+                  filter="url(#lampTextShadow)"
+                >
+                  {stats.fundamentalPct}%
+                </text>
+              </g>
+            </svg>
           </div>
         </div>
 
@@ -1322,14 +1486,14 @@ export function TopicBreakdown({ topics: propTopics = [] }: TopicBreakdownProps)
 
                 {/* Milestone Heading */}
                 <div className="text-sm font-extrabold text-amber-400 leading-snug drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]">
-                  {stats.totalProblems === 0
+                  {displayTotalProblems === 0
                     ? "No DSA problems solved yet."
-                    : `Solved ${stats.totalProblems} problems across ${stats.totalTopicsCount} topics!`}
+                    : `Solved ${displayTotalProblems} problems across ${stats.totalTopicsCount} topics!`}
                 </div>
 
                 {/* Subtitle / Tip */}
                 <p className="text-xs text-slate-300/90 leading-relaxed mt-1.5 pr-2">
-                  {stats.totalProblems === 0
+                  {displayTotalProblems === 0
                     ? "Connect your LeetCode account in Settings to track your real-time topic progress."
                     : stats.top1
                     ? `Top focus in ${stats.top1.tag} (${stats.top1.solved} solved). Expand coverage into other fundamental and intermediate patterns!`

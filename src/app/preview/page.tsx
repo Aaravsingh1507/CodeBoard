@@ -7,7 +7,7 @@ import { StreakWidget } from "@/components/widgets/streak-widget";
 import { GithubSummaryWidget } from "@/components/widgets/github-summary-widget";
 import { LeetcodeSummaryWidget } from "@/components/widgets/leetcode-summary-widget";
 import { LeetcodeStatsBanner } from "@/components/leetcode/leetcode-stats-banner";
-import { TopicBreakdown } from "@/components/topic-breakdown";
+import { TopicBreakdown, REAL_USER_TOPICS } from "@/components/topic-breakdown";
 import { GoalsSummaryWidget } from "@/components/widgets/goals-summary-widget";
 import { LatestReviewWidget } from "@/components/widgets/latest-review-widget";
 import { CompanyPrepWidget } from "@/components/widgets/company-prep-widget";
@@ -112,34 +112,21 @@ const PREVIEW_GITHUB: GithubStats = {
 };
 
 const DEFAULT_LEETCODE: LeetcodeStats = {
-  username: "aarav_singh",
-  ranking: 425102,
-  totalSolved: 35,
-  easySolved: 20,
-  mediumSolved: 13,
-  hardSolved: 2,
-  acceptanceRate: "68.4%",
+  username: "Aarav_singh",
+  ranking: 3551017,
+  totalSolved: 33,
+  easySolved: 18,
+  mediumSolved: 15,
+  hardSolved: 0,
+  acceptanceRate: "75.0%",
   recentSubmissions: [
-    { title: "Binary Search", difficulty: "Easy", status: "Accepted", timestamp: "1728000000" },
-    { title: "Running Sum of 1d Array", difficulty: "Easy", status: "Accepted", timestamp: "1727900000" },
-    { title: "Find Pivot Index", difficulty: "Easy", status: "Accepted", timestamp: "1727800000" },
-    { title: "Find All Duplicates in an Array", difficulty: "Medium", status: "Accepted", timestamp: "1727700000" },
-    { title: "Fibonacci Number", difficulty: "Easy", status: "Accepted", timestamp: "1727600000" },
+    { title: "Binary Tree Level Order Traversal", difficulty: "Medium", status: "Accepted", timestamp: "1731000000" },
+    { title: "Maximum Depth of Binary Tree", difficulty: "Easy", status: "Accepted", timestamp: "1730900000" },
+    { title: "Invert Binary Tree", difficulty: "Easy", status: "Accepted", timestamp: "1730800000" },
+    { title: "Two Sum", difficulty: "Easy", status: "Accepted", timestamp: "1730700000" },
+    { title: "Reverse Linked List", difficulty: "Easy", status: "Accepted", timestamp: "1730600000" },
   ],
-  topicBreakdown: [
-    { tag: "Array", solved: 10, level: "fundamental" },
-    { tag: "Binary Search", solved: 5, level: "intermediate" },
-    { tag: "Two Pointers", solved: 4, level: "intermediate" },
-    { tag: "Math", solved: 4, level: "fundamental" },
-    { tag: "Matrix", solved: 3, level: "fundamental" },
-    { tag: "String", solved: 2, level: "fundamental" },
-    { tag: "Sorting", solved: 2, level: "fundamental" },
-    { tag: "Simulation", solved: 1, level: "fundamental" },
-    { tag: "Hash Table", solved: 1, level: "fundamental" },
-    { tag: "Recursion", solved: 1, level: "intermediate" },
-    { tag: "Dynamic Programming", solved: 1, level: "intermediate" },
-    { tag: "Divide and Conquer", solved: 1, level: "intermediate" },
-  ],
+  topicBreakdown: REAL_USER_TOPICS,
 };
 
 const PREVIEW_GOALS = [
@@ -407,7 +394,10 @@ export default function PreviewPage() {
             />
 
             <div className="space-y-6">
-              <TopicBreakdown topics={liveLeetcode?.topicBreakdown?.length ? liveLeetcode.topicBreakdown : previewLeetcode.topicBreakdown} />
+              <TopicBreakdown
+                topics={liveLeetcode?.topicBreakdown?.length ? liveLeetcode.topicBreakdown : previewLeetcode.topicBreakdown}
+                totalSolved={liveLeetcode?.totalSolved ?? previewLeetcode.totalSolved}
+              />
 
               <Card className="p-5">
                 <h3 className="font-semibold text-foreground dark:text-white text-base mb-4">Recent submissions</h3>
