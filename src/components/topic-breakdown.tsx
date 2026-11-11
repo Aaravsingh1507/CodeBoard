@@ -1,6 +1,16 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import {
+  Code2,
+  BarChart2,
+  Trophy,
+  Layers,
+  Award,
+  Sparkles,
+  CheckCircle2,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export interface TopicItem {
   tag: string;
@@ -15,6 +25,7 @@ export interface TopicBreakdownProps {
   mediumSolved?: number;
   hardSolved?: number;
   ranking?: number | null;
+  acceptanceRate?: string;
   loading?: boolean;
 }
 
@@ -55,11 +66,11 @@ function inferLevel(tag: string): "fundamental" | "intermediate" | "advanced" {
   return "advanced";
 }
 
-// Real verified user topic distribution (empty when no solved questions)
+// Real user verified topics (empty when user has 0 solved)
 export const REAL_USER_TOPICS: TopicItem[] = [];
 
 // -----------------------------------------------------------------------------
-// Enchanted Tree Dashboard Component
+// Clean & Simple LeetCode Dashboard Component
 // -----------------------------------------------------------------------------
 export function TopicBreakdown({
   topics: propTopics = [],
@@ -68,15 +79,18 @@ export function TopicBreakdown({
   mediumSolved,
   hardSolved,
   ranking,
+  acceptanceRate = "0.0%",
   loading = false,
 }: TopicBreakdownProps) {
-  // Use real topics from props directly (no fake fallbacks)
+  // Use real topics from props directly (strictly real user data)
   const topics = useMemo(() => {
     return propTopics ?? [];
   }, [propTopics]);
 
-  // Active category filter state ('all' or 'fundamental' | 'intermediate' | 'advanced')
-  const [activeFilter, setActiveFilter] = useState<"all" | "fundamental" | "intermediate" | "advanced">("all");
+  // Active category filter state ('all' | 'fundamental' | 'intermediate' | 'advanced')
+  const [activeFilter, setActiveFilter] = useState<
+    "all" | "fundamental" | "intermediate" | "advanced"
+  >("all");
 
   const easyCount = easySolved ?? 0;
   const mediumCount = mediumSolved ?? 0;
@@ -95,28 +109,10 @@ export function TopicBreakdown({
       else if (lvl === "intermediate") intermediateCount += count;
       else if (lvl === "advanced") advancedCount += count;
       else {
-        const name = t.tag.toLowerCase();
-        if (
-          name.includes("array") ||
-          name.includes("string") ||
-          name.includes("hash") ||
-          name.includes("math") ||
-          name.includes("sort") ||
-          name.includes("two pointer")
-        ) {
-          fundamentalCount += count;
-        } else if (
-          name.includes("dynamic") ||
-          name.includes("tree") ||
-          name.includes("dfs") ||
-          name.includes("bfs") ||
-          name.includes("binary search") ||
-          name.includes("greedy")
-        ) {
-          intermediateCount += count;
-        } else {
-          advancedCount += count;
-        }
+        const inferred = inferLevel(t.tag);
+        if (inferred === "fundamental") fundamentalCount += count;
+        else if (inferred === "intermediate") intermediateCount += count;
+        else advancedCount += count;
       }
     });
 
@@ -124,9 +120,12 @@ export function TopicBreakdown({
     const solvedTopicsList = topics.filter((t) => (Number(t.solved) || 0) > 0);
     const totalTopicsCount = solvedTopicsList.length;
 
-    const fundamentalPct = totalProblems > 0 ? ((fundamentalCount / totalProblems) * 100).toFixed(1) : "0.0";
-    const intermediatePct = totalProblems > 0 ? ((intermediateCount / totalProblems) * 100).toFixed(1) : "0.0";
-    const advancedPct = totalProblems > 0 ? ((advancedCount / totalProblems) * 100).toFixed(1) : "0.0";
+    const fundamentalPct =
+      totalProblems > 0 ? ((fundamentalCount / totalProblems) * 100).toFixed(1) : "0.0";
+    const intermediatePct =
+      totalProblems > 0 ? ((intermediateCount / totalProblems) * 100).toFixed(1) : "0.0";
+    const advancedPct =
+      totalProblems > 0 ? ((advancedCount / totalProblems) * 100).toFixed(1) : "0.0";
 
     const sortedSolvedTopics = [...topics]
       .filter((t) => (Number(t.solved) || 0) > 0)
@@ -166,954 +165,342 @@ export function TopicBreakdown({
       .sort((a, b) => b.solved - a.solved);
   }, [topics]);
 
-  // Filter based on active category pill ("all" | "fundamental" | "intermediate" | "advanced")
+  // Filter based on active category pill
   const displayColumns = useMemo(() => {
     if (activeFilter === "all") return solvedTopics;
     return solvedTopics.filter((c) => c.level === activeFilter);
   }, [solvedTopics, activeFilter]);
 
-  // Dynamic Y-axis scale based on maximum solved count in displayColumns (or fallback 10)
-  const maxSolved = useMemo(() => {
-    if (displayColumns.length === 0) return 10;
-    const rawMax = Math.max(...displayColumns.map((c) => c.solved));
-    if (rawMax <= 10) return 10;
-    return Math.ceil(rawMax / 10) * 10;
+  const displayTotalProblems =
+    totalSolved ??
+    (stats.totalProblems > 0
+      ? stats.totalProblems
+      : easyCount + mediumCount + hardCount);
+
+  // Difficulty totals (max goal reference for progress bars)
+  const totalDifficulty = easyCount + mediumCount + hardCount;
+  const easyPct = totalDifficulty > 0 ? (easyCount / totalDifficulty) * 100 : 0;
+  const mediumPct = totalDifficulty > 0 ? (mediumCount / totalDifficulty) * 100 : 0;
+  const hardPct = totalDifficulty > 0 ? (hardCount / totalDifficulty) * 100 : 0;
+
+  // Max solved count in current display columns
+  const maxSolvedCount = useMemo(() => {
+    if (displayColumns.length === 0) return 1;
+    return Math.max(...displayColumns.map((c) => c.solved), 1);
   }, [displayColumns]);
 
-  const handlePillClick = (filter: "fundamental" | "intermediate" | "advanced") => {
-    setActiveFilter((prev) => (prev === filter ? "all" : filter));
-  };
-
-  const displayTotalProblems = totalSolved ?? (stats.totalProblems > 0 ? stats.totalProblems : easyCount + mediumCount + hardCount);
-  const rankingDisplay = ranking ? `#${ranking.toLocaleString()}` : "#5,000,001";
-
   return (
-    <div className="relative w-full text-white select-none">
-      {/* Scoped CSS Keyframe Animations for Lamp, Medals, Stars, Cups & Atmosphere */}
-      <style jsx global>{`
-        @keyframes realisticLanternFlame {
-          0%, 100% {
-            opacity: 0.96;
-            filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.9)) drop-shadow(0 0 20px rgba(245, 158, 11, 0.5));
-          }
-          20% {
-            opacity: 0.88;
-            filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.75)) drop-shadow(0 0 16px rgba(245, 158, 11, 0.4));
-          }
-          45% {
-            opacity: 0.98;
-            filter: drop-shadow(0 0 10px rgba(251, 191, 36, 1)) drop-shadow(0 0 25px rgba(245, 158, 11, 0.65));
-          }
-          70% {
-            opacity: 0.90;
-            filter: drop-shadow(0 0 7px rgba(251, 191, 36, 0.8)) drop-shadow(0 0 18px rgba(245, 158, 11, 0.45));
-          }
-          85% {
-            opacity: 1;
-            filter: drop-shadow(0 0 11px rgba(251, 191, 36, 1)) drop-shadow(0 0 28px rgba(245, 158, 11, 0.7));
-          }
-        }
-        @keyframes realisticLanternAtmosphere {
-          0%, 100% { opacity: 0.55; }
-          30% { opacity: 0.45; }
-          65% { opacity: 0.68; }
-          85% { opacity: 0.50; }
-        }
-        @keyframes trophyGleam {
-          0%, 100% {
-            transform: translateY(0px);
-            filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)) drop-shadow(0 0 18px rgba(245, 158, 11, 0.3));
-          }
-          50% {
-            transform: translateY(-2.5px);
-            filter: drop-shadow(0 0 14px rgba(251, 191, 36, 0.95)) drop-shadow(0 0 28px rgba(245, 158, 11, 0.55));
-          }
-        }
-        @keyframes starTwinkleGlint {
-          0%, 100% {
-            transform: scale(0.92) rotate(-2deg);
-            filter: drop-shadow(0 0 4px #38bdf8) drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
-            opacity: 0.9;
-          }
-          50% {
-            transform: scale(1.08) rotate(3deg);
-            filter: drop-shadow(0 0 10px #22d3ee) drop-shadow(0 0 20px rgba(34, 211, 238, 0.8));
-            opacity: 1;
-          }
-        }
-        @keyframes medalShimmerGlow {
-          0%, 100% {
-            transform: translateY(0px) rotate(0deg);
-            filter: drop-shadow(0 0 4px #c084fc) drop-shadow(0 0 10px rgba(192, 132, 252, 0.5));
-          }
-          50% {
-            transform: translateY(-2px) rotate(1.5deg);
-            filter: drop-shadow(0 0 9px #e879f9) drop-shadow(0 0 18px rgba(232, 121, 249, 0.75));
-          }
-        }
-        @keyframes treeTargetFloat {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-3px); }
-        }
-        @keyframes fireflyDrift1 {
-          0%, 100% { transform: translate(0, 0); opacity: 0.3; }
-          30% { transform: translate(12px, -8px); opacity: 0.95; }
-          60% { transform: translate(-8px, -16px); opacity: 0.5; }
-          80% { transform: translate(6px, -4px); opacity: 0.85; }
-        }
-        @keyframes fireflyDrift2 {
-          0%, 100% { transform: translate(0, 0); opacity: 0.4; }
-          40% { transform: translate(-14px, -10px); opacity: 0.95; }
-          75% { transform: translate(10px, -18px); opacity: 0.6; }
-        }
-        .animate-tree-lantern { animation: realisticLanternFlame 3.6s ease-in-out infinite; }
-        .animate-tree-atmosphere { animation: realisticLanternAtmosphere 3.6s ease-in-out infinite; }
-        .animate-tree-trophy { animation: trophyGleam 4.2s ease-in-out infinite; }
-        .animate-tree-star { animation: starTwinkleGlint 2.8s ease-in-out infinite; transform-origin: 461px 556px; }
-        .animate-tree-medal { animation: medalShimmerGlow 3.5s ease-in-out infinite; transform-origin: 577px 556px; }
-        .animate-tree-target { animation: treeTargetFloat 3.4s ease-in-out infinite; }
-        .animate-firefly-1 { animation: fireflyDrift1 6.5s ease-in-out infinite; }
-        .animate-firefly-2 { animation: fireflyDrift2 7.2s ease-in-out infinite; }
-      `}</style>
-
-      {/* Master Enchanted Tree Dashboard Canvas (Transparent Background) */}
-      <div className="relative w-full overflow-visible select-none">
-        <svg
-          viewBox="0 0 1024 682"
-          className="w-full h-auto block select-none drop-shadow-[0_16px_36px_rgba(0,0,0,0.6)]"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <defs>
-            {/* Lantern Core & Radiance */}
-            <radialGradient id="treeLanternCore" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="40%" stopColor="#fef08a" stopOpacity="0.95" />
-              <stop offset="70%" stopColor="#fbbf24" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="treeLanternRadiance" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#fef08a" stopOpacity="0.75" />
-              <stop offset="45%" stopColor="#fbbf24" stopOpacity="0.45" />
-              <stop offset="75%" stopColor="#f59e0b" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="treeLanternAmbient" cx="50%" cy="40%" r="50%">
-              <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.38" />
-              <stop offset="50%" stopColor="#f59e0b" stopOpacity="0.18" />
-              <stop offset="85%" stopColor="#b45309" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="#78350f" stopOpacity="0" />
-            </radialGradient>
-
-            {/* Glowing Text Shadows */}
-            <filter id="treeTextShadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#000000" floodOpacity="0.9" />
-            </filter>
-            <filter id="treeCyanGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#22d3ee" floodOpacity="0.85" />
-            </filter>
-            <filter id="treePurpleGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#c084fc" floodOpacity="0.85" />
-            </filter>
-            <filter id="treeAmberGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#fbbf24" floodOpacity="0.85" />
-            </filter>
-
-            {/* Chart Bar Gradients */}
-            <linearGradient id="treeCyanBar" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stopColor="#0891b2" />
-              <stop offset="50%" stopColor="#06b6d4" />
-              <stop offset="100%" stopColor="#67e8f9" />
-            </linearGradient>
-            <linearGradient id="treePurpleBar" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stopColor="#7c3aed" />
-              <stop offset="50%" stopColor="#a855f7" />
-              <stop offset="100%" stopColor="#e879f9" />
-            </linearGradient>
-            <linearGradient id="treeAmberBar" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stopColor="#d97706" />
-              <stop offset="50%" stopColor="#f59e0b" />
-              <stop offset="100%" stopColor="#fde047" />
-            </linearGradient>
-          </defs>
-
-          {/* 1. Base Transparent Enchanted Tree Artwork */}
-          <image
-            href="/dsa-enchanted-tree-transparent.webp"
-            width="1024"
-            height="682"
-            x="0"
-            y="0"
-          />
-
-          {/* =================================================================== */}
-          {/* 2. GLOWING GAS LANTERN ON TREE (Center: 88, 169)                    */}
-          {/* =================================================================== */}
-          <ellipse
-            cx="88"
-            cy="175"
-            rx="36"
-            ry="46"
-            fill="url(#treeLanternAmbient)"
-            className="animate-tree-atmosphere pointer-events-none"
-          />
-          <circle
-            cx="88"
-            cy="169"
-            r="18"
-            fill="url(#treeLanternRadiance)"
-            className="animate-tree-lantern pointer-events-none"
-          />
-          <circle
-            cx="88"
-            cy="169"
-            r="6"
-            fill="url(#treeLanternCore)"
-            className="animate-tree-lantern pointer-events-none"
-          />
-
-          {/* Ambient Forest Fireflies */}
-          <g className="pointer-events-none">
-            <circle cx="120" cy="140" r="2.2" fill="#fef08a" className="animate-firefly-1" filter="url(#treeAmberGlow)" />
-            <circle cx="210" cy="180" r="1.8" fill="#fef08a" className="animate-firefly-2" filter="url(#treeAmberGlow)" />
-            <circle cx="390" cy="110" r="2.2" fill="#67e8f9" className="animate-firefly-1" filter="url(#treeCyanGlow)" />
-            <circle cx="680" cy="120" r="1.8" fill="#e879f9" className="animate-firefly-2" filter="url(#treePurpleGlow)" />
-            <circle cx="670" cy="500" r="2.0" fill="#fef08a" className="animate-firefly-1" filter="url(#treeAmberGlow)" />
-          </g>
-
-          {/* =================================================================== */}
-          {/* 3. TOTAL SOLVED CIRCULAR DIAL (Center: 304, 168)                    */}
-          {/* =================================================================== */}
-          <g className="pointer-events-none select-none">
-            {/* Coding laptop glyph < / > */}
-            <path
-              d="M298 135l-4 4 4 4m12-8l4 4-4 4m-4-9l-4 10"
-              stroke="#38bdf8"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-              filter="url(#treeCyanGlow)"
-            />
-            {/* Solved Number */}
-            <text
-              x="304"
-              y="172"
-              textAnchor="middle"
-              fill="#ffffff"
-              fontSize="32"
-              fontWeight="800"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              {loading ? "..." : displayTotalProblems}
-            </text>
-            {/* Label */}
-            <text
-              x="304"
-              y="192"
-              textAnchor="middle"
-              fill="#94a3b8"
-              fontSize="11"
-              fontWeight="600"
-              fontFamily="system-ui, -apple-system, sans-serif"
-            >
+    <div className="space-y-5 select-none">
+      {/* ===================================================================== */}
+      {/* 1. TOP STATS ROW: 3 CLEAN, MINIMAL CARDS                             */}
+      {/* ===================================================================== */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Card 1: Total Solved */}
+        <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-xs transition-all hover:border-border">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Total Solved
-            </text>
-          </g>
+            </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              <Code2 className="h-4 w-4" />
+            </div>
+          </div>
 
-          {/* =================================================================== */}
-          {/* 4. EASY / MEDIUM / HARD PILLS                                       */}
-          {/* =================================================================== */}
-          {/* Easy Pill (y center ~134) */}
-          <g className="select-none">
-            <text
-              x="500"
-              y="138"
-              fill="#ffffff"
-              fontSize="13.5"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              Easy
-            </text>
-            <text
-              x="610"
-              y="138"
-              textAnchor="end"
-              fill="#ffffff"
-              fontSize="18"
-              fontWeight="800"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              {loading ? "—" : easyCount}
-            </text>
-          </g>
+          <div className="mt-4 flex items-baseline gap-2">
+            <span className="text-3xl font-extrabold tracking-tight text-foreground font-mono">
+              {loading ? "..." : displayTotalProblems}
+            </span>
+            <span className="text-xs text-muted-foreground">problems</span>
+          </div>
 
-          {/* Medium Pill (y center ~184) */}
-          <g className="select-none">
-            <text
-              x="500"
-              y="188"
-              fill="#ffffff"
-              fontSize="13.5"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              Medium
-            </text>
-            <text
-              x="610"
-              y="188"
-              textAnchor="end"
-              fill="#ffffff"
-              fontSize="18"
-              fontWeight="800"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              {loading ? "—" : mediumCount}
-            </text>
-          </g>
+          <div className="mt-4 flex items-center justify-between border-t border-border/50 pt-3 text-xs">
+            <span className="text-muted-foreground">Acceptance Rate</span>
+            <span className="font-semibold text-foreground font-mono">
+              {acceptanceRate || "0.0%"}
+            </span>
+          </div>
+        </div>
 
-          {/* Hard Pill (y center ~234) */}
-          <g className="select-none">
-            <text
-              x="500"
-              y="238"
-              fill="#ffffff"
-              fontSize="13.5"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              Hard
-            </text>
-            <text
-              x="610"
-              y="238"
-              textAnchor="end"
-              fill="#ffffff"
-              fontSize="18"
-              fontWeight="800"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              {loading ? "—" : hardCount}
-            </text>
-          </g>
+        {/* Card 2: Difficulty Breakdown */}
+        <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-xs transition-all hover:border-border">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Difficulty
+            </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              <BarChart2 className="h-4 w-4" />
+            </div>
+          </div>
 
-          {/* =================================================================== */}
-          {/* 5. GLOBAL RANKING SHIELD (Center: 810, 164)                         */}
-          {/* =================================================================== */}
-          <g className="pointer-events-none select-none">
-            {/* Animated Golden Aura around Trophy */}
-            <circle
-              cx="810"
-              cy="142"
-              r="22"
-              fill="rgba(251, 191, 36, 0.18)"
-              className="animate-tree-trophy"
-            />
-            {/* Ranking Number */}
-            <text
-              x="810"
-              y="194"
-              textAnchor="middle"
-              fill="#ffffff"
-              fontSize="24"
-              fontWeight="800"
-              letterSpacing="0.02em"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              {loading ? "..." : rankingDisplay}
-            </text>
-            {/* Label */}
-            <text
-              x="810"
-              y="216"
-              textAnchor="middle"
-              fill="#cbd5e1"
-              fontSize="11"
-              fontWeight="600"
-              fontFamily="system-ui, -apple-system, sans-serif"
-            >
+          <div className="mt-3.5 space-y-2.5">
+            {/* Easy */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1.5 font-medium text-emerald-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  Easy
+                </span>
+                <span className="font-semibold font-mono text-foreground">{easyCount}</span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-slate-800/80 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                  style={{ width: `${easyPct}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Medium */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1.5 font-medium text-amber-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  Medium
+                </span>
+                <span className="font-semibold font-mono text-foreground">{mediumCount}</span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-slate-800/80 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-amber-500 transition-all duration-500"
+                  style={{ width: `${mediumPct}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Hard */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1.5 font-medium text-rose-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                  Hard
+                </span>
+                <span className="font-semibold font-mono text-foreground">{hardCount}</span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-slate-800/80 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-rose-500 transition-all duration-500"
+                  style={{ width: `${hardPct}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Global Ranking */}
+        <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-xs transition-all hover:border-border">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Global Ranking
-            </text>
-          </g>
+            </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <Trophy className="h-4 w-4" />
+            </div>
+          </div>
 
-          {/* Hanging Filter Bar under Trophy Shield (Y=252..274) */}
-          <g className="select-none">
-            {/* Fundamental Pill */}
-            <rect
-              x="714"
-              y="253"
-              width="62"
-              height="20"
-              rx="10"
-              fill={activeFilter === "fundamental" ? "rgba(8, 51, 68, 0.85)" : "transparent"}
-              stroke={activeFilter === "fundamental" ? "#22d3ee" : "transparent"}
-              strokeWidth="1.2"
-              className="cursor-pointer transition-colors"
-              onClick={() => handlePillClick("fundamental")}
-            />
-            <text
-              x="745"
-              y="266.5"
-              textAnchor="middle"
-              fill={activeFilter === "fundamental" ? "#22d3ee" : "#cbd5e1"}
-              fontSize="9"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              className="pointer-events-none"
+          <div className="mt-4 flex items-baseline gap-2">
+            <span className="text-3xl font-extrabold tracking-tight text-foreground font-mono truncate">
+              {loading ? "..." : ranking ? `#${ranking.toLocaleString()}` : "Unranked"}
+            </span>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between border-t border-border/50 pt-3 text-xs">
+            <span className="text-muted-foreground">Standing</span>
+            <span className="font-medium text-slate-400">
+              {ranking ? "Active rank" : "Solve to rank"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ===================================================================== */}
+      {/* 2. MAIN DSA TOPIC DISTRIBUTION CARD                                  */}
+      {/* ===================================================================== */}
+      <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-xs space-y-5">
+        {/* Header with Title & Filter Buttons */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              <Layers className="h-4 w-4" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-foreground">Topic Distribution</h2>
+              <p className="text-xs text-muted-foreground">
+                Breakdown of solved DSA patterns across fundamental, intermediate, and advanced categories.
+              </p>
+            </div>
+          </div>
+
+          {/* Filter Pills */}
+          <div className="flex items-center gap-1.5 rounded-xl border border-border/60 bg-muted/30 p-1 text-xs">
+            <button
+              onClick={() => setActiveFilter("all")}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
+                activeFilter === "all"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
+              All
+            </button>
+            <button
+              onClick={() => setActiveFilter("fundamental")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
+                activeFilter === "fundamental"
+                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
               Fundamental
-            </text>
-
-            {/* Intermediate Pill */}
-            <rect
-              x="780"
-              y="253"
-              width="64"
-              height="20"
-              rx="10"
-              fill={activeFilter === "intermediate" ? "rgba(59, 7, 100, 0.85)" : "transparent"}
-              stroke={activeFilter === "intermediate" ? "#c084fc" : "transparent"}
-              strokeWidth="1.2"
-              className="cursor-pointer transition-colors"
-              onClick={() => handlePillClick("intermediate")}
-            />
-            <text
-              x="812"
-              y="266.5"
-              textAnchor="middle"
-              fill={activeFilter === "intermediate" ? "#c084fc" : "#cbd5e1"}
-              fontSize="9"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              className="pointer-events-none"
+            </button>
+            <button
+              onClick={() => setActiveFilter("intermediate")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
+                activeFilter === "intermediate"
+                  ? "bg-purple-500/20 text-purple-300 border border-purple-500/30 shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
+              <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
               Intermediate
-            </text>
-
-            {/* Advanced Pill */}
-            <rect
-              x="848"
-              y="253"
-              width="62"
-              height="20"
-              rx="10"
-              fill={activeFilter === "advanced" ? "rgba(69, 26, 3, 0.85)" : "transparent"}
-              stroke={activeFilter === "advanced" ? "#fbbf24" : "transparent"}
-              strokeWidth="1.2"
-              className="cursor-pointer transition-colors"
-              onClick={() => handlePillClick("advanced")}
-            />
-            <text
-              x="879"
-              y="266.5"
-              textAnchor="middle"
-              fill={activeFilter === "advanced" ? "#fbbf24" : "#cbd5e1"}
-              fontSize="9"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              className="pointer-events-none"
+            </button>
+            <button
+              onClick={() => setActiveFilter("advanced")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
+                activeFilter === "advanced"
+                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
               Advanced
-            </text>
-          </g>
+            </button>
+          </div>
+        </div>
 
-          {/* =================================================================== */}
-          {/* 6. LEFT 3 PILLS ON TRUNK/BRANCH (Fundamental, Intermediate, Advanced)*/}
-          {/* =================================================================== */}
-          {/* Pill 1: Fundamental */}
-          <rect
-            x="200"
-            y="306"
-            width="136"
-            height="44"
-            rx="22"
-            fill="transparent"
-            className="cursor-pointer"
-            onClick={() => handlePillClick("fundamental")}
-          />
-          {activeFilter === "fundamental" && (
-            <rect
-              x="202"
-              y="308"
-              width="132"
-              height="40"
-              rx="20"
-              fill="rgba(34, 211, 238, 0.12)"
-              stroke="#22d3ee"
-              strokeWidth="1.5"
-              className="pointer-events-none"
-              filter="url(#treeCyanGlow)"
-            />
-          )}
-          <g className="pointer-events-none select-none">
-            <text
-              x="254"
-              y="324"
-              fill="#ffffff"
-              fontSize="12.5"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              Fundamental
-            </text>
-            <text
-              x="254"
-              y="341"
-              fill="#22d3ee"
-              fontSize="11"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeCyanGlow)"
-            >
-              {stats.fundamentalCount} ({stats.fundamentalPct}%)
-            </text>
-          </g>
+        {/* Content: Empty State vs Real Topics Grid */}
+        {displayColumns.length === 0 ? (
+          /* Simple, Clean Empty State */
+          <div className="flex flex-col items-center justify-center py-12 px-4 text-center rounded-xl border border-dashed border-border/60 bg-muted/10">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 mb-3">
+              <Layers className="h-6 w-6" />
+            </div>
+            <h3 className="text-sm font-semibold text-foreground">No topic data available yet</h3>
+            <p className="text-xs text-muted-foreground max-w-sm mt-1">
+              Solved problems on LeetCode will automatically display here broken down by topic in real time.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Top 3 Covered Topics Podium (When active) */}
+            {stats.totalTopicsCount > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* 1st Place */}
+                <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    <Trophy className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">
+                      1st Focus
+                    </div>
+                    <div className="text-sm font-bold text-foreground truncate">
+                      {stats.top1?.tag ?? "—"}
+                    </div>
+                  </div>
+                  <span className="font-mono text-sm font-bold text-amber-400">
+                    {stats.top1?.solved ?? 0}
+                  </span>
+                </div>
 
-          {/* Pill 2: Intermediate */}
-          <rect
-            x="200"
-            y="360"
-            width="136"
-            height="44"
-            rx="22"
-            fill="transparent"
-            className="cursor-pointer"
-            onClick={() => handlePillClick("intermediate")}
-          />
-          {activeFilter === "intermediate" && (
-            <rect
-              x="202"
-              y="362"
-              width="132"
-              height="40"
-              rx="20"
-              fill="rgba(192, 132, 252, 0.12)"
-              stroke="#c084fc"
-              strokeWidth="1.5"
-              className="pointer-events-none"
-              filter="url(#treePurpleGlow)"
-            />
-          )}
-          <g className="pointer-events-none select-none">
-            <text
-              x="254"
-              y="378"
-              fill="#ffffff"
-              fontSize="12.5"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              Intermediate
-            </text>
-            <text
-              x="254"
-              y="395"
-              fill="#c084fc"
-              fontSize="11"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treePurpleGlow)"
-            >
-              {stats.intermediateCount} ({stats.intermediatePct}%)
-            </text>
-          </g>
+                {/* 2nd Place */}
+                <div className="flex items-center gap-3 rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                    <Award className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[11px] font-medium text-cyan-400 uppercase tracking-wider">
+                      2nd Focus
+                    </div>
+                    <div className="text-sm font-bold text-foreground truncate">
+                      {stats.top2?.tag ?? "—"}
+                    </div>
+                  </div>
+                  <span className="font-mono text-sm font-bold text-cyan-400">
+                    {stats.top2?.solved ?? 0}
+                  </span>
+                </div>
 
-          {/* Pill 3: Advanced */}
-          <rect
-            x="200"
-            y="414"
-            width="136"
-            height="44"
-            rx="22"
-            fill="transparent"
-            className="cursor-pointer"
-            onClick={() => handlePillClick("advanced")}
-          />
-          {activeFilter === "advanced" && (
-            <rect
-              x="202"
-              y="416"
-              width="132"
-              height="40"
-              rx="20"
-              fill="rgba(251, 191, 36, 0.12)"
-              stroke="#fbbf24"
-              strokeWidth="1.5"
-              className="pointer-events-none"
-              filter="url(#treeAmberGlow)"
-            />
-          )}
-          <g className="pointer-events-none select-none">
-            <text
-              x="254"
-              y="432"
-              fill="#ffffff"
-              fontSize="12.5"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              Advanced
-            </text>
-            <text
-              x="254"
-              y="449"
-              fill="#fbbf24"
-              fontSize="11"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeAmberGlow)"
-            >
-              {stats.advancedCount} ({stats.advancedPct}%)
-            </text>
-          </g>
+                {/* 3rd Place */}
+                <div className="flex items-center gap-3 rounded-xl border border-purple-500/30 bg-purple-500/5 p-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[11px] font-medium text-purple-400 uppercase tracking-wider">
+                      3rd Focus
+                    </div>
+                    <div className="text-sm font-bold text-foreground truncate">
+                      {stats.top3?.tag ?? "—"}
+                    </div>
+                  </div>
+                  <span className="font-mono text-sm font-bold text-purple-400">
+                    {stats.top3?.solved ?? 0}
+                  </span>
+                </div>
+              </div>
+            )}
 
-          {/* =================================================================== */}
-          {/* 7. MIDDLE BOARD: TOPIC-WISE PROBLEM DISTRIBUTION                    */}
-          {/* =================================================================== */}
-          {/* Header */}
-          <g className="pointer-events-none select-none">
-            <path
-              d="M404 330l4 4 6-6 4 4"
-              fill="none"
-              stroke="#c084fc"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              filter="url(#treePurpleGlow)"
-            />
-            <text
-              x="424"
-              y="333"
-              fill="#ffffff"
-              fontSize="12"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              Topic-wise Problem Distribution
-            </text>
-          </g>
-
-          {/* Board Content */}
-          {displayColumns.length === 0 ? (
-            /* Clean Empty State */
-            <g className="pointer-events-none select-none">
-              <circle cx="665" cy="380" r="18" fill="rgba(168, 85, 247, 0.12)" stroke="rgba(168, 85, 247, 0.35)" strokeWidth="1.2" />
-              <path
-                d="M656 390v-9m9 9v-17m9 17v-6"
-                stroke="#c084fc"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                fill="none"
-                filter="url(#treePurpleGlow)"
-              />
-              <text
-                x="665"
-                y="412"
-                textAnchor="middle"
-                fill="#f8fafc"
-                fontSize="13"
-                fontWeight="700"
-                fontFamily="system-ui, -apple-system, sans-serif"
-                filter="url(#treeTextShadow)"
-              >
-                No topic data available yet
-              </text>
-              <text
-                x="665"
-                y="428"
-                textAnchor="middle"
-                fill="#94a3b8"
-                fontSize="10"
-                fontWeight="500"
-                fontFamily="system-ui, -apple-system, sans-serif"
-              >
-                Problems solved on LeetCode will automatically display here broken down by topic.
-              </text>
-            </g>
-          ) : (
-            /* Dynamic Topic Distribution Bars */
-            <g className="select-none">
-              {displayColumns.slice(0, 14).map((col, idx, arr) => {
-                const totalPlotWidth = 515;
-                const colWidth = totalPlotWidth / arr.length;
-                const colCenterX = 414 + idx * colWidth + colWidth / 2;
-                const maxPlotHeight = 56;
-                const barHeight = Math.max(6, Math.min(maxPlotHeight, (col.solved / maxSolved) * maxPlotHeight));
-                const barY = 418 - barHeight;
-                const barFill =
-                  col.level === "fundamental"
-                    ? "url(#treeCyanBar)"
-                    : col.level === "advanced"
-                    ? "url(#treeAmberBar)"
-                    : "url(#treePurpleBar)";
-                const discStroke =
-                  col.level === "fundamental" ? "#22d3ee" : col.level === "advanced" ? "#fbbf24" : "#c084fc";
+            {/* Clean Topic List with Progress Bars */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              {displayColumns.map((col) => {
+                const pct = ((col.solved / maxSolvedCount) * 100).toFixed(0);
+                const isFund = col.level === "fundamental";
+                const isAdv = col.level === "advanced";
+                const barColor = isFund
+                  ? "bg-cyan-500"
+                  : isAdv
+                  ? "bg-amber-500"
+                  : "bg-purple-500";
+                const badgeColor = isFund
+                  ? "text-cyan-400 border-cyan-500/30 bg-cyan-500/10"
+                  : isAdv
+                  ? "text-amber-400 border-amber-500/30 bg-amber-500/10"
+                  : "text-purple-400 border-purple-500/30 bg-purple-500/10";
 
                 return (
-                  <g key={col.id} className="transition-all duration-300">
-                    {/* Solved Count on Top */}
-                    <text
-                      x={colCenterX}
-                      y={barY - 3}
-                      textAnchor="middle"
-                      fill="#ffffff"
-                      fontSize="9.5"
-                      fontWeight="800"
-                      fontFamily="system-ui, -apple-system, sans-serif"
-                      filter="url(#treeTextShadow)"
-                    >
-                      {col.solved}
-                    </text>
+                  <div
+                    key={col.id}
+                    className="flex flex-col justify-between gap-1.5 rounded-xl border border-border/60 bg-muted/20 p-3 transition-colors hover:bg-muted/30"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-sm font-medium text-foreground truncate">
+                          {col.name}
+                        </span>
+                        <span
+                          className={`rounded-md border px-1.5 py-0.5 text-[10px] font-medium capitalize shrink-0 ${badgeColor}`}
+                        >
+                          {col.level}
+                        </span>
+                      </div>
+                      <span className="font-mono text-xs font-bold text-foreground shrink-0">
+                        {col.solved} solved
+                      </span>
+                    </div>
 
-                    {/* Rising Neon Bar */}
-                    <rect
-                      x={colCenterX - 4}
-                      y={barY}
-                      width={8}
-                      height={barHeight}
-                      rx={3}
-                      fill={barFill}
-                    />
-
-                    {/* Glowing Baseline Disc */}
-                    <ellipse
-                      cx={colCenterX}
-                      cy={420}
-                      rx={9}
-                      ry={2.6}
-                      fill="#150d2e"
-                      stroke={discStroke}
-                      strokeWidth={1}
-                    />
-
-                    {/* Topic Label */}
-                    <text
-                      x={colCenterX}
-                      y={436}
-                      textAnchor="middle"
-                      fill="#cbd5e1"
-                      fontSize="8"
-                      fontWeight="600"
-                      fontFamily="system-ui, -apple-system, sans-serif"
-                    >
-                      {col.name.length > 7 ? col.name.slice(0, 6) + "…" : col.name}
-                    </text>
-                  </g>
+                    <div className="h-1.5 w-full rounded-full bg-slate-800/80 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-300 ${barColor}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
                 );
               })}
-            </g>
-          )}
-
-          {/* =================================================================== */}
-          {/* 8. BOTTOM-LEFT BOARD: TOP COVERED TOPICS (Podium 1, 2, 3)           */}
-          {/* =================================================================== */}
-          {/* Header */}
-          <g className="pointer-events-none select-none">
-            <path
-              d="M300 523h12v4a6 6 0 0 1-12 0v-4zm-2 1h2v3a2 2 0 0 1-2-2v-1zm14 0h2v1a2 2 0 0 1-2 2v-3zm-9 11v3m-2 0h6"
-              fill="none"
-              stroke="#fbbf24"
-              strokeWidth="1.4"
-              filter="url(#treeAmberGlow)"
-            />
-            <text
-              x="320"
-              y="528"
-              fill="#ffffff"
-              fontSize="12"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              Top Covered Topics
-            </text>
-          </g>
-
-          {/* 3 Stepped Podium Columns (Never Overlaps Cards!) */}
-          <g className="select-none">
-            {/* Podium 1: Rank 1 Gold Trophy */}
-            <g className="animate-tree-trophy">
-              <circle
-                cx="345"
-                cy="555"
-                r="10"
-                fill="rgba(251, 191, 36, 0.22)"
-                filter="url(#treeAmberGlow)"
-                className="pointer-events-none"
-              />
-              <text
-                x="345"
-                y="584"
-                textAnchor="middle"
-                fill="#ffffff"
-                fontSize="11"
-                fontWeight="700"
-                fontFamily="system-ui, -apple-system, sans-serif"
-                filter="url(#treeTextShadow)"
-              >
-                {stats.top1 ? stats.top1.tag : "1st Podium"}
-              </text>
-              <text
-                x="345"
-                y="599"
-                textAnchor="middle"
-                fill="#fbbf24"
-                fontSize="10"
-                fontWeight="800"
-                fontFamily="system-ui, -apple-system, sans-serif"
-                filter="url(#treeAmberGlow)"
-              >
-                {stats.top1 ? `${stats.top1.solved} solved` : "0 solved"}
-              </text>
-            </g>
-
-            {/* Podium 2: Rank 2 Cyan Star */}
-            <g className="animate-tree-star">
-              <circle
-                cx="461"
-                cy="556"
-                r="10"
-                fill="rgba(34, 211, 238, 0.22)"
-                filter="url(#treeCyanGlow)"
-                className="pointer-events-none"
-              />
-              <text
-                x="461"
-                y="584"
-                textAnchor="middle"
-                fill="#ffffff"
-                fontSize="11"
-                fontWeight="700"
-                fontFamily="system-ui, -apple-system, sans-serif"
-                filter="url(#treeTextShadow)"
-              >
-                {stats.top2 ? stats.top2.tag : "2nd Podium"}
-              </text>
-              <text
-                x="461"
-                y="599"
-                textAnchor="middle"
-                fill="#22d3ee"
-                fontSize="10"
-                fontWeight="800"
-                fontFamily="system-ui, -apple-system, sans-serif"
-                filter="url(#treeCyanGlow)"
-              >
-                {stats.top2 ? `${stats.top2.solved} solved` : "0 solved"}
-              </text>
-            </g>
-
-            {/* Podium 3: Rank 3 Purple Medal */}
-            <g className="animate-tree-medal">
-              <circle
-                cx="577"
-                cy="556"
-                r="10"
-                fill="rgba(192, 132, 252, 0.22)"
-                filter="url(#treePurpleGlow)"
-                className="pointer-events-none"
-              />
-              <text
-                x="577"
-                y="584"
-                textAnchor="middle"
-                fill="#ffffff"
-                fontSize="11"
-                fontWeight="700"
-                fontFamily="system-ui, -apple-system, sans-serif"
-                filter="url(#treeTextShadow)"
-              >
-                {stats.top3 ? stats.top3.tag : "3rd Podium"}
-              </text>
-              <text
-                x="577"
-                y="599"
-                textAnchor="middle"
-                fill="#c084fc"
-                fontSize="10"
-                fontWeight="800"
-                fontFamily="system-ui, -apple-system, sans-serif"
-                filter="url(#treePurpleGlow)"
-              >
-                {stats.top3 ? `${stats.top3.solved} solved` : "0 solved"}
-              </text>
-            </g>
-          </g>
-
-          {/* =================================================================== */}
-          {/* 9. BOTTOM-RIGHT BOARD: COVERAGE INSIGHT                             */}
-          {/* =================================================================== */}
-          {/* Header */}
-          <g className="pointer-events-none select-none">
-            <circle cx="708" cy="526" r="6" fill="none" stroke="#c084fc" strokeWidth="1.6" filter="url(#treePurpleGlow)" />
-            <circle cx="708" cy="526" r="2.5" fill="none" stroke="#c084fc" strokeWidth="1.2" />
-            <text
-              x="722"
-              y="529"
-              fill="#ffffff"
-              fontSize="12"
-              fontWeight="700"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeTextShadow)"
-            >
-              Coverage Insight
-            </text>
-          </g>
-
-          {/* Milestone Headline & Subtitle */}
-          <g className="pointer-events-none select-none">
-            <text
-              x="706"
-              y="556"
-              fill="#fbbf24"
-              fontSize="12.5"
-              fontWeight="800"
-              fontFamily="system-ui, -apple-system, sans-serif"
-              filter="url(#treeAmberGlow)"
-            >
-              {displayTotalProblems === 0
-                ? "No DSA problems solved yet."
-                : `Solved ${displayTotalProblems} problems across ${stats.totalTopicsCount} topics!`}
-            </text>
-            <text
-              x="706"
-              y="576"
-              fill="#cbd5e1"
-              fontSize="9.5"
-              fontFamily="system-ui, -apple-system, sans-serif"
-            >
-              {displayTotalProblems === 0
-                ? "Connect your LeetCode account in Settings"
-                : stats.top1
-                ? `Top focus in ${stats.top1.tag} (${stats.top1.solved} solved).`
-                : "Solve more problems to see personalized"}
-            </text>
-            <text
-              x="706"
-              y="592"
-              fill="#cbd5e1"
-              fontSize="9.5"
-              fontFamily="system-ui, -apple-system, sans-serif"
-            >
-              {displayTotalProblems === 0
-                ? "to track your real-time topic progress."
-                : "Expand into other patterns!"}
-            </text>
-          </g>
-        </svg>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

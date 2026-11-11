@@ -381,6 +381,7 @@ export default function PreviewPage() {
                 mediumSolved={previewLeetcode.mediumSolved}
                 hardSolved={previewLeetcode.hardSolved}
                 ranking={previewLeetcode.ranking}
+                acceptanceRate={previewLeetcode.acceptanceRate}
                 loading={leetcodeLoading}
               />
 

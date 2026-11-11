@@ -54,6 +54,7 @@ export default function LeetcodePage() {
             mediumSolved={data.mediumSolved}
             hardSolved={data.hardSolved}
             ranking={data.ranking}
+            acceptanceRate={data.acceptanceRate}
             loading={loading}
           />
 
