@@ -706,24 +706,67 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
             {/* Chart Area with Horizontal Dashed Gridlines & 12 Topic Columns */}
             <div className="relative w-full overflow-x-auto pb-1">
               <div className="min-w-[620px] relative">
-                {/* Horizontal Dashed Gridlines (10, 8, 6, 4, 2, 0) */}
-                <div className="relative h-[80px] w-full flex flex-col justify-between pl-6 pr-2 mb-2">
-                  {yTicks.map((val, idx) => (
-                    <div key={idx} className="relative w-full flex items-center">
-                      <span className="absolute -left-6 text-[10px] font-mono text-slate-400 w-4 text-right">
-                        {val}
-                      </span>
-                      <div className="w-full border-b border-dashed border-purple-500/20" />
-                    </div>
-                  ))}
+                {/* Upper Chart Plot Area: Gridlines + Rising Bars + Numbers + Discs */}
+                <div className="relative h-[105px] w-full pl-6 pr-2">
+                  {/* 6 Horizontal Dashed Gridlines (10, 8, 6, 4, 2, 0) */}
+                  <div className="absolute inset-0 pl-6 pr-2 flex flex-col justify-between pointer-events-none pb-1.5">
+                    {yTicks.map((val, idx) => (
+                      <div key={idx} className="relative w-full flex items-center">
+                        <span className="absolute -left-6 text-[10px] font-mono text-slate-400 w-4 text-right">
+                          {val}
+                        </span>
+                        <div className="w-full border-b border-dashed border-purple-500/20" />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 12 Columns: Rising Neon Bars, Numbers on Top, and 3D Pedestals on Baseline */}
+                  <div className="relative h-full grid grid-cols-12 gap-1 z-10 pb-1.5">
+                    {chartColumns.map((col) => {
+                      const isDimmed = activeFilter !== "all" && col.level !== activeFilter;
+                      // Maximum pixel height from baseline to top grid line
+                      const maxPlotHeight = 80;
+                      const barHeight = col.solved > 0 ? Math.max(8, Math.min(maxPlotHeight, (col.solved / maxSolved) * maxPlotHeight)) : 0;
+                      // Number is ALWAYS positioned directly above the summit of the bar (or above disc if 0)
+                      const numberBottom = col.solved > 0 ? barHeight + 8 : 10;
+
+                      return (
+                        <div
+                          key={col.id}
+                          className={`relative h-full flex flex-col items-center justify-end transition-opacity duration-300 ${
+                            isDimmed ? "opacity-30" : "opacity-100"
+                          }`}
+                        >
+                          {/* Solved Count Hover/Display: ALWAYS sits on top of bar with neon white shine */}
+                          <div
+                            style={{ bottom: `${numberBottom}px` }}
+                            className="absolute text-[11px] font-bold font-mono text-white text-center transition-all duration-500 ease-out z-20 pointer-events-none select-none drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]"
+                          >
+                            {col.solved}
+                          </div>
+
+                          {/* Animated Rising Neon Bar (when solved > 0) */}
+                          {barHeight > 0 && (
+                            <div
+                              style={{ height: `${barHeight}px` }}
+                              className="absolute bottom-1 w-3 rounded-t-md bg-gradient-to-t from-purple-600 via-cyan-400 to-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.85)] transition-all duration-700 ease-out z-10"
+                            />
+                          )}
+
+                          {/* 3D Oval Glowing Disc / Pedestal at Baseline (Fixed on 0 gridline) */}
+                          <div className="absolute bottom-0 w-9 h-3 flex items-center justify-center z-10">
+                            <div className="w-8 h-2.5 rounded-[50%] bg-[#1a1238] border border-purple-400/60 shadow-[0_0_10px_rgba(168,85,247,0.5),inset_0_0_4px_rgba(192,132,252,0.3)]" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                {/* 12 Topic Columns Grid: Every tier has a fixed height for 100% synchronized alignment */}
-                <div className="grid grid-cols-12 gap-1 pl-6 pr-2">
+                {/* Lower Area: Floating Neon Icon Tiles & Full Topic Labels */}
+                <div className="grid grid-cols-12 gap-1 pl-6 pr-2 pt-1">
                   {chartColumns.map((col) => {
                     const isDimmed = activeFilter !== "all" && col.level !== activeFilter;
-                    // Normalized height in pixels for solved bar (max 60px)
-                    const barHeight = col.solved > 0 ? Math.max(8, Math.min(60, (col.solved / maxSolved) * 60)) : 0;
 
                     return (
                       <div
@@ -732,47 +775,44 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                           isDimmed ? "opacity-30" : "opacity-100"
                         }`}
                       >
-                        {/* Tier 1: Chart / Pedestal Area (Fixed height 32px so all 0s and discs align in a straight horizontal line) */}
-                        <div className="relative w-full h-[32px] flex flex-col items-center justify-end">
-                          {/* Solved Count Hover/Display */}
-                          <div className="text-[11px] font-bold font-mono text-white mb-0.5">
-                            {col.solved}
-                          </div>
-
-                          {/* Animated Rising Neon Bar (when solved > 0) */}
-                          {barHeight > 0 && (
-                            <div
-                              style={{ height: `${barHeight}px` }}
-                              className="absolute bottom-3 w-3 rounded-t-md bg-gradient-to-t from-purple-600 via-cyan-400 to-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.7)] transition-all duration-700 ease-out z-10"
-                            />
-                          )}
-
-                          {/* 3D Oval Glowing Disc / Pedestal at Baseline (Fixed position) */}
-                          <div className="relative w-9 h-3 flex items-center justify-center">
-                            <div className="w-8 h-2.5 rounded-[50%] bg-[#1a1238] border border-purple-400/60 shadow-[0_0_10px_rgba(168,85,247,0.5),inset_0_0_4px_rgba(192,132,252,0.3)]" />
-                          </div>
+                        {/* Floating Neon Icon Tile */}
+                        <div className="w-8 h-8 rounded-lg bg-[#140e2b]/90 border border-purple-400/40 shadow-[0_0_8px_rgba(168,85,247,0.3)] flex items-center justify-center transition-transform duration-200 hover:scale-110 hover:border-purple-300 my-0.5">
+                          <TopicTileIcon id={col.id} />
                         </div>
 
-                        {/* Tier 2: Floating Neon Icon Tile (Fixed height 36px so all tiles are identical height) */}
-                        <div className="h-[36px] flex items-center justify-center my-0.5">
-                          <div className="w-8 h-8 rounded-lg bg-[#140e2b]/90 border border-purple-400/40 shadow-[0_0_8px_rgba(168,85,247,0.3)] flex items-center justify-center transition-transform duration-200 hover:scale-110 hover:border-purple-300">
-                            <TopicTileIcon id={col.id} />
-                          </div>
-                        </div>
-
-                        {/* Tier 3: Topic Label (Fixed height 24px so text length never shifts the columns) */}
+                        {/* Full Topic Label (Neatly wrapped into 2 lines where needed, no truncation) */}
                         <div
                           title={col.name}
-                          className="h-[24px] w-full flex items-center justify-center text-[9px] font-medium text-slate-300 text-center leading-[11px] px-0.5"
+                          className="h-[26px] w-full flex items-center justify-center text-[9px] font-medium text-slate-300 text-center leading-[12px] px-0.5"
                         >
-                          <span className="line-clamp-2">
-                            {col.name === "Dynamic Programming"
-                              ? "Dynamic Prog."
-                              : col.name === "Depth-First Search"
-                              ? "Depth-First"
-                              : col.name === "Breadth-First Search"
-                              ? "Breadth-First"
-                              : col.name}
+                          <span>
+                            {col.name === "Dynamic Programming" ? (
+                              <>
+                                Dynamic<br />Programming
+                              </>
+                            ) : col.name === "Depth-First Search" ? (
+                              <>
+                                Depth-First<br />Search
+                              </>
+                            ) : col.name === "Breadth-First Search" ? (
+                              <>
+                                Breadth-First<br />Search
+                              </>
+                            ) : col.name === "Hash Table" ? (
+                              <>
+                                Hash<br />Table
+                              </>
+                            ) : col.name === "Binary Search" ? (
+                              <>
+                                Binary<br />Search
+                              </>
+                            ) : col.name === "Two Pointers" ? (
+                              <>
+                                Two<br />Pointers
+                              </>
+                            ) : (
+                              col.name
+                            )}
                           </span>
                         </div>
                       </div>
@@ -813,15 +853,15 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                   {/* Animated Golden Trophy Cup */}
                   <PodiumCupAnimation />
 
-                  {/* Topic Name & Count */}
-                  <div className="text-center my-0.5">
+                  {/* Topic Name & Count (No truncation, cleanly wrapped) */}
+                  <div className="text-center my-0.5 min-h-[32px] flex flex-col justify-center">
                     <div
                       title={stats.top1?.tag ?? "—"}
-                      className="text-xs font-bold text-white truncate max-w-[70px]"
+                      className="text-[11px] font-bold text-white leading-tight"
                     >
                       {stats.top1 ? stats.top1.tag : "—"}
                     </div>
-                    <div className="text-[10px] text-amber-300/80 font-mono">
+                    <div className="text-[10px] text-amber-300/90 font-mono mt-0.5">
                       ({stats.top1 ? stats.top1.solved : 0})
                     </div>
                   </div>
@@ -838,15 +878,25 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                   {/* Animated Glowing 3D Star */}
                   <PodiumStarAnimation />
 
-                  {/* Topic Name & Count */}
-                  <div className="text-center my-0.5">
+                  {/* Topic Name & Count (No truncation, cleanly wrapped) */}
+                  <div className="text-center my-0.5 min-h-[32px] flex flex-col justify-center">
                     <div
                       title={stats.top2?.tag ?? "—"}
-                      className="text-xs font-bold text-white truncate max-w-[70px]"
+                      className="text-[11px] font-bold text-white leading-tight"
                     >
-                      {stats.top2 ? stats.top2.tag : "—"}
+                      {stats.top2 ? (
+                        stats.top2.tag.includes(" ") ? (
+                          stats.top2.tag.split(" ").map((w, idx) => (
+                            <span key={idx} className="block">{w}</span>
+                          ))
+                        ) : (
+                          stats.top2.tag
+                        )
+                      ) : (
+                        "—"
+                      )}
                     </div>
-                    <div className="text-[10px] text-cyan-300/80 font-mono">
+                    <div className="text-[10px] text-cyan-300/90 font-mono mt-0.5">
                       ({stats.top2 ? stats.top2.solved : 0})
                     </div>
                   </div>
@@ -863,15 +913,25 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                   {/* Animated Award Medal */}
                   <PodiumMedalAnimation />
 
-                  {/* Topic Name & Count */}
-                  <div className="text-center my-0.5">
+                  {/* Topic Name & Count (No truncation, cleanly wrapped) */}
+                  <div className="text-center my-0.5 min-h-[32px] flex flex-col justify-center">
                     <div
                       title={stats.top3?.tag ?? "—"}
-                      className="text-xs font-bold text-white truncate max-w-[70px]"
+                      className="text-[11px] font-bold text-white leading-tight"
                     >
-                      {stats.top3 ? stats.top3.tag : "—"}
+                      {stats.top3 ? (
+                        stats.top3.tag.includes(" ") ? (
+                          stats.top3.tag.split(" ").map((w, idx) => (
+                            <span key={idx} className="block">{w}</span>
+                          ))
+                        ) : (
+                          stats.top3.tag
+                        )
+                      ) : (
+                        "—"
+                      )}
                     </div>
-                    <div className="text-[10px] text-purple-300/80 font-mono">
+                    <div className="text-[10px] text-purple-300/90 font-mono mt-0.5">
                       ({stats.top3 ? stats.top3.solved : 0})
                     </div>
                   </div>
@@ -924,8 +984,8 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                 </p>
               </div>
 
-              {/* Right Side: 3D Target Dart Illustration */}
-              <div className="relative w-[115px] h-[105px] flex-shrink-0 animate-dart-float filter drop-shadow-[0_0_12px_rgba(168,85,247,0.4)] pointer-events-none select-none">
+              {/* Right Side: Clean 3D Cutout Target Dart Illustration */}
+              <div className="relative w-[120px] h-[105px] flex-shrink-0 animate-dart-float filter drop-shadow-[0_0_12px_rgba(168,85,247,0.4)] pointer-events-none select-none">
                 <Image
                   src="/dsa-target-dart.webp"
                   alt="DSA Target Dart"
