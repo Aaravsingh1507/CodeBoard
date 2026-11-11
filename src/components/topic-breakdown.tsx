@@ -156,13 +156,13 @@ function TopicTileIcon({ id }: { id: string }) {
 // 1. Golden Trophy Cup Animation (Rank 1)
 function PodiumCupAnimation() {
   return (
-    <div className="relative w-12 h-12 flex items-center justify-center pointer-events-none select-none">
+    <div className="relative w-14 h-14 flex items-center justify-center pointer-events-none select-none">
       {/* Golden Aura Glow */}
-      <div className="absolute inset-0 rounded-full bg-amber-500/20 blur-md animate-pulse" />
+      <div className="absolute inset-0 rounded-full bg-amber-500/25 blur-md animate-pulse" />
 
       {/* Floating Trophy Cup */}
-      <div className="relative z-10 animate-cup-float filter drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">
-        <svg viewBox="0 0 48 48" className="w-10 h-10 overflow-visible" fill="none">
+      <div className="relative z-10 animate-cup-float filter drop-shadow-[0_0_10px_rgba(245,158,11,0.7)]">
+        <svg viewBox="0 0 48 48" className="w-12 h-12 overflow-visible" fill="none">
           <defs>
             <linearGradient id="cupGoldBody" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#fef08a" />
@@ -176,7 +176,7 @@ function PodiumCupAnimation() {
             </linearGradient>
             <linearGradient id="cupShimmer" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="transparent" />
-              <stop offset="50%" stopColor="rgba(255,255,255,0.7)" />
+              <stop offset="50%" stopColor="rgba(255,255,255,0.75)" />
               <stop offset="100%" stopColor="transparent" />
             </linearGradient>
             <clipPath id="cupClip">
@@ -188,7 +188,7 @@ function PodiumCupAnimation() {
           <path
             d="M 13 14 C 6 14, 6 24, 15 24"
             stroke="url(#cupGoldHandle)"
-            strokeWidth="2.5"
+            strokeWidth="2.6"
             strokeLinecap="round"
             fill="none"
           />
@@ -197,7 +197,7 @@ function PodiumCupAnimation() {
           <path
             d="M 35 14 C 42 14, 42 24, 33 24"
             stroke="url(#cupGoldHandle)"
-            strokeWidth="2.5"
+            strokeWidth="2.6"
             strokeLinecap="round"
             fill="none"
           />
@@ -211,7 +211,7 @@ function PodiumCupAnimation() {
 
           {/* Shimmer Light Sweep across Bowl */}
           <g clipPath="url(#cupClip)">
-            <rect x="0" y="8" width="16" height="24" fill="url(#cupShimmer)" className="animate-cup-shimmer" />
+            <rect x="0" y="8" width="18" height="24" fill="url(#cupShimmer)" className="animate-cup-shimmer" />
           </g>
 
           {/* Center Star Emblem on Cup */}
@@ -224,7 +224,7 @@ function PodiumCupAnimation() {
           {/* Cup Stem */}
           <path d="M 22 29 L 22 34 L 26 34 L 26 29 Z" fill="url(#cupGoldHandle)" />
 
-          {/* Stepped Pedestal Base */}
+          {/* Stepped Base Foot */}
           <ellipse cx="24" cy="35" rx="8" ry="2" fill="#ca8a04" />
           <path d="M 16 35 L 14 38 L 34 38 L 32 35 Z" fill="url(#cupGoldBody)" />
           <ellipse cx="24" cy="38" rx="10" ry="2.5" fill="#f59e0b" stroke="#78350f" strokeWidth="0.8" />
@@ -247,19 +247,19 @@ function PodiumCupAnimation() {
 // 2. Glowing 3D Star Animation (Rank 2)
 function PodiumStarAnimation() {
   return (
-    <div className="relative w-12 h-12 flex items-center justify-center pointer-events-none select-none">
+    <div className="relative w-14 h-14 flex items-center justify-center pointer-events-none select-none">
       {/* Cyan/Blue Aura Glow */}
-      <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-md animate-pulse" />
+      <div className="absolute inset-0 rounded-full bg-cyan-500/25 blur-md animate-pulse" />
 
       {/* Rotating Sparkle Rays behind Star */}
       <div className="absolute inset-0 flex items-center justify-center animate-spin-slow opacity-60">
-        <div className="w-10 h-0.5 bg-gradient-to-r from-transparent via-cyan-300 to-transparent" />
-        <div className="w-0.5 h-10 bg-gradient-to-b from-transparent via-cyan-300 to-transparent absolute" />
+        <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-cyan-300 to-transparent" />
+        <div className="w-0.5 h-12 bg-gradient-to-b from-transparent via-cyan-300 to-transparent absolute" />
       </div>
 
       {/* Floating 3D Beveled Star */}
-      <div className="relative z-10 animate-star-float filter drop-shadow-[0_0_10px_rgba(56,189,248,0.7)]">
-        <svg viewBox="0 0 48 48" className="w-10 h-10 overflow-visible" fill="none">
+      <div className="relative z-10 animate-star-float filter drop-shadow-[0_0_12px_rgba(56,189,248,0.75)]">
+        <svg viewBox="0 0 48 48" className="w-12 h-12 overflow-visible" fill="none">
           <defs>
             <linearGradient id="starHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#ffffff" />
@@ -277,28 +277,19 @@ function PodiumStarAnimation() {
           </defs>
 
           {/* 3D Beveled 5-point Star Facets with Center Vertex (24, 24) */}
-          {/* Top Tip */}
           <polygon points="24,9 24,24 20.5,19" fill="url(#starHighlight)" />
           <polygon points="24,9 24,24 27.5,19" fill="url(#starShadow)" />
-
-          {/* Top Right Tip */}
           <polygon points="38,19 24,24 27.5,19" fill="url(#starHighlight)" />
           <polygon points="38,19 24,24 30.5,26.5" fill="url(#starShadow)" />
-
-          {/* Bottom Right Tip */}
           <polygon points="33,36 24,24 30.5,26.5" fill="url(#starMid)" />
           <polygon points="33,36 24,24 24,31" fill="url(#starShadow)" />
-
-          {/* Bottom Left Tip */}
           <polygon points="15,36 24,24 24,31" fill="url(#starHighlight)" />
           <polygon points="15,36 24,24 17.5,26.5" fill="url(#starShadow)" />
-
-          {/* Top Left Tip */}
           <polygon points="10,19 24,24 17.5,26.5" fill="url(#starMid)" />
           <polygon points="10,19 24,24 20.5,19" fill="url(#starShadow)" />
 
           {/* Center Jewel Glint */}
-          <circle cx="24" cy="24" r="2.2" fill="#ffffff" filter="drop-shadow(0 0 3px #ffffff)" />
+          <circle cx="24" cy="24" r="2.4" fill="#ffffff" filter="drop-shadow(0 0 3px #ffffff)" />
 
           {/* Twinkle Glint on Top Tip */}
           <g className="animate-glint-1">
@@ -314,13 +305,13 @@ function PodiumStarAnimation() {
 // 3. Glowing Award Medal Animation (Rank 3)
 function PodiumMedalAnimation() {
   return (
-    <div className="relative w-12 h-12 flex items-center justify-center pointer-events-none select-none">
+    <div className="relative w-14 h-14 flex items-center justify-center pointer-events-none select-none">
       {/* Magenta/Purple Aura Glow */}
-      <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-md animate-pulse" />
+      <div className="absolute inset-0 rounded-full bg-purple-500/25 blur-md animate-pulse" />
 
       {/* Floating & Swaying Medal */}
-      <div className="relative z-10 animate-medal-sway origin-top filter drop-shadow-[0_0_8px_rgba(192,132,252,0.65)]">
-        <svg viewBox="0 0 48 48" className="w-10 h-10 overflow-visible" fill="none">
+      <div className="relative z-10 animate-medal-sway origin-top filter drop-shadow-[0_0_10px_rgba(192,132,252,0.7)]">
+        <svg viewBox="0 0 48 48" className="w-12 h-12 overflow-visible" fill="none">
           <defs>
             <linearGradient id="medalRibbonLeft" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#e879f9" />
@@ -344,9 +335,7 @@ function PodiumMedalAnimation() {
           </defs>
 
           {/* Draped Satin Ribbon on Top */}
-          {/* Left Ribbon */}
           <polygon points="16,8 24,21 21,21 13,8" fill="url(#medalRibbonLeft)" />
-          {/* Right Ribbon */}
           <polygon points="32,8 24,21 27,21 35,8" fill="url(#medalRibbonRight)" />
 
           {/* Gold Connector Ring */}
@@ -375,6 +364,100 @@ function PodiumMedalAnimation() {
 }
 
 // -----------------------------------------------------------------------------
+// 3D Cylindrical Stage Pedestal Component (Exact match to target design)
+// -----------------------------------------------------------------------------
+function PodiumPedestal({ variant }: { variant: "amber" | "cyan" | "purple" }) {
+  if (variant === "amber") {
+    return (
+      <div className="relative w-full h-[26px] flex items-center justify-center pointer-events-none select-none">
+        <svg viewBox="0 0 80 26" className="w-[82px] h-[26px] overflow-visible" fill="none">
+          <defs>
+            <radialGradient id="amberGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.85" />
+              <stop offset="100%" stopColor="#b45309" stopOpacity="0" />
+            </radialGradient>
+            <linearGradient id="amberCylinder" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#92400e" />
+              <stop offset="25%" stopColor="#fbbf24" />
+              <stop offset="70%" stopColor="#d97706" />
+              <stop offset="100%" stopColor="#78350f" />
+            </linearGradient>
+            <linearGradient id="amberTop" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fef08a" />
+              <stop offset="45%" stopColor="#fbbf24" />
+              <stop offset="100%" stopColor="#d97706" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="40" cy="18" rx="36" ry="6" fill="url(#amberGlow)" filter="drop-shadow(0 0 8px rgba(245,158,11,0.6))" />
+          <path d="M 8 10 A 32 6.5 0 0 0 72 10 L 72 16 A 32 6.5 0 0 1 8 16 Z" fill="url(#amberCylinder)" />
+          <path d="M 8 16 A 32 6.5 0 0 0 72 16" stroke="#fbbf24" strokeWidth="1" strokeOpacity="0.9" fill="none" />
+          <ellipse cx="40" cy="10" rx="32" ry="6.5" fill="url(#amberTop)" stroke="#fef9c3" strokeWidth="1.2" />
+          <ellipse cx="40" cy="9.5" rx="27" ry="5" fill="#ca8a04" fillOpacity="0.4" />
+        </svg>
+      </div>
+    );
+  }
+  if (variant === "cyan") {
+    return (
+      <div className="relative w-full h-[26px] flex items-center justify-center pointer-events-none select-none">
+        <svg viewBox="0 0 80 26" className="w-[82px] h-[26px] overflow-visible" fill="none">
+          <defs>
+            <radialGradient id="cyanGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.85" />
+              <stop offset="100%" stopColor="#1e40af" stopOpacity="0" />
+            </radialGradient>
+            <linearGradient id="cyanCylinder" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#1e3a8a" />
+              <stop offset="25%" stopColor="#818cf8" />
+              <stop offset="70%" stopColor="#4f46e5" />
+              <stop offset="100%" stopColor="#172554" />
+            </linearGradient>
+            <linearGradient id="cyanTop" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#e0e7ff" />
+              <stop offset="45%" stopColor="#818cf8" />
+              <stop offset="100%" stopColor="#4f46e5" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="40" cy="18" rx="36" ry="6" fill="url(#cyanGlow)" filter="drop-shadow(0 0 8px rgba(99,102,241,0.6))" />
+          <path d="M 8 10 A 32 6.5 0 0 0 72 10 L 72 16 A 32 6.5 0 0 1 8 16 Z" fill="url(#cyanCylinder)" />
+          <path d="M 8 16 A 32 6.5 0 0 0 72 16" stroke="#818cf8" strokeWidth="1" strokeOpacity="0.9" fill="none" />
+          <ellipse cx="40" cy="10" rx="32" ry="6.5" fill="url(#cyanTop)" stroke="#e0e7ff" strokeWidth="1.2" />
+          <ellipse cx="40" cy="9.5" rx="27" ry="5" fill="#3730a3" fillOpacity="0.4" />
+        </svg>
+      </div>
+    );
+  }
+  return (
+    <div className="relative w-full h-[26px] flex items-center justify-center pointer-events-none select-none">
+      <svg viewBox="0 0 80 26" className="w-[82px] h-[26px] overflow-visible" fill="none">
+        <defs>
+          <radialGradient id="purpleGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#c084fc" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#581c87" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id="purpleCylinder" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#581c87" />
+            <stop offset="25%" stopColor="#e879f9" />
+            <stop offset="70%" stopColor="#a855f7" />
+            <stop offset="100%" stopColor="#3b0764" />
+          </linearGradient>
+          <linearGradient id="purpleTop" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#fae8ff" />
+            <stop offset="45%" stopColor="#c084fc" />
+            <stop offset="100%" stopColor="#9333ea" />
+          </linearGradient>
+        </defs>
+        <ellipse cx="40" cy="18" rx="36" ry="6" fill="url(#purpleGlow)" filter="drop-shadow(0 0 8px rgba(192,132,252,0.6))" />
+        <path d="M 8 10 A 32 6.5 0 0 0 72 10 L 72 16 A 32 6.5 0 0 1 8 16 Z" fill="url(#purpleCylinder)" />
+        <path d="M 8 16 A 32 6.5 0 0 0 72 16" stroke="#e879f9" strokeWidth="1" strokeOpacity="0.9" fill="none" />
+        <ellipse cx="40" cy="10" rx="32" ry="6.5" fill="url(#purpleTop)" stroke="#fae8ff" strokeWidth="1.2" />
+        <ellipse cx="40" cy="9.5" rx="27" ry="5" fill="#7e22ce" fillOpacity="0.4" />
+      </svg>
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
 // Main TopicBreakdown Component
 // -----------------------------------------------------------------------------
 export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
@@ -394,7 +477,6 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
       else if (lvl === "intermediate") intermediateCount += count;
       else if (lvl === "advanced") advancedCount += count;
       else {
-        // Fallback classification based on standard LeetCode tags
         const name = t.tag.toLowerCase();
         if (
           name.includes("array") ||
@@ -428,7 +510,6 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
     const intermediatePct = totalProblems > 0 ? ((intermediateCount / totalProblems) * 100).toFixed(1) : "0.0";
     const advancedPct = totalProblems > 0 ? ((advancedCount / totalProblems) * 100).toFixed(1) : "0.0";
 
-    // Sort user's solved topics descending to pick Top 3 Covered Topics
     const sortedSolvedTopics = [...topics]
       .filter((t) => (Number(t.solved) || 0) > 0)
       .sort((a, b) => (Number(b.solved) || 0) - (Number(a.solved) || 0));
@@ -451,7 +532,6 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
   // Map user data to the canonical 12 columns
   const chartColumns = useMemo(() => {
     return CANONICAL_TOPICS.map((canonical) => {
-      // Find matching topic in user's real LeetCode list
       const matched = topics.find((t) => {
         const norm = t.tag.toLowerCase().trim();
         return (
@@ -467,11 +547,10 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
     });
   }, [topics]);
 
-  // Compute maximum solved value for dynamic Y-axis scaling
+  // Dynamic Y-axis scale based on maximum solved count
   const maxSolved = useMemo(() => {
     const rawMax = Math.max(0, ...chartColumns.map((c) => c.solved));
     if (rawMax <= 10) return 10;
-    // Round up to a pleasant multiple of 10
     return Math.ceil(rawMax / 10) * 10;
   }, [chartColumns]);
 
@@ -488,14 +567,13 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
     ];
   }, [maxSolved]);
 
-  // Filter handler
   const handlePillClick = (filter: "fundamental" | "intermediate" | "advanced") => {
     setActiveFilter((prev) => (prev === filter ? "all" : filter));
   };
 
   return (
     <div className="relative w-full max-w-[1024px] mx-auto text-white select-none">
-      {/* Component-level scoped keyframe animations */}
+      {/* Scoped CSS Keyframe Animations */}
       <style jsx global>{`
         @keyframes cupFloat {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -536,14 +614,14 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
         .animate-dart-float { animation: dartFloat 3.6s ease-in-out infinite; }
       `}</style>
 
-      {/* Main Grid Container: Left column starts at the very top, matching uploaded image */}
-      <div className="grid grid-cols-1 lg:grid-cols-[266px_1fr] gap-4 items-stretch">
+      {/* Main Grid: Left Column starts at the top, matching the reference image */}
+      <div className="grid grid-cols-1 lg:grid-cols-[265px_1fr] gap-4 items-start">
         {/* ========================================================================= */}
-        {/* LEFT COLUMN: 3D Desk Scene at the very top + Summary Card underneath       */}
+        {/* LEFT COLUMN: 3D Desk Scene on top + Summary Card underneath               */}
         {/* ========================================================================= */}
-        <div className="flex flex-col items-center h-full pt-1">
-          {/* 3D Desk Scene Illustration (Reaching the very top of the layout) */}
-          <div className="relative w-[266px] h-[235px] -mb-6 z-10 flex-shrink-0 pointer-events-none select-none">
+        <div className="flex flex-col items-center">
+          {/* 3D Desk Scene Illustration (Starts right at the top of the canvas) */}
+          <div className="relative w-[265px] h-[215px] -mb-5 z-10 pointer-events-none select-none">
             <Image
               src="/dsa-desk-scene.webp"
               alt="DSA Desk Scene"
@@ -554,19 +632,17 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
             {/* Ambient lamp glow reflection on desk */}
             <div className="absolute top-8 left-6 w-20 h-20 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
             {/* Glowing </> Code bracket pulse on laptop screen */}
-            <div className="absolute top-[135px] left-[175px] w-8 h-8 rounded-full bg-cyan-400/25 blur-md animate-pulse pointer-events-none" />
+            <div className="absolute top-[125px] left-[175px] w-8 h-8 rounded-full bg-cyan-400/25 blur-md animate-pulse pointer-events-none" />
           </div>
 
-          {/* Left Glassmorphism Summary Card (flex-1 to match right column bottom perfectly) */}
-          <div className="relative w-full flex-1 flex flex-col justify-between rounded-2xl p-4 pt-7 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
-            {/* Top Section: 3 Levels */}
-            <div className="space-y-1">
+          {/* Left Glassmorphism Summary Card (Compact, proportional layout) */}
+          <div className="relative w-full rounded-2xl p-4 pt-6 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
+            {/* Top Section: 3 Levels (Vibrant 3D gemstone square badges, no white dots) */}
+            <div className="space-y-0.5">
               {/* Row 1: Fundamental */}
               <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-cyan-400 to-blue-600 shadow-[0_0_10px_rgba(34,211,238,0.6)] flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-sm bg-white/90" />
-                  </div>
+                  <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600 shadow-[0_0_12px_rgba(34,211,238,0.7)] border border-cyan-300/40" />
                   <span className="text-sm font-semibold text-slate-200">Fundamental</span>
                 </div>
                 <span className="text-sm font-bold text-white tracking-wide">
@@ -578,9 +654,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
               {/* Row 2: Intermediate */}
               <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-purple-400 to-indigo-600 shadow-[0_0_10px_rgba(192,132,252,0.6)] flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-sm bg-white/90" />
-                  </div>
+                  <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-fuchsia-400 via-purple-500 to-indigo-600 shadow-[0_0_12px_rgba(192,132,252,0.7)] border border-purple-300/40" />
                   <span className="text-sm font-semibold text-slate-200">Intermediate</span>
                 </div>
                 <span className="text-sm font-bold text-white tracking-wide">
@@ -592,9 +666,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
               {/* Row 3: Advanced */}
               <div className="flex items-center justify-between py-2">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-400 to-orange-600 shadow-[0_0_10px_rgba(251,191,36,0.6)] flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-sm bg-white/90" />
-                  </div>
+                  <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-amber-300 via-amber-500 to-orange-600 shadow-[0_0_12px_rgba(251,191,36,0.7)] border border-amber-300/40" />
                   <span className="text-sm font-semibold text-slate-200">Advanced</span>
                 </div>
                 <span className="text-sm font-bold text-white tracking-wide">
@@ -610,7 +682,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
               <div className="h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-3.5" />
 
               {/* 3-Column Stats at Bottom */}
-              <div className="grid grid-cols-3 gap-2 text-center pt-1">
+              <div className="grid grid-cols-3 gap-2 text-center pt-0.5">
                 <div>
                   <div className="text-xl font-extrabold text-white font-mono">
                     {stats.totalTopicsCount}
@@ -635,10 +707,10 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
         </div>
 
         {/* ========================================================================= */}
-        {/* RIGHT COLUMN: Pills on top (aligned right) + Distribution Chart + Cards  */}
+        {/* RIGHT COLUMN: Filter Pills on top + Distribution Chart + Bottom 2 Cards   */}
         {/* ========================================================================= */}
-        <div className="flex flex-col gap-3 justify-between h-full">
-          {/* Top Filter Pills Row (Aligned Right directly above Card 2, matching image) */}
+        <div className="flex flex-col gap-3">
+          {/* Top Filter Pills Row (Aligned Right above Card 2) */}
           <div className="flex items-center justify-end gap-3 px-1">
             {/* Fundamental Pill */}
             <button
@@ -679,6 +751,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
               <span>Advanced</span>
             </button>
           </div>
+
           {/* Card 2: Topic-wise Problem Distribution */}
           <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
             {/* Header: Trending Graph Icon + Title */}
@@ -723,10 +796,8 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                   <div className="relative h-full grid grid-cols-12 gap-1 z-10 pb-1.5">
                     {chartColumns.map((col) => {
                       const isDimmed = activeFilter !== "all" && col.level !== activeFilter;
-                      // Maximum pixel height from baseline to top grid line
                       const maxPlotHeight = 80;
                       const barHeight = col.solved > 0 ? Math.max(8, Math.min(maxPlotHeight, (col.solved / maxSolved) * maxPlotHeight)) : 0;
-                      // Number is ALWAYS positioned directly above the summit of the bar (or above disc if 0)
                       const numberBottom = col.solved > 0 ? barHeight + 8 : 10;
 
                       return (
@@ -779,7 +850,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                           <TopicTileIcon id={col.id} />
                         </div>
 
-                        {/* Full Topic Label (Neatly wrapped into 2 lines where needed, no truncation) */}
+                        {/* Full Topic Label */}
                         <div
                           title={col.name}
                           className="h-[26px] w-full flex items-center justify-center text-[9px] font-medium text-slate-300 text-center leading-[12px] px-0.5"
@@ -822,63 +893,65 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
             </div>
           </div>
 
-          {/* Bottom 2 Cards Grid: EXACT SAME SIZE (50% / 50% grid-cols-2, equal height h-full) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch flex-1">
+          {/* Bottom 2 Cards Grid: Top Covered Topics & Coverage Insight */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* ========================================================================= */}
-            {/* Card 3: Top Covered Topics (with Animated Cup, Star, Medal Podiums)       */}
+            {/* Card 3: Top Covered Topics (with True 3D Stage Pedestals)                 */}
             {/* ========================================================================= */}
-            <div className="relative w-full h-full rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex flex-col justify-between">
-              {/* Header: Trophy Icon + Title + Circular Chevron Button */}
+            <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex flex-col justify-between">
+              {/* Header: Crisp 3D Golden Trophy Icon + Title + Circular Chevron Button */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <svg
                     viewBox="0 0 24 24"
                     className="w-4 h-4 text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.85)]"
-                    fill="currentColor"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <path d="M19 4h-3V3a1 1 0 00-1-1H9a1 1 0 00-1 1v1H5a1 1 0 00-1 1v4c0 3.3 2.7 6 6 6h.2c.6 1.4 1.8 2.5 3.3 2.9V20H11a1 1 0 000 2h2a1 1 0 000-2h-2.5v-2.1c1.5-.4 2.7-1.5 3.3-2.9H14c3.3 0 6-2.7 6-6V5a1 1 0 00-1-1zM6 9V6h2v3c0 2.2-1.8 4-4 4s2-1.8 2-4zm12 0c0 2.2.2 4-2 4s-4-1.8-4-4V6h2v3c0 2.2 1.8 4 4 4z" />
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                    <path d="M4 22h16" />
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H8v4h8v-4h-1c-.55 0-1-.45-1-1v-2.34" />
+                    <path d="M6 4h12v5a6 6 0 0 1-12 0V4z" fill="#f59e0b" fillOpacity="0.4" />
                   </svg>
                   <h4 className="text-sm font-bold text-white tracking-wide">Top Covered Topics</h4>
                 </div>
-                <div className="w-5 h-5 rounded-full bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-purple-300 text-xs">
-                  &gt;
+                <div className="w-6 h-6 rounded-full bg-purple-900/40 border border-purple-400/30 flex items-center justify-center text-purple-200 shadow-[0_0_8px_rgba(168,85,247,0.3)]">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </div>
 
-              {/* 3 Stepped Glowing Podiums (Equal width, equal height) */}
-              <div className="grid grid-cols-3 gap-2 flex-1 items-stretch pt-1">
-                {/* Podium 1 (Rank 1): Golden Trophy Cup */}
-                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#2a1a0f]/40 to-[#181126]/60 border border-amber-500/20 h-full">
-                  {/* Animated Golden Trophy Cup */}
+              {/* 3 Stepped Glowing Podiums */}
+              <div className="grid grid-cols-3 gap-2 pt-1">
+                {/* Podium 1 (Rank 1): Golden Trophy Cup on 3D Amber Stage Pedestal */}
+                <div className="relative flex flex-col items-center justify-between p-2 pt-1 pb-1.5 rounded-xl bg-gradient-to-b from-[#2a1708]/60 via-[#180e22]/70 to-[#120a1c]/80 border border-amber-500/30 shadow-[inset_0_1px_1px_rgba(251,191,36,0.2)]">
                   <PodiumCupAnimation />
 
-                  {/* Topic Name & Count (No truncation, cleanly wrapped) */}
-                  <div className="text-center my-0.5 min-h-[32px] flex flex-col justify-center">
+                  <div className="text-center my-0.5 min-h-[30px] flex flex-col justify-center">
                     <div
                       title={stats.top1?.tag ?? "—"}
                       className="text-[11px] font-bold text-white leading-tight"
                     >
                       {stats.top1 ? stats.top1.tag : "—"}
                     </div>
-                    <div className="text-[10px] text-amber-300/90 font-mono mt-0.5">
+                    <div className="text-[10px] text-amber-300 font-mono mt-0.5">
                       ({stats.top1 ? stats.top1.solved : 0})
                     </div>
                   </div>
 
-                  {/* Tiered Glowing Amber/Gold 3D Pedestal Base */}
-                  <div className="relative w-full flex flex-col items-center mt-0.5">
-                    <div className="w-14 h-2 rounded-[50%] bg-[#ca8a04] border border-amber-300/60 shadow-[0_0_10px_rgba(251,191,36,0.6)]" />
-                    <div className="w-16 h-2 rounded-[50%] bg-[#b45309] -mt-1 shadow-[0_4px_14px_rgba(245,158,11,0.6)]" />
-                  </div>
+                  <PodiumPedestal variant="amber" />
                 </div>
 
-                {/* Podium 2 (Rank 2): Glowing 3D Star */}
-                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#0f1f3a]/40 to-[#181126]/60 border border-cyan-500/20 h-full">
-                  {/* Animated Glowing 3D Star */}
+                {/* Podium 2 (Rank 2): Glowing 3D Star on 3D Blue Stage Pedestal */}
+                <div className="relative flex flex-col items-center justify-between p-2 pt-1 pb-1.5 rounded-xl bg-gradient-to-b from-[#0c1830]/60 via-[#120e28]/70 to-[#100a1c]/80 border border-cyan-500/30 shadow-[inset_0_1px_1px_rgba(56,189,248,0.2)]">
                   <PodiumStarAnimation />
 
-                  {/* Topic Name & Count (No truncation, cleanly wrapped) */}
-                  <div className="text-center my-0.5 min-h-[32px] flex flex-col justify-center">
+                  <div className="text-center my-0.5 min-h-[30px] flex flex-col justify-center">
                     <div
                       title={stats.top2?.tag ?? "—"}
                       className="text-[11px] font-bold text-white leading-tight"
@@ -895,25 +968,19 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                         "—"
                       )}
                     </div>
-                    <div className="text-[10px] text-cyan-300/90 font-mono mt-0.5">
+                    <div className="text-[10px] text-cyan-300 font-mono mt-0.5">
                       ({stats.top2 ? stats.top2.solved : 0})
                     </div>
                   </div>
 
-                  {/* Tiered Glowing Cyan/Blue 3D Pedestal Base */}
-                  <div className="relative w-full flex flex-col items-center mt-0.5">
-                    <div className="w-14 h-2 rounded-[50%] bg-[#6366f1] border border-cyan-300/60 shadow-[0_0_10px_rgba(56,189,248,0.6)]" />
-                    <div className="w-16 h-2 rounded-[50%] bg-[#4338ca] -mt-1 shadow-[0_4px_14px_rgba(99,102,241,0.6)]" />
-                  </div>
+                  <PodiumPedestal variant="cyan" />
                 </div>
 
-                {/* Podium 3 (Rank 3): Glowing Award Medal */}
-                <div className="relative flex flex-col items-center justify-between p-2 rounded-xl bg-gradient-to-b from-[#25103a]/40 to-[#181126]/60 border border-purple-500/20 h-full">
-                  {/* Animated Award Medal */}
+                {/* Podium 3 (Rank 3): Glowing Award Medal on 3D Purple Stage Pedestal */}
+                <div className="relative flex flex-col items-center justify-between p-2 pt-1 pb-1.5 rounded-xl bg-gradient-to-b from-[#240e32]/60 via-[#160c26]/70 to-[#100a1c]/80 border border-purple-500/30 shadow-[inset_0_1px_1px_rgba(192,132,252,0.2)]">
                   <PodiumMedalAnimation />
 
-                  {/* Topic Name & Count (No truncation, cleanly wrapped) */}
-                  <div className="text-center my-0.5 min-h-[32px] flex flex-col justify-center">
+                  <div className="text-center my-0.5 min-h-[30px] flex flex-col justify-center">
                     <div
                       title={stats.top3?.tag ?? "—"}
                       className="text-[11px] font-bold text-white leading-tight"
@@ -930,24 +997,20 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                         "—"
                       )}
                     </div>
-                    <div className="text-[10px] text-purple-300/90 font-mono mt-0.5">
+                    <div className="text-[10px] text-purple-300 font-mono mt-0.5">
                       ({stats.top3 ? stats.top3.solved : 0})
                     </div>
                   </div>
 
-                  {/* Tiered Glowing Magenta/Purple 3D Pedestal Base */}
-                  <div className="relative w-full flex flex-col items-center mt-0.5">
-                    <div className="w-14 h-2 rounded-[50%] bg-[#a855f7] border border-purple-300/60 shadow-[0_0_10px_rgba(192,132,252,0.6)]" />
-                    <div className="w-16 h-2 rounded-[50%] bg-[#7e22ce] -mt-1 shadow-[0_4px_14px_rgba(168,85,247,0.6)]" />
-                  </div>
+                  <PodiumPedestal variant="purple" />
                 </div>
               </div>
             </div>
 
             {/* ========================================================================= */}
-            {/* Card 4: Coverage Insight (EXACT SAME SIZE as Card 3)                       */}
+            {/* Card 4: Coverage Insight (with Clean 3D Cutout Target Dart)               */}
             {/* ========================================================================= */}
-            <div className="relative w-full h-full rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex items-center justify-between">
+            <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent flex items-center justify-between">
               {/* Left Content */}
               <div className="flex-1 pr-2 flex flex-col justify-center">
                 {/* Header: Target Bullseye Icon + Title */}
@@ -983,7 +1046,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                 </p>
               </div>
 
-              {/* Right Side: Clean 3D Cutout Target Dart Illustration */}
+              {/* Right Side: Clean 3D Cutout Target Dart */}
               <div className="relative w-[120px] h-[105px] flex-shrink-0 animate-dart-float filter drop-shadow-[0_0_12px_rgba(168,85,247,0.4)] pointer-events-none select-none">
                 <Image
                   src="/dsa-target-dart.webp"
