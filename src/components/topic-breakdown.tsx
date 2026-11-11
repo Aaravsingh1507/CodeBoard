@@ -575,36 +575,16 @@ function PodiumPedestal({ variant }: { variant: "amber" | "cyan" | "purple" }) {
   );
 }
 
-// Real verified user topic distribution (Synced directly from LeetCode user Aarav_singh)
-export const REAL_USER_TOPICS: TopicItem[] = [
-  { tag: "Array", solved: 14, level: "fundamental" },
-  { tag: "Tree", solved: 10, level: "intermediate" },
-  { tag: "Binary Tree", solved: 10, level: "intermediate" },
-  { tag: "Depth-First Search", solved: 9, level: "intermediate" },
-  { tag: "Dynamic Programming", solved: 7, level: "advanced" },
-  { tag: "Two Pointers", solved: 5, level: "fundamental" },
-  { tag: "Linked List", solved: 4, level: "fundamental" },
-  { tag: "Hash Table", solved: 4, level: "intermediate" },
-  { tag: "Binary Search", solved: 4, level: "intermediate" },
-  { tag: "Breadth-First Search", solved: 4, level: "intermediate" },
-  { tag: "Math", solved: 4, level: "intermediate" },
-  { tag: "Divide and Conquer", solved: 3, level: "advanced" },
-  { tag: "Stack", solved: 2, level: "fundamental" },
-  { tag: "Recursion", solved: 2, level: "intermediate" },
-  { tag: "Bit Manipulation", solved: 2, level: "intermediate" },
-  { tag: "String", solved: 1, level: "fundamental" },
-  { tag: "Sorting", solved: 1, level: "fundamental" },
-  { tag: "Greedy", solved: 1, level: "intermediate" },
-  { tag: "Sliding Window", solved: 1, level: "intermediate" },
-];
+// Real verified user topic distribution
+export const REAL_USER_TOPICS: TopicItem[] = [];
 
 // -----------------------------------------------------------------------------
 // Main TopicBreakdown Component
 // -----------------------------------------------------------------------------
 export function TopicBreakdown({ topics: propTopics = [], totalSolved }: TopicBreakdownProps) {
-  // Use propTopics if provided with data; otherwise seamlessly use user's real topics
+  // Use real topics from props directly (no fake fallbacks)
   const topics = useMemo(() => {
-    return propTopics && propTopics.length > 0 ? propTopics : REAL_USER_TOPICS;
+    return propTopics ?? [];
   }, [propTopics]);
 
   // Active category filter state ('all' or 'fundamental' | 'intermediate' | 'advanced')
@@ -725,8 +705,8 @@ export function TopicBreakdown({ topics: propTopics = [], totalSolved }: TopicBr
     setActiveFilter((prev) => (prev === filter ? "all" : filter));
   };
 
-  // User's verified real-time solved problems count (Aarav_singh: 33 solved problems across 19 topics)
-  const displayTotalProblems = totalSolved ?? (stats.totalTopicsCount === 19 ? 33 : stats.totalProblems);
+  // User's verified real-time solved problems count
+  const displayTotalProblems = totalSolved ?? stats.totalProblems;
 
   return (
     <div className="relative w-full text-white select-none">

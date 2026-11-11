@@ -112,21 +112,15 @@ const PREVIEW_GITHUB: GithubStats = {
 };
 
 const DEFAULT_LEETCODE: LeetcodeStats = {
-  username: "Aarav_singh",
-  ranking: 3551017,
-  totalSolved: 33,
-  easySolved: 18,
-  mediumSolved: 15,
+  username: "",
+  ranking: null,
+  totalSolved: 0,
+  easySolved: 0,
+  mediumSolved: 0,
   hardSolved: 0,
-  acceptanceRate: "75.0%",
-  recentSubmissions: [
-    { title: "Binary Tree Level Order Traversal", difficulty: "Medium", status: "Accepted", timestamp: "1731000000" },
-    { title: "Maximum Depth of Binary Tree", difficulty: "Easy", status: "Accepted", timestamp: "1730900000" },
-    { title: "Invert Binary Tree", difficulty: "Easy", status: "Accepted", timestamp: "1730800000" },
-    { title: "Two Sum", difficulty: "Easy", status: "Accepted", timestamp: "1730700000" },
-    { title: "Reverse Linked List", difficulty: "Easy", status: "Accepted", timestamp: "1730600000" },
-  ],
-  topicBreakdown: REAL_USER_TOPICS,
+  acceptanceRate: "0.0%",
+  recentSubmissions: [],
+  topicBreakdown: [],
 };
 
 const PREVIEW_GOALS = [
@@ -171,10 +165,7 @@ export default function PreviewPage() {
   const previewReadiness = PREVIEW_READINESS;
   const previewStreak = PREVIEW_STREAK;
   const previewGithub = PREVIEW_GITHUB;
-  const previewLeetcode: LeetcodeStats =
-    liveLeetcode && (liveLeetcode.totalSolved > 0 || (liveLeetcode.topicBreakdown && liveLeetcode.topicBreakdown.length > 0))
-      ? liveLeetcode
-      : DEFAULT_LEETCODE;
+  const previewLeetcode: LeetcodeStats = liveLeetcode ?? DEFAULT_LEETCODE;
   const previewGoals = PREVIEW_GOALS;
 
   const [previewReviews, setPreviewReviews] = useState([

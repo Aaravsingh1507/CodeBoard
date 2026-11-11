@@ -15,8 +15,8 @@ export async function GET(req: Request) {
   // Check auth optionally
   const { user } = await requireUser();
 
-  // Determine target username: query param -> authenticated user's setting -> default real username
-  const username = queryUsername || user?.leetcodeUsername || "Aarav_singh";
+  // Determine target username: query param -> authenticated user's setting -> null (no fake fallback)
+  const username = queryUsername || user?.leetcodeUsername || null;
 
   if (!username) {
     return NextResponse.json({
