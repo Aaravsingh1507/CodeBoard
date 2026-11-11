@@ -13,140 +13,257 @@ interface TopicBreakdownProps {
   topics?: TopicItem[];
 }
 
-// Canonical 12 DSA topics matching the reference design exactly
-interface CanonicalTopic {
-  id: string;
-  name: string;
-  level: "fundamental" | "intermediate" | "advanced";
-  aliases: string[];
+// Helper to infer category level if not provided by LeetCode API
+function inferLevel(tag: string): "fundamental" | "intermediate" | "advanced" {
+  const norm = tag.toLowerCase();
+  if (
+    norm.includes("array") ||
+    norm.includes("string") ||
+    norm.includes("hash") ||
+    norm.includes("math") ||
+    norm.includes("sort") ||
+    norm.includes("two pointer") ||
+    norm.includes("matrix") ||
+    norm.includes("simulation")
+  ) {
+    return "fundamental";
+  }
+  if (
+    norm.includes("dynamic") ||
+    norm.includes("dp") ||
+    norm.includes("tree") ||
+    norm.includes("dfs") ||
+    norm.includes("bfs") ||
+    norm.includes("binary search") ||
+    norm.includes("greedy") ||
+    norm.includes("stack") ||
+    norm.includes("queue") ||
+    norm.includes("heap") ||
+    norm.includes("priority") ||
+    norm.includes("linked list") ||
+    norm.includes("graph") ||
+    norm.includes("backtracking") ||
+    norm.includes("sliding window")
+  ) {
+    return "intermediate";
+  }
+  return "advanced";
 }
 
-const CANONICAL_TOPICS: CanonicalTopic[] = [
-  { id: "array", name: "Array", level: "fundamental", aliases: ["array", "arrays"] },
-  { id: "string", name: "String", level: "fundamental", aliases: ["string", "strings"] },
-  { id: "hash-table", name: "Hash Table", level: "fundamental", aliases: ["hash table", "hash map", "hashmap", "hashtable"] },
-  { id: "dp", name: "Dynamic Programming", level: "intermediate", aliases: ["dynamic programming", "dp"] },
-  { id: "math", name: "Math", level: "fundamental", aliases: ["math", "mathematics"] },
-  { id: "sorting", name: "Sorting", level: "fundamental", aliases: ["sorting", "sort"] },
-  { id: "greedy", name: "Greedy", level: "intermediate", aliases: ["greedy"] },
-  { id: "dfs", name: "Depth-First Search", level: "intermediate", aliases: ["depth-first search", "dfs"] },
-  { id: "binary-search", name: "Binary Search", level: "intermediate", aliases: ["binary search"] },
-  { id: "tree", name: "Tree", level: "intermediate", aliases: ["tree", "trees", "binary tree"] },
-  { id: "bfs", name: "Breadth-First Search", level: "intermediate", aliases: ["breadth-first search", "bfs"] },
-  { id: "two-pointers", name: "Two Pointers", level: "fundamental", aliases: ["two pointers", "two-pointer"] },
-];
+// High-fidelity vector icons dynamically mapped for any real-time DSA topic
+function TopicTileIcon({ tag, level }: { tag: string; level?: string }) {
+  const norm = tag.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-");
+  
+  // Theme color dynamically based on level
+  const colorClass =
+    level === "fundamental"
+      ? "text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]"
+      : level === "advanced"
+      ? "text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.7)]"
+      : "text-purple-400 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]";
 
-// High-fidelity vector icons for the 12 floating topic tiles
-function TopicTileIcon({ id }: { id: string }) {
-  switch (id) {
-    case "array":
-      // < >
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="8 7 3 12 8 17" />
-          <polyline points="16 7 21 12 16 17" />
-        </svg>
-      );
-    case "string":
-      // " "
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="currentColor">
-          <path d="M7 8h2v5H6.5c0 1.5 1 2.5 2.5 2.5v1.5C6.5 17 5 15.5 5 13V8h2zm8 0h2v5h-2.5c0 1.5 1 2.5 2.5 2.5v1.5c-2.5 0-4-1.5-4-4V8h2z" />
-        </svg>
-      );
-    case "hash-table":
-      // #
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-purple-400 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-          <line x1="4" y1="9" x2="20" y2="9" />
-          <line x1="4" y1="15" x2="20" y2="15" />
-          <line x1="10" y1="3" x2="8" y2="21" />
-          <line x1="16" y1="3" x2="14" y2="21" />
-        </svg>
-      );
-    case "dp":
-      // </>
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="7 8 3 12 7 16" />
-          <polyline points="17 8 21 12 17 16" />
-          <line x1="14" y1="4" x2="10" y2="20" />
-        </svg>
-      );
-    case "math":
-      // Σ
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-purple-400 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="18 4 6 4 13 12 6 20 18 20" />
-        </svg>
-      );
-    case "sorting":
-      // ⇅
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M8 18V6m0 0l-3 3m3-3l3 3" />
-          <path d="M16 6v12m0 0l-3-3m3 3l3-3" />
-        </svg>
-      );
-    case "greedy":
-      // <>
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="9 8 5 12 9 16" />
-          <polyline points="15 8 19 12 15 16" />
-        </svg>
-      );
-    case "dfs":
-      // 🔍 depth
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="10.5" cy="10.5" r="6" />
-          <line x1="15" y1="15" x2="20" y2="20" />
-        </svg>
-      );
-    case "binary-search":
-      // 🔍 binary
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="10.5" cy="10.5" r="6" />
-          <line x1="15" y1="15" x2="20" y2="20" />
-        </svg>
-      );
-    case "tree":
-      // ⑂
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-purple-400 drop-shadow-[0_0_6px_rgba(192,132,252,0.7)]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="5" r="2.5" fill="currentColor" fillOpacity="0.4" />
-          <circle cx="6" cy="18" r="2.5" fill="currentColor" fillOpacity="0.4" />
-          <circle cx="18" cy="18" r="2.5" fill="currentColor" fillOpacity="0.4" />
-          <path d="M12 7.5v4m0 0l-6 4m6-4l6 4" />
-        </svg>
-      );
-    case "bfs":
-      // 🔍 bfs
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="10.5" cy="10.5" r="6" />
-          <line x1="15" y1="15" x2="20" y2="20" />
-        </svg>
-      );
-    case "two-pointers":
-      // ⇄
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.7)]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M17 7l4 4-4 4" />
-          <path d="M21 11H7" />
-          <path d="M7 17l-4-4 4-4" />
-          <path d="M3 13h14" />
-        </svg>
-      );
-    default:
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="8" />
-        </svg>
-      );
+  if (norm.includes("array")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="8 7 3 12 8 17" />
+        <polyline points="16 7 21 12 16 17" />
+      </svg>
+    );
   }
+  if (norm.includes("string")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="currentColor">
+        <path d="M7 8h2v5H6.5c0 1.5 1 2.5 2.5 2.5v1.5C6.5 17 5 15.5 5 13V8h2zm8 0h2v5h-2.5c0 1.5 1 2.5 2.5 2.5v1.5c-2.5 0-4-1.5-4-4V8h2z" />
+      </svg>
+    );
+  }
+  if (norm.includes("hash")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+        <line x1="4" y1="9" x2="20" y2="9" />
+        <line x1="4" y1="15" x2="20" y2="15" />
+        <line x1="10" y1="3" x2="8" y2="21" />
+        <line x1="16" y1="3" x2="14" y2="21" />
+      </svg>
+    );
+  }
+  if (norm.includes("dynamic") || norm === "dp") {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="7 8 3 12 7 16" />
+        <polyline points="17 8 21 12 17 16" />
+        <line x1="14" y1="4" x2="10" y2="20" />
+      </svg>
+    );
+  }
+  if (norm.includes("math")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="18 4 6 4 13 12 6 20 18 20" />
+      </svg>
+    );
+  }
+  if (norm.includes("sort")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 18V6m0 0l-3 3m3-3l3 3" />
+        <path d="M16 6v12m0 0l-3-3m3 3l3-3" />
+      </svg>
+    );
+  }
+  if (norm.includes("greedy")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 8 5 12 9 16" />
+        <polyline points="15 8 19 12 15 16" />
+      </svg>
+    );
+  }
+  if (norm.includes("dfs") || norm.includes("depth-first")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="10.5" cy="10.5" r="6" />
+        <line x1="15" y1="15" x2="20" y2="20" />
+      </svg>
+    );
+  }
+  if (norm.includes("binary-search")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="10.5" cy="10.5" r="6" />
+        <line x1="15" y1="15" x2="20" y2="20" />
+      </svg>
+    );
+  }
+  if (norm.includes("tree")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="5" r="2.5" fill="currentColor" fillOpacity="0.4" />
+        <circle cx="6" cy="18" r="2.5" fill="currentColor" fillOpacity="0.4" />
+        <circle cx="18" cy="18" r="2.5" fill="currentColor" fillOpacity="0.4" />
+        <path d="M12 7.5v4m0 0l-6 4m6-4l6 4" />
+      </svg>
+    );
+  }
+  if (norm.includes("bfs") || norm.includes("breadth-first")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="10.5" cy="10.5" r="6" />
+        <line x1="15" y1="15" x2="20" y2="20" />
+      </svg>
+    );
+  }
+  if (norm.includes("two-pointer")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 7l4 4-4 4" />
+        <path d="M21 11H7" />
+        <path d="M7 17l-4-4 4-4" />
+        <path d="M3 13h14" />
+      </svg>
+    );
+  }
+  if (norm.includes("matrix")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <line x1="3" y1="9" x2="21" y2="9" />
+        <line x1="3" y1="15" x2="21" y2="15" />
+        <line x1="9" y1="3" x2="9" y2="21" />
+        <line x1="15" y1="3" x2="15" y2="21" />
+      </svg>
+    );
+  }
+  if (norm.includes("stack")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <ellipse cx="12" cy="6" rx="8" ry="3" />
+        <path d="M4 10c0 1.66 3.58 3 8 3s8-1.34 8-3" />
+        <path d="M4 14c0 1.66 3.58 3 8 3s8-1.34 8-3" />
+        <path d="M4 18c0 1.66 3.58 3 8 3s8-1.34 8-3" />
+      </svg>
+    );
+  }
+  if (norm.includes("queue")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="4 8 10 8 10 16 4 16" />
+        <polyline points="14 8 20 8 20 16 14 16" />
+        <line x1="10" y1="12" x2="14" y2="12" />
+      </svg>
+    );
+  }
+  if (norm.includes("heap") || norm.includes("priority")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 3 2 21 22 21" />
+        <line x1="8" y1="13" x2="16" y2="13" />
+      </svg>
+    );
+  }
+  if (norm.includes("graph")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <circle cx="6" cy="6" r="3" />
+        <circle cx="18" cy="6" r="3" />
+        <circle cx="18" cy="18" r="3" />
+        <circle cx="6" cy="18" r="3" />
+        <line x1="9" y1="6" x2="15" y2="6" />
+        <line x1="18" y1="9" x2="18" y2="15" />
+        <line x1="15" y1="18" x2="9" y2="18" />
+        <line x1="6" y1="15" x2="6" y2="9" />
+        <line x1="8" y1="8" x2="16" y2="16" />
+      </svg>
+    );
+  }
+  if (norm.includes("linked-list") || norm.includes("list")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="8" width="6" height="8" rx="1" />
+        <rect x="15" y="8" width="6" height="8" rx="1" />
+        <line x1="9" y1="12" x2="15" y2="12" />
+        <polyline points="13 10 15 12 13 14" />
+      </svg>
+    );
+  }
+  if (norm.includes("backtracking")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 14 4 9 9 4" />
+        <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
+      </svg>
+    );
+  }
+  if (norm.includes("bit")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="7" cy="12" r="4" />
+        <line x1="17" y1="8" x2="17" y2="16" />
+      </svg>
+    );
+  }
+  if (norm.includes("trie")) {
+    return (
+      <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <circle cx="12" cy="4" r="2" />
+        <circle cx="7" cy="12" r="2" />
+        <circle cx="17" cy="12" r="2" />
+        <circle cx="4" cy="20" r="2" />
+        <circle cx="10" cy="20" r="2" />
+        <line x1="12" y1="6" x2="7" y2="10" />
+        <line x1="12" y1="6" x2="17" y2="10" />
+        <line x1="7" y1="14" x2="4" y2="18" />
+        <line x1="7" y1="14" x2="10" y2="18" />
+      </svg>
+    );
+  }
+  // Universal DSA fallback code icon
+  return (
+    <svg viewBox="0 0 24 24" className={`w-4 h-4 ${colorClass}`} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -529,30 +646,38 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
     };
   }, [topics]);
 
-  // Map user data to the canonical 12 columns
-  const chartColumns = useMemo(() => {
-    return CANONICAL_TOPICS.map((canonical) => {
-      const matched = topics.find((t) => {
-        const norm = t.tag.toLowerCase().trim();
-        return (
-          norm === canonical.name.toLowerCase() ||
-          canonical.aliases.some((alias) => norm === alias || norm.includes(alias))
-        );
-      });
-      const solved = matched ? Number(matched.solved) || 0 : 0;
-      return {
-        ...canonical,
-        solved,
-      };
-    });
+  // Extract ONLY real-time topics where solved > 0
+  const solvedTopics = useMemo(() => {
+    return topics
+      .filter((t) => (Number(t.solved) || 0) > 0)
+      .map((t) => {
+        const id = t.tag.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        const level =
+          ((t.level?.toLowerCase() as "fundamental" | "intermediate" | "advanced") ||
+          inferLevel(t.tag));
+        return {
+          id,
+          name: t.tag,
+          level,
+          solved: Number(t.solved) || 0,
+        };
+      })
+      .sort((a, b) => b.solved - a.solved);
   }, [topics]);
 
-  // Dynamic Y-axis scale based on maximum solved count
+  // Filter based on active category pill ("all" | "fundamental" | "intermediate" | "advanced")
+  const displayColumns = useMemo(() => {
+    if (activeFilter === "all") return solvedTopics;
+    return solvedTopics.filter((c) => c.level === activeFilter);
+  }, [solvedTopics, activeFilter]);
+
+  // Dynamic Y-axis scale based on maximum solved count in displayColumns (or fallback 10)
   const maxSolved = useMemo(() => {
-    const rawMax = Math.max(0, ...chartColumns.map((c) => c.solved));
+    if (displayColumns.length === 0) return 10;
+    const rawMax = Math.max(...displayColumns.map((c) => c.solved));
     if (rawMax <= 10) return 10;
     return Math.ceil(rawMax / 10) * 10;
-  }, [chartColumns]);
+  }, [displayColumns]);
 
   // Y-axis 6 gridline ticks (10, 8, 6, 4, 2, 0 when max=10)
   const yTicks = useMemo(() => {
@@ -828,122 +953,121 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
               </h3>
             </div>
 
-            {/* Chart Area with Horizontal Dashed Gridlines & 12 Topic Columns */}
-            <div className="relative w-full overflow-x-auto pb-1">
-              <div className="min-w-[620px] relative">
-                {/* Upper Chart Plot Area: Gridlines + Rising Bars + Numbers + Discs */}
-                <div className="relative h-[92px] w-full pl-6 pr-2">
-                  {/* 6 Horizontal Dashed Gridlines (10, 8, 6, 4, 2, 0) */}
-                  <div className="absolute inset-0 pl-6 pr-2 flex flex-col justify-between pointer-events-none pb-1.5">
-                    {yTicks.map((val, idx) => (
-                      <div key={idx} className="relative w-full flex items-center">
-                        <span className="absolute -left-6 text-[10px] font-mono text-slate-400 w-4 text-right">
-                          {val}
-                        </span>
-                        <div className="w-full border-b border-dashed border-purple-500/20" />
-                      </div>
-                    ))}
+            {/* Chart Area: Displays ONLY real-time topics solved by user; clean empty state if none */}
+            {solvedTopics.length === 0 ? (
+              <div className="h-[155px] flex flex-col items-center justify-center text-center px-4">
+                <div className="w-11 h-11 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-2 shadow-[0_0_16px_rgba(168,85,247,0.2)]">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M18 17V9" />
+                    <path d="M13 17V5" />
+                    <path d="M8 17v-3" />
+                  </svg>
+                </div>
+                <p className="text-xs font-semibold text-slate-200">No topic data available yet</p>
+                <p className="text-[11px] text-slate-400 mt-0.5 max-w-[320px]">
+                  Solved problems on LeetCode will automatically display here broken down by topic in real time.
+                </p>
+              </div>
+            ) : displayColumns.length === 0 ? (
+              <div className="h-[155px] flex flex-col items-center justify-center text-center px-4">
+                <p className="text-xs font-semibold text-slate-300">
+                  No {activeFilter} topics solved yet
+                </p>
+                <button
+                  onClick={() => setActiveFilter("all")}
+                  className="mt-2 px-3 py-1 text-[11px] font-semibold rounded-full bg-purple-500/20 text-purple-200 border border-purple-400/40 hover:bg-purple-500/30 transition-colors"
+                >
+                  Show all solved topics ({solvedTopics.length})
+                </button>
+              </div>
+            ) : (
+              <div className="relative w-full overflow-x-auto pb-1">
+                <div className="min-w-full w-max mx-auto px-2">
+                  {/* Upper Chart Plot Area: Gridlines + Rising Bars + Numbers + Discs */}
+                  <div className="relative h-[92px] w-full pl-6 pr-2">
+                    {/* 6 Horizontal Dashed Gridlines (10, 8, 6, 4, 2, 0) */}
+                    <div className="absolute inset-0 pl-6 pr-2 flex flex-col justify-between pointer-events-none pb-1.5">
+                      {yTicks.map((val, idx) => (
+                        <div key={idx} className="relative w-full flex items-center">
+                          <span className="absolute -left-6 text-[10px] font-mono text-slate-400 w-4 text-right">
+                            {val}
+                          </span>
+                          <div className="w-full border-b border-dashed border-purple-500/20" />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Columns: Rising Neon Bars, Numbers on Top, and 3D Pedestals on Baseline */}
+                    <div className={`relative h-full flex items-end ${displayColumns.length <= 10 ? 'justify-around' : 'gap-4'} z-10 pb-1.5`}>
+                      {displayColumns.map((col) => {
+                        const maxPlotHeight = 68;
+                        const barHeight = Math.max(8, Math.min(maxPlotHeight, (col.solved / maxSolved) * maxPlotHeight));
+                        const numberBottom = barHeight + 7;
+
+                        const barGradient =
+                          col.level === "fundamental"
+                            ? "from-cyan-600 via-sky-400 to-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.85)]"
+                            : col.level === "advanced"
+                            ? "from-amber-600 via-orange-400 to-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.85)]"
+                            : "from-purple-600 via-fuchsia-400 to-purple-300 shadow-[0_0_12px_rgba(192,132,252,0.85)]";
+
+                        return (
+                          <div
+                            key={col.id}
+                            className="relative h-full w-14 flex-shrink-0 flex flex-col items-center justify-end transition-all duration-300"
+                          >
+                            {/* Solved Count Hover/Display */}
+                            <div
+                              style={{ bottom: `${numberBottom}px` }}
+                              className="absolute text-[11px] font-black font-mono text-white text-center transition-all duration-500 ease-out z-20 pointer-events-none select-none drop-shadow-[0_0_6px_rgba(34,211,238,0.9),0_1px_3px_rgba(0,0,0,0.9)]"
+                            >
+                              {col.solved}
+                            </div>
+
+                            {/* Animated Rising Neon Bar */}
+                            <div
+                              style={{ height: `${barHeight}px` }}
+                              className={`absolute bottom-1 w-3 rounded-t-md bg-gradient-to-t ${barGradient} transition-all duration-700 ease-out z-10`}
+                            />
+
+                            {/* 3D Oval Glowing Disc / Pedestal at Baseline (Fixed on 0 gridline) */}
+                            <div className="absolute bottom-0 w-9 h-3 flex items-center justify-center z-10">
+                              <div className="w-8 h-2.5 rounded-[50%] bg-[#1a1238] border border-purple-400/60 shadow-[0_0_10px_rgba(168,85,247,0.5),inset_0_0_4px_rgba(192,132,252,0.3)]" />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
 
-                  {/* 12 Columns: Rising Neon Bars, Numbers on Top, and 3D Pedestals on Baseline */}
-                  <div className="relative h-full grid grid-cols-12 gap-1 z-10 pb-1.5">
-                    {chartColumns.map((col) => {
-                      const isDimmed = activeFilter !== "all" && col.level !== activeFilter;
-                      const maxPlotHeight = 68;
-                      const barHeight = col.solved > 0 ? Math.max(8, Math.min(maxPlotHeight, (col.solved / maxSolved) * maxPlotHeight)) : 0;
-                      const numberBottom = col.solved > 0 ? barHeight + 7 : 9;
-
+                  {/* Lower Area: Floating Neon Icon Tiles & Full Topic Labels */}
+                  <div className={`flex items-start ${displayColumns.length <= 10 ? 'justify-around' : 'gap-4'} pl-6 pr-2 pt-1`}>
+                    {displayColumns.map((col) => {
                       return (
                         <div
                           key={col.id}
-                          className={`relative h-full flex flex-col items-center justify-end transition-opacity duration-300 ${
-                            isDimmed ? "opacity-30" : "opacity-100"
-                          }`}
+                          className="w-14 flex-shrink-0 flex flex-col items-center transition-all duration-300"
                         >
-                          {/* Solved Count Hover/Display: ALWAYS sits on top of bar with neon white shine and strong contrast */}
-                          <div
-                            style={{ bottom: `${numberBottom}px` }}
-                            className="absolute text-[11px] font-black font-mono text-white text-center transition-all duration-500 ease-out z-20 pointer-events-none select-none drop-shadow-[0_0_6px_rgba(34,211,238,0.9),0_1px_3px_rgba(0,0,0,0.9)]"
-                          >
-                            {col.solved}
+                          {/* Floating Neon Icon Tile */}
+                          <div className="w-7.5 h-7.5 rounded-lg bg-[#140e2b]/90 border border-purple-400/40 shadow-[0_0_8px_rgba(168,85,247,0.3)] flex items-center justify-center transition-transform duration-200 hover:scale-110 hover:border-purple-300 my-0.5">
+                            <TopicTileIcon tag={col.name} level={col.level} />
                           </div>
 
-                          {/* Animated Rising Neon Bar (when solved > 0) */}
-                          {barHeight > 0 && (
-                            <div
-                              style={{ height: `${barHeight}px` }}
-                              className="absolute bottom-1 w-3 rounded-t-md bg-gradient-to-t from-purple-600 via-cyan-400 to-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.85)] transition-all duration-700 ease-out z-10"
-                            />
-                          )}
-
-                          {/* 3D Oval Glowing Disc / Pedestal at Baseline (Fixed on 0 gridline) */}
-                          <div className="absolute bottom-0 w-9 h-3 flex items-center justify-center z-10">
-                            <div className="w-8 h-2.5 rounded-[50%] bg-[#1a1238] border border-purple-400/60 shadow-[0_0_10px_rgba(168,85,247,0.5),inset_0_0_4px_rgba(192,132,252,0.3)]" />
+                          {/* Full Topic Label */}
+                          <div
+                            title={col.name}
+                            className="h-[26px] w-full flex items-center justify-center text-[9px] font-medium text-slate-300 text-center leading-[11px] px-0.5 break-words"
+                          >
+                            <span>{col.name}</span>
                           </div>
                         </div>
                       );
                     })}
                   </div>
                 </div>
-
-                {/* Lower Area: Floating Neon Icon Tiles & Full Topic Labels */}
-                <div className="grid grid-cols-12 gap-1 pl-6 pr-2 pt-1">
-                  {chartColumns.map((col) => {
-                    const isDimmed = activeFilter !== "all" && col.level !== activeFilter;
-
-                    return (
-                      <div
-                        key={col.id}
-                        className={`flex flex-col items-center transition-opacity duration-300 ${
-                          isDimmed ? "opacity-30" : "opacity-100"
-                        }`}
-                      >
-                        {/* Floating Neon Icon Tile */}
-                        <div className="w-7.5 h-7.5 rounded-lg bg-[#140e2b]/90 border border-purple-400/40 shadow-[0_0_8px_rgba(168,85,247,0.3)] flex items-center justify-center transition-transform duration-200 hover:scale-110 hover:border-purple-300 my-0.5">
-                          <TopicTileIcon id={col.id} />
-                        </div>
-
-                        {/* Full Topic Label */}
-                        <div
-                          title={col.name}
-                          className="h-[26px] w-full flex items-center justify-center text-[9px] font-medium text-slate-300 text-center leading-[12px] px-0.5"
-                        >
-                          <span>
-                            {col.name === "Dynamic Programming" ? (
-                              <>
-                                Dynamic<br />Programming
-                              </>
-                            ) : col.name === "Depth-First Search" ? (
-                              <>
-                                Depth-First<br />Search
-                              </>
-                            ) : col.name === "Breadth-First Search" ? (
-                              <>
-                                Breadth-First<br />Search
-                              </>
-                            ) : col.name === "Hash Table" ? (
-                              <>
-                                Hash<br />Table
-                              </>
-                            ) : col.name === "Binary Search" ? (
-                              <>
-                                Binary<br />Search
-                              </>
-                            ) : col.name === "Two Pointers" ? (
-                              <>
-                                Two<br />Pointers
-                              </>
-                            ) : (
-                              col.name
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Bottom 2 Cards Grid: Top Covered Topics & Coverage Insight */}
@@ -972,94 +1096,100 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                 <h4 className="text-sm font-bold text-white tracking-wide">Top Covered Topics</h4>
               </div>
 
-              {/* 3 Stepped Glowing Podiums */}
-              <div className="grid grid-cols-3 gap-2 pt-1">
-                {/* Podium 1 (Rank 1): Golden Trophy Cup on 3D Amber Stage Pedestal */}
-                <div className="relative flex flex-col items-center justify-between p-2 pt-1 pb-1.5 rounded-xl bg-gradient-to-b from-[#2a1708]/60 via-[#180e22]/70 to-[#120a1c]/80 border border-amber-500/30 shadow-[inset_0_1px_1px_rgba(251,191,36,0.2)]">
-                  <PodiumCupAnimation />
+              {stats.totalTopicsCount === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-3 min-h-[140px]">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-2 shadow-[0_0_12px_rgba(245,158,11,0.2)]">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                      <path d="M4 22h16" />
+                      <path d="M10 14.66V17c0 .55-.45 1-1 1H8v4h8v-4h-1c-.55 0-1-.45-1-1v-2.34" />
+                      <path d="M6 4h12v5a6 6 0 0 1-12 0V4z" fill="#f59e0b" fillOpacity="0.4" />
+                    </svg>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-300">No covered topics yet</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5 max-w-[200px]">
+                    Your top solved topics will take the podium here.
+                  </p>
+                </div>
+              ) : (
+                /* 3 Stepped Glowing Podiums */
+                <div className="grid grid-cols-3 gap-2 pt-1">
+                  {/* Podium 1 (Rank 1): Golden Trophy Cup on 3D Amber Stage Pedestal */}
+                  <div className="relative flex flex-col items-center justify-between p-2 pt-1 pb-1.5 rounded-xl bg-gradient-to-b from-[#2a1708]/60 via-[#180e22]/70 to-[#120a1c]/80 border border-amber-500/30 shadow-[inset_0_1px_1px_rgba(251,191,36,0.2)]">
+                    <PodiumCupAnimation />
 
-                  <div className="text-center my-0.5 min-h-[34px] flex flex-col justify-center">
-                    <div
-                      title={stats.top1?.tag ?? "—"}
-                      className="text-xs font-bold text-white leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
-                    >
-                      {stats.top1 ? stats.top1.tag : "—"}
+                    <div className="text-center my-0.5 min-h-[34px] flex flex-col justify-center">
+                      <div
+                        title={stats.top1?.tag ?? "—"}
+                        className="text-xs font-bold text-white leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+                      >
+                        {stats.top1 ? stats.top1.tag : "—"}
+                      </div>
+                      {/* High-visibility illuminated number pill badge */}
+                      <div className="mt-1 flex items-center justify-center">
+                        <span className="inline-block px-2.5 py-0.5 text-xs font-black font-mono text-amber-200 bg-amber-500/25 border border-amber-400/60 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.55)]">
+                          ({stats.top1 ? stats.top1.solved : 0})
+                        </span>
+                      </div>
                     </div>
-                    {/* High-visibility illuminated number pill badge */}
-                    <div className="mt-1 flex items-center justify-center">
-                      <span className="inline-block px-2.5 py-0.5 text-xs font-black font-mono text-amber-200 bg-amber-500/25 border border-amber-400/60 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.55)]">
-                        ({stats.top1 ? stats.top1.solved : 0})
-                      </span>
-                    </div>
+
+                    <PodiumPedestal variant="amber" />
                   </div>
 
-                  <PodiumPedestal variant="amber" />
-                </div>
+                  {/* Podium 2 (Rank 2): Glowing 3D Star on 3D Blue Stage Pedestal */}
+                  <div className="relative flex flex-col items-center justify-between p-2 pt-1 pb-1.5 rounded-xl bg-gradient-to-b from-[#0c1830]/60 via-[#120e28]/70 to-[#100a1c]/80 border border-cyan-500/30 shadow-[inset_0_1px_1px_rgba(56,189,248,0.2)]">
+                    <PodiumStarAnimation />
 
-                {/* Podium 2 (Rank 2): Glowing 3D Star on 3D Blue Stage Pedestal */}
-                <div className="relative flex flex-col items-center justify-between p-2 pt-1 pb-1.5 rounded-xl bg-gradient-to-b from-[#0c1830]/60 via-[#120e28]/70 to-[#100a1c]/80 border border-cyan-500/30 shadow-[inset_0_1px_1px_rgba(56,189,248,0.2)]">
-                  <PodiumStarAnimation />
-
-                  <div className="text-center my-0.5 min-h-[34px] flex flex-col justify-center">
-                    <div
-                      title={stats.top2?.tag ?? "—"}
-                      className="text-xs font-bold text-white leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
-                    >
-                      {stats.top2 ? (
-                        stats.top2.tag.includes(" ") ? (
-                          stats.top2.tag.split(" ").map((w, idx) => (
-                            <span key={idx} className="block">{w}</span>
-                          ))
+                    <div className="text-center my-0.5 min-h-[34px] flex flex-col justify-center">
+                      <div
+                        title={stats.top2?.tag ?? "—"}
+                        className="text-xs font-bold text-white leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+                      >
+                        {stats.top2 ? stats.top2.tag : "—"}
+                      </div>
+                      {/* High-visibility illuminated number pill badge or empty indicator */}
+                      <div className="mt-1 flex items-center justify-center">
+                        {stats.top2 ? (
+                          <span className="inline-block px-2.5 py-0.5 text-xs font-black font-mono text-cyan-100 bg-cyan-500/25 border border-cyan-400/60 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.55)]">
+                            ({stats.top2.solved})
+                          </span>
                         ) : (
-                          stats.top2.tag
-                        )
-                      ) : (
-                        "—"
-                      )}
+                          <span className="text-[10px] text-slate-500 font-mono">—</span>
+                        )}
+                      </div>
                     </div>
-                    {/* High-visibility illuminated number pill badge */}
-                    <div className="mt-1 flex items-center justify-center">
-                      <span className="inline-block px-2.5 py-0.5 text-xs font-black font-mono text-cyan-100 bg-cyan-500/25 border border-cyan-400/60 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.55)]">
-                        ({stats.top2 ? stats.top2.solved : 0})
-                      </span>
-                    </div>
+
+                    <PodiumPedestal variant="cyan" />
                   </div>
 
-                  <PodiumPedestal variant="cyan" />
-                </div>
+                  {/* Podium 3 (Rank 3): Glowing Award Medal on 3D Purple Stage Pedestal */}
+                  <div className="relative flex flex-col items-center justify-between p-2 pt-1 pb-1.5 rounded-xl bg-gradient-to-b from-[#240e32]/60 via-[#160c26]/70 to-[#100a1c]/80 border border-purple-500/30 shadow-[inset_0_1px_1px_rgba(192,132,252,0.2)]">
+                    <PodiumMedalAnimation />
 
-                {/* Podium 3 (Rank 3): Glowing Award Medal on 3D Purple Stage Pedestal */}
-                <div className="relative flex flex-col items-center justify-between p-2 pt-1 pb-1.5 rounded-xl bg-gradient-to-b from-[#240e32]/60 via-[#160c26]/70 to-[#100a1c]/80 border border-purple-500/30 shadow-[inset_0_1px_1px_rgba(192,132,252,0.2)]">
-                  <PodiumMedalAnimation />
-
-                  <div className="text-center my-0.5 min-h-[34px] flex flex-col justify-center">
-                    <div
-                      title={stats.top3?.tag ?? "—"}
-                      className="text-xs font-bold text-white leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
-                    >
-                      {stats.top3 ? (
-                        stats.top3.tag.includes(" ") ? (
-                          stats.top3.tag.split(" ").map((w, idx) => (
-                            <span key={idx} className="block">{w}</span>
-                          ))
+                    <div className="text-center my-0.5 min-h-[34px] flex flex-col justify-center">
+                      <div
+                        title={stats.top3?.tag ?? "—"}
+                        className="text-xs font-bold text-white leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+                      >
+                        {stats.top3 ? stats.top3.tag : "—"}
+                      </div>
+                      {/* High-visibility illuminated number pill badge or empty indicator */}
+                      <div className="mt-1 flex items-center justify-center">
+                        {stats.top3 ? (
+                          <span className="inline-block px-2.5 py-0.5 text-xs font-black font-mono text-purple-100 bg-purple-500/25 border border-purple-400/60 rounded-full shadow-[0_0_10px_rgba(192,132,252,0.55)]">
+                            ({stats.top3.solved})
+                          </span>
                         ) : (
-                          stats.top3.tag
-                        )
-                      ) : (
-                        "—"
-                      )}
+                          <span className="text-[10px] text-slate-500 font-mono">—</span>
+                        )}
+                      </div>
                     </div>
-                    {/* High-visibility illuminated number pill badge */}
-                    <div className="mt-1 flex items-center justify-center">
-                      <span className="inline-block px-2.5 py-0.5 text-xs font-black font-mono text-purple-100 bg-purple-500/25 border border-purple-400/60 rounded-full shadow-[0_0_10px_rgba(192,132,252,0.55)]">
-                        ({stats.top3 ? stats.top3.solved : 0})
-                      </span>
-                    </div>
-                  </div>
 
-                  <PodiumPedestal variant="purple" />
+                    <PodiumPedestal variant="purple" />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* ========================================================================= */}
