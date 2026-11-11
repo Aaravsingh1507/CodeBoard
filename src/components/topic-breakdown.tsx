@@ -536,56 +536,14 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
         .animate-dart-float { animation: dartFloat 3.6s ease-in-out infinite; }
       `}</style>
 
-      {/* Top Filter Pills Row (Aligned Right, matching image) */}
-      <div className="flex items-center justify-end gap-3 mb-3 px-1">
-        {/* Fundamental Pill */}
-        <button
-          onClick={() => handlePillClick("fundamental")}
-          className={`group flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
-            activeFilter === "fundamental"
-              ? "bg-[#0b1d30] border-cyan-400 text-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.45)] ring-1 ring-cyan-400"
-              : "bg-[#0c1424]/90 border-cyan-500/30 text-cyan-200/90 hover:border-cyan-400/60 hover:shadow-[0_0_12px_rgba(6,182,212,0.25)]"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
-          <span>Fundamental</span>
-        </button>
-
-        {/* Intermediate Pill */}
-        <button
-          onClick={() => handlePillClick("intermediate")}
-          className={`group flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
-            activeFilter === "intermediate"
-              ? "bg-[#201035] border-purple-400 text-purple-200 shadow-[0_0_16px_rgba(192,132,252,0.45)] ring-1 ring-purple-400"
-              : "bg-[#180e29]/90 border-purple-500/30 text-purple-200/90 hover:border-purple-400/60 hover:shadow-[0_0_12px_rgba(168,85,247,0.25)]"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_#c084fc] animate-pulse" />
-          <span>Intermediate</span>
-        </button>
-
-        {/* Advanced Pill */}
-        <button
-          onClick={() => handlePillClick("advanced")}
-          className={`group flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
-            activeFilter === "advanced"
-              ? "bg-[#2c1908] border-amber-400 text-amber-200 shadow-[0_0_16px_rgba(251,191,36,0.45)] ring-1 ring-amber-400"
-              : "bg-[#211208]/90 border-amber-500/30 text-amber-200/90 hover:border-amber-400/60 hover:shadow-[0_0_12px_rgba(245,158,11,0.25)]"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24] animate-pulse" />
-          <span>Advanced</span>
-        </button>
-      </div>
-
-      {/* Main Grid Container (No artificial outer background, pure glassmorphic floating cards) */}
-      <div className="grid grid-cols-1 lg:grid-cols-[265px_1fr] gap-4 items-stretch">
+      {/* Main Grid Container: Left column starts at the very top, matching uploaded image */}
+      <div className="grid grid-cols-1 lg:grid-cols-[266px_1fr] gap-4 items-stretch">
         {/* ========================================================================= */}
-        {/* LEFT COLUMN: 3D Desk Scene on top + Summary Card underneath               */}
+        {/* LEFT COLUMN: 3D Desk Scene at the very top + Summary Card underneath       */}
         {/* ========================================================================= */}
-        <div className="flex flex-col items-center h-full">
-          {/* 3D Desk Scene Illustration (Floating naturally above card) */}
-          <div className="relative w-[265px] h-[200px] -mb-4 z-10 flex-shrink-0 pointer-events-none select-none">
+        <div className="flex flex-col items-center h-full pt-1">
+          {/* 3D Desk Scene Illustration (Reaching the very top of the layout) */}
+          <div className="relative w-[266px] h-[235px] -mb-6 z-10 flex-shrink-0 pointer-events-none select-none">
             <Image
               src="/dsa-desk-scene.webp"
               alt="DSA Desk Scene"
@@ -594,13 +552,13 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
               className="object-contain filter drop-shadow-[0_10px_20px_rgba(168,85,247,0.3)]"
             />
             {/* Ambient lamp glow reflection on desk */}
-            <div className="absolute top-10 left-6 w-20 h-20 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute top-8 left-6 w-20 h-20 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
             {/* Glowing </> Code bracket pulse on laptop screen */}
-            <div className="absolute top-[84px] left-[138px] w-8 h-8 rounded-full bg-cyan-400/25 blur-md animate-pulse pointer-events-none" />
+            <div className="absolute top-[135px] left-[175px] w-8 h-8 rounded-full bg-cyan-400/25 blur-md animate-pulse pointer-events-none" />
           </div>
 
-          {/* Left Glassmorphism Summary Card (flex-1 to match right column height perfectly) */}
-          <div className="relative w-full flex-1 flex flex-col justify-between rounded-2xl p-4 pt-6 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
+          {/* Left Glassmorphism Summary Card (flex-1 to match right column bottom perfectly) */}
+          <div className="relative w-full flex-1 flex flex-col justify-between rounded-2xl p-4 pt-7 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
             {/* Top Section: 3 Levels */}
             <div className="space-y-1">
               {/* Row 1: Fundamental */}
@@ -677,9 +635,50 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
         </div>
 
         {/* ========================================================================= */}
-        {/* RIGHT COLUMN: Distribution Chart (Top) + Bottom 2 Cards                  */}
+        {/* RIGHT COLUMN: Pills on top (aligned right) + Distribution Chart + Cards  */}
         {/* ========================================================================= */}
-        <div className="flex flex-col gap-4 justify-between h-full">
+        <div className="flex flex-col gap-3 justify-between h-full">
+          {/* Top Filter Pills Row (Aligned Right directly above Card 2, matching image) */}
+          <div className="flex items-center justify-end gap-3 px-1">
+            {/* Fundamental Pill */}
+            <button
+              onClick={() => handlePillClick("fundamental")}
+              className={`group flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
+                activeFilter === "fundamental"
+                  ? "bg-[#0b1d30] border-cyan-400 text-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.45)] ring-1 ring-cyan-400"
+                  : "bg-[#0c1424]/90 border-cyan-500/30 text-cyan-200/90 hover:border-cyan-400/60 hover:shadow-[0_0_12px_rgba(6,182,212,0.25)]"
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
+              <span>Fundamental</span>
+            </button>
+
+            {/* Intermediate Pill */}
+            <button
+              onClick={() => handlePillClick("intermediate")}
+              className={`group flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
+                activeFilter === "intermediate"
+                  ? "bg-[#201035] border-purple-400 text-purple-200 shadow-[0_0_16px_rgba(192,132,252,0.45)] ring-1 ring-purple-400"
+                  : "bg-[#180e29]/90 border-purple-500/30 text-purple-200/90 hover:border-purple-400/60 hover:shadow-[0_0_12px_rgba(168,85,247,0.25)]"
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_#c084fc] animate-pulse" />
+              <span>Intermediate</span>
+            </button>
+
+            {/* Advanced Pill */}
+            <button
+              onClick={() => handlePillClick("advanced")}
+              className={`group flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
+                activeFilter === "advanced"
+                  ? "bg-[#2c1908] border-amber-400 text-amber-200 shadow-[0_0_16px_rgba(251,191,36,0.45)] ring-1 ring-amber-400"
+                  : "bg-[#211208]/90 border-amber-500/30 text-amber-200/90 hover:border-amber-400/60 hover:shadow-[0_0_12px_rgba(245,158,11,0.25)]"
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24] animate-pulse" />
+              <span>Advanced</span>
+            </button>
+          </div>
           {/* Card 2: Topic-wise Problem Distribution */}
           <div className="relative rounded-2xl p-4 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
             {/* Header: Trending Graph Icon + Title */}
