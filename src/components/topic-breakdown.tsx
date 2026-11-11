@@ -777,72 +777,42 @@ export function TopicBreakdown({ topics: propTopics = [], totalSolved }: TopicBr
           0%, 100% { opacity: 0.65; transform: scale(1); }
           50% { opacity: 0.95; transform: scale(1.06); }
         }
-        @keyframes gasLanternFlicker {
+        @keyframes realisticLanternFlame {
           0%, 100% {
-            opacity: 0.98;
-            transform: scale(1);
-            filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.95)) drop-shadow(0 0 35px rgba(245, 158, 11, 0.6));
-          }
-          6% {
-            opacity: 0.82;
-            transform: scale(0.96);
-            filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.75)) drop-shadow(0 0 20px rgba(245, 158, 11, 0.4));
-          }
-          12% {
-            opacity: 1;
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 24px rgba(251, 191, 36, 1)) drop-shadow(0 0 45px rgba(245, 158, 11, 0.85));
-          }
-          25% {
-            opacity: 0.90;
-            transform: scale(0.98);
-            filter: drop-shadow(0 0 14px rgba(251, 191, 36, 0.8));
-          }
-          38% {
-            opacity: 0.68;
-            transform: scale(0.92);
-            filter: drop-shadow(0 0 9px rgba(251, 191, 36, 0.5));
-          }
-          42% {
             opacity: 0.96;
-            transform: scale(1.03);
-            filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.9));
+            filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.9)) drop-shadow(0 0 24px rgba(245, 158, 11, 0.55));
           }
-          58% {
-            opacity: 0.85;
-            transform: scale(0.97);
-            filter: drop-shadow(0 0 13px rgba(251, 191, 36, 0.75));
+          16% {
+            opacity: 0.89;
+            filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8)) drop-shadow(0 0 18px rgba(245, 158, 11, 0.4));
           }
-          64% {
-            opacity: 0.65;
-            transform: scale(0.90);
-            filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.45));
+          32% {
+            opacity: 0.98;
+            filter: drop-shadow(0 0 12px rgba(251, 191, 36, 1)) drop-shadow(0 0 28px rgba(245, 158, 11, 0.65));
           }
-          68% {
+          46% {
+            opacity: 0.91;
+            filter: drop-shadow(0 0 9px rgba(251, 191, 36, 0.85)) drop-shadow(0 0 20px rgba(245, 158, 11, 0.45));
+          }
+          60% {
             opacity: 1;
-            transform: scale(1.07);
-            filter: drop-shadow(0 0 28px rgba(251, 191, 36, 1)) drop-shadow(0 0 52px rgba(245, 158, 11, 0.9));
+            filter: drop-shadow(0 0 14px rgba(251, 191, 36, 1)) drop-shadow(0 0 32px rgba(245, 158, 11, 0.7));
           }
-          82% {
-            opacity: 0.92;
-            transform: scale(0.99);
-            filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.8));
+          74% {
+            opacity: 0.87;
+            filter: drop-shadow(0 0 7px rgba(251, 191, 36, 0.75)) drop-shadow(0 0 17px rgba(245, 158, 11, 0.38));
           }
-          94% {
-            opacity: 0.75;
-            transform: scale(0.94);
-            filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.6));
+          88% {
+            opacity: 0.94;
+            filter: drop-shadow(0 0 11px rgba(251, 191, 36, 0.95)) drop-shadow(0 0 25px rgba(245, 158, 11, 0.55));
           }
         }
-        @keyframes volumetricBeamFlicker {
-          0%, 100% { opacity: 0.70; transform: scaleY(1); }
-          6% { opacity: 0.52; transform: scaleY(0.97); }
-          12% { opacity: 0.88; transform: scaleY(1.03); }
-          38% { opacity: 0.38; transform: scaleY(0.93); }
-          42% { opacity: 0.80; transform: scaleY(1.02); }
-          64% { opacity: 0.32; transform: scaleY(0.91); }
-          68% { opacity: 0.90; transform: scaleY(1.05); }
-          94% { opacity: 0.48; transform: scaleY(0.95); }
+        @keyframes realisticLanternAtmosphere {
+          0%, 100% { opacity: 0.58; }
+          22% { opacity: 0.48; }
+          48% { opacity: 0.65; }
+          75% { opacity: 0.52; }
+          90% { opacity: 0.62; }
         }
         .animate-cup-float { animation: cupFloat 3.2s ease-in-out infinite; }
         .animate-star-float { animation: starFloat 2.8s ease-in-out infinite; }
@@ -852,39 +822,41 @@ export function TopicBreakdown({ topics: propTopics = [], totalSolved }: TopicBr
         .animate-glint-2 { animation: glintTwinkle 2.4s ease-in-out infinite 1.4s; }
         .animate-spin-slow { animation: spinSlow 8s linear infinite; }
         .animate-dart-float { animation: dartFloat 3.6s ease-in-out infinite; }
-        .animate-lantern-flicker { animation: gasLanternFlicker 2.6s infinite ease-in-out; }
-        .animate-beam-flicker { animation: volumetricBeamFlicker 2.6s infinite ease-in-out; }
+        .animate-lantern-flicker { animation: realisticLanternFlame 3.8s ease-in-out infinite; }
+        .animate-beam-flicker { animation: realisticLanternAtmosphere 3.8s ease-in-out infinite; }
       `}</style>
 
       {/* Main Grid: Left Lamp Post and Right Dashboard Columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)] xl:grid-cols-[400px_minmax(0,1fr)] gap-5 items-stretch w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-[330px_minmax(0,1fr)] xl:grid-cols-[350px_minmax(0,1fr)] gap-5 items-stretch w-full">
         {/* ========================================================================= */}
         {/* LEFT COLUMN: 3D Masterpiece Victorian Street Lamp Post Artwork             */}
         {/* ========================================================================= */}
-        <div className="relative w-full max-w-[440px] mx-auto lg:max-w-none flex flex-col items-center justify-end select-none h-full lg:-mb-6">
-          <div className="relative w-full h-full min-h-[560px] lg:min-h-[640px] flex items-end justify-center filter drop-shadow-[0_12px_32px_rgba(112,66,248,0.3)]">
+        <div className="relative w-full max-w-[360px] mx-auto lg:max-w-none flex flex-col items-center justify-end select-none h-full lg:-mb-5">
+          <div className="relative w-full h-full min-h-[500px] lg:min-h-[580px] flex items-end justify-center filter drop-shadow-[0_10px_28px_rgba(112,66,248,0.25)]">
             <svg
               viewBox="0 0 603 969"
-              className="w-full h-full max-h-[660px] select-none"
+              className="w-full h-full max-h-[590px] select-none"
               preserveAspectRatio="xMidYMax meet"
             >
               <defs>
                 <radialGradient id="lanternFlameCore" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                  <stop offset="45%" stopColor="#fef08a" stopOpacity="0.95" />
-                  <stop offset="80%" stopColor="#fbbf24" stopOpacity="0.8" />
+                  <stop offset="40%" stopColor="#fffbeb" stopOpacity="0.95" />
+                  <stop offset="70%" stopColor="#fef08a" stopOpacity="0.8" />
                   <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
                 </radialGradient>
-                <radialGradient id="lanternAmbientGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.6" />
-                  <stop offset="60%" stopColor="#f59e0b" stopOpacity="0.25" />
+                <radialGradient id="lanternRadianceGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#fef08a" stopOpacity="0.75" />
+                  <stop offset="45%" stopColor="#fbbf24" stopOpacity="0.45" />
+                  <stop offset="75%" stopColor="#f59e0b" stopOpacity="0.2" />
                   <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
                 </radialGradient>
-                <linearGradient id="lanternLightBeam" x1="50%" y1="0%" x2="50%" y2="100%">
-                  <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.35" />
-                  <stop offset="60%" stopColor="#f59e0b" stopOpacity="0.1" />
-                  <stop offset="100%" stopColor="#b45309" stopOpacity="0" />
-                </linearGradient>
+                <radialGradient id="lanternAmbientGlow" cx="50%" cy="40%" r="50%">
+                  <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.32" />
+                  <stop offset="50%" stopColor="#f59e0b" stopOpacity="0.14" />
+                  <stop offset="85%" stopColor="#b45309" stopOpacity="0.04" />
+                  <stop offset="100%" stopColor="#78350f" stopOpacity="0" />
+                </radialGradient>
                 <filter id="lampTextShadow" x="-20%" y="-20%" width="140%" height="140%">
                   <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#000000" floodOpacity="0.9" />
                 </filter>
@@ -909,19 +881,22 @@ export function TopicBreakdown({ topics: propTopics = [], totalSolved }: TopicBr
               />
 
               {/* REALISTIC GAS LANTERN FLICKERING LIGHT ANIMATION */}
-              {/* Downward Warm Volumetric Light Beam */}
-              <polygon
-                points="114,185 10,480 230,480"
-                fill="url(#lanternLightBeam)"
+              {/* Soft atmospheric ambient glow spilling downward and around the lantern */}
+              <ellipse
+                cx="120"
+                cy="230"
+                rx="105"
+                ry="135"
+                fill="url(#lanternAmbientGlow)"
                 className="animate-beam-flicker pointer-events-none"
               />
 
-              {/* Radiant Ambient Flare */}
+              {/* Radiant Ambient Flare inside lantern glass */}
               <circle
                 cx="114"
                 cy="185"
                 r="44"
-                fill="url(#lanternAmbientGlow)"
+                fill="url(#lanternRadianceGlow)"
                 className="animate-lantern-flicker pointer-events-none"
               />
 
@@ -929,7 +904,7 @@ export function TopicBreakdown({ topics: propTopics = [], totalSolved }: TopicBr
               <circle
                 cx="114"
                 cy="185"
-                r="14"
+                r="13"
                 fill="url(#lanternFlameCore)"
                 className="animate-lantern-flicker pointer-events-none"
               />
