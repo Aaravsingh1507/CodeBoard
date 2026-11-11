@@ -697,7 +697,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
   };
 
   return (
-    <div className="relative w-full max-w-[1024px] mx-auto text-white select-none">
+    <div className="relative w-full text-white select-none">
       {/* Scoped CSS Keyframe Animations */}
       <style jsx global>{`
         @keyframes cupFloat {
@@ -760,7 +760,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
       `}</style>
 
       {/* Main Grid: Left and Right Columns stretch to equal, balanced height */}
-      <div className="grid grid-cols-1 lg:grid-cols-[265px_1fr] gap-4 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-[265px_minmax(0,1fr)] gap-4 items-stretch w-full">
         {/* ========================================================================= */}
         {/* LEFT COLUMN: 3D Desk Scene on top + Summary Card underneath               */}
         {/* ========================================================================= */}
@@ -887,7 +887,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
         {/* ========================================================================= */}
         {/* RIGHT COLUMN: Filter Pills on top + Distribution Chart + Bottom 2 Cards   */}
         {/* ========================================================================= */}
-        <div className="flex flex-col gap-3 justify-between">
+        <div className="flex flex-col gap-3 justify-between min-w-0 w-full">
           {/* Top Filter Pills Row (Aligned Right above Card 2) */}
           <div className="flex items-center justify-end gap-3 px-1">
             {/* Fundamental Pill */}
@@ -982,12 +982,12 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                 </button>
               </div>
             ) : (
-              <div className="relative w-full overflow-x-auto pb-1">
-                <div className="min-w-full w-max mx-auto px-2">
+              <div className="relative w-full overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-purple-500/30">
+                <div className="min-w-full w-full px-2">
                   {/* Upper Chart Plot Area: Gridlines + Rising Bars + Numbers + Discs */}
-                  <div className="relative h-[92px] w-full pl-6 pr-2">
+                  <div className="relative h-[106px] w-full pl-6 pr-2 pt-2">
                     {/* 6 Horizontal Dashed Gridlines (10, 8, 6, 4, 2, 0) */}
-                    <div className="absolute inset-0 pl-6 pr-2 flex flex-col justify-between pointer-events-none pb-1.5">
+                    <div className="absolute inset-0 pl-6 pr-2 pt-2 flex flex-col justify-between pointer-events-none pb-2">
                       {yTicks.map((val, idx) => (
                         <div key={idx} className="relative w-full flex items-center">
                           <span className="absolute -left-6 text-[10px] font-mono text-slate-400 w-4 text-right">
@@ -999,11 +999,15 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                     </div>
 
                     {/* Columns: Rising Neon Bars, Numbers on Top, and 3D Pedestals on Baseline */}
-                    <div className={`relative h-full flex items-end ${displayColumns.length <= 10 ? 'justify-around' : 'gap-4'} z-10 pb-1.5`}>
+                    <div
+                      className={`relative h-full flex items-end ${
+                        displayColumns.length <= 6 ? "justify-center gap-6 sm:gap-8" : "justify-between"
+                      } z-10 pb-2 w-full`}
+                    >
                       {displayColumns.map((col) => {
-                        const maxPlotHeight = 68;
+                        const maxPlotHeight = 66;
                         const barHeight = Math.max(8, Math.min(maxPlotHeight, (col.solved / maxSolved) * maxPlotHeight));
-                        const numberBottom = barHeight + 7;
+                        const numberBottom = barHeight + 6;
 
                         const barGradient =
                           col.level === "fundamental"
@@ -1015,7 +1019,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                         return (
                           <div
                             key={col.id}
-                            className="relative h-full w-14 flex-shrink-0 flex flex-col items-center justify-end transition-all duration-300"
+                            className="relative h-full flex-1 min-w-[46px] max-w-[72px] flex flex-col items-center justify-end transition-all duration-300"
                           >
                             {/* Solved Count Hover/Display */}
                             <div
@@ -1042,12 +1046,16 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                   </div>
 
                   {/* Lower Area: Floating Neon Icon Tiles & Full Topic Labels */}
-                  <div className={`flex items-start ${displayColumns.length <= 10 ? 'justify-around' : 'gap-4'} pl-6 pr-2 pt-1`}>
+                  <div
+                    className={`flex items-start ${
+                      displayColumns.length <= 6 ? "justify-center gap-6 sm:gap-8" : "justify-between"
+                    } pl-6 pr-2 pt-1.5 w-full`}
+                  >
                     {displayColumns.map((col) => {
                       return (
                         <div
                           key={col.id}
-                          className="w-14 flex-shrink-0 flex flex-col items-center transition-all duration-300"
+                          className="flex-1 min-w-[46px] max-w-[72px] flex flex-col items-center transition-all duration-300"
                         >
                           {/* Floating Neon Icon Tile */}
                           <div className="w-7.5 h-7.5 rounded-lg bg-[#140e2b]/90 border border-purple-400/40 shadow-[0_0_8px_rgba(168,85,247,0.3)] flex items-center justify-center transition-transform duration-200 hover:scale-110 hover:border-purple-300 my-0.5">
@@ -1057,7 +1065,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                           {/* Full Topic Label */}
                           <div
                             title={col.name}
-                            className="h-[26px] w-full flex items-center justify-center text-[9px] font-medium text-slate-300 text-center leading-[11px] px-0.5 break-words"
+                            className="h-[28px] w-full flex items-center justify-center text-[9px] font-medium text-slate-300 text-center leading-[11px] px-0.5 break-words line-clamp-2"
                           >
                             <span>{col.name}</span>
                           </div>
@@ -1222,7 +1230,7 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
                 </div>
 
                 {/* Subtitle / Tip */}
-                <p className="text-xs text-slate-300/90 leading-relaxed mt-1.5 max-w-[200px]">
+                <p className="text-xs text-slate-300/90 leading-relaxed mt-1.5 pr-2">
                   {stats.totalProblems === 0
                     ? "Connect your LeetCode account in Settings to track your real-time topic progress."
                     : stats.top1

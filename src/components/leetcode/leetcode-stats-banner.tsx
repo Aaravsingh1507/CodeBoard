@@ -71,7 +71,7 @@ export function LeetcodeStatsBanner({
 
   return (
     <div
-      className={`relative w-full max-w-[1040px] mx-auto select-none overflow-visible transition-all duration-700 ease-out ${
+      className={`relative w-full select-none overflow-visible transition-all duration-700 ease-out ${
         mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
       } ${className}`}
     >
