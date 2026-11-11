@@ -759,126 +759,127 @@ export function TopicBreakdown({ topics = [] }: TopicBreakdownProps) {
         .animate-lamp-desk-glow { animation: lampDeskGlowPulse 3.2s ease-in-out infinite; }
       `}</style>
 
-      {/* Main Grid: Left and Right Columns stretch to equal, balanced height */}
-      <div className="grid grid-cols-1 lg:grid-cols-[265px_minmax(0,1fr)] gap-4 items-stretch w-full">
+      {/* Main Grid: Left Lamp Post and Right Dashboard Columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-5 items-stretch w-full">
         {/* ========================================================================= */}
-        {/* LEFT COLUMN: 3D Desk Scene on top + Summary Card underneath               */}
+        {/* LEFT COLUMN: Victorian Street Lamp Post with Glowing Signposts            */}
         {/* ========================================================================= */}
-        <div className="flex flex-col items-center h-full">
-          {/* 3D Desk Scene Illustration with Animated Desk Lamp */}
-          <div className="relative w-[265px] h-[210px] -mb-4 z-10 pointer-events-none select-none">
+        <div className="relative w-full max-w-[340px] mx-auto lg:max-w-none flex flex-col items-center justify-center select-none">
+          <div className="relative w-full aspect-[682/1024] flex items-center justify-center filter drop-shadow-[0_12px_32px_rgba(112,66,248,0.25)]">
+            {/* Base Lamp Post 3D Illustration */}
             <Image
-              src="/dsa-desk-scene.webp"
-              alt="DSA Desk Scene"
+              src="/dsa-lamp-post-clean.webp"
+              alt="DSA Street Lamp Post"
               fill
               priority
-              className="object-contain filter drop-shadow-[0_10px_20px_rgba(168,85,247,0.3)]"
+              className="object-contain"
             />
 
-            {/* Volumetric Lamp Light Cone streaming down onto the books & laptop */}
-            <svg
-              className="absolute inset-0 w-full h-full pointer-events-none overflow-visible animate-lamp-beam"
-              viewBox="0 0 265 210"
-              fill="none"
-            >
-              <defs>
-                <linearGradient id="lampLightBeam" x1="92" y1="112" x2="110" y2="200" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#fef08a" stopOpacity="0.55" />
-                  <stop offset="35%" stopColor="#fbbf24" stopOpacity="0.28" />
-                  <stop offset="70%" stopColor="#f59e0b" stopOpacity="0.12" />
-                  <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
-                </linearGradient>
-                <filter id="beamSoftGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="4" />
-                </filter>
-              </defs>
-              {/* Volumetric light beam polygon from lamp shade opening (92, 112) spreading down across the books */}
-              <polygon
-                points="86,108 98,114 175,195 38,190"
-                fill="url(#lampLightBeam)"
-                filter="url(#beamSoftGlow)"
-              />
-            </svg>
-
-            {/* Lamp Bulb Glowing Core (at container coords 92, 112) */}
-            <div className="absolute left-[85px] top-[105px] w-3.5 h-3.5 rounded-full bg-amber-100 shadow-[0_0_8px_#ffffff,0_0_16px_#fbbf24,0_0_24px_#f59e0b] animate-lamp-core pointer-events-none" />
+            {/* =================================================================== */}
+            {/* ANIMATED LANTERN: Golden Core, Flare, & Volumetric Light Glow        */}
+            {/* =================================================================== */}
+            {/* Lamp Bulb Glowing Core (at coords 27.86%, 16.60%) */}
+            <div className="absolute left-[27.86%] top-[16.60%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-amber-100 shadow-[0_0_10px_#ffffff,0_0_20px_#fbbf24,0_0_32px_#f59e0b] animate-lamp-core pointer-events-none z-20" />
 
             {/* Lamp Bulb Radiant Flare */}
-            <div className="absolute left-[68px] top-[88px] w-12 h-12 rounded-full bg-gradient-to-br from-amber-300/80 via-amber-500/40 to-transparent blur-md animate-lamp-flare pointer-events-none" />
+            <div className="absolute left-[27.86%] top-[16.60%] -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-gradient-to-br from-amber-300/80 via-amber-500/40 to-transparent blur-md animate-lamp-flare pointer-events-none z-10" />
 
-            {/* Ambient warm pool of light cast on books and desk */}
-            <div className="absolute left-[40px] top-[145px] w-[115px] h-[48px] bg-gradient-to-r from-amber-400/30 via-amber-300/40 to-amber-500/20 rounded-[50%] blur-xl animate-lamp-desk-glow pointer-events-none" />
+            {/* Ambient Warm Golden Beam casting down across the pole & ivy */}
+            <div className="absolute left-[27.86%] top-[16.60%] -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-br from-amber-400/25 via-amber-500/15 to-transparent rounded-full blur-xl animate-lamp-desk-glow pointer-events-none" />
 
-            {/* Glowing </> Code bracket pulse on laptop screen */}
-            <div className="absolute top-[122px] left-[172px] w-8 h-8 rounded-full bg-cyan-400/30 blur-md animate-pulse pointer-events-none" />
-          </div>
-
-          {/* Left Glassmorphism Summary Card: flex-1 ensures it fills full matching height to bottom */}
-          <div className="relative w-full flex-1 flex flex-col justify-between rounded-2xl p-4 pt-5 bg-gradient-to-br from-[#1b143d]/85 via-[#130f2f]/85 to-[#0e0b24]/90 backdrop-blur-xl border border-purple-500/25 shadow-[0_8px_32px_0_rgba(112,66,248,0.22)] overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-purple-400/40 before:to-transparent">
-            {/* Top Section: 3 Levels (Spaced evenly to match column height) */}
-            <div className="flex-1 flex flex-col justify-around py-1">
-              {/* Row 1: Fundamental */}
-              <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600 shadow-[0_0_12px_rgba(34,211,238,0.7)] border border-cyan-300/40" />
-                  <span className="text-sm font-semibold text-slate-200">Fundamental</span>
-                </div>
-                <span className="text-sm font-bold text-white tracking-wide">
-                  {stats.fundamentalCount}{" "}
-                  <span className="text-xs font-normal text-slate-400">({stats.fundamentalPct}%)</span>
-                </span>
+            {/* =================================================================== */}
+            {/* SIGNPOST 1: Fundamental (Cyan)                                      */}
+            {/* =================================================================== */}
+            <div
+              onClick={() => handlePillClick("fundamental")}
+              title="Filter by Fundamental topics"
+              className={`absolute left-[48.39%] top-[27.83%] w-[34%] h-[7.32%] flex flex-col justify-center cursor-pointer transition-all duration-200 hover:scale-[1.03] z-20 ${
+                activeFilter === "fundamental" ? "brightness-125" : ""
+              }`}
+            >
+              <div className="text-[13px] sm:text-[14px] font-bold text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] tracking-tight">
+                Fundamental
               </div>
-
-              {/* Row 2: Intermediate */}
-              <div className="flex items-center justify-between py-2 border-b border-purple-500/10">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-fuchsia-400 via-purple-500 to-indigo-600 shadow-[0_0_12px_rgba(192,132,252,0.7)] border border-purple-300/40" />
-                  <span className="text-sm font-semibold text-slate-200">Intermediate</span>
-                </div>
-                <span className="text-sm font-bold text-white tracking-wide">
-                  {stats.intermediateCount}{" "}
-                  <span className="text-xs font-normal text-slate-400">({stats.intermediatePct}%)</span>
-                </span>
-              </div>
-
-              {/* Row 3: Advanced */}
-              <div className="flex items-center justify-between py-2">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-amber-300 via-amber-500 to-orange-600 shadow-[0_0_12px_rgba(251,191,36,0.7)] border border-amber-300/40" />
-                  <span className="text-sm font-semibold text-slate-200">Advanced</span>
-                </div>
-                <span className="text-sm font-bold text-white tracking-wide">
-                  {stats.advancedCount}{" "}
-                  <span className="text-xs font-normal text-slate-400">({stats.advancedPct}%)</span>
+              <div className="text-[12px] sm:text-[13px] font-bold text-white leading-tight mt-0.5 flex items-center gap-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                <span>{stats.fundamentalCount}</span>
+                <span className="text-cyan-400 font-semibold drop-shadow-[0_0_8px_rgba(34,211,238,0.7)]">
+                  ({stats.fundamentalPct}%)
                 </span>
               </div>
             </div>
 
-            {/* Bottom Section: Divider + 3 Stats */}
-            <div className="pt-2">
-              {/* Horizontal Divider Line */}
-              <div className="h-[1px] bg-gradient-to-r from-transparent via-purple-500/30 to-transparent my-3" />
+            {/* =================================================================== */}
+            {/* SIGNPOST 2: Intermediate (Purple)                                   */}
+            {/* =================================================================== */}
+            <div
+              onClick={() => handlePillClick("intermediate")}
+              title="Filter by Intermediate topics"
+              className={`absolute left-[48.39%] top-[38.87%] w-[34%] h-[7.32%] flex flex-col justify-center cursor-pointer transition-all duration-200 hover:scale-[1.03] z-20 ${
+                activeFilter === "intermediate" ? "brightness-125" : ""
+              }`}
+            >
+              <div className="text-[13px] sm:text-[14px] font-bold text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] tracking-tight">
+                Intermediate
+              </div>
+              <div className="text-[12px] sm:text-[13px] font-bold text-white leading-tight mt-0.5 flex items-center gap-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                <span>{stats.intermediateCount}</span>
+                <span className="text-purple-400 font-semibold drop-shadow-[0_0_8px_rgba(192,132,252,0.7)]">
+                  ({stats.intermediatePct}%)
+                </span>
+              </div>
+            </div>
 
-              {/* 3-Column Stats at Bottom */}
-              <div className="grid grid-cols-3 gap-2 text-center pt-0.5 pb-1">
-                <div>
-                  <div className="text-xl font-extrabold text-white font-mono">
-                    {stats.totalTopicsCount}
-                  </div>
-                  <div className="text-[11px] font-medium text-slate-400">Topics</div>
-                </div>
-                <div>
-                  <div className="text-xl font-extrabold text-white font-mono">
-                    {stats.totalProblems}
-                  </div>
-                  <div className="text-[11px] font-medium text-slate-400">Problems</div>
-                </div>
-                <div>
-                  <div className="text-xl font-extrabold text-white font-mono">
-                    {stats.fundamentalPct}%
-                  </div>
-                  <div className="text-[11px] font-medium text-slate-400">Fundamental</div>
-                </div>
+            {/* =================================================================== */}
+            {/* SIGNPOST 3: Advanced (Amber)                                        */}
+            {/* =================================================================== */}
+            <div
+              onClick={() => handlePillClick("advanced")}
+              title="Filter by Advanced topics"
+              className={`absolute left-[48.39%] top-[49.80%] w-[34%] h-[7.32%] flex flex-col justify-center cursor-pointer transition-all duration-200 hover:scale-[1.03] z-20 ${
+                activeFilter === "advanced" ? "brightness-125" : ""
+              }`}
+            >
+              <div className="text-[13px] sm:text-[14px] font-bold text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] tracking-tight">
+                Advanced
+              </div>
+              <div className="text-[12px] sm:text-[13px] font-bold text-white leading-tight mt-0.5 flex items-center gap-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                <span>{stats.advancedCount}</span>
+                <span className="text-amber-400 font-semibold drop-shadow-[0_0_8px_rgba(251,191,36,0.7)]">
+                  ({stats.advancedPct}%)
+                </span>
+              </div>
+            </div>
+
+            {/* =================================================================== */}
+            {/* HANGING GLASS PLAQUE: 3 Stats (Topics, Problems, Fundamental %)     */}
+            {/* =================================================================== */}
+            {/* Stat 1: Topics */}
+            <div className="absolute left-[33%] top-[70.2%] w-[15.4%] h-[6.35%] flex flex-col items-center justify-center text-center z-20">
+              <div className="text-[13px] sm:text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                {stats.totalTopicsCount}
+              </div>
+              <div className="text-[9px] sm:text-[10px] font-semibold text-slate-300 leading-tight mt-0.5">
+                Topics
+              </div>
+            </div>
+
+            {/* Stat 2: Problems */}
+            <div className="absolute left-[49.85%] top-[70.2%] w-[15.4%] h-[6.35%] flex flex-col items-center justify-center text-center z-20">
+              <div className="text-[13px] sm:text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                {stats.totalProblems}
+              </div>
+              <div className="text-[9px] sm:text-[10px] font-semibold text-slate-300 leading-tight mt-0.5">
+                Problems
+              </div>
+            </div>
+
+            {/* Stat 3: Fundamental % */}
+            <div className="absolute left-[66.72%] top-[70.2%] w-[16.86%] h-[6.35%] flex flex-col items-center justify-center text-center z-20">
+              <div className="text-[13px] sm:text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                {stats.fundamentalPct}%
+              </div>
+              <div className="text-[9px] sm:text-[10px] font-semibold text-slate-300 leading-tight mt-0.5">
+                Fundamental
               </div>
             </div>
           </div>
