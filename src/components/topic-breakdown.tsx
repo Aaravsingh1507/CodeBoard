@@ -189,7 +189,7 @@ export function TopicBreakdown({
 
   return (
     <div className="relative w-full text-white select-none">
-      {/* Scoped CSS Keyframe Animations */}
+      {/* Scoped CSS Keyframe Animations for Lamp, Medals, Stars, Cups & Atmosphere */}
       <style jsx global>{`
         @keyframes realisticLanternFlame {
           0%, 100% {
@@ -216,23 +216,71 @@ export function TopicBreakdown({
         @keyframes realisticLanternAtmosphere {
           0%, 100% { opacity: 0.55; }
           30% { opacity: 0.45; }
-          65% { opacity: 0.65; }
+          65% { opacity: 0.68; }
           85% { opacity: 0.50; }
+        }
+        @keyframes trophyGleam {
+          0%, 100% {
+            transform: translateY(0px);
+            filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)) drop-shadow(0 0 18px rgba(245, 158, 11, 0.3));
+          }
+          50% {
+            transform: translateY(-2.5px);
+            filter: drop-shadow(0 0 14px rgba(251, 191, 36, 0.95)) drop-shadow(0 0 28px rgba(245, 158, 11, 0.55));
+          }
+        }
+        @keyframes starTwinkleGlint {
+          0%, 100% {
+            transform: scale(0.92) rotate(-2deg);
+            filter: drop-shadow(0 0 4px #38bdf8) drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
+            opacity: 0.9;
+          }
+          50% {
+            transform: scale(1.08) rotate(3deg);
+            filter: drop-shadow(0 0 10px #22d3ee) drop-shadow(0 0 20px rgba(34, 211, 238, 0.8));
+            opacity: 1;
+          }
+        }
+        @keyframes medalShimmerGlow {
+          0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+            filter: drop-shadow(0 0 4px #c084fc) drop-shadow(0 0 10px rgba(192, 132, 252, 0.5));
+          }
+          50% {
+            transform: translateY(-2px) rotate(1.5deg);
+            filter: drop-shadow(0 0 9px #e879f9) drop-shadow(0 0 18px rgba(232, 121, 249, 0.75));
+          }
         }
         @keyframes treeTargetFloat {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-3px); }
         }
-        .animate-tree-lantern { animation: realisticLanternFlame 3.8s ease-in-out infinite; }
-        .animate-tree-atmosphere { animation: realisticLanternAtmosphere 3.8s ease-in-out infinite; }
+        @keyframes fireflyDrift1 {
+          0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+          30% { transform: translate(12px, -8px); opacity: 0.95; }
+          60% { transform: translate(-8px, -16px); opacity: 0.5; }
+          80% { transform: translate(6px, -4px); opacity: 0.85; }
+        }
+        @keyframes fireflyDrift2 {
+          0%, 100% { transform: translate(0, 0); opacity: 0.4; }
+          40% { transform: translate(-14px, -10px); opacity: 0.95; }
+          75% { transform: translate(10px, -18px); opacity: 0.6; }
+        }
+        .animate-tree-lantern { animation: realisticLanternFlame 3.6s ease-in-out infinite; }
+        .animate-tree-atmosphere { animation: realisticLanternAtmosphere 3.6s ease-in-out infinite; }
+        .animate-tree-trophy { animation: trophyGleam 4.2s ease-in-out infinite; }
+        .animate-tree-star { animation: starTwinkleGlint 2.8s ease-in-out infinite; transform-origin: 461px 556px; }
+        .animate-tree-medal { animation: medalShimmerGlow 3.5s ease-in-out infinite; transform-origin: 577px 556px; }
         .animate-tree-target { animation: treeTargetFloat 3.4s ease-in-out infinite; }
+        .animate-firefly-1 { animation: fireflyDrift1 6.5s ease-in-out infinite; }
+        .animate-firefly-2 { animation: fireflyDrift2 7.2s ease-in-out infinite; }
       `}</style>
 
-      {/* Master Enchanted Tree Dashboard Container */}
-      <div className="relative w-full rounded-3xl overflow-hidden bg-[#07050d] border border-purple-500/20 shadow-[0_12px_48px_rgba(0,0,0,0.8),0_0_32px_rgba(112,66,248,0.15)]">
+      {/* Master Enchanted Tree Dashboard Canvas (Transparent Background) */}
+      <div className="relative w-full overflow-visible select-none">
         <svg
           viewBox="0 0 1024 682"
-          className="w-full h-auto block select-none"
+          className="w-full h-auto block select-none drop-shadow-[0_16px_36px_rgba(0,0,0,0.6)]"
           preserveAspectRatio="xMidYMid meet"
         >
           <defs>
@@ -250,9 +298,9 @@ export function TopicBreakdown({
               <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
             </radialGradient>
             <radialGradient id="treeLanternAmbient" cx="50%" cy="40%" r="50%">
-              <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.35" />
-              <stop offset="50%" stopColor="#f59e0b" stopOpacity="0.15" />
-              <stop offset="85%" stopColor="#b45309" stopOpacity="0.04" />
+              <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.38" />
+              <stop offset="50%" stopColor="#f59e0b" stopOpacity="0.18" />
+              <stop offset="85%" stopColor="#b45309" stopOpacity="0.05" />
               <stop offset="100%" stopColor="#78350f" stopOpacity="0" />
             </radialGradient>
 
@@ -261,13 +309,13 @@ export function TopicBreakdown({
               <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#000000" floodOpacity="0.9" />
             </filter>
             <filter id="treeCyanGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#22d3ee" floodOpacity="0.8" />
+              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#22d3ee" floodOpacity="0.85" />
             </filter>
             <filter id="treePurpleGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#c084fc" floodOpacity="0.8" />
+              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#c084fc" floodOpacity="0.85" />
             </filter>
             <filter id="treeAmberGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#fbbf24" floodOpacity="0.8" />
+              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#fbbf24" floodOpacity="0.85" />
             </filter>
 
             {/* Chart Bar Gradients */}
@@ -288,9 +336,9 @@ export function TopicBreakdown({
             </linearGradient>
           </defs>
 
-          {/* 1. Base Enchanted Tree Artwork */}
+          {/* 1. Base Transparent Enchanted Tree Artwork */}
           <image
-            href="/dsa-enchanted-tree-clean.webp"
+            href="/dsa-enchanted-tree-transparent.webp"
             width="1024"
             height="682"
             x="0"
@@ -323,8 +371,17 @@ export function TopicBreakdown({
             className="animate-tree-lantern pointer-events-none"
           />
 
+          {/* Ambient Forest Fireflies */}
+          <g className="pointer-events-none">
+            <circle cx="120" cy="140" r="2.2" fill="#fef08a" className="animate-firefly-1" filter="url(#treeAmberGlow)" />
+            <circle cx="210" cy="180" r="1.8" fill="#fef08a" className="animate-firefly-2" filter="url(#treeAmberGlow)" />
+            <circle cx="390" cy="110" r="2.2" fill="#67e8f9" className="animate-firefly-1" filter="url(#treeCyanGlow)" />
+            <circle cx="680" cy="120" r="1.8" fill="#e879f9" className="animate-firefly-2" filter="url(#treePurpleGlow)" />
+            <circle cx="670" cy="500" r="2.0" fill="#fef08a" className="animate-firefly-1" filter="url(#treeAmberGlow)" />
+          </g>
+
           {/* =================================================================== */}
-          {/* 3. TOTAL SOLVED CIRCULAR DIAL (Center: 304, 164)                    */}
+          {/* 3. TOTAL SOLVED CIRCULAR DIAL (Center: 304, 168)                    */}
           {/* =================================================================== */}
           <g className="pointer-events-none select-none">
             {/* Coding laptop glyph < / > */}
@@ -345,7 +402,7 @@ export function TopicBreakdown({
               fill="#ffffff"
               fontSize="32"
               fontWeight="800"
-              fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+              fontFamily="system-ui, -apple-system, sans-serif"
               filter="url(#treeTextShadow)"
             >
               {loading ? "..." : displayTotalProblems}
@@ -353,7 +410,7 @@ export function TopicBreakdown({
             {/* Label */}
             <text
               x="304"
-              y="196"
+              y="192"
               textAnchor="middle"
               fill="#94a3b8"
               fontSize="11"
@@ -367,11 +424,11 @@ export function TopicBreakdown({
           {/* =================================================================== */}
           {/* 4. EASY / MEDIUM / HARD PILLS                                       */}
           {/* =================================================================== */}
-          {/* Easy Pill */}
+          {/* Easy Pill (y center ~134) */}
           <g className="select-none">
             <text
-              x="502"
-              y="132"
+              x="500"
+              y="138"
               fill="#ffffff"
               fontSize="13.5"
               fontWeight="700"
@@ -381,24 +438,24 @@ export function TopicBreakdown({
               Easy
             </text>
             <text
-              x="614"
-              y="133"
+              x="610"
+              y="138"
               textAnchor="end"
               fill="#ffffff"
-              fontSize="17"
+              fontSize="18"
               fontWeight="800"
-              fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+              fontFamily="system-ui, -apple-system, sans-serif"
               filter="url(#treeTextShadow)"
             >
               {loading ? "—" : easyCount}
             </text>
           </g>
 
-          {/* Medium Pill */}
+          {/* Medium Pill (y center ~184) */}
           <g className="select-none">
             <text
-              x="502"
-              y="181"
+              x="500"
+              y="188"
               fill="#ffffff"
               fontSize="13.5"
               fontWeight="700"
@@ -408,24 +465,24 @@ export function TopicBreakdown({
               Medium
             </text>
             <text
-              x="614"
-              y="182"
+              x="610"
+              y="188"
               textAnchor="end"
               fill="#ffffff"
-              fontSize="17"
+              fontSize="18"
               fontWeight="800"
-              fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+              fontFamily="system-ui, -apple-system, sans-serif"
               filter="url(#treeTextShadow)"
             >
               {loading ? "—" : mediumCount}
             </text>
           </g>
 
-          {/* Hard Pill */}
+          {/* Hard Pill (y center ~234) */}
           <g className="select-none">
             <text
-              x="502"
-              y="231"
+              x="500"
+              y="238"
               fill="#ffffff"
               fontSize="13.5"
               fontWeight="700"
@@ -435,13 +492,13 @@ export function TopicBreakdown({
               Hard
             </text>
             <text
-              x="614"
-              y="232"
+              x="610"
+              y="238"
               textAnchor="end"
               fill="#ffffff"
-              fontSize="17"
+              fontSize="18"
               fontWeight="800"
-              fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+              fontFamily="system-ui, -apple-system, sans-serif"
               filter="url(#treeTextShadow)"
             >
               {loading ? "—" : hardCount}
@@ -452,15 +509,24 @@ export function TopicBreakdown({
           {/* 5. GLOBAL RANKING SHIELD (Center: 810, 164)                         */}
           {/* =================================================================== */}
           <g className="pointer-events-none select-none">
+            {/* Animated Golden Aura around Trophy */}
+            <circle
+              cx="810"
+              cy="142"
+              r="22"
+              fill="rgba(251, 191, 36, 0.18)"
+              className="animate-tree-trophy"
+            />
             {/* Ranking Number */}
             <text
               x="810"
-              y="184"
+              y="194"
               textAnchor="middle"
               fill="#ffffff"
-              fontSize="23"
+              fontSize="24"
               fontWeight="800"
-              fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+              letterSpacing="0.02em"
+              fontFamily="system-ui, -apple-system, sans-serif"
               filter="url(#treeTextShadow)"
             >
               {loading ? "..." : rankingDisplay}
@@ -468,7 +534,7 @@ export function TopicBreakdown({
             {/* Label */}
             <text
               x="810"
-              y="206"
+              y="216"
               textAnchor="middle"
               fill="#cbd5e1"
               fontSize="11"
@@ -479,7 +545,7 @@ export function TopicBreakdown({
             </text>
           </g>
 
-          {/* Mini Hanging Filter Buttons under Trophy Shield (Y=252..274) */}
+          {/* Hanging Filter Bar under Trophy Shield (Y=252..274) */}
           <g className="select-none">
             {/* Fundamental Pill */}
             <rect
@@ -488,7 +554,7 @@ export function TopicBreakdown({
               width="62"
               height="20"
               rx="10"
-              fill={activeFilter === "fundamental" ? "#083344" : "transparent"}
+              fill={activeFilter === "fundamental" ? "rgba(8, 51, 68, 0.85)" : "transparent"}
               stroke={activeFilter === "fundamental" ? "#22d3ee" : "transparent"}
               strokeWidth="1.2"
               className="cursor-pointer transition-colors"
@@ -514,7 +580,7 @@ export function TopicBreakdown({
               width="64"
               height="20"
               rx="10"
-              fill={activeFilter === "intermediate" ? "#3b0764" : "transparent"}
+              fill={activeFilter === "intermediate" ? "rgba(59, 7, 100, 0.85)" : "transparent"}
               stroke={activeFilter === "intermediate" ? "#c084fc" : "transparent"}
               strokeWidth="1.2"
               className="cursor-pointer transition-colors"
@@ -540,7 +606,7 @@ export function TopicBreakdown({
               width="62"
               height="20"
               rx="10"
-              fill={activeFilter === "advanced" ? "#451a03" : "transparent"}
+              fill={activeFilter === "advanced" ? "rgba(69, 26, 3, 0.85)" : "transparent"}
               stroke={activeFilter === "advanced" ? "#fbbf24" : "transparent"}
               strokeWidth="1.2"
               className="cursor-pointer transition-colors"
@@ -591,7 +657,7 @@ export function TopicBreakdown({
           <g className="pointer-events-none select-none">
             <text
               x="254"
-              y="323"
+              y="324"
               fill="#ffffff"
               fontSize="12.5"
               fontWeight="700"
@@ -602,7 +668,7 @@ export function TopicBreakdown({
             </text>
             <text
               x="254"
-              y="340"
+              y="341"
               fill="#22d3ee"
               fontSize="11"
               fontWeight="700"
@@ -641,7 +707,7 @@ export function TopicBreakdown({
           <g className="pointer-events-none select-none">
             <text
               x="254"
-              y="377"
+              y="378"
               fill="#ffffff"
               fontSize="12.5"
               fontWeight="700"
@@ -652,7 +718,7 @@ export function TopicBreakdown({
             </text>
             <text
               x="254"
-              y="394"
+              y="395"
               fill="#c084fc"
               fontSize="11"
               fontWeight="700"
@@ -691,7 +757,7 @@ export function TopicBreakdown({
           <g className="pointer-events-none select-none">
             <text
               x="254"
-              y="431"
+              y="432"
               fill="#ffffff"
               fontSize="12.5"
               fontWeight="700"
@@ -702,7 +768,7 @@ export function TopicBreakdown({
             </text>
             <text
               x="254"
-              y="448"
+              y="449"
               fill="#fbbf24"
               fontSize="11"
               fontWeight="700"
@@ -744,34 +810,37 @@ export function TopicBreakdown({
           {displayColumns.length === 0 ? (
             /* Clean Empty State */
             <g className="pointer-events-none select-none">
-              <circle cx="665" cy="380" r="18" fill="rgba(168, 85, 247, 0.12)" stroke="rgba(168, 85, 247, 0.3)" strokeWidth="1" />
+              <circle cx="665" cy="380" r="18" fill="rgba(168, 85, 247, 0.12)" stroke="rgba(168, 85, 247, 0.35)" strokeWidth="1.2" />
               <path
-                d="M657 386v-8m8 8v-14m8 14v-5"
+                d="M656 390v-9m9 9v-17m9 17v-6"
                 stroke="#c084fc"
-                strokeWidth="2"
+                strokeWidth="2.4"
                 strokeLinecap="round"
                 fill="none"
+                filter="url(#treePurpleGlow)"
               />
               <text
                 x="665"
-                y="414"
+                y="412"
                 textAnchor="middle"
-                fill="#f1f5f9"
-                fontSize="12"
+                fill="#f8fafc"
+                fontSize="13"
                 fontWeight="700"
                 fontFamily="system-ui, -apple-system, sans-serif"
+                filter="url(#treeTextShadow)"
               >
                 No topic data available yet
               </text>
               <text
                 x="665"
-                y="430"
+                y="428"
                 textAnchor="middle"
                 fill="#94a3b8"
-                fontSize="9.5"
+                fontSize="10"
+                fontWeight="500"
                 fontFamily="system-ui, -apple-system, sans-serif"
               >
-                Solved problems on LeetCode will automatically display here broken down by topic in real time.
+                Problems solved on LeetCode will automatically display here broken down by topic.
               </text>
             </g>
           ) : (
@@ -803,7 +872,7 @@ export function TopicBreakdown({
                       fill="#ffffff"
                       fontSize="9.5"
                       fontWeight="800"
-                      fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+                      fontFamily="system-ui, -apple-system, sans-serif"
                       filter="url(#treeTextShadow)"
                     >
                       {col.solved}
@@ -849,7 +918,7 @@ export function TopicBreakdown({
           )}
 
           {/* =================================================================== */}
-          {/* 8. BOTTOM-LEFT BOARD: TOP COVERED TOPICS                            */}
+          {/* 8. BOTTOM-LEFT BOARD: TOP COVERED TOPICS (Podium 1, 2, 3)           */}
           {/* =================================================================== */}
           {/* Header */}
           <g className="pointer-events-none select-none">
@@ -873,127 +942,116 @@ export function TopicBreakdown({
             </text>
           </g>
 
-          {/* Content */}
-          {stats.totalTopicsCount === 0 ? (
-            /* Clean Empty State */
-            <g className="pointer-events-none select-none">
-              <circle cx="461" cy="565" r="16" fill="rgba(245, 158, 11, 0.1)" stroke="rgba(245, 158, 11, 0.3)" strokeWidth="1" />
-              <path
-                d="M457 561h8v3a4 4 0 0 1-8 0v-3zm-1 1h1v2a1 1 0 0 1-1-1v-1zm9 0h1v1a1 1 0 0 1-1 1v-2zm-6 8v2m-1 0h4"
-                stroke="#fbbf24"
-                strokeWidth="1.2"
-                fill="none"
+          {/* 3 Stepped Podium Columns (Never Overlaps Cards!) */}
+          <g className="select-none">
+            {/* Podium 1: Rank 1 Gold Trophy */}
+            <g className="animate-tree-trophy">
+              <circle
+                cx="345"
+                cy="555"
+                r="10"
+                fill="rgba(251, 191, 36, 0.22)"
+                filter="url(#treeAmberGlow)"
+                className="pointer-events-none"
+              />
+              <text
+                x="345"
+                y="584"
+                textAnchor="middle"
+                fill="#ffffff"
+                fontSize="11"
+                fontWeight="700"
+                fontFamily="system-ui, -apple-system, sans-serif"
+                filter="url(#treeTextShadow)"
+              >
+                {stats.top1 ? stats.top1.tag : "1st Podium"}
+              </text>
+              <text
+                x="345"
+                y="599"
+                textAnchor="middle"
+                fill="#fbbf24"
+                fontSize="10"
+                fontWeight="800"
+                fontFamily="system-ui, -apple-system, sans-serif"
+                filter="url(#treeAmberGlow)"
+              >
+                {stats.top1 ? `${stats.top1.solved} solved` : "0 solved"}
+              </text>
+            </g>
+
+            {/* Podium 2: Rank 2 Cyan Star */}
+            <g className="animate-tree-star">
+              <circle
+                cx="461"
+                cy="556"
+                r="10"
+                fill="rgba(34, 211, 238, 0.22)"
+                filter="url(#treeCyanGlow)"
+                className="pointer-events-none"
               />
               <text
                 x="461"
-                y="593"
+                y="584"
                 textAnchor="middle"
-                fill="#f1f5f9"
-                fontSize="11.5"
+                fill="#ffffff"
+                fontSize="11"
                 fontWeight="700"
                 fontFamily="system-ui, -apple-system, sans-serif"
+                filter="url(#treeTextShadow)"
               >
-                No covered topics yet
+                {stats.top2 ? stats.top2.tag : "2nd Podium"}
               </text>
               <text
                 x="461"
-                y="608"
+                y="599"
                 textAnchor="middle"
-                fill="#94a3b8"
-                fontSize="9"
+                fill="#22d3ee"
+                fontSize="10"
+                fontWeight="800"
                 fontFamily="system-ui, -apple-system, sans-serif"
+                filter="url(#treeCyanGlow)"
               >
-                Your top solved topics will take the podium here.
+                {stats.top2 ? `${stats.top2.solved} solved` : "0 solved"}
               </text>
             </g>
-          ) : (
-            /* 3 Stepped Podium Columns */
-            <g className="select-none">
-              {/* Podium 1: Rank 1 Gold */}
-              <g>
-                <text
-                  x="345"
-                  y="584"
-                  textAnchor="middle"
-                  fill="#ffffff"
-                  fontSize="11"
-                  fontWeight="700"
-                  fontFamily="system-ui, -apple-system, sans-serif"
-                  filter="url(#treeTextShadow)"
-                >
-                  {stats.top1?.tag ?? "—"}
-                </text>
-                <text
-                  x="345"
-                  y="599"
-                  textAnchor="middle"
-                  fill="#fbbf24"
-                  fontSize="10"
-                  fontWeight="800"
-                  fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-                  filter="url(#treeAmberGlow)"
-                >
-                  ({stats.top1 ? stats.top1.solved : 0})
-                </text>
-              </g>
 
-              {/* Podium 2: Rank 2 Cyan */}
-              <g>
-                <text
-                  x="461"
-                  y="584"
-                  textAnchor="middle"
-                  fill="#ffffff"
-                  fontSize="11"
-                  fontWeight="700"
-                  fontFamily="system-ui, -apple-system, sans-serif"
-                  filter="url(#treeTextShadow)"
-                >
-                  {stats.top2?.tag ?? "—"}
-                </text>
-                <text
-                  x="461"
-                  y="599"
-                  textAnchor="middle"
-                  fill="#22d3ee"
-                  fontSize="10"
-                  fontWeight="800"
-                  fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-                  filter="url(#treeCyanGlow)"
-                >
-                  {stats.top2 ? `(${stats.top2.solved})` : "—"}
-                </text>
-              </g>
-
-              {/* Podium 3: Rank 3 Purple */}
-              <g>
-                <text
-                  x="577"
-                  y="584"
-                  textAnchor="middle"
-                  fill="#ffffff"
-                  fontSize="11"
-                  fontWeight="700"
-                  fontFamily="system-ui, -apple-system, sans-serif"
-                  filter="url(#treeTextShadow)"
-                >
-                  {stats.top3?.tag ?? "—"}
-                </text>
-                <text
-                  x="577"
-                  y="599"
-                  textAnchor="middle"
-                  fill="#c084fc"
-                  fontSize="10"
-                  fontWeight="800"
-                  fontFamily="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-                  filter="url(#treePurpleGlow)"
-                >
-                  {stats.top3 ? `(${stats.top3.solved})` : "—"}
-                </text>
-              </g>
+            {/* Podium 3: Rank 3 Purple Medal */}
+            <g className="animate-tree-medal">
+              <circle
+                cx="577"
+                cy="556"
+                r="10"
+                fill="rgba(192, 132, 252, 0.22)"
+                filter="url(#treePurpleGlow)"
+                className="pointer-events-none"
+              />
+              <text
+                x="577"
+                y="584"
+                textAnchor="middle"
+                fill="#ffffff"
+                fontSize="11"
+                fontWeight="700"
+                fontFamily="system-ui, -apple-system, sans-serif"
+                filter="url(#treeTextShadow)"
+              >
+                {stats.top3 ? stats.top3.tag : "3rd Podium"}
+              </text>
+              <text
+                x="577"
+                y="599"
+                textAnchor="middle"
+                fill="#c084fc"
+                fontSize="10"
+                fontWeight="800"
+                fontFamily="system-ui, -apple-system, sans-serif"
+                filter="url(#treePurpleGlow)"
+              >
+                {stats.top3 ? `${stats.top3.solved} solved` : "0 solved"}
+              </text>
             </g>
-          )}
+          </g>
 
           {/* =================================================================== */}
           {/* 9. BOTTOM-RIGHT BOARD: COVERAGE INSIGHT                             */}
@@ -1018,8 +1076,8 @@ export function TopicBreakdown({
           {/* Milestone Headline & Subtitle */}
           <g className="pointer-events-none select-none">
             <text
-              x="704"
-              y="554"
+              x="706"
+              y="556"
               fill="#fbbf24"
               fontSize="12.5"
               fontWeight="800"
@@ -1031,10 +1089,10 @@ export function TopicBreakdown({
                 : `Solved ${displayTotalProblems} problems across ${stats.totalTopicsCount} topics!`}
             </text>
             <text
-              x="704"
-              y="573"
+              x="706"
+              y="576"
               fill="#cbd5e1"
-              fontSize="9"
+              fontSize="9.5"
               fontFamily="system-ui, -apple-system, sans-serif"
             >
               {displayTotalProblems === 0
@@ -1044,10 +1102,10 @@ export function TopicBreakdown({
                 : "Solve more problems to see personalized"}
             </text>
             <text
-              x="704"
-              y="586"
+              x="706"
+              y="592"
               fill="#cbd5e1"
-              fontSize="9"
+              fontSize="9.5"
               fontFamily="system-ui, -apple-system, sans-serif"
             >
               {displayTotalProblems === 0
