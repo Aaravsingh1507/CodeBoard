@@ -884,116 +884,100 @@ export function TopicBreakdown({ topics: propTopics = [] }: TopicBreakdownProps)
             {/* =================================================================== */}
             {/* INTERACTIVE SIGNPOST ARROWS (Fundamental, Intermediate, Advanced)    */}
             {/* =================================================================== */}
-            {/* Arrow 1: Fundamental */}
-            <div
+            {/* Arrow 1: Fundamental Click Area */}
+            <button
+              type="button"
               onClick={() => handlePillClick("fundamental")}
               title="Filter by Fundamental topics"
-              className={`absolute left-[36%] top-[27.3%] w-[52%] h-[10.2%] rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125 z-20 ${
+              aria-label="Filter by Fundamental topics"
+              className={`absolute left-[36%] top-[27.3%] w-[52%] h-[10.2%] rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125 z-20 bg-transparent border-0 outline-none ${
                 activeFilter === "fundamental"
                   ? "ring-2 ring-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6)]"
                   : ""
               }`}
-            >
-              {!isMockupStats && (
-                <div className="absolute left-[26%] top-0 bottom-0 flex flex-col justify-center select-none pointer-events-none">
-                  <div className="text-[13px] sm:text-[14px] font-bold text-white tracking-tight leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    Fundamental
-                  </div>
-                  <div className="text-[12px] sm:text-[13px] font-bold text-white leading-tight mt-0.5 flex items-center gap-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    <span>{stats.fundamentalCount}</span>
-                    <span className="text-cyan-400 font-semibold drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">
-                      ({stats.fundamentalPct}%)
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+            />
 
-            {/* Arrow 2: Intermediate */}
-            <div
+            {/* Arrow 2: Intermediate Click Area */}
+            <button
+              type="button"
               onClick={() => handlePillClick("intermediate")}
               title="Filter by Intermediate topics"
-              className={`absolute left-[36%] top-[39.0%] w-[52%] h-[10.2%] rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125 z-20 ${
+              aria-label="Filter by Intermediate topics"
+              className={`absolute left-[36%] top-[39.0%] w-[52%] h-[10.2%] rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125 z-20 bg-transparent border-0 outline-none ${
                 activeFilter === "intermediate"
                   ? "ring-2 ring-purple-400 shadow-[0_0_20px_rgba(192,132,252,0.6)]"
                   : ""
               }`}
-            >
-              {!isMockupStats && (
-                <div className="absolute left-[26%] top-0 bottom-0 flex flex-col justify-center select-none pointer-events-none">
-                  <div className="text-[13px] sm:text-[14px] font-bold text-white tracking-tight leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    Intermediate
-                  </div>
-                  <div className="text-[12px] sm:text-[13px] font-bold text-white leading-tight mt-0.5 flex items-center gap-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    <span>{stats.intermediateCount}</span>
-                    <span className="text-purple-400 font-semibold drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]">
-                      ({stats.intermediatePct}%)
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+            />
 
-            {/* Arrow 3: Advanced */}
-            <div
+            {/* Arrow 3: Advanced Click Area */}
+            <button
+              type="button"
               onClick={() => handlePillClick("advanced")}
               title="Filter by Advanced topics"
-              className={`absolute left-[36%] top-[51.0%] w-[52%] h-[10.2%] rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125 z-20 ${
+              aria-label="Filter by Advanced topics"
+              className={`absolute left-[36%] top-[51.0%] w-[52%] h-[10.2%] rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125 z-20 bg-transparent border-0 outline-none ${
                 activeFilter === "advanced"
                   ? "ring-2 ring-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.6)]"
                   : ""
               }`}
-            >
-              {!isMockupStats && (
-                <div className="absolute left-[26%] top-0 bottom-0 flex flex-col justify-center select-none pointer-events-none">
-                  <div className="text-[13px] sm:text-[14px] font-bold text-white tracking-tight leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    Advanced
-                  </div>
-                  <div className="text-[12px] sm:text-[13px] font-bold text-white leading-tight mt-0.5 flex items-center gap-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    <span>{stats.advancedCount}</span>
-                    <span className="text-amber-400 font-semibold drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
-                      ({stats.advancedPct}%)
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+            />
 
-            {/* =================================================================== */}
-            {/* HANGING GLASS PLAQUE (3 Stats: Topics, Problems, Fundamental %)     */}
-            {/* =================================================================== */}
+            {/* Dynamic Real-Time Statistics Overlays (Displayed cleanly over clean number strips) */}
             {!isMockupStats && (
-              <div className="absolute left-[36.1%] top-[66.9%] w-[53.5%] h-[15.6%] flex items-center justify-around pointer-events-none z-20">
-                {/* Col 1: Topics */}
-                <div className="flex-1 flex flex-col items-center justify-center pt-5">
-                  <div className="text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {stats.totalTopicsCount}
-                  </div>
-                  <div className="text-[10px] font-semibold text-slate-300 leading-tight mt-1">
-                    Topics
-                  </div>
+              <>
+                {/* Arrow 1 Numbers: Count + Percentage */}
+                <div className="absolute left-[51.0%] top-[33.2%] flex items-baseline gap-1 select-none pointer-events-none z-20">
+                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-bold text-white leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                    {stats.fundamentalCount}
+                  </span>
+                  <span className="text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-cyan-400 leading-none drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">
+                    ({stats.fundamentalPct}%)
+                  </span>
                 </div>
 
-                {/* Col 2: Problems */}
-                <div className="flex-1 flex flex-col items-center justify-center pt-5">
-                  <div className="text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                {/* Arrow 2 Numbers: Count + Percentage */}
+                <div className="absolute left-[51.0%] top-[45.0%] flex items-baseline gap-1 select-none pointer-events-none z-20">
+                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-bold text-white leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                    {stats.intermediateCount}
+                  </span>
+                  <span className="text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-purple-400 leading-none drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]">
+                    ({stats.intermediatePct}%)
+                  </span>
+                </div>
+
+                {/* Arrow 3 Numbers: Count + Percentage */}
+                <div className="absolute left-[51.0%] top-[56.8%] flex items-baseline gap-1 select-none pointer-events-none z-20">
+                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-bold text-white leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                    {stats.advancedCount}
+                  </span>
+                  <span className="text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-amber-400 leading-none drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
+                    ({stats.advancedPct}%)
+                  </span>
+                </div>
+
+                {/* Hanging Plaque: 3 Stats Numbers (Centered in their respective columns) */}
+                {/* Col 1: Topics count */}
+                <div className="absolute left-[44.35%] top-[75.4%] -translate-x-1/2 select-none pointer-events-none z-20">
+                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                    {stats.totalTopicsCount}
+                  </span>
+                </div>
+
+                {/* Col 2: Problems count */}
+                <div className="absolute left-[58.38%] top-[75.4%] -translate-x-1/2 select-none pointer-events-none z-20">
+                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                     {stats.totalProblems}
-                  </div>
-                  <div className="text-[10px] font-semibold text-slate-300 leading-tight mt-1">
-                    Problems
-                  </div>
+                  </span>
                 </div>
 
                 {/* Col 3: Fundamental % */}
-                <div className="flex-1 flex flex-col items-center justify-center pt-5">
-                  <div className="text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                <div className="absolute left-[73.34%] top-[75.4%] -translate-x-1/2 select-none pointer-events-none z-20">
+                  <span className="text-[12px] sm:text-[13px] md:text-[14px] font-black text-white font-mono leading-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                     {stats.fundamentalPct}%
-                  </div>
-                  <div className="text-[10px] font-semibold text-slate-300 leading-tight mt-1">
-                    Fundamental
-                  </div>
+                  </span>
                 </div>
-              </div>
+              </>
             )}
           </div>
         </div>
