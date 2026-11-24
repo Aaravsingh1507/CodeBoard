@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Textarea, Select } from "@/components/ui/input";
 import { InterviewRounds } from "@/components/interview-rounds";
 import { formatDate } from "@/lib/utils";
+import { ApplicationsLoadingSkeleton } from "@/components/loading/page-skeletons";
 
 interface Application {
   id: string;
@@ -100,10 +101,11 @@ export default function ApplicationsPage() {
         />
       )}
 
-      {loading && <Skeleton className="h-64 w-full" />}
-      {error && <ErrorState message={error} onRetry={() => refetch()} />}
-
-      {data && total === 0 && (
+      {loading ? (
+        <ApplicationsLoadingSkeleton />
+      ) : error ? (
+        <ErrorState message={error} onRetry={() => refetch({ force: true })} />
+      ) : data && total === 0 ? (
         <EmptyState
           title="No applications yet"
           description="Add your first one to start tracking your pipeline."
@@ -113,10 +115,8 @@ export default function ApplicationsPage() {
             </Button>
           }
         />
-      )}
-
-      {data && total > 0 && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      ) : data && total > 0 ? (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 animate-fade-in">
           {COLUMNS.map((col) => {
             const colors = STATUS_COLORS[col.key];
             const count = byColumn[col.key].length;
@@ -210,7 +210,7 @@ export default function ApplicationsPage() {
             );
           })}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { Plus, Users, LogOut, Copy, Check, ChevronDown, Flame } from "lucide-react";
 import { useFetch } from "@/lib/use-fetch";
+import { CirclesLoadingSkeleton } from "@/components/loading/page-skeletons";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
@@ -113,9 +114,11 @@ export default function CirclesPage() {
         <JoinCircleForm onClose={() => setShowJoin(false)} onJoined={() => { setShowJoin(false); refetch(); }} />
       )}
 
-      {loading && <Skeleton className="h-40 w-full" />}
-      {error && <ErrorState message={error} onRetry={() => refetch()} />}
-      {data && data.length === 0 && (
+      {loading ? (
+        <CirclesLoadingSkeleton />
+      ) : error ? (
+        <ErrorState message={error} onRetry={() => refetch({ force: true })} />
+      ) : data && data.length === 0 ? (
         <EmptyState
           icon={<Users size={20} />}
           title="No circles yet"
@@ -126,9 +129,8 @@ export default function CirclesPage() {
             </Button>
           }
         />
-      )}
-
-      <div className="space-y-5">
+      ) : data ? (
+        <div className="space-y-5 animate-fade-in">
         {(data ?? []).map((circle) => {
           // Determine "This week's leader" — member with highest combined LC + GH activity this week
           const sortedByWeekly = [...circle.members].sort((a, b) => {
@@ -384,6 +386,7 @@ export default function CirclesPage() {
           );
         })}
       </div>
+      ) : null}
     </div>
   );
 }

@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, daysBetween } from "@/lib/utils";
 import { computeWeeklyPace } from "@/lib/placement";
+import { GoalsLoadingSkeleton } from "@/components/loading/page-skeletons";
 
 interface Goal {
   id: string;
@@ -102,9 +103,11 @@ export default function GoalsPage() {
 
       <PlacementBanner />
 
-      {loading && <Skeleton className="h-40 w-full" />}
-      {error && <ErrorState message={error} onRetry={() => refetch()} />}
-      {data && data.length === 0 && (
+      {loading ? (
+        <GoalsLoadingSkeleton />
+      ) : error ? (
+        <ErrorState message={error} onRetry={() => refetch({ force: true })} />
+      ) : data && data.length === 0 ? (
         <div className="animate-fade-in">
           <EmptyState
             title="No goals yet"
@@ -116,9 +119,8 @@ export default function GoalsPage() {
             }
           />
         </div>
-      )}
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      ) : data ? (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 animate-fade-in">
         {(data ?? []).map((g, index) => {
           const pct = (g.current / g.target) * 100;
           const daysLeft = daysBetween(new Date(), new Date(g.deadline));
@@ -190,6 +192,7 @@ export default function GoalsPage() {
           );
         })}
       </div>
+      ) : null}
     </div>
   );
 }

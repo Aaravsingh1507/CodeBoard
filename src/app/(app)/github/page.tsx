@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { StreakHeatmap } from "@/components/streak-heatmap";
 import { TopLanguagesCard } from "@/components/github/top-languages-card";
 import { ProfileOverviewCard } from "@/components/github/profile-overview-card";
+import { GithubLoadingSkeleton } from "@/components/loading/page-skeletons";
 import type { GithubStats } from "@/lib/github";
 
 export default function GithubPage() {
@@ -47,23 +48,17 @@ export default function GithubPage() {
         </Button>
       </div>
 
-      {loading && (
-        <div className="space-y-5">
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-48 w-full" />
-        </div>
-      )}
-
-      {error && !notConnected && <ErrorState message={error} onRetry={() => refetch()} />}
-      {notConnected && (
+      {loading ? (
+        <GithubLoadingSkeleton />
+      ) : error && !notConnected ? (
+        <ErrorState message={error} onRetry={() => refetch({ force: true })} />
+      ) : notConnected ? (
         <EmptyState
           title="GitHub not connected"
           description="Reconnect your GitHub account from Settings to pull live stats."
         />
-      )}
-
-      {data && (
-        <div className="space-y-5 min-w-0 max-w-full">
+      ) : data ? (
+        <div className="space-y-5 min-w-0 max-w-full animate-fade-in">
           {warning && (
             <p className="rounded-lg bg-warn/10 px-3 py-2 text-xs text-warn">{warning}</p>
           )}
@@ -207,7 +202,7 @@ export default function GithubPage() {
             </CardContent>
           </Card>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

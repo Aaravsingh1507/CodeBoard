@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sparkles, Lightbulb, TrendingUp, Trash2 } from "lucide-react";
 import { useFetch } from "@/lib/use-fetch";
+import { ReviewsLoadingSkeleton } from "@/components/loading/page-skeletons";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/error-state";
@@ -71,9 +72,11 @@ export default function ReviewsPage() {
         <p className="mb-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{genError}</p>
       )}
 
-      {loading && <Skeleton className="h-40 w-full" />}
-      {error && <ErrorState message={error} onRetry={() => refetch()} />}
-      {data && data.length === 0 && (
+      {loading ? (
+        <ReviewsLoadingSkeleton />
+      ) : error ? (
+        <ErrorState message={error} onRetry={() => refetch({ force: true })} />
+      ) : data && data.length === 0 ? (
         <EmptyState
           icon={<Sparkles size={20} />}
           title="No reviews yet"
@@ -84,9 +87,8 @@ export default function ReviewsPage() {
             </Button>
           }
         />
-      )}
-
-      <div className="space-y-4">
+      ) : data ? (
+        <div className="space-y-4 animate-fade-in">
         {(data ?? []).map((r, idx) => (
           <Card key={r.id} className="p-5">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-border/40 pb-2.5">
@@ -150,6 +152,7 @@ export default function ReviewsPage() {
           </Card>
         ))}
       </div>
+      ) : null}
     </div>
   );
 }
