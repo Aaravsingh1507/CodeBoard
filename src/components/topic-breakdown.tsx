@@ -190,30 +190,33 @@ export function TopicBreakdown({
   }, [displayColumns]);
 
   return (
-    <div className="space-y-5 select-none">
+    <div className="space-y-4 sm:space-y-5 select-none w-full min-w-0">
       {/* ===================================================================== */}
-      {/* 1. TOP STATS ROW: 3 CLEAN, MINIMAL CARDS                             */}
+      {/* 1. TOP STATS ROW: 3 GLASSMORPHISM CARDS WITH MICRO-ANIMATIONS         */}
       {/* ===================================================================== */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
         {/* Card 1: Total Solved */}
-        <div className="rounded-2xl border border-slate-800/90 dark:border-white/[0.08] dark:bg-[#060913] bg-slate-900/95 p-5 shadow-[0_14px_36px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:border-white/15 hover:shadow-[0_18px_44px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,255,255,0.12)]">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+        <div className="group relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-white/[0.01] dark:from-[#11192e]/80 dark:via-[#0c1322]/80 dark:to-[#070b14]/90 backdrop-blur-xl p-4 sm:p-5 shadow-[0_12px_32px_0_rgba(0,0,0,0.65),inset_0_1px_1px_0_rgba(255,255,255,0.15)] transition-all duration-300 hover:border-white/20 hover:shadow-[0_16px_40px_0_rgba(0,0,0,0.85),inset_0_1px_1px_0_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
+          {/* Ambient Cyan Glass Glow */}
+          <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-cyan-500/15 blur-2xl transition-all duration-500 group-hover:bg-cyan-500/25" />
+
+          <div className="relative z-10 flex items-center justify-between">
+            <span className="text-xs font-medium text-slate-300 uppercase tracking-wider">
               Total Solved
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_12px_rgba(6,182,212,0.15)]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300 border border-cyan-400/30 backdrop-blur-md shadow-[0_0_16px_rgba(6,182,212,0.25)] transition-transform duration-300 group-hover:scale-110">
               <Code2 className="h-4 w-4" />
             </div>
           </div>
 
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold tracking-tight text-white font-mono">
+          <div className="relative z-10 mt-3 sm:mt-4 flex items-baseline gap-2">
+            <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white font-mono">
               {loading ? "..." : displayTotalProblems}
             </span>
             <span className="text-xs text-slate-400">problems</span>
           </div>
 
-          <div className="mt-4 flex items-center justify-between border-t border-slate-800/80 dark:border-white/[0.06] pt-3 text-xs">
+          <div className="relative z-10 mt-3.5 sm:mt-4 flex items-center justify-between border-t border-white/[0.08] pt-3 text-xs">
             <span className="text-slate-400">Acceptance Rate</span>
             <span className="font-semibold text-white font-mono">
               {acceptanceRate || "0.0%"}
@@ -222,29 +225,32 @@ export function TopicBreakdown({
         </div>
 
         {/* Card 2: Difficulty Breakdown */}
-        <div className="rounded-2xl border border-slate-800/90 dark:border-white/[0.08] dark:bg-[#060913] bg-slate-900/95 p-5 shadow-[0_14px_36px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:border-white/15 hover:shadow-[0_18px_44px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,255,255,0.12)]">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+        <div className="group relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-white/[0.01] dark:from-[#11192e]/80 dark:via-[#0c1322]/80 dark:to-[#070b14]/90 backdrop-blur-xl p-4 sm:p-5 shadow-[0_12px_32px_0_rgba(0,0,0,0.65),inset_0_1px_1px_0_rgba(255,255,255,0.15)] transition-all duration-300 hover:border-white/20 hover:shadow-[0_16px_40px_0_rgba(0,0,0,0.85),inset_0_1px_1px_0_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
+          {/* Ambient Purple Glass Glow */}
+          <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-purple-500/15 blur-2xl transition-all duration-500 group-hover:bg-purple-500/25" />
+
+          <div className="relative z-10 flex items-center justify-between">
+            <span className="text-xs font-medium text-slate-300 uppercase tracking-wider">
               Difficulty
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-[0_0_12px_rgba(168,85,247,0.15)]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/15 text-purple-300 border border-purple-400/30 backdrop-blur-md shadow-[0_0_16px_rgba(168,85,247,0.25)] transition-transform duration-300 group-hover:scale-110">
               <BarChart2 className="h-4 w-4" />
             </div>
           </div>
 
-          <div className="mt-3.5 space-y-2.5">
+          <div className="relative z-10 mt-3 space-y-2.5">
             {/* Easy */}
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center gap-1.5 font-medium text-emerald-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
                   Easy
                 </span>
                 <span className="font-semibold font-mono text-white">{easyCount}</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-black/90 border border-white/[0.04] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]">
+              <div className="h-1.5 w-full rounded-full bg-black/60 dark:bg-black/80 border border-white/[0.04] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]">
                 <div
-                  className="h-full rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] transition-all duration-500"
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_10px_rgba(16,185,129,0.7)] transition-all duration-1000 ease-out"
                   style={{ width: `${easyPct}%` }}
                 />
               </div>
@@ -254,14 +260,14 @@ export function TopicBreakdown({
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center gap-1.5 font-medium text-amber-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)]" />
                   Medium
                 </span>
                 <span className="font-semibold font-mono text-white">{mediumCount}</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-black/90 border border-white/[0.04] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]">
+              <div className="h-1.5 w-full rounded-full bg-black/60 dark:bg-black/80 border border-white/[0.04] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]">
                 <div
-                  className="h-full rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)] transition-all duration-500"
+                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 shadow-[0_0_10px_rgba(245,158,11,0.7)] transition-all duration-1000 ease-out"
                   style={{ width: `${mediumPct}%` }}
                 />
               </div>
@@ -271,14 +277,14 @@ export function TopicBreakdown({
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center gap-1.5 font-medium text-rose-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-rose-400 shadow-[0_0_6px_rgba(251,113,133,0.8)]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.9)]" />
                   Hard
                 </span>
                 <span className="font-semibold font-mono text-white">{hardCount}</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-black/90 border border-white/[0.04] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]">
+              <div className="h-1.5 w-full rounded-full bg-black/60 dark:bg-black/80 border border-white/[0.04] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]">
                 <div
-                  className="h-full rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)] transition-all duration-500"
+                  className="h-full rounded-full bg-gradient-to-r from-rose-500 to-pink-500 shadow-[0_0_10px_rgba(244,63,94,0.7)] transition-all duration-1000 ease-out"
                   style={{ width: `${hardPct}%` }}
                 />
               </div>
@@ -287,92 +293,105 @@ export function TopicBreakdown({
         </div>
 
         {/* Card 3: Global Ranking */}
-        <div className="rounded-2xl border border-slate-800/90 dark:border-white/[0.08] dark:bg-[#060913] bg-slate-900/95 p-5 shadow-[0_14px_36px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:border-white/15 hover:shadow-[0_18px_44px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,255,255,0.12)]">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+        <div className="group relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-white/[0.01] dark:from-[#11192e]/80 dark:via-[#0c1322]/80 dark:to-[#070b14]/90 backdrop-blur-xl p-4 sm:p-5 shadow-[0_12px_32px_0_rgba(0,0,0,0.65),inset_0_1px_1px_0_rgba(255,255,255,0.15)] transition-all duration-300 hover:border-white/20 hover:shadow-[0_16px_40px_0_rgba(0,0,0,0.85),inset_0_1px_1px_0_rgba(255,255,255,0.25)] hover:-translate-y-0.5">
+          {/* Ambient Amber Glass Glow */}
+          <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-amber-500/15 blur-2xl transition-all duration-500 group-hover:bg-amber-500/25" />
+
+          <div className="relative z-10 flex items-center justify-between">
+            <span className="text-xs font-medium text-slate-300 uppercase tracking-wider">
               Global Ranking
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.15)]">
-              <Trophy className="h-4 w-4" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300 border border-amber-400/30 backdrop-blur-md shadow-[0_0_16px_rgba(245,158,11,0.25)] transition-transform duration-300 group-hover:scale-110">
+              <Trophy className="h-4 w-4 animate-[trophy-float_4s_ease-in-out_infinite]" />
             </div>
           </div>
 
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold tracking-tight text-white font-mono truncate">
+          <div className="relative z-10 mt-3 sm:mt-4 flex items-baseline gap-2">
+            <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-mono truncate">
               {loading ? "..." : ranking ? `#${ranking.toLocaleString()}` : "Unranked"}
             </span>
           </div>
 
-          <div className="mt-4 flex items-center justify-between border-t border-slate-800/80 dark:border-white/[0.06] pt-3 text-xs">
+          <div className="relative z-10 mt-3.5 sm:mt-4 flex items-center justify-between border-t border-white/[0.08] pt-3 text-xs">
             <span className="text-slate-400">Standing</span>
-            <span className="font-medium text-slate-400">
-              {ranking ? "Active rank" : "Solve to rank"}
+            <span className="flex items-center gap-1.5 font-medium text-slate-300">
+              {ranking ? (
+                <>
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)] animate-pulse" />
+                  Active rank
+                </>
+              ) : (
+                "Solve to rank"
+              )}
             </span>
           </div>
         </div>
       </div>
 
       {/* ===================================================================== */}
-      {/* 2. MAIN DSA TOPIC DISTRIBUTION CARD                                  */}
+      {/* 2. MAIN DSA TOPIC DISTRIBUTION CARD (FULLY MOBILE OPTIMIZED)         */}
       {/* ===================================================================== */}
-      <div className="rounded-2xl border border-slate-800/90 dark:border-white/[0.08] dark:bg-[#060913] bg-slate-900/95 p-5 sm:p-6 shadow-[0_16px_44px_rgba(0,0,0,0.92),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] space-y-5">
-        {/* Header with Title & Filter Buttons */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-[0_0_12px_rgba(168,85,247,0.15)]">
+      <div className="relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-white/[0.01] dark:from-[#11192e]/80 dark:via-[#0c1322]/80 dark:to-[#070b14]/90 backdrop-blur-xl p-4 sm:p-6 shadow-[0_16px_44px_0_rgba(0,0,0,0.75),inset_0_1px_1px_0_rgba(255,255,255,0.15)] space-y-4 sm:space-y-5 animate-glass-sheen">
+        {/* Soft Ambient Refraction Glow at Top-Left */}
+        <div className="pointer-events-none absolute -left-12 -top-12 h-44 w-44 rounded-full bg-purple-500/10 blur-3xl" />
+
+        {/* Header with Title & Filter Buttons (Wraps smoothly on mobile with no overflow) */}
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/15 text-purple-300 border border-purple-400/30 backdrop-blur-md shadow-[0_0_16px_rgba(168,85,247,0.25)]">
               <Layers className="h-4 w-4" />
             </div>
-            <div>
-              <h2 className="text-base font-semibold text-white">Topic Distribution</h2>
-              <p className="text-xs text-slate-400">
+            <div className="min-w-0">
+              <h2 className="text-base font-semibold text-white truncate">Topic Distribution</h2>
+              <p className="text-xs text-slate-400 line-clamp-1 sm:line-clamp-none">
                 Breakdown of solved DSA patterns across fundamental, intermediate, and advanced categories.
               </p>
             </div>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-slate-800 dark:border-white/[0.08] dark:bg-[#04060d] bg-black/60 p-1 text-xs shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
+          {/* Filter Pills: Horizontal scrolling on mobile without scrollbar distortion */}
+          <div className="w-full sm:w-auto overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-1.5 p-1 rounded-xl bg-black/40 dark:bg-black/50 backdrop-blur-md border border-white/[0.08] shadow-[inset_0_2px_4px_rgba(0,0,0,0.7)]">
             <button
               onClick={() => setActiveFilter("all")}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
                 activeFilter === "all"
-                  ? "bg-slate-800 text-white border border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-white/[0.15] text-white border border-white/20 shadow-[0_2px_10px_rgba(255,255,255,0.1)]"
+                  : "text-slate-400 hover:text-white hover:bg-white/[0.05]"
               }`}
             >
               All
             </button>
             <button
               onClick={() => setActiveFilter("fundamental")}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
                 activeFilter === "fundamental"
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_2px_8px_rgba(6,182,212,0.2)]"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-cyan-500/25 text-cyan-200 border border-cyan-400/40 shadow-[0_2px_12px_rgba(6,182,212,0.3)]"
+                  : "text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/10"
               }`}
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(6,182,212,0.8)]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(6,182,212,0.9)]" />
               Fundamental
             </button>
             <button
               onClick={() => setActiveFilter("intermediate")}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
                 activeFilter === "intermediate"
-                  ? "bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-[0_2px_8px_rgba(168,85,247,0.2)]"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-purple-500/25 text-purple-200 border border-purple-400/40 shadow-[0_2px_12px_rgba(168,85,247,0.3)]"
+                  : "text-slate-400 hover:text-purple-300 hover:bg-purple-500/10"
               }`}
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-400 shadow-[0_0_6px_rgba(168,85,247,0.8)]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-purple-400 shadow-[0_0_6px_rgba(168,85,247,0.9)]" />
               Intermediate
             </button>
             <button
               onClick={() => setActiveFilter("advanced")}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
                 activeFilter === "advanced"
-                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-[0_2px_8px_rgba(245,158,11,0.2)]"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-amber-500/25 text-amber-200 border border-amber-400/40 shadow-[0_2px_12px_rgba(245,158,11,0.3)]"
+                  : "text-slate-400 hover:text-amber-300 hover:bg-amber-500/10"
               }`}
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.8)]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.9)]" />
               Advanced
             </button>
           </div>
@@ -380,9 +399,9 @@ export function TopicBreakdown({
 
         {/* Content: Empty State vs Real Topics Grid */}
         {displayColumns.length === 0 ? (
-          /* Simple, Clean Empty State */
-          <div className="flex flex-col items-center justify-center py-12 px-4 text-center rounded-xl border border-dashed border-slate-800 dark:border-white/[0.08] dark:bg-[#04060d]/80 bg-black/40 shadow-[inset_0_2px_8px_rgba(0,0,0,0.8),0_6px_20px_rgba(0,0,0,0.6)]">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 mb-3 shadow-[0_0_14px_rgba(168,85,247,0.15)]">
+          /* Simple, Clean Frosted Glass Empty State */
+          <div className="relative z-10 flex flex-col items-center justify-center py-10 sm:py-14 px-4 text-center rounded-xl border border-dashed border-white/[0.1] bg-white/[0.02] backdrop-blur-md shadow-[inset_0_2px_8px_rgba(0,0,0,0.6)]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/15 border border-purple-400/30 text-purple-300 mb-3 shadow-[0_0_18px_rgba(168,85,247,0.2)]">
               <Layers className="h-6 w-6" />
             </div>
             <h3 className="text-sm font-semibold text-white">No topic data available yet</h3>
@@ -391,107 +410,107 @@ export function TopicBreakdown({
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {/* Top 3 Covered Topics Podium (When active) */}
+          <div className="relative z-10 space-y-4">
+            {/* Top 3 Covered Topics Podium (Responsive Glass Cards) */}
             {stats.totalTopicsCount > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 {/* 1st Place */}
-                <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 dark:bg-gradient-to-b dark:from-amber-500/[0.08] dark:to-[#04060d] bg-amber-500/5 p-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(245,158,11,0.25)]">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                <div className="group relative overflow-hidden flex items-center gap-3 rounded-xl border border-amber-400/30 bg-gradient-to-r from-amber-500/[0.12] to-amber-500/[0.02] backdrop-blur-md p-3 sm:p-3.5 shadow-[0_4px_20px_rgba(245,158,11,0.15),inset_0_1px_1px_rgba(255,255,255,0.2)] transition-all duration-300 hover:border-amber-400/50 hover:scale-[1.01]">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/25 text-amber-300 border border-amber-400/40 shadow-[0_0_12px_rgba(245,158,11,0.3)] transition-transform duration-300 group-hover:scale-110">
                     <Trophy className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">
+                    <div className="text-[10px] sm:text-[11px] font-medium text-amber-400 uppercase tracking-wider">
                       1st Focus
                     </div>
                     <div className="text-sm font-bold text-white truncate">
                       {stats.top1?.tag ?? "—"}
                     </div>
                   </div>
-                  <span className="font-mono text-sm font-bold text-amber-400">
+                  <span className="font-mono text-sm font-bold text-amber-300 shrink-0 ml-1">
                     {stats.top1?.solved ?? 0}
                   </span>
                 </div>
 
                 {/* 2nd Place */}
-                <div className="flex items-center gap-3 rounded-xl border border-cyan-500/30 dark:bg-gradient-to-b dark:from-cyan-500/[0.08] dark:to-[#04060d] bg-cyan-500/5 p-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(6,182,212,0.25)]">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.2)]">
+                <div className="group relative overflow-hidden flex items-center gap-3 rounded-xl border border-cyan-400/30 bg-gradient-to-r from-cyan-500/[0.12] to-cyan-500/[0.02] backdrop-blur-md p-3 sm:p-3.5 shadow-[0_4px_20px_rgba(6,182,212,0.15),inset_0_1px_1px_rgba(255,255,255,0.2)] transition-all duration-300 hover:border-cyan-400/50 hover:scale-[1.01]">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/25 text-cyan-300 border border-cyan-400/40 shadow-[0_0_12px_rgba(6,182,212,0.3)] transition-transform duration-300 group-hover:scale-110">
                     <Award className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[11px] font-medium text-cyan-400 uppercase tracking-wider">
+                    <div className="text-[10px] sm:text-[11px] font-medium text-cyan-400 uppercase tracking-wider">
                       2nd Focus
                     </div>
                     <div className="text-sm font-bold text-white truncate">
                       {stats.top2?.tag ?? "—"}
                     </div>
                   </div>
-                  <span className="font-mono text-sm font-bold text-cyan-400">
+                  <span className="font-mono text-sm font-bold text-cyan-300 shrink-0 ml-1">
                     {stats.top2?.solved ?? 0}
                   </span>
                 </div>
 
                 {/* 3rd Place */}
-                <div className="flex items-center gap-3 rounded-xl border border-purple-500/30 dark:bg-gradient-to-b dark:from-purple-500/[0.08] dark:to-[#04060d] bg-purple-500/5 p-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(168,85,247,0.25)]">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                <div className="group relative overflow-hidden flex items-center gap-3 rounded-xl border border-purple-400/30 bg-gradient-to-r from-purple-500/[0.12] to-purple-500/[0.02] backdrop-blur-md p-3 sm:p-3.5 shadow-[0_4px_20px_rgba(168,85,247,0.15),inset_0_1px_1px_rgba(255,255,255,0.2)] transition-all duration-300 hover:border-purple-400/50 hover:scale-[1.01]">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/25 text-purple-300 border border-purple-400/40 shadow-[0_0_12px_rgba(168,85,247,0.3)] transition-transform duration-300 group-hover:scale-110">
                     <Sparkles className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[11px] font-medium text-purple-400 uppercase tracking-wider">
+                    <div className="text-[10px] sm:text-[11px] font-medium text-purple-400 uppercase tracking-wider">
                       3rd Focus
                     </div>
                     <div className="text-sm font-bold text-white truncate">
                       {stats.top3?.tag ?? "—"}
                     </div>
                   </div>
-                  <span className="font-mono text-sm font-bold text-purple-400">
+                  <span className="font-mono text-sm font-bold text-purple-300 shrink-0 ml-1">
                     {stats.top3?.solved ?? 0}
                   </span>
                 </div>
               </div>
             )}
 
-            {/* Clean Topic List with Progress Bars */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+            {/* Clean Topic List with Frosted Progress Bars */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5">
               {displayColumns.map((col) => {
                 const pct = ((col.solved / maxSolvedCount) * 100).toFixed(0);
                 const isFund = col.level === "fundamental";
                 const isAdv = col.level === "advanced";
                 const barColor = isFund
-                  ? "bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.4)]"
+                  ? "bg-gradient-to-r from-cyan-500 to-teal-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]"
                   : isAdv
-                  ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]"
-                  : "bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]";
+                  ? "bg-gradient-to-r from-amber-500 to-yellow-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]"
+                  : "bg-gradient-to-r from-purple-500 to-indigo-400 shadow-[0_0_8px_rgba(168,85,247,0.6)]";
                 const badgeColor = isFund
-                  ? "text-cyan-400 border-cyan-500/30 bg-cyan-500/10 shadow-[0_0_8px_rgba(6,182,212,0.15)]"
+                  ? "text-cyan-300 border-cyan-400/30 bg-cyan-500/15"
                   : isAdv
-                  ? "text-amber-400 border-amber-500/30 bg-amber-500/10 shadow-[0_0_8px_rgba(245,158,11,0.15)]"
-                  : "text-purple-400 border-purple-500/30 bg-purple-500/10 shadow-[0_0_8px_rgba(168,85,247,0.15)]";
+                  ? "text-amber-300 border-amber-400/30 bg-amber-500/15"
+                  : "text-purple-300 border-purple-400/30 bg-purple-500/15";
 
                 return (
                   <div
                     key={col.id}
-                    className="flex flex-col justify-between gap-2 rounded-xl border border-slate-800/80 dark:border-white/[0.06] dark:bg-[#04060d] bg-slate-900/80 p-3.5 transition-all duration-200 hover:border-white/15 hover:shadow-[0_8px_24px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.06)] shadow-[0_4px_16px_rgba(0,0,0,0.65),inset_0_1px_0_rgba(255,255,255,0.03)]"
+                    className="group flex flex-col justify-between gap-2 rounded-xl border border-white/[0.07] bg-white/[0.03] dark:bg-white/[0.02] backdrop-blur-md p-3 sm:p-3.5 transition-all duration-200 hover:border-white/20 hover:bg-white/[0.06] hover:shadow-[0_8px_24px_rgba(0,0,0,0.65),inset_0_1px_0_rgba(255,255,255,0.1)] hover:-translate-y-0.5"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-sm font-medium text-white truncate">
+                    <div className="flex items-center justify-between gap-2 min-w-0">
+                      <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+                        <span className="text-xs sm:text-sm font-semibold text-white truncate">
                           {col.name}
                         </span>
                         <span
-                          className={`rounded-md border px-1.5 py-0.5 text-[10px] font-medium capitalize shrink-0 ${badgeColor}`}
+                          className={`rounded-md border px-1.5 py-0.5 text-[9px] sm:text-[10px] font-medium capitalize shrink-0 ${badgeColor}`}
                         >
                           {col.level}
                         </span>
                       </div>
-                      <span className="font-mono text-xs font-bold text-white shrink-0">
+                      <span className="font-mono text-xs font-bold text-white shrink-0 ml-1">
                         {col.solved} solved
                       </span>
                     </div>
 
-                    <div className="h-1.5 w-full rounded-full bg-black/90 border border-white/[0.03] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]">
+                    <div className="h-1.5 w-full rounded-full bg-black/60 dark:bg-black/80 border border-white/[0.04] overflow-hidden shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]">
                       <div
-                        className={`h-full rounded-full transition-all duration-300 ${barColor}`}
+                        className={`h-full rounded-full transition-all duration-700 ease-out ${barColor}`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>

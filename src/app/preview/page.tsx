@@ -385,15 +385,20 @@ export default function PreviewPage() {
                 loading={leetcodeLoading}
               />
 
-              <div className="rounded-2xl border border-slate-800/90 dark:border-white/[0.08] dark:bg-[#060913] bg-slate-900/95 p-5 sm:p-6 shadow-[0_14px_36px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:border-white/15 hover:shadow-[0_18px_44px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,255,255,0.12)]">
-                <h3 className="font-bold text-white text-base mb-4 pb-3 border-b border-slate-800/80 dark:border-white/[0.06]">
+              <div className="relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-white/[0.01] dark:from-[#11192e]/80 dark:via-[#0c1322]/80 dark:to-[#070b14]/90 backdrop-blur-xl p-4 sm:p-6 shadow-[0_12px_36px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all duration-300 hover:border-white/20 hover:shadow-[0_18px_44px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.25)]">
+                {/* Ambient Cyan Glass Glow */}
+                <div className="pointer-events-none absolute -right-10 -bottom-10 h-36 w-36 rounded-full bg-cyan-500/10 blur-3xl" />
+
+                <h3 className="relative z-10 font-bold text-white text-base mb-3 pb-3 border-b border-white/[0.08]">
                   Recent submissions
                 </h3>
-                <ul className="divide-y divide-slate-800/80 dark:divide-white/[0.06]">
+                <ul className="relative z-10 divide-y divide-white/[0.06]">
                   {(liveLeetcode?.recentSubmissions?.length ? liveLeetcode.recentSubmissions : previewLeetcode.recentSubmissions).map((s, i) => (
-                    <li key={i} className="flex items-center justify-between py-2.5 text-sm">
-                      <span className="text-white font-medium">{s.title}</span>
-                      <Badge tone="success">{s.status}</Badge>
+                    <li key={i} className="flex items-center justify-between py-2.5 text-xs sm:text-sm gap-2 hover:bg-white/[0.03] px-2 -mx-2 rounded-lg transition-colors">
+                      <span className="text-white font-medium truncate min-w-0 flex-1">{s.title}</span>
+                      <span className="shrink-0">
+                        <Badge tone="success">{s.status}</Badge>
+                      </span>
                     </li>
                   ))}
                 </ul>
