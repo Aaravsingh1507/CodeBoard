@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TopicBreakdown } from "@/components/topic-breakdown";
+import { LeetcodeLoadingSkeleton } from "@/components/leetcode-loading-skeleton";
 import type { LeetcodeStats } from "@/lib/leetcode";
 
 const STATUS_TONE: Record<string, "success" | "danger" | "neutral"> = {
@@ -34,17 +35,17 @@ export default function LeetcodePage() {
         </Button>
       </div>
 
-      {loading && <Skeleton className="h-48 w-full" />}
-      {error && !notConfigured && <ErrorState message={error} onRetry={() => refetch()} />}
-      {notConfigured && (
+      {loading ? (
+        <LeetcodeLoadingSkeleton />
+      ) : error && !notConfigured ? (
+        <ErrorState message={error} onRetry={() => refetch({ force: true })} />
+      ) : notConfigured ? (
         <EmptyState
           title="No LeetCode username set"
           description="Add your username in Settings to start tracking solved problems."
         />
-      )}
-
-      {data && (
-        <div className="space-y-5">
+      ) : data ? (
+        <div className="space-y-5 animate-fade-in">
           {warning && <p className="rounded-lg bg-warn/10 px-3 py-2 text-xs text-warn">{warning}</p>}
 
           <TopicBreakdown
@@ -83,7 +84,7 @@ export default function LeetcodePage() {
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { StreakWidget } from "@/components/widgets/streak-widget";
 import { GithubSummaryWidget } from "@/components/widgets/github-summary-widget";
 import { LeetcodeSummaryWidget } from "@/components/widgets/leetcode-summary-widget";
 import { TopicBreakdown, REAL_USER_TOPICS } from "@/components/topic-breakdown";
+import { LeetcodeLoadingSkeleton } from "@/components/leetcode-loading-skeleton";
 import { GoalsSummaryWidget } from "@/components/widgets/goals-summary-widget";
 import { LatestReviewWidget } from "@/components/widgets/latest-review-widget";
 import { CompanyPrepWidget } from "@/components/widgets/company-prep-widget";
@@ -373,37 +374,41 @@ export default function PreviewPage() {
               </p>
             </div>
 
-            <div className="space-y-6">
-              <TopicBreakdown
-                topics={previewLeetcode.topicBreakdown ?? []}
-                totalSolved={previewLeetcode.totalSolved}
-                easySolved={previewLeetcode.easySolved}
-                mediumSolved={previewLeetcode.mediumSolved}
-                hardSolved={previewLeetcode.hardSolved}
-                ranking={previewLeetcode.ranking}
-                acceptanceRate={previewLeetcode.acceptanceRate}
-                loading={leetcodeLoading}
-              />
+            {leetcodeLoading ? (
+              <LeetcodeLoadingSkeleton />
+            ) : (
+              <div className="space-y-6">
+                <TopicBreakdown
+                  topics={previewLeetcode.topicBreakdown ?? []}
+                  totalSolved={previewLeetcode.totalSolved}
+                  easySolved={previewLeetcode.easySolved}
+                  mediumSolved={previewLeetcode.mediumSolved}
+                  hardSolved={previewLeetcode.hardSolved}
+                  ranking={previewLeetcode.ranking}
+                  acceptanceRate={previewLeetcode.acceptanceRate}
+                  loading={leetcodeLoading}
+                />
 
-              <div className="relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-white/[0.01] dark:from-[#11192e]/80 dark:via-[#0c1322]/80 dark:to-[#070b14]/90 backdrop-blur-xl p-4 sm:p-6 shadow-[0_12px_36px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all duration-300 hover:border-white/20 hover:shadow-[0_18px_44px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.25)]">
-                {/* Ambient Cyan Glass Glow */}
-                <div className="pointer-events-none absolute -right-10 -bottom-10 h-36 w-36 rounded-full bg-cyan-500/10 blur-3xl" />
+                <div className="relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-white/[0.01] dark:from-[#11192e]/80 dark:via-[#0c1322]/80 dark:to-[#070b14]/90 backdrop-blur-xl p-4 sm:p-6 shadow-[0_12px_36px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all duration-300 hover:border-white/20 hover:shadow-[0_18px_44px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.25)]">
+                  {/* Ambient Cyan Glass Glow */}
+                  <div className="pointer-events-none absolute -right-10 -bottom-10 h-36 w-36 rounded-full bg-cyan-500/10 blur-3xl" />
 
-                <h3 className="relative z-10 font-bold text-white text-base mb-3 pb-3 border-b border-white/[0.08]">
-                  Recent submissions
-                </h3>
-                <ul className="relative z-10 divide-y divide-white/[0.06]">
-                  {(liveLeetcode?.recentSubmissions?.length ? liveLeetcode.recentSubmissions : previewLeetcode.recentSubmissions).map((s, i) => (
-                    <li key={i} className="flex items-center justify-between py-2.5 text-xs sm:text-sm gap-2 hover:bg-white/[0.03] px-2 -mx-2 rounded-lg transition-colors">
-                      <span className="text-white font-medium truncate min-w-0 flex-1">{s.title}</span>
-                      <span className="shrink-0">
-                        <Badge tone="success">{s.status}</Badge>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                  <h3 className="relative z-10 font-bold text-white text-base mb-3 pb-3 border-b border-white/[0.08]">
+                    Recent submissions
+                  </h3>
+                  <ul className="relative z-10 divide-y divide-white/[0.06]">
+                    {(liveLeetcode?.recentSubmissions?.length ? liveLeetcode.recentSubmissions : previewLeetcode.recentSubmissions).map((s, i) => (
+                      <li key={i} className="flex items-center justify-between py-2.5 text-xs sm:text-sm gap-2 hover:bg-white/[0.03] px-2 -mx-2 rounded-lg transition-colors">
+                        <span className="text-white font-medium truncate min-w-0 flex-1">{s.title}</span>
+                        <span className="shrink-0">
+                          <Badge tone="success">{s.status}</Badge>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
