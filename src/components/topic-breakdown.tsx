@@ -335,25 +335,25 @@ export function TopicBreakdown({
         {/* Soft Ambient Refraction Glow at Top-Left */}
         <div className="pointer-events-none absolute -left-12 -top-12 h-44 w-44 rounded-full bg-purple-500/10 blur-3xl" />
 
-        {/* Header with Title & Filter Buttons (Wraps smoothly on mobile with no overflow) */}
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-          <div className="flex items-center gap-2.5 min-w-0">
+        {/* Header with Title & Filter Buttons */}
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/15 text-purple-300 border border-purple-400/30 backdrop-blur-md shadow-[0_0_16px_rgba(168,85,247,0.25)]">
               <Layers className="h-4 w-4" />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h2 className="text-base font-semibold text-white truncate">Topic Distribution</h2>
-              <p className="text-xs text-slate-400 line-clamp-1 sm:line-clamp-none">
+              <p className="text-xs text-slate-400 line-clamp-2 lg:line-clamp-none">
                 Breakdown of solved DSA patterns across fundamental, intermediate, and advanced categories.
               </p>
             </div>
           </div>
 
-          {/* Filter Pills: Horizontal scrolling on mobile without scrollbar distortion */}
-          <div className="w-full sm:w-auto overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-1.5 p-1 rounded-xl bg-black/40 dark:bg-black/50 backdrop-blur-md border border-white/[0.08] shadow-[inset_0_2px_4px_rgba(0,0,0,0.7)]">
+          {/* Filter Pills: shrink-0 and min-w-fit prevent flex from compressing pills; pr-3 ensures last pill is never clipped */}
+          <div className="w-fit max-w-full shrink-0 overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 pr-2.5 sm:pr-2 rounded-xl bg-black/40 dark:bg-black/50 backdrop-blur-md border border-white/[0.08] shadow-[inset_0_2px_4px_rgba(0,0,0,0.7)]">
             <button
               onClick={() => setActiveFilter("all")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
                 activeFilter === "all"
                   ? "bg-white/[0.15] text-white border border-white/20 shadow-[0_2px_10px_rgba(255,255,255,0.1)]"
                   : "text-slate-400 hover:text-white hover:bg-white/[0.05]"
@@ -363,7 +363,7 @@ export function TopicBreakdown({
             </button>
             <button
               onClick={() => setActiveFilter("fundamental")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
                 activeFilter === "fundamental"
                   ? "bg-cyan-500/25 text-cyan-200 border border-cyan-400/40 shadow-[0_2px_12px_rgba(6,182,212,0.3)]"
                   : "text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/10"
@@ -374,7 +374,7 @@ export function TopicBreakdown({
             </button>
             <button
               onClick={() => setActiveFilter("intermediate")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
                 activeFilter === "intermediate"
                   ? "bg-purple-500/25 text-purple-200 border border-purple-400/40 shadow-[0_2px_12px_rgba(168,85,247,0.3)]"
                   : "text-slate-400 hover:text-purple-300 hover:bg-purple-500/10"
@@ -385,7 +385,7 @@ export function TopicBreakdown({
             </button>
             <button
               onClick={() => setActiveFilter("advanced")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-medium transition-all duration-200 shrink-0 cursor-pointer active:scale-95 whitespace-nowrap ${
                 activeFilter === "advanced"
                   ? "bg-amber-500/25 text-amber-200 border border-amber-400/40 shadow-[0_2px_12px_rgba(245,158,11,0.3)]"
                   : "text-slate-400 hover:text-amber-300 hover:bg-amber-500/10"
