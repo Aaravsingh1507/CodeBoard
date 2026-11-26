@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && next build && node scripts/optimize-build.js",
     "start": "next start",
     "lint": "eslint",
     "db:push": "prisma db push"
@@ -42,6 +42,12 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   },
+  "browserslist": [
+    "chrome 111",
+    "edge 111",
+    "firefox 111",
+    "safari 16.4"
+  ],
   "allowScripts": {
     "@prisma/engines@7.8.0": true,
     "prisma@7.8.0": true,

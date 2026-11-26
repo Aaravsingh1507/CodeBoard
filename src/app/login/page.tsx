@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { auth, signIn } from "@/lib/auth";
+import { signIn } from "@/lib/auth";
 import { GithubIcon, LinkedinIcon } from "@/components/icons";
-
 import { LeetcodeLoginForm } from "@/components/auth/leetcode-login-form";
+import { AuthRedirect } from "@/components/auth/auth-redirect";
 
 export const metadata: Metadata = {
   title: "Login",
@@ -16,12 +15,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function LoginPage() {
-  const session = await auth();
-  if (session?.user) redirect("/dashboard");
-
+export default function LoginPage() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#080c17] px-4 py-8">
+      {/* Client-side fallback redirect if user has an active session cookie */}
+      <AuthRedirect />
+
       {/* Subtle Ambient Nebula Glows */}
       <div className="pointer-events-none absolute right-1/4 top-1/4 h-[500px] w-[500px] rounded-full bg-purple-600/15 blur-[140px]" />
       <div className="pointer-events-none absolute left-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full bg-indigo-600/15 blur-[140px]" />
