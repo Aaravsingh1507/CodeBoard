@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const appOrigin = process.env.NEXTAUTH_URL || "https://codeboard-rho.vercel.app";
+
 const securityHeaders = [
   // Prevent clickjacking by denying iframes embedding this site
   {
@@ -36,11 +38,16 @@ const securityHeaders = [
     key: "X-Permitted-Cross-Domain-Policies",
     value: "none",
   },
-  // Content Security Policy
+  // Strict Content Security Policy without 'unsafe-eval'
   {
     key: "Content-Security-Policy",
     value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none';",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://github.com; object-src 'none';",
+  },
+  // Restrict CORS origin instead of wildcard '*'
+  {
+    key: "Access-Control-Allow-Origin",
+    value: appOrigin,
   },
 ];
 
@@ -51,13 +58,53 @@ const nextConfig: NextConfig = {
   // WebSocket library only needed locally where the global WebSocket API
   // isn't available.
   serverExternalPackages: ["ws"],
+  // Omit legacy IE11 nomodule polyfill bundle so <head> has 0 render-blocking scripts
+  webpack: (config, { isServer }) => {
+    if (!isServer && Array.isArray(config.plugins)) {
+      config.plugins = config.plugins.filter((plugin: unknown) => {
+        const p = plugin as { constructor?: { name?: string }; filePath?: unknown };
+        return !(
+          p?.constructor?.name === "CopyFilePlugin" &&
+          typeof p.filePath === "string" &&
+          p.filePath.includes("polyfill-nomodule")
+        );
+      });
+    }
+    return config;
+  },
   async headers() {
     return [
       {
-        source: "/:path*",
+        source: "/((?!_next/static|_next/image|favicon.ico).*)",
         headers: securityHeaders,
       },
+      {
+        source: "/_next/static/:path*",
+        headers: securityHeaders.filter((h) => h.key !== "Access-Control-Allow-Origin"),
+      },
     ];
+  },
+  async redirects() {
+    const sessionCookies = [
+      "authjs.session-token",
+      "__Secure-authjs.session-token",
+      "next-auth.session-token",
+      "__Secure-next-auth.session-token",
+    ];
+    return sessionCookies.flatMap((key) => [
+      {
+        source: "/",
+        has: [{ type: "cookie" as const, key }],
+        destination: "/dashboard",
+        permanent: false,
+      },
+      {
+        source: "/login",
+        has: [{ type: "cookie" as const, key }],
+        destination: "/dashboard",
+        permanent: false,
+      },
+    ]);
   },
   async rewrites() {
     return [
